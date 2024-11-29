@@ -1,0 +1,4 @@
+uart:
+  tx_pin: 43
+  rx_pin: 44
+  baud_rate: 115200

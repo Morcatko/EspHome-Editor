@@ -1,0 +1,1 @@
+docker build -t morcatko/esphome-editor:latest -f %~dp0Dockerfile .

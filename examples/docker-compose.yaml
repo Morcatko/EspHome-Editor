@@ -1,0 +1,10 @@
+services:
+  esphome-editor:
+    image: morcatko/esphome-editor:latest
+    container_name: esphome-editor
+    environment:
+      - ESPHOME_URL=        #fill your esphome url
+    ports:
+      - 8080:3000
+    volumes:
+      - ./:/app/work-folder/devices

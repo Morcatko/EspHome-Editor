@@ -1,0 +1,56 @@
+# ESPHome-Editor
+
+ESPHome-Editor is a self-hosted, offline code editor built on top of [ESPHome](https://esphome.io/). It's designed to simplify the configuration of ESPHome devices by streamlining the process of writing and managing repetitive sections of your configuration YAML files.
+
+This tool generates ESPHome YAML configurations through the following steps:
+
+- Converts all `.eta` files ([etajs template](https://eta.js.org/)) to YAML.
+- Combines all `.yaml` files into a final ESPHome YAML configuration.
+- Uploads configuration to your ESPHome instance
+- Compiles & OTA updates our device
+
+See [Use Cases](/docs/code-samples.md) for more details.
+
+## Quick Start
+If you only want to see how it works then run `docker run -d -p 8080:3000 morcatko/esphome-editor`. It will run ESPHome editor on port 8080 with some sample devices
+
+Otherwise continue with following steps:
+
+1. Prepare a folder to store your ESPHome Editor device configurations (e.g., `/home/esphome-editor/devices`).
+
+```yaml
+# docker-compose.yaml
+services:
+  esphome-editor:
+    image: esphome-editor:latest
+    container_name: esphome-editor
+    environment:
+      - ESPHOME_URL=__ESPHOME_URL__                     # e.g., ESPHOME_URL=http://192.168.0.99:6052
+    ports:
+      - __EXTERNAL_PORT__:3000                          # e.g., 8080:3000
+    volumes:
+      - __path_to_data__:/app/work-folder/devices       # e.g., /home/esphome-editor/devices:/app/work-folder/devices
+```
+
+2. Run the command:
+
+```bash
+docker compose up -d
+```
+
+### Limitations
+
+Since this project is in an early stage, it has limited functionality and specific requirements:
+
+- The ESPHome instance must be accessible without authentication (i.e., Home Assistant add-on is not supported).
+- The Web UI does not support local file management.
+- ESPHome devices cannot be created directly from the Editor.
+
+See [Documentation](docs/index.md) for more info
+
+## Roadmap (unordered)
+- Tabs/multiple editors
+- File management via Web UI
+- Home Assistant Add-on support
+- Syntax/error highlighting
+- YAML Patches

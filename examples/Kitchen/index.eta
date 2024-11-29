@@ -1,0 +1,5 @@
+<%~ include('../.lib/my-device', 
+{ 
+    name: 'Kitchen', 
+    update_interval: '60s'
+}) %>

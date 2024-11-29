@@ -1,0 +1,14 @@
+<%~ include('header', 
+{ 
+    name: it.name, 
+    board: 'esp32-s3-devkitc-1'
+}) %>
+
+sensor:
+  - platform: dht
+    pin: D2
+    temperature:
+      name: "Temperature"
+    humidity:
+      name: "Humidity"
+    update_interval: <%= it.update_interval %>
