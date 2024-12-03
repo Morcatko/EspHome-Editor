@@ -8,9 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "test": "vitest",
-    "xtasks": "npx tsx ./tasks.mts",
-    "ttasks": "npx ts-node ./tasks.mts",
-    "dtasks": "deno --allow-env ./tasks.mts"
+    "xtasks": "npx tsx --env-file=.env.local ./tasks.mts",
+    "dtasks": "deno run --allow-env --allow-sys --allow-read --allow-run --env-file=.env.local ./tasks.mts"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.6.0",
@@ -37,10 +36,10 @@
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "^15.0.3",
+    "execa": "^9.5.1",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5",
-    "vitest": "^2.1.4",
-    "zx": "^8.2.4"
+    "vitest": "^2.1.4"
   }
 }
