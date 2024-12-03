@@ -3,6 +3,7 @@ import fs from 'node:fs/promises';
 import { devicesDir, espHomeUrl, workFolder } from "./server/config";
 import { directoryExists } from "./server/utils/dir-utils";
 import { log } from "./shared/log";
+import { getEspHomeUrl } from './server/utils/ha-client';
 
 export async function init() {
     log.info('Config:', { 
@@ -22,4 +23,6 @@ export async function init() {
     }
 
     log.success('Initialization complete');
+
+    console.log(await getEspHomeUrl());
 }
