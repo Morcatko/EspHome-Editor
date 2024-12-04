@@ -62,10 +62,4 @@ const mainLoop = async () => {
 };
 
 await mainLoop();
-
-//await exec("ls -la");
-//await execa_pipe`ls -la`;
-//console.log(list.stdout);
-//await $.sync`dir`;
-
 exit(0);
