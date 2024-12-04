@@ -1,1 +1,0 @@
-docker image push morcatko/esphome-editor:latest
