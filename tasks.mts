@@ -18,7 +18,7 @@ const exec = (command: string) => {
     return promise;
 };
 
-const getDockerTag = () => input({ message: "Enter tag", default: "latest" });
+const getDockerTag = () => input({ message: "Enter tag", default: "1.0.0" });
 
 
 const docker = async (

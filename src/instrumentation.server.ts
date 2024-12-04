@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 
-import { devicesDir, espHomeUrl, workFolder } from "./server/config";
+import { devicesDir, espHomeUrl, haToken, haUrl, workFolder } from "./server/config";
 import { directoryExists } from "./server/utils/dir-utils";
 import { log } from "./shared/log";
 import { getEspHomeUrl } from './server/utils/ha-client';
@@ -9,7 +9,10 @@ export async function init() {
     log.info('Config:', { 
         WORK_FOLDER: workFolder,
         DEVICES_DIR: devicesDir,
-        ESPHOME_URL: espHomeUrl });
+        ESPHOME_URL: espHomeUrl,
+        HA_URL: haUrl,
+        HA_TOKEN: haToken
+     });
         
     log.info('Initializing...');
     if (!await directoryExists(devicesDir)) {
@@ -24,5 +27,5 @@ export async function init() {
 
     log.success('Initialization complete');
 
-    console.log(await getEspHomeUrl());
+    console.log('ESPHome Url', await getEspHomeUrl());
 }

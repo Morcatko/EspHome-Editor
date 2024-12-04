@@ -44,7 +44,7 @@ export class DevicesStore {
         if (!silent) {
             this.asyncState = "loading";
         }
-        const json = await api.callGet_json("/api/device");
+        const json = await api.callGet_json<TDevice[]>("/api/device");
         runInAction(() => {
             this.asyncState = "loaded";
             this.devices = json;

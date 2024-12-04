@@ -7,9 +7,10 @@ export namespace api {
     };
 
     const fixUrl = (url: string) => {
-        url = url.replace("//", "/");
-        //Trim / from end of url
-        url.trimEnd()
+        url = url
+            .replace("//", "/") // Repalce double //
+            .replace(/\/$/, ""); // Remove / at the end of url
+
         return (url.startsWith("/")) ? `.${url}` : url;
     };
 
