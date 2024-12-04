@@ -8,8 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "vitest",
-    "xtasks": "npx tsx --env-file=.env.local ./tasks.mts",
-    "dtasks": "deno run --allow-env --allow-sys --allow-read --allow-run --env-file=.env.local ./tasks.mts"
+    "tasks": "npx tsx --env-file=.env.local ./tasks.mts"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.6.0",
