@@ -32,7 +32,7 @@ export namespace api {
             method: "DELETE",
             headers: {
                 "Content-Type": "text/plain",
-            },
+            }
         });
         return <TCallResult>{
             content: await response.text(),
