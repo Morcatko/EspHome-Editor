@@ -1,3 +1,4 @@
+import { assertResponseAndJsonOk } from "@/shared/http-utils";
 import { log } from "@/shared/log";
 
 const ha_getJson = async (haUrl: string, haToken: string, path: string) => {
@@ -10,12 +11,7 @@ const ha_getJson = async (haUrl: string, haToken: string, path: string) => {
             }
         }
     )
-    if (!response.ok) {
-        log.info("call", url, response.status,  await response.text());
-        throw new Error("Failed to call home assistant");
-    }
-        
-    return await response.json();
+    return await assertResponseAndJsonOk(response);
 }
 
 const findEspHomeAddon = async (haUrl: string, haToken: string) => {

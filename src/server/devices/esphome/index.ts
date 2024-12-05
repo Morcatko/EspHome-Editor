@@ -2,6 +2,7 @@ import { c } from "@/server/config";
 import type { TDevice } from "../types";
 import { esphome_stream, type StreamEvent } from "./client";
 import { log } from "@/shared/log";
+import { assertResponseAndJsonOk, assertResponseOk } from "@/shared/http-utils";
 
 type TEspHomeDevice = {
     name: string;
@@ -14,29 +15,6 @@ type TEspHomeDevicesResponse = {
     importable: any;
 };
 
-const tryFetchJson = async (url: string) => {
-    log.info("Fetching", url);
-    try {
-        const response = await fetch(url);
-
-        log.info("Response", url, response.status);
-        if (!response.ok) {
-            log.info("call", url, response.status,  await response.text());
-            throw new Error(`Failed to call ${url}`);
-        }
-        try {
-
-            return await response.json();
-        } catch (e) {
-            log.error("Failed to parse json", e);
-            throw new Error(`Failed to parse json from ${url}`);
-        }
-    }
-    catch (e) {
-        log.error("Failed", e);
-    }
-}
-
 export namespace espHome {
     export const tryGetDevices = async (): Promise<TDevice[]> => {
         const url = `${c.espHomeUrl}/devices`
@@ -46,7 +24,7 @@ export namespace espHome {
             return [];
 
         try {
-            const devicesResponse: TEspHomeDevicesResponse = await tryFetchJson(url);
+            const devicesResponse = await assertResponseAndJsonOk<TEspHomeDevicesResponse>(await fetch(url))
 
             return devicesResponse
                 .configured
@@ -72,6 +50,7 @@ export namespace espHome {
         const url = `${c.espHomeUrl}/edit?configuration=${device.esphome_config}`;
         log.debug("Getting ESPHome configuration", url);
         const response = await fetch(url);
+        assertResponseOk(response);
         return await response.text();
     };
 
@@ -79,10 +58,11 @@ export namespace espHome {
         const device = await getDevice(device_id);
         const url = `${c.espHomeUrl}/edit?configuration=${device.esphome_config}`;
         log.debug("Saving ESPHome configuration", url);
-        await fetch(url, {
+        const response = await fetch(url, {
             method: "POST",
             body: content,
         });
+        assertResponseOk(response);
     }
 
     export const stream = (
