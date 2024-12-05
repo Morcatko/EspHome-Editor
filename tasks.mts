@@ -3,7 +3,7 @@ import { execaCommand } from "execa";
 import { confirm, input, select, Separator } from "@inquirer/prompts";
 
 const image_name_prod = "morcatko/esphome-editor";
-const image_name_dev = env.IMAGE_NAME_DEV ?? "esphome-editor-dev";
+const image_name_dev = "morcatko/esphome-editor-dev";
 
 const exec = (command: string) => {
     console.log(`Command: ${command}`);
@@ -18,14 +18,13 @@ const exec = (command: string) => {
     return promise;
 };
 
-const getDockerTag = () => input({ message: "Enter tag", default: "1.0.0" });
+const getVersion = async () => (await import("./package.json")).version;
 
-
-const docker = async (
+const dockerBuild = async (
     build_cmd: string,
     image_name: string) => {
 
-    const tag = await getDockerTag();
+    const tag = await getVersion();
     console.log(`Building ${image_name}:${tag}`);
     await exec(`${build_cmd} -t ${image_name}:${tag} -f dockerfile .`);
     const push = await confirm({ message: `Push (${image_name}:${tag}) ?` });
@@ -34,37 +33,49 @@ const docker = async (
     }
 }
 
+const createNewVersion = async () => {
+    const version = await input({ message: "Enter version" });
+    await exec(`npm pkg set version=${version}`);
+}
+
 
 const mainLoop = async () => {
+    const version = await getVersion();
     const answer = await select({
         message: "Select a task",
         choices: [
             {
-                name: "Docker Dev - Build",
+                name: `Docker Dev - Build (${image_name_dev}:${version})`,
                 value: "docker_dev_build",
             },
             {
-                name: "Docker Dev - Run",
+                name: `Docker Dev - Run (${image_name_dev}:${version})`,
                 value: "docker_dev_run",
             },
             new Separator(),
             {
-                name: "Docker Prod",
-                value: "docker_prod",
+                name: `Create New Version`,
+                value: "create_new_version",
+            },
+            {
+                name: `Docker Prod - Build (${image_name_dev}:${version})`,
+                value: "docker_prod_build",
             },
         ],
     });
 
     switch (answer) {
         case "docker_dev_build":
-            await docker("docker build", image_name_dev);
+            await dockerBuild("docker build", image_name_dev);
             break;
         case "docker_dev_run":
-            const tag = await getDockerTag();
-            await exec(`docker run --rm -p 8080:3000 -e ESPHOME_URL=http://192.168.0.15:6052/ ${image_name_dev}:${tag}`);
+            await exec(`docker run --rm -p 8080:3000 -e ESPHOME_URL=http://192.168.0.15:6052/ ${image_name_dev}:${version}`);
             break;
-        case "docker_prod":
-            await docker("docker buildx build --platform=linux/amd64,linux/arm64 --load", image_name_prod);
+        case "create_new_version":
+            await createNewVersion();
+            break;
+        case "docker_prod_build":
+            await dockerBuild("docker buildx build --platform=linux/amd64,linux/arm64 --load", image_name_prod);
             break;
     }
 };
