@@ -16,7 +16,7 @@ export namespace api {
 
     export async function callGet_text(url: string): Promise<TCallResult> {
         const response = await fetch(fixUrl(url));
-        return <TCallResult> {
+        return <TCallResult>{
             content: await response.text(),
             status: response.status,
         };
@@ -34,7 +34,7 @@ export namespace api {
                 "Content-Type": "text/plain",
             },
         });
-        return <TCallResult> {
+        return <TCallResult>{
             content: await response.text(),
             status: response.status,
         };
@@ -52,7 +52,7 @@ export namespace api {
             },
             body: content || undefined,
         });
-        return <TCallResult> {
+        return <TCallResult>{
             content: await response.text(),
             status: response.status,
         };
@@ -93,8 +93,7 @@ export namespace api {
     ) {
         assertOk(
             await callPut(
-                `/api/device/${encodeURIComponent(device_id)}/local/${
-                    encodeURIComponent(directory_path)
+                `/api/device/${encodeURIComponent(device_id)}/local/${encodeURIComponent(directory_path)
                 }`,
                 "directory",
             ),
@@ -107,8 +106,7 @@ export namespace api {
     ) {
         assertOk(
             await callPut(
-                `/api/device/${encodeURIComponent(device_id)}/local/${
-                    encodeURIComponent(directory_path)
+                `/api/device/${encodeURIComponent(device_id)}/local/${encodeURIComponent(directory_path)
                 }`,
                 "file",
             ),
@@ -130,8 +128,7 @@ export namespace api {
     ) {
         assertOk(
             await callPost(
-                `/api/device/${encodeURIComponent(device_id)}/local/${
-                    encodeURIComponent(path)
+                `/api/device/${encodeURIComponent(device_id)}/local/${encodeURIComponent(path)
                 }/rename_to/${encodeURIComponent(newName)}`,
                 "",
             ),
@@ -141,8 +138,7 @@ export namespace api {
     export async function local_delete(device_id: string, path: string) {
         assertOk(
             await callDelete(
-                `/api/device/${encodeURIComponent(device_id)}/local/${
-                    encodeURIComponent(path)
+                `/api/device/${encodeURIComponent(device_id)}/local/${encodeURIComponent(path)
                 }/`,
             ),
         );
