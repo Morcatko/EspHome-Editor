@@ -1,7 +1,7 @@
 "use client";
 import { observer } from "mobx-react-lite";
 import Image from 'next/image';
-import { ActionBar, ActionList, ActionMenu, IconButton, TreeView } from "@primer/react";
+import { ActionBar, ActionList, ActionMenu, ButtonBaseProps, IconButton, TreeView } from "@primer/react";
 import { useStore } from "../stores";
 import { TDevice, TLocalFileOrDirectory, TParent } from "@/server/devices/types";
 import { BeakerIcon, CodeIcon, DownloadIcon, KebabHorizontalIcon, FileDirectoryIcon, GitCompareIcon, LightBulbIcon, LogIcon, PlusIcon, UploadIcon, PencilIcon, FileCodeIcon, QuestionIcon, XIcon } from "@primer/octicons-react";
@@ -22,7 +22,7 @@ const FileTypeIcon = ({ fod }: { fod: TLocalFileOrDirectory }) => {
 }
 
 const ThreeDotProps = {
-    variant: "invisible",
+    variant: ("invisible" as ButtonBaseProps["variant"]),
     className: "opacity-30 hover:opacity-100",
     "aria-label": ""
 }
