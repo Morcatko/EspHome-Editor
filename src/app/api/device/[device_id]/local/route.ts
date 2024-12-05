@@ -13,7 +13,7 @@ export async function GET(
     try {
         content = await local.compileDevice(device_id);
     } catch (e) {
-        content = e.message;
+        content = (e as Error).message;
         status = 400;
     }
 
