@@ -1,4 +1,4 @@
-import { espHomeUrl } from "@/server/config";
+import { c } from "@/server/config";
 import type { TDevice } from "../types";
 import { esphome_stream, type StreamEvent } from "./client";
 import { log } from "@/shared/log";
@@ -16,12 +16,13 @@ type TEspHomeDevicesResponse = {
 
 export namespace espHome {
     export const tryGetDevices = async (): Promise<TDevice[]> => {
-        if (!espHomeUrl)
+        const url = `${c.espHomeUrl}/devices`
+        log.debug("Getting ESPHome devices", c.espHomeUrl ? url : "skipping - no url");
+
+        if (!c.espHomeUrl)
             return [];
-        const url = `${espHomeUrl}/devices`
-        log.debug("Getting ESPHome devices", url);
+
         try {
-      //      return [];
             const devicesResponse: TEspHomeDevicesResponse =
                 await (await fetch(url)).json();
             return devicesResponse
@@ -45,7 +46,7 @@ export namespace espHome {
 
     export const getConfiguration = async (device_id: string) => {
         const device = await getDevice(device_id);
-        const url = `${espHomeUrl}/edit?configuration=${device.esphome_config}`;
+        const url = `${c.espHomeUrl}/edit?configuration=${device.esphome_config}`;
         log.debug("Getting ESPHome configuration", url);
         const response = await fetch(url);
         return await response.text();
@@ -53,7 +54,7 @@ export namespace espHome {
 
     export const saveConfiguration = async (device_id: string, content: string) => {
         const device = await getDevice(device_id);
-        const url = `${espHomeUrl}/edit?configuration=${device.esphome_config}`;
+        const url = `${c.espHomeUrl}/edit?configuration=${device.esphome_config}`;
         log.debug("Saving ESPHome configuration", url);
         await fetch(url, {
             method: "POST",

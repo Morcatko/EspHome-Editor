@@ -1,25 +1,28 @@
 import fs from 'node:fs/promises';
-
-import { devicesDir, espHomeUrl, workFolder } from "./server/config";
 import { directoryExists } from "./server/utils/dir-utils";
 import { log } from "./shared/log";
+import { c, initConfig } from './server/config';
 
 export async function init() {
-    log.info('Config:', { 
-        WORK_FOLDER: workFolder,
-        DEVICES_DIR: devicesDir,
-        ESPHOME_URL: espHomeUrl });
+    log.info("Initializing...");
+
+    await initConfig();
+
         
-    log.info('Initializing...');
-    if (!await directoryExists(devicesDir)) {
-        log.fatal('Devices directory does not exist:', devicesDir);
+    if (!await directoryExists(c.devicesDir)) {
+        log.fatal('Devices directory does not exist:', c.devicesDir);
         return;
     }
-    if (!await directoryExists(devicesDir + "/.lib"))
+    if (!await directoryExists(c.devicesDir + "/.lib"))
     {
         log.info('Creating .lib directory');
-        await fs.mkdir(devicesDir + "/.lib");    
+        await fs.mkdir(c.devicesDir + "/.lib");    
     }
 
-    log.success('Initialization complete');
+    log.info("Config:", {
+        devicesDir: c.devicesDir,
+        espHomeUrl: c.espHomeUrl,
+    });
+
+    log.success("Initialization complete");
 }

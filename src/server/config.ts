@@ -1,8 +1,21 @@
 import path from "path";
-const cwd = process.cwd() + "/";
 
+const cwd = process.cwd() + "/";
 const optimize = path.normalize;
 
-export const workFolder = optimize(cwd + (process.env.WORK_FOLDER || "/work-folder/"));
-export const devicesDir = optimize(workFolder + "/devices");
-export const espHomeUrl = process.env.ESPHOME_URL?.replace(/\/+$/, "");
+export const initConfig = async () => {
+    const ENV_WORKFOLDER = optimize(cwd + (process.env.WORK_FOLDER || "/work-folder/"));
+    const ENV_ESPHOME_URL = process.env.ESPHOME_URL?.replace(/\/+$/, "");
+
+    process.env.EE_DEVICES_DIR = optimize(ENV_WORKFOLDER + "/devices");
+    process.env.EE_ESPHOME_URL = ENV_ESPHOME_URL;
+};
+
+export const c = {
+    get espHomeUrl() {
+        return process.env.EE_ESPHOME_URL ||"";
+    },
+    get devicesDir() {
+        return process.env.EE_DEVICES_DIR ||"";
+    },
+};
