@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 
 import type { TDevice, TLocalDirectory, TLocalFile, TLocalFileOrDirectory } from "../types";
-import { devicesDir } from "../../config";
+import { c } from "../../config";
 import { listDirEntries } from "../../utils/dir-utils";
 import { compileFile as _compileFile, getFileInfo } from "./template-processors";
 import { log } from "@/shared/log";
@@ -46,9 +46,9 @@ const scanDirectory = async (fullPath: string, parentPath: string | null): Promi
 
 export namespace local {
     export const getDevices = async (): Promise<TDevice[]> => {
-        log.debug("Getting Local devices", devicesDir);
+        log.debug("Getting Local devices", c.devicesDir);
         const deviceDirectories = await listDirEntries(
-            devicesDir,
+            c.devicesDir,
             (d) => d.isDirectory(),
         );
 
@@ -59,7 +59,7 @@ export namespace local {
                     path: "",
                     name: d.name,
                     type: "device",
-                    files: await scanDirectory(`${devicesDir}/${d.name}`, null),
+                    files: await scanDirectory(`${c.devicesDir}/${d.name}`, null),
                 } as TDevice;
             });
 

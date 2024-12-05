@@ -1,10 +1,10 @@
-import { devicesDir } from "@/server/config";
+import { c } from "@/server/config";
 import { Eta } from "eta"
 
 
 export const processTemplate_eta = (filePath: string, testData: string | null) => {
     const eta = new Eta({ 
-        views: devicesDir, 
+        views: c.devicesDir, 
         cache: true, 
         debug: false, 
         rmWhitespace: false, 
