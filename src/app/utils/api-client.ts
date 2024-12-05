@@ -6,16 +6,29 @@ export namespace api {
         content: string;
     };
 
+    const fixUrl = (url: string) => {
+        url = url
+            .replace("//", "/") // Replace double //
+            .replace(/\/$/, ""); // Remove / at the end of url
+
+        return (url.startsWith("/")) ? `.${url}` : url;
+    };
+
     export async function callGet_text(url: string): Promise<TCallResult> {
-        const response = await fetch(url.replace("//", "/"));
+        const response = await fetch(fixUrl(url));
         return <TCallResult>{
             content: await response.text(),
             status: response.status,
         };
     }
 
+    export async function callGet_json<T = any>(url: string): Promise<T> {
+        const response = await fetch(fixUrl(url));
+        return await response.json();
+    }
+
     async function callDelete(url: string): Promise<TCallResult> {
-        const response = await fetch(url.replace("//", "/"), {
+        const response = await fetch(fixUrl(url), {
             method: "DELETE",
             headers: {
                 "Content-Type": "text/plain",
@@ -28,7 +41,7 @@ export namespace api {
     }
 
     export async function callPostPut(method: "POST" | "PUT", url: string, content: string | null) : Promise<TCallResult> {
-        const response = await fetch(url.replace("//", "/"), {
+        const response = await fetch(fixUrl(url), {
             method: method,
             headers: {
                 "Content-Type": "text/plain",
