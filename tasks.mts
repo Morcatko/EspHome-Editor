@@ -40,8 +40,12 @@ const mainLoop = async () => {
         message: "Select a task",
         choices: [
             {
-                name: "Docker Dev",
-                value: "docker_dev",
+                name: "Docker Dev - Build",
+                value: "docker_dev_build",
+            },
+            {
+                name: "Docker Dev - Run",
+                value: "docker_dev_run",
             },
             new Separator(),
             {
@@ -52,8 +56,12 @@ const mainLoop = async () => {
     });
 
     switch (answer) {
-        case "docker_dev":
+        case "docker_dev_build":
             await docker("docker build", image_name_dev);
+            break;
+        case "docker_dev_run":
+            const tag = await getDockerTag();
+            await exec(`docker run --rm -p 8080:3000 -e ESPHOME_URL=http://192.168.0.15:6052/ ${image_name_dev}:${tag}`);
             break;
         case "docker_prod":
             await docker("docker buildx build --platform=linux/amd64,linux/arm64 --load", image_name_prod);

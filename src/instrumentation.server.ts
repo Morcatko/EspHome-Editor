@@ -1,31 +1,27 @@
 import fs from 'node:fs/promises';
-
-import { devicesDir, espHomeUrl, haToken, haUrl, workFolder } from "./server/config";
+import { log } from "@/shared/log";
 import { directoryExists } from "./server/utils/dir-utils";
-import { log } from "./shared/log";
-import { getEspHomeUrl } from './server/utils/ha-client';
+import { c, initConfig } from './server/config';
 
 export async function init() {
-    log.info('Config:', { 
-        WORK_FOLDER: workFolder,
-        DEVICES_DIR: devicesDir,
-        ESPHOME_URL: espHomeUrl,
-        HA_URL: haUrl,
-        HA_TOKEN: haToken
-     });
-        
-    log.info('Initializing...');
-    if (!await directoryExists(devicesDir)) {
-        log.fatal('Devices directory does not exist:', devicesDir);
+    log.info("Initializing...");
+
+    await initConfig(); 
+
+    if (!await directoryExists(c.devicesDir)) {
+        log.fatal('Devices directory does not exist:', c.devicesDir);
         return;
     }
-    if (!await directoryExists(devicesDir + "/.lib"))
+    if (!await directoryExists(c.devicesDir + "/.lib"))
     {
         log.info('Creating .lib directory');
-        await fs.mkdir(devicesDir + "/.lib");    
+        await fs.mkdir(c.devicesDir + "/.lib");    
     }
 
-    log.success('Initialization complete');
+    log.info("Config:", {
+        devicesDir: c.devicesDir,
+        espHomeUrl: c.espHomeUrl,
+    });
 
-    console.log('ESPHome Url', await getEspHomeUrl());
+    log.success("Initialization complete");
 }

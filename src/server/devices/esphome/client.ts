@@ -1,4 +1,4 @@
-import { espHomeUrl } from "@/server/config";
+import { c } from "@/server/config";
 
 export type StreamEvent = {
     event: "line" | "exit";
@@ -11,7 +11,7 @@ export const esphome_stream = async (
     spawnParams: Record<string, any>,
     onEvent: (event: StreamEvent) => void,
 ): Promise<number> => {
-    const url = new URL(`${espHomeUrl}/${path}`);
+    const url = new URL(`${c.espHomeUrl}/${path}`);
     url.protocol = url.protocol === "http:" ? "ws:" : "wss:";
     const socket = new WebSocket(url.toString());
 
