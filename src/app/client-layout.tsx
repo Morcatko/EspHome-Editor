@@ -16,6 +16,7 @@ export function ClientLayout({
     if (typeof window !== undefined) {
       (window as any).rootStore = rootStore;
     }
+    //Monaco editor based on https://github.com/graphql/graphiql/blob/main/examples/monaco-graphql-nextjs/next.config.js
     import('monaco-editor')
       .then((monaco) =>
         loader.config({ monaco }));
