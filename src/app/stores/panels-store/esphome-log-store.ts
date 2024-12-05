@@ -4,7 +4,6 @@ import { IPanelsStore } from "./utils/IPanelsStore";
 import { StreamingStore } from "./utils/streaming-store";
 import { api } from "@/app/utils/api-client";
 
-
 export class ESPHomeLogStore implements IPanelsStore{
     readonly dataPath = "Log";
     readonly data: StreamingStore;

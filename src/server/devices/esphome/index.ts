@@ -39,14 +39,11 @@ const tryFetchJson = async (url: string) => {
 
 export namespace espHome {
     export const tryGetDevices = async (): Promise<TDevice[]> => {
+        const url = `${c.espHomeUrl}/devices`
+        log.debug("Getting ESPHome devices", c.espHomeUrl ? url : "skipping - no url");
+
         if (!c.espHomeUrl)
-        {
-            log.info("Geting ESPHome devices", "skipping - no url");
             return [];
-        }
-        
-        const url = `${c.espHomeUrl}/devices`;
-        log.debug("Getting ESPHome devices", url);
 
         try {
             const devicesResponse: TEspHomeDevicesResponse = await tryFetchJson(url);

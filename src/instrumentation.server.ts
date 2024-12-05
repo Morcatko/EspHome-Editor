@@ -1,13 +1,14 @@
 import fs from 'node:fs/promises';
-import { log } from "@/shared/log";
 import { directoryExists } from "./server/utils/dir-utils";
+import { log } from "./shared/log";
 import { c, initConfig } from './server/config';
 
 export async function init() {
     log.info("Initializing...");
 
-    await initConfig(); 
+    await initConfig();
 
+        
     if (!await directoryExists(c.devicesDir)) {
         log.fatal('Devices directory does not exist:', c.devicesDir);
         return;
