@@ -46,7 +46,7 @@ const scanDirectory = async (fullPath: string, parentPath: string | null): Promi
 
 export namespace local {
     export const getDevices = async (): Promise<TDevice[]> => {
-        log.debug("Getting Local devices", c.devicesDir);
+        log.debug("Getting Local devices");
         const deviceDirectories = await listDirEntries(
             c.devicesDir,
             (d) => d.isDirectory(),

@@ -1,4 +1,5 @@
 import { TDevice } from "@/server/devices/types";
+import { assertResponseAndJsonOk, assertResponseOk } from "@/shared/http-utils";
 
 export namespace api {
     export type TCallResult = {
@@ -24,23 +25,24 @@ export namespace api {
 
     export async function callGet_json<T = any>(url: string): Promise<T> {
         const response = await fetch(fixUrl(url));
-        return await response.json();
+        return await assertResponseAndJsonOk(response);
     }
 
-    async function callDelete(url: string): Promise<TCallResult> {
+    async function callDelete(url: string) {
         const response = await fetch(fixUrl(url), {
             method: "DELETE",
             headers: {
                 "Content-Type": "text/plain",
             }
         });
-        return <TCallResult>{
-            content: await response.text(),
-            status: response.status,
-        };
+        await assertResponseOk(response);
     }
 
-    export async function callPostPut(method: "POST" | "PUT", url: string, content: string | null) : Promise<TCallResult> {
+    async function callPostPut(
+        method: "POST" | "PUT", 
+        url: string, 
+        content: string | null,
+        throwOnError: boolean) : Promise<TCallResult> {
         const response = await fetch(fixUrl(url), {
             method: method,
             headers: {
@@ -48,50 +50,49 @@ export namespace api {
             },
             body: content || undefined,
         });
+        
+        if (throwOnError)
+            await assertResponseOk(response);
+
         return <TCallResult>{
             content: await response.text(),
             status: response.status,
         };
     }
 
-    export async function callPost(url: string, content: string | null): Promise<TCallResult> {
-        return await callPostPut("POST", url, content);
+    export async function callPost(url: string, content: string | null, throwOnError: boolean = true): Promise<TCallResult> {
+        return await callPostPut("POST", url, content, throwOnError);
     }
 
-    export async function callPut(url: string, content: string): Promise<TCallResult> {
-        return await callPostPut("PUT", url, content);
+    async function callPut(url: string, content: string): Promise<TCallResult> {
+        return await callPostPut("PUT", url, content, true);
     }
 
-    function assertOk(result: TCallResult) {
-        if (result.status !== 200) {
-            throw new Error(`API call failed with status ${result.status}: ${result.content}`);
-        }
-    }
     export const url_device = (device_id: string, suffix: string = "") => `/api/device/${encodeURIComponent(device_id)}/${suffix}`;
     export const url_local_path = (device_id: string, path: string, suffix: string = "") => 
         url_device(device_id, `/local/${encodeURIComponent(path)}/${suffix}`);
 
     export async function local_createDirectory(device_id: string, directory_path: string) {
-        assertOk(await callPut(`/api/device/${encodeURIComponent(device_id)}/local/${encodeURIComponent(directory_path)}`, "directory"));
+        await callPut(`/api/device/${encodeURIComponent(device_id)}/local/${encodeURIComponent(directory_path)}`, "directory");
     }
 
     export async function local_createFile(device_id: string, directory_path: string) {
-        assertOk(await callPut(`/api/device/${encodeURIComponent(device_id)}/local/${encodeURIComponent(directory_path)}`, "file"));
+        await callPut(`/api/device/${encodeURIComponent(device_id)}/local/${encodeURIComponent(directory_path)}`, "file");
     }
 
     export async function local_save(device_id: string, file_path: string, content: string) {
-        assertOk(await callPost(url_local_path(device_id, file_path), content));
+        await callPost(url_local_path(device_id, file_path), content, true);
     }
 
     export async function local_rename(device_id: string, path: string, newName: string) {
-        assertOk(await callPost(`/api/device/${encodeURIComponent(device_id)}/local/${encodeURIComponent(path)}/rename_to/${encodeURIComponent(newName)}`, ""));
+        await callPost(`/api/device/${encodeURIComponent(device_id)}/local/${encodeURIComponent(path)}/rename_to/${encodeURIComponent(newName)}`, "", true);
     }
 
     export async function local_delete(device_id: string, path: string) {
-        assertOk(await callDelete(`/api/device/${encodeURIComponent(device_id)}/local/${encodeURIComponent(path)}/`));
+        await callDelete(`/api/device/${encodeURIComponent(device_id)}/local/${encodeURIComponent(path)}/`);
     }
 
     export async function local_path_compile(device: TDevice, path: string, test_content: string | undefined) {
-        return await callPost(url_local_path(device.id, path, "compile"), test_content ?? "");
+        return await callPost(url_local_path(device.id, path, "compile"), test_content ?? "", false);
     }
 }
