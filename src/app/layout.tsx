@@ -8,7 +8,6 @@ export const metadata: Metadata = {
   title: "ESPHome-Editor",
 };
 
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -19,10 +18,10 @@ export default function RootLayout({
       <body
         className={`antialiased h-full`}
       >
-          <ClientLayout>
-            {children}
-            <Toaster />
-          </ClientLayout>
+        <ClientLayout>
+          {children}
+          <Toaster />
+        </ClientLayout>
       </body>
     </html>
   );
