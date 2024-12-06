@@ -8,10 +8,9 @@ export async function init() {
 
     await initConfig();
 
-        
     if (!await directoryExists(c.devicesDir)) {
-        log.fatal('Devices directory does not exist:', c.devicesDir);
-        return;
+        log.info('Creating devices directory');
+        await fs.mkdir(c.devicesDir);
     }
     if (!await directoryExists(c.devicesDir + "/.lib"))
     {
