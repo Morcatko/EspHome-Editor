@@ -10,6 +10,7 @@ export const initConfig = async () => {
     const ENV_HA_URL = process.env.HA_URL?.replace(/\/+$/, "") ?? "http://supervisor";
     const ENV_SUPERVISOR_TOKEN = process.env.SUPERVISOR_TOKEN;
 
+    process.env.EE_VERSION = (await import("../../package.json")).version;
     process.env.EE_DEVICES_DIR = optimize(ENV_WORKFOLDER + "/devices");
     process.env.EE_ESPHOME_URL = (ENV_SUPERVISOR_TOKEN
         ? await getEspHomeUrl(ENV_HA_URL, ENV_SUPERVISOR_TOKEN)
@@ -23,4 +24,7 @@ export const c = {
     get devicesDir() {
         return process.env.EE_DEVICES_DIR || "";
     },
+    get version() {
+        return process.env.EE_VERSION || "unknown";
+    }
 };

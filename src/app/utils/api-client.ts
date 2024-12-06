@@ -95,4 +95,8 @@ export namespace api {
     export async function local_path_compile(device: TDevice, path: string, test_content: string | undefined) {
         return await callPost(url_local_path(device.id, path, "compile"), test_content ?? "", false);
     }
+
+    export async function getStatus() {
+        return await callGet_json("/api/status");
+    }
 }

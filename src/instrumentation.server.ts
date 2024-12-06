@@ -21,6 +21,7 @@ export async function init() {
     log.info("Config:", {
         devicesDir: c.devicesDir,
         espHomeUrl: c.espHomeUrl,
+        version: c.version,
     });
 
     log.success("Initialization complete");
