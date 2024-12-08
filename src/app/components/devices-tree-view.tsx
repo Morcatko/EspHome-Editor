@@ -1,5 +1,6 @@
 "use client";
 import { observer } from "mobx-react-lite";
+import { useQuery } from "@tanstack/react-query";
 import Image from 'next/image';
 import { ActionBar, ActionList, ActionMenu, ButtonBaseProps, IconButton, TreeView } from "@primer/react";
 import { useStore } from "../stores";
@@ -7,6 +8,7 @@ import { TDevice, TLocalFileOrDirectory, TParent } from "@/server/devices/types"
 import { BeakerIcon, CodeIcon, DownloadIcon, KebabHorizontalIcon, FileDirectoryIcon, GitCompareIcon, LightBulbIcon, LogIcon, UploadIcon, PencilIcon, FileCodeIcon, QuestionIcon, XIcon } from "@primer/octicons-react";
 import { color_esphome, color_local } from "../utils/const";
 import etajsIcon from "../etajs-logo.svg";
+import { api } from "../utils/api-client";
 
 const FileTypeIcon = ({ fod }: { fod: TLocalFileOrDirectory }) => {
     if (fod.type === "directory")
@@ -140,6 +142,19 @@ export const DevicesTreeView = observer(() => {
     const devices = useStore().devices;
     const exp = devices.expanded;
 
+    const pinQuery = useQuery({
+        queryKey: ['ping'],
+        refetchInterval: 1000,
+        queryFn: api.getPing 
+    });
+
+    const getDeviceColor = (d: TDevice) => 
+        d.esphome_config
+            ? pinQuery?.data?.[d.esphome_config]
+                ? color_esphome
+                : "red"
+            : undefined;
+
     return (
         <TreeView>
             {devices.devices.map((d) =>
@@ -156,7 +171,7 @@ export const DevicesTreeView = observer(() => {
                         <TreeView.LeadingVisual>
                             { (isLib)
                                 ? <FileDirectoryIcon />
-                                : <LightBulbIcon fill={d.esphome_config ? color_esphome : undefined} />
+                                : <LightBulbIcon fill={getDeviceColor(d)} />
                             }
                         </TreeView.LeadingVisual>
                         <TreeView.SubTree>
