@@ -99,4 +99,8 @@ export namespace api {
     export async function getStatus() {
         return await callGet_json("/api/status");
     }
+
+    export async function getPing() {
+        return await callGet_json("/api/device/ping");
+    }
 }

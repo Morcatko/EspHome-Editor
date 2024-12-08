@@ -65,6 +65,13 @@ export namespace espHome {
         assertResponseOk(response);
     }
 
+    export const getPing = async () => {
+        const url = `${c.espHomeUrl}/ping`;
+        log.debug("Pinging ESPHome", url);
+        const response = await fetch(url);
+        return await assertResponseAndJsonOk(response);
+    }
+
     export const stream = (
         device_id: string,
         path: string,

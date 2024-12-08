@@ -1,12 +1,14 @@
 "use client";
 import { observer } from "mobx-react-lite";
+import { useQuery } from "@tanstack/react-query";
 import Image from 'next/image';
 import { ActionBar, ActionList, ActionMenu, ButtonBaseProps, IconButton, TreeView } from "@primer/react";
 import { useStore } from "../stores";
 import { TDevice, TLocalFileOrDirectory, TParent } from "@/server/devices/types";
 import { BeakerIcon, CodeIcon, DownloadIcon, KebabHorizontalIcon, FileDirectoryIcon, GitCompareIcon, LightBulbIcon, LogIcon, UploadIcon, PencilIcon, FileCodeIcon, QuestionIcon, XIcon } from "@primer/octicons-react";
-import { color_esphome, color_local } from "../utils/const";
+import { color_esphome, color_local, color_offline, color_online } from "../utils/const";
 import etajsIcon from "../etajs-logo.svg";
+import { api } from "../utils/api-client";
 
 const FileTypeIcon = ({ fod }: { fod: TLocalFileOrDirectory }) => {
     if (fod.type === "directory")
@@ -121,17 +123,17 @@ const DeviceToolbar = ({ device }: { device: TDevice }) => {
     return <div style={{ marginLeft: '-16px' }}>
         <ActionBar aria-label="Device tools" size="small">
             {hasLocalFiles
-                ? <ActionBar.IconButton sx={{ color: color_local }} icon={CodeIcon} onClick={() => panels.add_localDevice(device)} aria-label="Show local yaml configuration" />
-                : <ActionBar.IconButton sx={{ color: color_local }} icon={DownloadIcon} onClick={() => devices.localDevice_import(device)} aria-label="Import yaml configuration" />
+                ? <ActionBar.IconButton key="show_local" sx={{ color: color_local }} icon={CodeIcon} onClick={() => panels.add_localDevice(device)} aria-label="Show local yaml configuration" />
+                : <ActionBar.IconButton key="create_local" sx={{ color: color_local }} icon={DownloadIcon} onClick={() => devices.localDevice_import(device)} aria-label="Import yaml configuration" />
             }
-            <ActionBar.Divider />
-            <ActionBar.IconButton {...bothProps} icon={GitCompareIcon} onClick={() => panels.add_diff(device)} aria-label="Show local vs ESPHome diff" />
-            <ActionBar.IconButton {...bothProps} icon={UploadIcon} onClick={() => devices.espHome_upload(device)} aria-label="Upload local to ESPHome" />
-            <ActionBar.Divider />
-            <ActionBar.IconButton {...espHomeProps} icon={CodeIcon} onClick={() => panels.add_espHomeDevice(device)} aria-label="Show ESPHome configuration" />
-            <ActionBar.IconButton {...espHomeProps} icon={BeakerIcon} onClick={() => panels.add_espHomeCompile(device)} aria-label="Compile ESPHome configuration" />
-            <ActionBar.IconButton {...espHomeProps} icon={UploadIcon} onClick={() => panels.add_espHomeInstall(device)} aria-label="Install ESPHome configuration to device" />
-            <ActionBar.IconButton {...espHomeProps} icon={LogIcon} onClick={() => panels.add_espHomeLog(device)} aria-label="Show ESPHome device logs" />
+            <ActionBar.Divider key="div1" />
+            <ActionBar.IconButton key="diff" {...bothProps} icon={GitCompareIcon} onClick={() => panels.add_diff(device)} aria-label="Show local vs ESPHome diff" />
+            <ActionBar.IconButton key="upload" {...bothProps} icon={UploadIcon} onClick={() => devices.espHome_upload(device)} aria-label="Upload local to ESPHome" />
+            <ActionBar.Divider key="div2" />
+            <ActionBar.IconButton key="show_esphome" {...espHomeProps} icon={CodeIcon} onClick={() => panels.add_espHomeDevice(device)} aria-label="Show ESPHome configuration" />
+            <ActionBar.IconButton key="compile" {...espHomeProps} icon={BeakerIcon} onClick={() => panels.add_espHomeCompile(device)} aria-label="Compile ESPHome configuration" />
+            <ActionBar.IconButton key="install" {...espHomeProps} icon={UploadIcon} onClick={() => panels.add_espHomeInstall(device)} aria-label="Install ESPHome configuration to device" />
+            <ActionBar.IconButton key="log" {...espHomeProps} icon={LogIcon} onClick={() => panels.add_espHomeLog(device)} aria-label="Show ESPHome device logs" />
         </ActionBar>
     </div>;
 }
@@ -139,6 +141,19 @@ const DeviceToolbar = ({ device }: { device: TDevice }) => {
 export const DevicesTreeView = observer(() => {
     const devices = useStore().devices;
     const exp = devices.expanded;
+
+    const pinQuery = useQuery({
+        queryKey: ['ping'],
+        refetchInterval: 1000,
+        queryFn: api.getPing 
+    });
+
+    const getDeviceColor = (d: TDevice) => 
+        d.esphome_config
+            ? pinQuery?.data?.[d.esphome_config]
+                ? color_online
+                : color_offline
+            : undefined;
 
     return (
         <TreeView>
@@ -156,7 +171,7 @@ export const DevicesTreeView = observer(() => {
                         <TreeView.LeadingVisual>
                             { (isLib)
                                 ? <FileDirectoryIcon />
-                                : <LightBulbIcon fill={d.esphome_config ? color_esphome : undefined} />
+                                : <LightBulbIcon fill={getDeviceColor(d)} />
                             }
                         </TreeView.LeadingVisual>
                         <TreeView.SubTree>
