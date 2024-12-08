@@ -1,9 +1,12 @@
 import { exit, env } from "node:process";
+import *as fs from "node:fs/promises";
 import { execaCommand } from "execa";
 import { confirm, input, select, Separator } from "@inquirer/prompts";
+import YAML from 'yaml'
 
 const image_name_prod = "morcatko/esphome-editor";
 const image_name_dev = "morcatko/esphome-editor-dev";
+const addon_path = env.TASKS_ADDON_PATH;
 
 const exec = (command: string) => {
     console.log(`Command: ${command}`);
@@ -36,6 +39,11 @@ const dockerBuild = async (
 const createNewVersion = async () => {
     const version = await input({ message: "Enter version" });
     await exec(`npm pkg set version=${version}`);
+
+    console.log("Updating config.yaml version");
+    const yaml = YAML.parse(await fs.readFile(addon_path + '/config.yaml', 'utf8'), { keepSourceTokens: true });
+    yaml["version"] = version
+    await fs.writeFile(addon_path + '/config.yaml', YAML.stringify(yaml, { keepSourceTokens: true }));
 }
 
 
