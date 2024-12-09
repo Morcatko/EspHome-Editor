@@ -17,9 +17,12 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
 }
 
 #__primerPortalRoot__ {
   z-index: 10;
+}
+
+.monaco-editor {
+  position: absolute !important;
 }
