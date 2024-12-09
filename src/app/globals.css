@@ -1,3 +1,4 @@
+@layer reset, base, tokens, recipes, utilities;
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -14,10 +15,21 @@
   }
 }
 
+/* Taken from tailwind reset */
+:host,html {
+   line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  -moz-tab-size: 4;
+  tab-size: 4;
+  font-family: ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
+  font-feature-settings: normal;
+  font-variation-settings: normal;
+  -webkit-tap-highlight-color: transparent
+}
+
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
 }
 
 #__primerPortalRoot__ {
