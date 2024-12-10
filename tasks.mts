@@ -29,10 +29,11 @@ const dockerBuild = async (
 
     const tag = await getVersion();
     console.log(`Building ${image_name}:${tag}`);
-    await exec(`${build_cmd} -t ${image_name}:${tag} -f dockerfile .`);
-    const push = await confirm({ message: `Push (${image_name}:${tag}) ?` });
-    if (push) {
+    await exec(`${build_cmd} -t ${image_name}:${tag} -t ${image_name}:latest -f dockerfile .`);
+    
+    if (await confirm({ message: `Push (${image_name}:${tag} and latest) ?` })) {
         await exec(`docker push ${image_name}:${tag}`);
+        await exec(`docker push ${image_name}:latest`);
     }
 }
 
@@ -66,7 +67,7 @@ const mainLoop = async () => {
                 value: "create_new_version",
             },
             {
-                name: `Docker Prod - Build (${image_name_dev}:${version})`,
+                name: `Docker Prod - Build (${image_name_prod}:${version})`,
                 value: "docker_prod_build",
             },
         ],
