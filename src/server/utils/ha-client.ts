@@ -3,7 +3,7 @@ import { log } from "@/shared/log";
 
 const ha_getJson = async (haUrl: string, haToken: string, path: string) => {
     const url = `${haUrl}/${path}`;
-    log.info("Fetching", url, `Bearer ${haToken}`);
+    log.debug("Fetching", url);
     const response = await fetch(url,
         {
             headers: {
@@ -18,7 +18,6 @@ const findEspHomeAddon = async (haUrl: string, haToken: string) => {
     const responseJson = await ha_getJson(haUrl, haToken, "addons");
     const addons = responseJson.data.addons as any[];
     const espHomeAddon = addons.find(a => a.name === "ESPHome Device Compiler");
-    //log.info(espHomeAddon);
     return espHomeAddon;
 }
 
@@ -33,7 +32,7 @@ const findEspHomeAddon = async (haUrl: string, haToken: string) => {
 // }
 
 export const getEspHomeUrl = async (haUrl: string, haToken: string) => {
-    log.info("Getting ESPHome URL");
+    log.debug("Getting ESPHome URL");
     try {
         const espHomeAddon = await findEspHomeAddon(haUrl, haToken);
         const espHomeSlug = espHomeAddon.slug;
