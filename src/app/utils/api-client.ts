@@ -1,5 +1,7 @@
+import { stream } from "fetch-event-stream";
 import { TDevice } from "@/server/devices/types";
 import { assertResponseAndJsonOk, assertResponseOk } from "@/shared/http-utils";
+import { log } from "@/shared/log";
 
 export namespace api {
     export type TCallResult = {
@@ -7,7 +9,7 @@ export namespace api {
         content: string;
     };
 
-    export const fixUrl = (url: string) => {
+    const fixUrl = (url: string) => {
         url = url
             .replace("//", "/") // Replace double //
             .replace(/\/$/, ""); // Remove / at the end of url
@@ -112,5 +114,37 @@ export namespace api {
 
     export async function getPing() {
         return await callGet_json("/api/device/ping");
+    }
+
+    export async function getStream(
+        url: string,
+        onMessage: (message: string) => void,
+    ) {
+        const close = new AbortController();
+        
+        const events = await stream(fixUrl(url), {
+            signal: close.signal,
+            method: "POST"
+        });
+
+        const startStream = async () => {            
+            for await (const event of events) {
+                switch (event.event) {
+                    case "completed":
+                        log.verbose("Stream completed");
+                        close.abort();
+                        break;
+                    case "error":
+                        log.error("Stream error", event.data);
+                        close.abort();
+                        break;
+                    case "message":
+                        onMessage(event.data as string);
+                        break;
+                }
+            }
+        }
+
+        startStream();
     }
 }

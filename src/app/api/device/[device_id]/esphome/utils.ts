@@ -14,8 +14,9 @@ export function getStreamResponse(
         }
       };
       
-      espHome.stream(device_id, path, spawnParams, (e) => enqueue("message", e.data))
-        .then((r) => enqueue("completed", r.toString()))
+      espHome
+        .stream(device_id, path, spawnParams, (e) => enqueue("message", e.data))
+        .then((r) => enqueue("completed", ""))
         .catch((e) => enqueue("error", e.toString()));
     },
     cancel() {
@@ -26,6 +27,8 @@ export function getStreamResponse(
   return new Response(stream, {
     headers: {
       "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache",
+      "Connection": "keep-alive"
     },
   });
 }
