@@ -15,6 +15,16 @@ export namespace api {
         return (url.startsWith("/")) ? `.${url}` : url;
     };
 
+    const fixPath = (path: string) => {
+        const fixed = path
+            .replaceAll("//", "/") // Replace double //
+            .replaceAll(/^\/+|\/+$/g, '') // Remove / from start and end of path
+            .replaceAll("/", "\\") // Replace  \ by /
+            ;
+
+        return encodeURIComponent(fixed);
+    }
+
     export async function callGet_text(url: string): Promise<TCallResult> {
         const response = await fetch(fixUrl(url));
         return <TCallResult>{
@@ -39,10 +49,10 @@ export namespace api {
     }
 
     async function callPostPut(
-        method: "POST" | "PUT", 
-        url: string, 
+        method: "POST" | "PUT",
+        url: string,
         content: string | null,
-        throwOnError: boolean) : Promise<TCallResult> {
+        throwOnError: boolean): Promise<TCallResult> {
         const response = await fetch(fixUrl(url), {
             method: method,
             headers: {
@@ -50,7 +60,7 @@ export namespace api {
             },
             body: content || undefined,
         });
-        
+
         if (throwOnError)
             await assertResponseOk(response);
 
@@ -69,15 +79,15 @@ export namespace api {
     }
 
     export const url_device = (device_id: string, suffix: string = "") => `/api/device/${encodeURIComponent(device_id)}/${suffix}`;
-    export const url_local_path = (device_id: string, path: string, suffix: string = "") => 
-        url_device(device_id, `/local/${encodeURIComponent(path)}/${suffix}`);
+    export const url_local_path = (device_id: string, path: string, suffix: string = "") =>
+        url_device(device_id, `/local/${fixPath(path)}/${suffix}`);
 
     export async function local_createDirectory(device_id: string, directory_path: string) {
-        await callPut(`/api/device/${encodeURIComponent(device_id)}/local/${encodeURIComponent(directory_path)}`, "directory");
+        await callPut(url_local_path(device_id, directory_path), "directory");
     }
 
     export async function local_createFile(device_id: string, directory_path: string) {
-        await callPut(`/api/device/${encodeURIComponent(device_id)}/local/${encodeURIComponent(directory_path)}`, "file");
+        await callPut(url_local_path(device_id, directory_path), "file");
     }
 
     export async function local_save(device_id: string, file_path: string, content: string) {
@@ -85,11 +95,11 @@ export namespace api {
     }
 
     export async function local_rename(device_id: string, path: string, newName: string) {
-        await callPost(`/api/device/${encodeURIComponent(device_id)}/local/${encodeURIComponent(path)}/rename_to/${encodeURIComponent(newName)}`, "", true);
+        await callPost(url_local_path(device_id, path, `rename_to/${fixPath(newName)}`), "", true);
     }
 
     export async function local_delete(device_id: string, path: string) {
-        await callDelete(`/api/device/${encodeURIComponent(device_id)}/local/${encodeURIComponent(path)}/`);
+        await callDelete(url_local_path(device_id, path));
     }
 
     export async function local_path_compile(device: TDevice, path: string, test_content: string | undefined) {
@@ -102,5 +112,16 @@ export namespace api {
 
     export async function getPing() {
         return await callGet_json("/api/device/ping");
+    }
+
+    export async function getStream(
+        url: string,
+        onMessage: (message: string) => void,
+    ) {
+
+        const sse = new EventSource(url);
+        sse.addEventListener("completed", () => sse.close());
+        sse.addEventListener("error", () => sse.close());
+        sse.addEventListener("message", (ev) => onMessage(ev.data as string));
     }
 }
