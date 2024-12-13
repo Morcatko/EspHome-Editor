@@ -42,8 +42,13 @@ export namespace espHome {
         }
     };
 
-    const getDevice = async (device_id: string) =>
-        (await tryGetDevices()).find((d) => d.id === device_id);
+    const getDevice = async (device_id: string) => {
+        const device = (await tryGetDevices()).find((d) => d.id === device_id);
+        if (!device || !device.esphome_config) {
+            throw new Error(`ESPHome Device not found: ${device_id}`);
+        }
+        return device;
+    }
 
     export const getConfiguration = async (device_id: string) => {
         const device = await getDevice(device_id);
@@ -67,15 +72,18 @@ export namespace espHome {
 
     export const getPing = async () => {
         const url = `${c.espHomeUrl}/ping`;
-        log.debug("Pinging ESPHome", url);
+        //log.debug("Pinging ESPHome", url);
         const response = await fetch(url);
         return await assertResponseAndJsonOk(response);
     }
 
-    export const stream = (
+    export const stream = async (
         device_id: string,
         path: string,
         spawnParams: Record<string, any> | null,
         onEvent: (event: StreamEvent) => void,
-    ) => esphome_stream(path, { ...spawnParams, configuration: device_id }, onEvent);
+    ) => {
+        const device = await getDevice(device_id);
+        await esphome_stream(path, { ...spawnParams, configuration: device.esphome_config }, onEvent);
+    }
 }

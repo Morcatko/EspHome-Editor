@@ -11,7 +11,7 @@ export class ESPHomeCompileStore implements IPanelsStore {
 
     constructor(readonly device: TDevice) {
         makeAutoObservable(this);
-        this.data = new StreamingStore(api.url_device(device.esphome_config, "esphome/compile"));
+        this.data = new StreamingStore(api.url_device(device.id, "esphome/compile"));
     }
 
     async loadIfNeeded() {
