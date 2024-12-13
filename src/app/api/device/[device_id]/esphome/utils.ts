@@ -15,7 +15,12 @@ export function getStreamResponse(
       };
       
       espHome
-        .stream(device_id, path, spawnParams, (e) => enqueue("message", e.data))
+        .stream(
+          device_id, 
+          path, 
+          spawnParams,
+          (e) => enqueue("message", "abcdef".repeat(1000)),
+        )
         .then((r) => enqueue("completed", ""))
         .catch((e) => enqueue("error", e.toString()));
     },
@@ -28,7 +33,7 @@ export function getStreamResponse(
     headers: {
       "Content-Type": "text/event-stream",
       "Cache-Control": "no-cache",
-      "Connection": "keep-alive"
+      "Connection": "keep-alive",
     },
   });
 }

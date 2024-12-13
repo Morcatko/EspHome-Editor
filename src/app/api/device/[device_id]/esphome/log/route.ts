@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { getStreamResponse } from "../utils";
 import type { TDeviceId, TParams } from "@/app/api/api-types";
 
-export async function POST(
+export async function PUT(
     request: NextRequest,
     { params }: TParams<TDeviceId>) {
 

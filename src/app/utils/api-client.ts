@@ -124,7 +124,7 @@ export namespace api {
         
         const events = await stream(fixUrl(url), {
             signal: close.signal,
-            method: "POST"
+            method: "PUT"
         });
 
         const startStream = async () => {            
