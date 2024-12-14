@@ -1,44 +1,6 @@
 import { WebSocket } from "ws";
 import { espHome } from "@/server/devices/esphome";
 
-export function getStreamResponse(
-  device_id: string,
-  path: string,
-  spawnParams: Record<string, any> | null = null,
-) {
-  let cancelled = false;
-  const stream = new ReadableStream({
-    async start(controller) {
-      const send = (event: string, data: string) => {
-        if (!cancelled) {
-          controller.enqueue(`event: ${event}\ndata: ${data}\n\n`);
-        }
-      };
-      
-      espHome
-        .stream(
-          device_id, 
-          path, 
-          spawnParams,
-          (e) => send("message", e.data),
-        )
-        .then((r) => send("completed", ""))
-        .catch((e) => send("error", e.toString()));
-    },
-    cancel() {
-      cancelled = true;
-    },
-  });
-
-  return new Response(stream, {
-    headers: {
-      "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache",
-      "Connection": "keep-alive",
-    },
-  });
-}
-
 export async function streamToWs(
   requestUrl: string,
   client: WebSocket,
