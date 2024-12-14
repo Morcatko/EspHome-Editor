@@ -141,6 +141,9 @@ export namespace api {
                     case "message":
                         onMessage(event.data as string);
                         break;
+                    default:
+                        log.warn("Unknown event", event);
+                        break;
                 }
             }
         }
