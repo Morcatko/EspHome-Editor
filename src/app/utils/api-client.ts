@@ -120,11 +120,11 @@ export namespace api {
         url: string,
         onMessage: (message: string) => void,
     ) {
-        const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-        const host = window.location.host;
-        const fullUrl = `${protocol}//${host}/${fixUrl(url)}`;
-        log.info("Stream url", fullUrl);
-        const ws = new WebSocket(fullUrl);
+        const finalUrl = new URL(fixUrl(url), location.href);
+        finalUrl.protocol = finalUrl.protocol === "http:" ? "ws:" : "wss:";
+
+        log.info("Stream url", finalUrl.toString());
+        const ws = new WebSocket(finalUrl.toString());
         ws.onopen = () => log.info("Stream opened");
         ws.onclose = () => log.info("Stream closed");
         ws.onmessage = (ev) => {
