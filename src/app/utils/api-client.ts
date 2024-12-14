@@ -120,8 +120,35 @@ export namespace api {
         url: string,
         onMessage: (message: string) => void,
     ) {
-        const close = new AbortController();
-        
+        const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+        const host = window.location.host;
+        const fullUrl = `${protocol}//${host}/${fixUrl(url)}`;
+        log.info("Stream url", fullUrl);
+        const ws = new WebSocket(fullUrl);
+        ws.onopen = () => log.info("Stream opened");
+        ws.onclose = () => log.info("Stream closed");
+        ws.onmessage = (ev) => {
+            const msg = JSON.parse(ev.data);
+            switch (msg.event) {
+                case "completed":
+                    log.verbose("Stream completed");
+                    ws.close();;
+                    break;
+                case "error":
+                    log.error("Stream error", msg.data);
+                    ws.close();
+                    break;
+                case "message":
+                    onMessage(msg.data as string);
+                    break;
+                default:
+                    log.warn("Unknown event", msg);
+                    break;
+            }
+        };
+                
+        /*const close = new AbortController();
+
         const events = await stream(fixUrl(url), {
             signal: close.signal,
             method: "PUT"
@@ -146,8 +173,8 @@ export namespace api {
                         break;
                 }
             }
-        }
+        }*/
 
-        startStream();
+        //startStream();
     }
 }

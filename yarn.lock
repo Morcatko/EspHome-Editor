@@ -2177,11 +2177,6 @@ fastq@^1.6.0:
   dependencies:
     reusify "^1.0.4"
 
-fetch-event-stream@^0.1.5:
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/fetch-event-stream/-/fetch-event-stream-0.1.5.tgz#ffc5a8f57a040e3eb78d9f990632c2a3fd253c02"
-  integrity sha512-V1PWovkspxQfssq/NnxoEyQo1DV+MRK/laPuPblIZmSjMN8P5u46OhlFQznSr9p/t0Sp8Uc6SbM3yCMfr0KU8g==
-
 figures@^6.1.0:
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/figures/-/figures-6.1.0.tgz#935479f51865fa7479f6fa94fc6fc7ac14e62c4a"
@@ -2949,6 +2944,11 @@ natural-compare@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==
+
+next-ws@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/next-ws/-/next-ws-1.1.1.tgz#35bd223478effed4bd3d6aa30ec3d70575eab7ca"
+  integrity sha512-J/wNgcd1lXIkrFbRNP60lNVeAVieIDlxahkQ5jpfX3QJhuLPYLBh/CFvX82nkLUBlXANQbTqg9F9yU4XxjmUIg==
 
 next@^15.0.3:
   version "15.0.4"

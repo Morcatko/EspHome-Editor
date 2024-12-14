@@ -1,3 +1,4 @@
+import { WebSocket } from "ws";
 import { espHome } from "@/server/devices/esphome";
 
 export function getStreamResponse(
@@ -8,7 +9,7 @@ export function getStreamResponse(
   let cancelled = false;
   const stream = new ReadableStream({
     async start(controller) {
-      const enqueue = (event: string, data: string) => {
+      const send = (event: string, data: string) => {
         if (!cancelled) {
           controller.enqueue(`event: ${event}\ndata: ${data}\n\n`);
         }
@@ -19,10 +20,10 @@ export function getStreamResponse(
           device_id, 
           path, 
           spawnParams,
-          (e) => enqueue("message", e.data),
+          (e) => send("message", e.data),
         )
-        .then((r) => enqueue("completed", ""))
-        .catch((e) => enqueue("error", e.toString()));
+        .then((r) => send("completed", ""))
+        .catch((e) => send("error", e.toString()));
     },
     cancel() {
       cancelled = true;
@@ -37,3 +38,29 @@ export function getStreamResponse(
     },
   });
 }
+
+export async function streamToWs(
+  requestUrl: string,
+  client: WebSocket,
+  path: string,
+  spawnParams: Record<string, any> | null = null
+) {
+  const match = requestUrl.match(/\/device\/([^\/]+)\/esphome/);
+  const device_id = match ? match[1] : null;
+
+  const send = (event: string, data: string) => {
+    client.send(JSON.stringify({ event, data: data.trim() }));
+  }
+
+  await espHome
+    .stream(
+      device_id!, 
+      path, 
+      spawnParams,
+      (e) => send("message", e.data)
+    )
+    .then((r) => {send("completed", ""); client.close();})
+    .catch((e) => send("error", e.toString()));
+}
+  
+
