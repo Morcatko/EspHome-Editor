@@ -1,5 +1,6 @@
 import { TDevice } from "@/server/devices/types";
 import { assertResponseAndJsonOk, assertResponseOk } from "@/shared/http-utils";
+import { log } from "@/shared/log";
 
 export namespace api {
     export type TCallResult = {
@@ -118,10 +119,28 @@ export namespace api {
         url: string,
         onMessage: (message: string) => void,
     ) {
+        const finalUrl = new URL(fixUrl(url), location.href);
+        finalUrl.protocol = finalUrl.protocol === "http:" ? "ws:" : "wss:";
 
-        const sse = new EventSource(url);
-        sse.addEventListener("completed", () => sse.close());
-        sse.addEventListener("error", () => sse.close());
-        sse.addEventListener("message", (ev) => onMessage(ev.data as string));
+        const ws = new WebSocket(finalUrl.toString());
+        ws.onmessage = (ev) => {
+            const msg = JSON.parse(ev.data);
+            switch (msg.event) {
+                case "completed":
+                    log.verbose("Stream completed");
+                    ws.close();;
+                    break;
+                case "error":
+                    log.error("Stream error", msg.data);
+                    ws.close();
+                    break;
+                case "message":
+                    onMessage(msg.data as string);
+                    break;
+                default:
+                    log.warn("Unknown event", msg);
+                    break;
+            }
+        };
     }
 }
