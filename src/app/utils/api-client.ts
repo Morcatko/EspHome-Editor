@@ -1,4 +1,3 @@
-import { stream } from "fetch-event-stream";
 import { TDevice } from "@/server/devices/types";
 import { assertResponseAndJsonOk, assertResponseOk } from "@/shared/http-utils";
 import { log } from "@/shared/log";
@@ -146,35 +145,5 @@ export namespace api {
                     break;
             }
         };
-                
-        /*const close = new AbortController();
-
-        const events = await stream(fixUrl(url), {
-            signal: close.signal,
-            method: "PUT"
-        });
-
-        const startStream = async () => {            
-            for await (const event of events) {
-                switch (event.event) {
-                    case "completed":
-                        log.verbose("Stream completed");
-                        close.abort();
-                        break;
-                    case "error":
-                        log.error("Stream error", event.data);
-                        close.abort();
-                        break;
-                    case "message":
-                        onMessage(event.data as string);
-                        break;
-                    default:
-                        log.warn("Unknown event", event);
-                        break;
-                }
-            }
-        }*/
-
-        //startStream();
     }
 }

@@ -60,7 +60,7 @@ export async function streamToWs(
       (e) => send("message", e.data)
     )
     .then((r) => {send("completed", ""); client.close();})
-    .catch((e) => send("error", e.toString()));
+    .catch((e) => { send("error", e.toString()); client.close(); });
 }
   
 
