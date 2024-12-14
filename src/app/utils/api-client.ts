@@ -122,10 +122,7 @@ export namespace api {
         const finalUrl = new URL(fixUrl(url), location.href);
         finalUrl.protocol = finalUrl.protocol === "http:" ? "ws:" : "wss:";
 
-        log.info("Stream url", finalUrl.toString());
         const ws = new WebSocket(finalUrl.toString());
-        ws.onopen = () => log.info("Stream opened");
-        ws.onclose = () => log.info("Stream closed");
         ws.onmessage = (ev) => {
             const msg = JSON.parse(ev.data);
             switch (msg.event) {
