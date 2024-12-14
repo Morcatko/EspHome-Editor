@@ -19,7 +19,7 @@ export function getStreamResponse(
           device_id, 
           path, 
           spawnParams,
-          (e) => enqueue("message", "abcdef".repeat(1000)),
+          (e) => enqueue("message", e.data),
         )
         .then((r) => enqueue("completed", ""))
         .catch((e) => enqueue("error", e.toString()));
