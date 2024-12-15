@@ -10,7 +10,7 @@ export class ESPHomeLogStore implements IPanelsStore{
 
     constructor(readonly device: TDevice) {
         makeAutoObservable(this);
-        this.data = new StreamingStore(api.url_device(device.esphome_config, "esphome/log"));
+        this.data = new StreamingStore(api.url_device(device.id, "esphome/log"));
     }
 
     async loadIfNeeded() {

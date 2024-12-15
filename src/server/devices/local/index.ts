@@ -7,7 +7,7 @@ import { compileFile as _compileFile, getFileInfo } from "./template-processors"
 import { log } from "@/shared/log";
 import { mergeEspHomeYamlFiles } from "./template-processors/yaml-merger";
 import { patchEspHomeYaml } from "./template-processors/yaml-patcher";
-import { ensureDeviceDirExists, getDeviceDir, getDevicePath } from "./utils";
+import { ensureDeviceDirExists, fixPath, getDeviceDir, getDevicePath } from "./utils";
 import { dirname, join } from "node:path";
 
 const awaitArray = async <T>(arr: Promise<T>[]): Promise<T[]> =>
@@ -47,7 +47,7 @@ const scanDirectory = async (fullPath: string, parentPath: string | null): Promi
 
 export namespace local {
     export const getDevices = async (): Promise<TDevice[]> => {
-        log.debug("Getting Local devices", c.devicesDir);
+        log.debug("Getting Local devices");
         const deviceDirectories = await listDirEntries(
             c.devicesDir,
             (d) => d.isDirectory(),
@@ -138,7 +138,7 @@ export namespace local {
     export const renameFile = async (device_id: string, path: string, newName: string) => {
         const oldPath = getDevicePath(device_id, path);
         const parentDir = dirname(oldPath);
-        const newPath = join(parentDir, newName);
+        const newPath = join(parentDir, fixPath(newName));
         console.debug(`Renaming file '${oldPath}' to '${newName}'`);
         await fs.rename(oldPath, newPath);
     };

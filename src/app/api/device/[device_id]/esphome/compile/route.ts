@@ -1,11 +1,13 @@
-import { NextRequest } from "next/server";
-import { getStreamResponse } from "../utils";
-import type { TDeviceId, TParams } from "@/app/api/api-types";
+import * as ws from "ws";
+import * as http from "node:http";
+import { streamToWs } from "../utils";
 
-export async function GET(
-    request: NextRequest,
-    { params }: TParams<TDeviceId>) {
+export function GET() {}
 
-    const { device_id } = await params;
-    return getStreamResponse(device_id, "compile");
+export async function SOCKET(
+    client: ws.WebSocket,
+    request: http.IncomingMessage,
+    server: ws.WebSocketServer
+) {
+    await streamToWs(request.url!, client, "compile");
 }

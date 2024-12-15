@@ -10,7 +10,7 @@ const compile = async ({ params }: TParams<TDeviceIdAndPath>, testData: string |
         result = await local.compileFile(device_id, path, testData);
     } catch (e) {
         const error = e as Error;
-        result = error.message + "\n" + e.stack;
+        result = error.message + "\n" + error.stack;
         status = 400;
     }
 

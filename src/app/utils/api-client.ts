@@ -1,4 +1,6 @@
 import { TDevice } from "@/server/devices/types";
+import { assertResponseAndJsonOk, assertResponseOk } from "@/shared/http-utils";
+import { log } from "@/shared/log";
 
 export namespace api {
     export type TCallResult = {
@@ -14,6 +16,16 @@ export namespace api {
         return (url.startsWith("/")) ? `.${url}` : url;
     };
 
+    const fixPath = (path: string) => {
+        const fixed = path
+            .replaceAll("//", "/") // Replace double //
+            .replaceAll(/^\/+|\/+$/g, '') // Remove / from start and end of path
+            .replaceAll("/", "\\") // Replace  \ by /
+            ;
+
+        return encodeURIComponent(fixed);
+    }
+
     export async function callGet_text(url: string): Promise<TCallResult> {
         const response = await fetch(fixUrl(url));
         return <TCallResult>{
@@ -24,23 +36,24 @@ export namespace api {
 
     export async function callGet_json<T = any>(url: string): Promise<T> {
         const response = await fetch(fixUrl(url));
-        return await response.json();
+        return await assertResponseAndJsonOk(response);
     }
 
-    async function callDelete(url: string): Promise<TCallResult> {
+    async function callDelete(url: string) {
         const response = await fetch(fixUrl(url), {
             method: "DELETE",
             headers: {
                 "Content-Type": "text/plain",
             }
         });
-        return <TCallResult>{
-            content: await response.text(),
-            status: response.status,
-        };
+        await assertResponseOk(response);
     }
 
-    export async function callPostPut(method: "POST" | "PUT", url: string, content: string | null) : Promise<TCallResult> {
+    async function callPostPut(
+        method: "POST" | "PUT",
+        url: string,
+        content: string | null,
+        throwOnError: boolean): Promise<TCallResult> {
         const response = await fetch(fixUrl(url), {
             method: method,
             headers: {
@@ -48,50 +61,86 @@ export namespace api {
             },
             body: content || undefined,
         });
+
+        if (throwOnError)
+            await assertResponseOk(response);
+
         return <TCallResult>{
             content: await response.text(),
             status: response.status,
         };
     }
 
-    export async function callPost(url: string, content: string | null): Promise<TCallResult> {
-        return await callPostPut("POST", url, content);
+    export async function callPost(url: string, content: string | null, throwOnError: boolean = true): Promise<TCallResult> {
+        return await callPostPut("POST", url, content, throwOnError);
     }
 
-    export async function callPut(url: string, content: string): Promise<TCallResult> {
-        return await callPostPut("PUT", url, content);
+    async function callPut(url: string, content: string): Promise<TCallResult> {
+        return await callPostPut("PUT", url, content, true);
     }
 
-    function assertOk(result: TCallResult) {
-        if (result.status !== 200) {
-            throw new Error(`API call failed with status ${result.status}: ${result.content}`);
-        }
-    }
     export const url_device = (device_id: string, suffix: string = "") => `/api/device/${encodeURIComponent(device_id)}/${suffix}`;
-    export const url_local_path = (device_id: string, path: string, suffix: string = "") => 
-        url_device(device_id, `/local/${encodeURIComponent(path)}/${suffix}`);
+    export const url_local_path = (device_id: string, path: string, suffix: string = "") =>
+        url_device(device_id, `/local/${fixPath(path)}/${suffix}`);
 
     export async function local_createDirectory(device_id: string, directory_path: string) {
-        assertOk(await callPut(`/api/device/${encodeURIComponent(device_id)}/local/${encodeURIComponent(directory_path)}`, "directory"));
+        await callPut(url_local_path(device_id, directory_path), "directory");
     }
 
     export async function local_createFile(device_id: string, directory_path: string) {
-        assertOk(await callPut(`/api/device/${encodeURIComponent(device_id)}/local/${encodeURIComponent(directory_path)}`, "file"));
+        await callPut(url_local_path(device_id, directory_path), "file");
     }
 
     export async function local_save(device_id: string, file_path: string, content: string) {
-        assertOk(await callPost(url_local_path(device_id, file_path), content));
+        await callPost(url_local_path(device_id, file_path), content, true);
     }
 
     export async function local_rename(device_id: string, path: string, newName: string) {
-        assertOk(await callPost(`/api/device/${encodeURIComponent(device_id)}/local/${encodeURIComponent(path)}/rename_to/${encodeURIComponent(newName)}`, ""));
+        await callPost(url_local_path(device_id, path, `rename_to/${fixPath(newName)}`), "", true);
     }
 
     export async function local_delete(device_id: string, path: string) {
-        assertOk(await callDelete(`/api/device/${encodeURIComponent(device_id)}/local/${encodeURIComponent(path)}/`));
+        await callDelete(url_local_path(device_id, path));
     }
 
     export async function local_path_compile(device: TDevice, path: string, test_content: string | undefined) {
-        return await callPost(url_local_path(device.id, path, "compile"), test_content ?? "");
+        return await callPost(url_local_path(device.id, path, "compile"), test_content ?? "", false);
+    }
+
+    export async function getStatus() {
+        return await callGet_json("/api/status");
+    }
+
+    export async function getPing() {
+        return await callGet_json("/api/device/ping");
+    }
+
+    export async function getStream(
+        url: string,
+        onMessage: (message: string) => void,
+    ) {
+        const finalUrl = new URL(fixUrl(url), location.href);
+        finalUrl.protocol = finalUrl.protocol === "http:" ? "ws:" : "wss:";
+
+        const ws = new WebSocket(finalUrl.toString());
+        ws.onmessage = (ev) => {
+            const msg = JSON.parse(ev.data);
+            switch (msg.event) {
+                case "completed":
+                    log.verbose("Stream completed");
+                    ws.close();;
+                    break;
+                case "error":
+                    log.error("Stream error", msg.data);
+                    ws.close();
+                    break;
+                case "message":
+                    onMessage(msg.data as string);
+                    break;
+                default:
+                    log.warn("Unknown event", msg);
+                    break;
+            }
+        };
     }
 }
