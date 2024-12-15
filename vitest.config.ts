@@ -8,7 +8,6 @@ export default defineConfig({
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "src"),
-        "jsonpathly": path.resolve(__dirname, "external/jsonpathly/src"),
       },
     }
   })

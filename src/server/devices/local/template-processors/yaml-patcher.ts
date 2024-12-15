@@ -59,6 +59,9 @@ export const patchEspHomeYaml = (target: YAML.Document, patches: string[]) => {
                         const patches = patch.value.items as YAML.YAMLMap[];
                         patchYaml(target, path, patches);
                     }
+                    else {
+                        throw new Error("Invalid patch format");
+                    }
 
                     //console.log(item.items[0]);
                     //console.log(item.toJSON());
