@@ -8,9 +8,9 @@ import {
     Root,
     Subscript,
 } from "jsonpathly/parser/types";
-import { log as logger } from "@/shared/log";
 
 
+//import { log as logger } from "@/shared/log";
 const log = (...args: any[]) => {}/*logger.create({defaults: {
     level: 950,
     //type: "verbose",
@@ -39,18 +39,6 @@ const _applyDot = (nodes: YAML.Node[], path: DotContent): YAML.Node[] => {
 };
 
 const _applyFilterExpression = (nodes: YAML.Node[], path: FilterExpressionContent) => {
-    /*const getValue = (n: YAML.Node, path: Subscript) => {
-        if (n instanceof YAML.YAMLMap) {
-            return _applySubscript([n], path);
-        }
-        else if (n instanceof YAML.YAMLSeq) {
-            return _applySubscript(n.items as YAML.Node[], path);
-        }
-        else {
-            throw new Error("Unsupported node type: ", n?.toJSON());
-        }
-    }*/
-
     log("_applyFilterExpression: ", path);
     switch (path.type) {
         case "comparator":
@@ -122,15 +110,6 @@ const _applySubscript = (nodes: YAML.Node[], path: Subscript): YAML.Node[] => {
 
         default:
             throw new Error("Unsupported subscript type: " + path.value.type);
-            /*
-        case "bracketMember":
-            log("Bracket member: ", path.value.value);
-            break;
-
-
-        case "dotdot":
-            log("DotDot: ", path.value);
-            break;*/
     }
 
     return (path.next) ? _applySubscript(result, path.next) : result;
