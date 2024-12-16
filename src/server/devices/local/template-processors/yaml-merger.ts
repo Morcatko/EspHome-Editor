@@ -32,7 +32,7 @@ const mergeEspHomeYamls = (target: YAML.Document, yaml2: YAML.Document) => {
                     result_values.items.push(add_value)
                 );
             } else {
-                //unsupported merge
+                throw new Error("Unsupported merge");
             }
         }
     });

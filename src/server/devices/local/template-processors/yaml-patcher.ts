@@ -1,9 +1,7 @@
 import { parse } from "@/server/yamlpath";
-import { log } from "@/shared/log";
 import * as YAML from "yaml";
 
 const patchYaml = (target: YAML.Document, path: string, changes: YAML.YAMLMap[]) => {
-    console.log("patchYaml", path, changes);
 
     const nodesToChange = parse(target, path);
 
@@ -11,7 +9,6 @@ const patchYaml = (target: YAML.Document, path: string, changes: YAML.YAMLMap[])
         const pair = change.items[0] as YAML.Pair<YAML.Scalar, unknown>;
         const operation = pair.key.value;
         const value = (pair.value as YAML.YAMLMap).items[0];
-        console.log("patch", operation, value);
 
         for(const nodeToChange of nodesToChange) {
             if (nodeToChange instanceof YAML.YAMLMap) {
@@ -62,9 +59,6 @@ export const patchEspHomeYaml = (target: YAML.Document, patches: string[]) => {
                     else {
                         throw new Error("Invalid patch format");
                     }
-
-                    //console.log(item.items[0]);
-                    //console.log(item.toJSON());
                 }
             }
         }
