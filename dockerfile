@@ -14,6 +14,7 @@ COPY yarn.lock ./
 RUN yarn --frozen-lockfile
 
 COPY src ./src
+RUN yarn test run
 RUN yarn build
 
 FROM node:current-alpine AS run
