@@ -1,6 +1,6 @@
 {
   "name": "esphome-editor",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@monaco-editor/react": "^4.6.0",
-    "@primer/octicons-react": "^19.13.0",
+    "@primer/octicons-react": "^19.14.0",
     "@primer/react": "^37.3.0",
     "@tanstack/react-query": "^5.62.7",
     "@types/ws": "^8.5.13",
@@ -23,7 +23,7 @@
     "mobx": "^6.13.5",
     "mobx-react-lite": "^4.1.0",
     "monaco-editor": "^0.52.2",
-    "next": "^15.0.3",
+    "next": "^15.1.0",
     "next-ws": "^1.1.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -38,7 +38,7 @@
     "@types/node": "^22.10.2",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.2",
-    "eslint": "^8",
+    "eslint": "^9.17.0",
     "eslint-config-next": "^15.1.0",
     "execa": "^9.5.2",
     "postcss": "^8",
