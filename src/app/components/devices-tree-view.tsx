@@ -49,7 +49,7 @@ const LocalFileOrDirectory = ({ device, fod }: { device: TDevice, fod: TLocalFil
                 <FileTypeIcon fod={fod} />
             </div>
         </TreeView.LeadingVisual>
-        <span>{fod.name}</span>
+        <span className="text-[color:--foreground]">{fod.name}</span>
         <TreeView.TrailingVisual>
             <ActionMenu>
                 <ActionMenu.Anchor>
@@ -167,7 +167,7 @@ export const DevicesTreeView = observer(() => {
                         expanded={exp.get(d.id)}
                         onExpandedChange={(e) => exp.set(d.id, e)}
                     >
-                        <span className="font-semibold">{d.name}</span>
+                        <span className="font-semibold text-[color:--foreground]">{d.name}</span>
                         <TreeView.LeadingVisual>
                             { (isLib)
                                 ? <FileDirectoryIcon />
