@@ -25,7 +25,7 @@ export default observer(() => {
 		</div>
 		: <div style={{ gridTemplateColumns: "18rem 1fr", gridTemplateRows: "56px 1fr auto", gridGap: "1px" }} className="h-screen grid" >
 			<div style={{ gridArea: "1/1/1/1", lineHeight: '56px' }} className="border-b border-slate-200 text-center" >
-				<Heading className="inline-block align-baseline text-slate-600" variant="small" >ESPHome Editor</Heading>
+				<Heading className="inline-block align-baseline text-slate-600 dark:text-slate-400" variant="small" >ESPHome Editor</Heading>
 			</div>
 			<div style={{ gridArea: "2/1/2/1" }} className="pl-1 overflow-y-auto"><DevicesTreeView /></div>
 			<div style={{ gridArea: "3/1/3/1" }} className="border-t border-slate-200 text-center text-slate-400 ">{query.isSuccess && query.data?.version}</div>
