@@ -1,3 +1,4 @@
+name: esphome-editor
 services:
   esphome-editor:
     image: morcatko/esphome-editor:latest
