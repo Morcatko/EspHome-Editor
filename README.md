@@ -30,16 +30,17 @@ Otherwise continue with following steps:
 
 ```yaml
 # docker-compose.yaml
+name: esphome-editor
 services:
   esphome-editor:
-    image: esphome-editor:latest
+    image: morcatko/esphome-editor:latest
     container_name: esphome-editor
     environment:
-      - ESPHOME_URL=__ESPHOME_URL__                     # e.g., ESPHOME_URL=http://192.168.0.99:6052
+      - ESPHOME_URL=__ESPHOME_URL__                                       # e.g., ESPHOME_URL=http://192.168.0.99:6052
     ports:
-      - __EXTERNAL_PORT__:3000                          # e.g., 8080:3000
+      - __EXTERNAL_PORT__:3000                                            # e.g., 8080:3000
     volumes:
-      - __path_to_data__:/app/work-folder/devices       # e.g., /home/esphome-editor/devices:/app/work-folder/devices
+      - __path_to_esphome-editor-config__:/app/work-folder/devices        # e.g., /home/esphome-editor/devices:/app/work-folder/devices (!!! Not a path to ESPHome config files !!!)
 ```
 
 2. Run the command:
