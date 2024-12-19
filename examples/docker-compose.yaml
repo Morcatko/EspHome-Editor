@@ -1,8 +1,8 @@
-name: esphome-editor
+name: editor-for-esphome
 services:
-  esphome-editor:
+  editor-for-esphome:
     image: morcatko/esphome-editor:latest
-    container_name: esphome-editor
+    container_name: editor-for-esphome
     environment:
       - ESPHOME_URL=        #fill your esphome url
     ports:

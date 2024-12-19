@@ -5,7 +5,7 @@ import { ClientLayout } from "./client-layout";
 import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
-  title: "ESPHome-Editor",
+  title: "Editor for ESPHome",
 };
 
 export default function RootLayout({
