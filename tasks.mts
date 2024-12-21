@@ -32,8 +32,8 @@ const dockerBuild = async (
     await exec(`${build_cmd} -t ${image_name}:${tag} -t ${image_name}:latest -f dockerfile .`);
     
     if (await confirm({ message: `Push (${image_name}:${tag} and latest) ?` })) {
-        await exec(`docker push ${image_name}:${tag}`);
         await exec(`docker push ${image_name}:latest`);
+        await exec(`docker push ${image_name}:${tag}`);
     }
 }
 
