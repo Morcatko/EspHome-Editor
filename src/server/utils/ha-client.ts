@@ -17,7 +17,9 @@ const ha_getJson = async (haUrl: string, haToken: string, path: string) => {
 const findEspHomeAddon = async (haUrl: string, haToken: string) => {
     const responseJson = await ha_getJson(haUrl, haToken, "addons");
     const addons = responseJson.data.addons as any[];
-    const espHomeAddon = addons.find(a => a.name === "ESPHome Device Compiler");
+    const espHomeAddon = addons.find(a => a.name === "ESPHome Device Builder")
+        || addons.find(a => a.name === "ESPHome Device Compiler")
+        || addons.find(a => a.url === "https://esphome.io/");
     return espHomeAddon;
 }
 
@@ -43,5 +45,5 @@ export const getEspHomeUrl = async (haUrl: string, haToken: string) => {
     } catch (e) {
         log.error("Error finding ESPHome addon", e);
     }
-    return null;    
+    return null;
 }
