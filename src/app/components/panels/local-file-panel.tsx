@@ -1,6 +1,6 @@
 import { LocalFileStore, useLocalFileQuery } from "@/app/stores/panels-store/local-file-store";
 import { observer } from "mobx-react-lite";
-import { SplitEditor } from "./split-editor";
+import { SplitEditor } from "../editors/split-editor";
 import { useState } from "react";
 
 // const EtaJsBanner = ({ store }: { store: LocalFileStore }) => {

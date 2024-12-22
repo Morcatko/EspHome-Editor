@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import { useStore } from "../stores";
 import { ESPHomeDeviceStore } from "../stores/panels-store/esphome-device-store";
 import { LocalFileStore } from "../stores/panels-store/local-file-store";
-import { SingleEditor, SingleEditor2 } from "./panels/single-editor";
+import { SingleEditor, SingleEditor2 } from "./editors/single-editor";
 import { LocalDeviceStore } from "../stores/panels-store/local-device-store";
 import { DeviceDiffStore } from "../stores/panels-store/device-diff-store";
 import { DiffEditor } from "./panels/diff-editor";

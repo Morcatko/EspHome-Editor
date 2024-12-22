@@ -1,5 +1,5 @@
 import { ESPHomeDeviceStore, useESPHomeDeviceQuery } from "@/app/stores/panels-store/esphome-device-store";
-import { SingleEditor2 } from "./single-editor";
+import { SingleEditor2 } from "../editors/single-editor";
 
 export const ESPHomeDevicePanel = ({store} : {store: ESPHomeDeviceStore}) => {
     const data = useESPHomeDeviceQuery(store);

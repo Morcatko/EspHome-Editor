@@ -1,4 +1,4 @@
-import { SingleEditor2 } from "./single-editor";
+import { SingleEditor2 } from "../editors/single-editor";
 import { LocalDeviceStore, useLocalDeviceQuery } from "@/app/stores/panels-store/local-device-store";
 
 export const LocalDevicePanel = ({store} : {store: LocalDeviceStore}) => {
