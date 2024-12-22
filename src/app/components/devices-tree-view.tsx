@@ -145,7 +145,8 @@ export const DevicesTreeView = observer(() => {
     const pinQuery = useQuery({
         queryKey: ['ping'],
         refetchInterval: 1000,
-        queryFn: api.getPing 
+        queryFn: api.getPing,
+        enabled: false
     });
 
     const getDeviceColor = (d: TDevice) => 

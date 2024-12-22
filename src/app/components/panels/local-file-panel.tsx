@@ -1,10 +1,12 @@
 import { LocalFileStore } from "@/app/stores/panels-store/local-file-store";
 import { observer } from "mobx-react-lite";
-import { SplitEditor } from "./split-editor";
+import { SplitEditor, SplitEditor2 } from "./split-editor";
 import { Link } from "@primer/react";
 import { Editor } from "@monaco-editor/react";
 import { useState } from "react";
 import SplitPane, { Pane } from "split-pane-react";
+import { queryOptions, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { api } from "@/app/utils/api-client";
 
 const EtaJsBanner = ({ store }: { store: LocalFileStore }) => {
     const [sizes, setSizes] = useState<(number | string)[]>([
@@ -41,27 +43,43 @@ const getBanner = (store: LocalFileStore) => {
     }
 }
 export const LocalFilePanel = observer(({ store }: { store: LocalFileStore }) => {
-    const banner = getBanner(store);
     const [sizes, setSizes] = useState<(number | string)[]>([
         '150px',
         'auto',
     ]);
 
-    return (banner)
-        ? <SplitPane
-            split="horizontal"
-            sizes={sizes}
-            onChange={(sizes) => setSizes(sizes)} >
-            <Pane minSize={20}>
-                {banner}
-            </Pane>
-            <Pane minSize={20}>
-                <SplitEditor
-                    left_store={store.left_file}
-                    right_store={store.right_file} />
-            </Pane>
-        </SplitPane>
-        : <SplitEditor
-            left_store={store.left_file}
-            right_store={store.right_file} />
+
+    const leftQuery = useQuery({
+        queryKey: ["device", store.device.id, "local-file", store.file.path],
+        queryFn: async () => api.callGet_text(api.url_local_path(store.device.id, store.file.path))
+    });
+
+    const rightQuery = useQuery({
+        queryKey: ["device", store.device.id, "local-file", store.file.path, "compiled"],
+        queryFn: async () => api.local_path_compile(store.device.id, store.file.path, "")
+    });
+
+    const queryClient = useQueryClient();
+    const leftMutation = useMutation({
+         mutationFn: async (v: string) => api.local_save(store.device.id, store.file.path, v),
+         onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["device", store.device.id, "local-file", store.file.path, "compiled"]})
+         }
+    });
+
+    return <SplitEditor2
+        leftEditor={
+            {
+                value: leftQuery.data?.content ?? "",
+                onValueChange: (v) => leftMutation.mutate(v),
+                language: store.left_file.language,
+                readonly: store.left_file.readonly,
+            }}
+        rightEditor={
+            {
+                value: rightQuery.data?.content ?? "",
+                language: "yaml",
+                readonly: true,
+            }}
+    />
 });

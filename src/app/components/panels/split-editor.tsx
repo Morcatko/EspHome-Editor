@@ -2,7 +2,9 @@ import { MonacoFileStore } from "@/app/stores/panels-store/utils/monaco-file-sto
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import SplitPane, { Pane } from "split-pane-react";
-import { SingleEditor } from "./single-editor";
+import { SingleEditor, SingleEditor2, TSingleEditorProps } from "./single-editor";
+import { useQuery, UseQueryOptions } from "@tanstack/react-query";
+import { api } from "@/app/utils/api-client";
 
 type props = {
     left_store: MonacoFileStore;
@@ -28,3 +30,35 @@ export const SplitEditor = observer((props: props) => {
         </SplitPane>
         : <SingleEditor store={props.left_store} />
 });
+
+type TProps2 = {
+    leftEditor: TSingleEditorProps;
+    rightEditor: TSingleEditorProps;
+}
+
+export const SplitEditor2 = (props: TProps2) => {
+    const [sizes, setSizes] = useState<(number | string)[]>([
+        '50%',
+        'auto',
+    ]);
+
+    return (props.rightEditor)
+        ? <SplitPane
+            split="vertical"
+            sizes={sizes}
+            onChange={(sizes) => setSizes(sizes)}        >
+            <Pane minSize={20}>
+                <SingleEditor2
+                    {...props.leftEditor}
+                 />
+            </Pane>
+            <Pane minSize={20}>
+                <SingleEditor2 
+                    {...props.rightEditor}
+                />
+            </Pane>
+        </SplitPane>
+        : <SingleEditor2 
+                {...props.leftEditor}
+            />;
+}
