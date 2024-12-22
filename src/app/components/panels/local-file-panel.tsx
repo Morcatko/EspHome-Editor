@@ -1,12 +1,7 @@
 import { LocalFileStore, useLocalFileQuery } from "@/app/stores/panels-store/local-file-store";
 import { observer } from "mobx-react-lite";
-import { SplitEditor, SplitEditor2 } from "./split-editor";
-import { Link } from "@primer/react";
-import { Editor } from "@monaco-editor/react";
+import { SplitEditor } from "./split-editor";
 import { useState } from "react";
-import SplitPane, { Pane } from "split-pane-react";
-import { queryOptions, useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/app/utils/api-client";
 
 // const EtaJsBanner = ({ store }: { store: LocalFileStore }) => {
 //     const [sizes, setSizes] = useState<(number | string)[]>([
@@ -48,15 +43,9 @@ export const LocalFilePanel = observer(({ store }: { store: LocalFileStore }) =>
         'auto',
     ]);
 
-    const q = useQueries({
-        queries: [
-        ],
-        
-    })
-
     const data = useLocalFileQuery(store);
 
-    return <SplitEditor2
+    return <SplitEditor
         leftEditor={data.leftEditor} 
         rightEditor={data.rightEditor} />;
 });

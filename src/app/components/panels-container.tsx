@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import { useStore } from "../stores";
 import { ESPHomeDeviceStore } from "../stores/panels-store/esphome-device-store";
 import { LocalFileStore } from "../stores/panels-store/local-file-store";
-import { SingleEditor } from "./panels/single-editor";
+import { SingleEditor, SingleEditor2 } from "./panels/single-editor";
 import { LocalDeviceStore } from "../stores/panels-store/local-device-store";
 import { DeviceDiffStore } from "../stores/panels-store/device-diff-store";
 import { DiffEditor } from "./panels/diff-editor";
@@ -12,14 +12,16 @@ import { ESPHomeInstallStore } from "../stores/panels-store/esphome-install-stor
 import { ESPHomeLogStore } from "../stores/panels-store/esphome-log-store";
 import { IPanelsStore } from "../stores/panels-store/utils/IPanelsStore";
 import { LocalFilePanel } from "./panels/local-file-panel";
+import { LocalDevicePanel } from "./panels/local-device-panel";
+import { ESPHomeDevicePanel } from "./panels/esphome-device-panel";
 
 const PanelContent = observer(({ tabStore } : {tabStore: IPanelsStore}) => {
     if (tabStore instanceof ESPHomeDeviceStore) {
-        return <SingleEditor store={tabStore.monaco_file} />;
+        return <ESPHomeDevicePanel store={tabStore} />;
     } else if (tabStore instanceof LocalFileStore) {
         return <LocalFilePanel store={tabStore} />;
     } else if (tabStore instanceof LocalDeviceStore) {
-        return <SingleEditor store={tabStore.monaco_file} />;
+        return <LocalDevicePanel store={tabStore} />;
     } else if (tabStore instanceof DeviceDiffStore) {
         return <DiffEditor 
             left_store={tabStore.left_file}

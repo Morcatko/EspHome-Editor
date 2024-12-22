@@ -9,9 +9,8 @@ import { read } from "fs";
 
 export type TEditorFileProps ={
     value: string;
-    onValueChange?: (v: string) => void;
     language: string;
-    readonly: boolean;
+    onValueChange?: (v: string) => void;
 }
 
 export const useLocalFileQuery = (store: LocalFileStore) => {
@@ -40,14 +39,12 @@ export const useLocalFileQuery = (store: LocalFileStore) => {
     return { 
         leftEditor: <TEditorFileProps>{
             value: leftQuery.data?.content ?? "",
-            onValueChange: (v) => leftMutation.mutate(v),
             language: store.left_file.language,
-            readonly: store.left_file.readonly,
+            onValueChange: (v) => leftMutation.mutate(v),
         },
         rightEditor: store.right_file && {
             value: rightQuery.data?.content ?? "",
             language: "yaml",
-            readonly: true,
         }
     }
 };

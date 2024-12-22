@@ -33,7 +33,7 @@ export const SingleEditor2 = (props: TSingleEditorProps) => {
         language={props.language}
         theme={isDarkMode ? "vs-dark" : "vs-light"}
         options={{
-            readOnly: props.readonly,
+            readOnly: !props.onValueChange,
         }}
     />
 };
