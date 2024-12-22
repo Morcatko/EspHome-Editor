@@ -1,7 +1,8 @@
-import { LocalFileStore, useLocalFileQuery } from "@/app/stores/panels-store/local-file-store";
+import { LocalFileStore, useLocalFileStore } from "@/app/stores/panels-store/local-file-store";
 import { observer } from "mobx-react-lite";
 import { SplitEditor } from "../editors/split-editor";
 import { useState } from "react";
+import { TLocalFile } from "@/server/devices/types";
 
 // const EtaJsBanner = ({ store }: { store: LocalFileStore }) => {
 //     const [sizes, setSizes] = useState<(number | string)[]>([
@@ -37,13 +38,13 @@ import { useState } from "react";
 //             return null;
 //     }
 // }
-export const LocalFilePanel = observer(({ store }: { store: LocalFileStore }) => {
+export const LocalFilePanel = observer(({ device_id, file }: { device_id: string, file: TLocalFile }) => {
     const [sizes, setSizes] = useState<(number | string)[]>([
         '150px',
         'auto',
     ]);
 
-    const data = useLocalFileQuery(store);
+    const data = useLocalFileStore(device_id, file);
 
     return <SplitEditor
         leftEditor={data.leftEditor} 

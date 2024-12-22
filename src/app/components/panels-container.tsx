@@ -2,10 +2,8 @@ import { observer } from "mobx-react-lite";
 import { useStore } from "../stores";
 import { ESPHomeDeviceStore } from "../stores/panels-store/esphome-device-store";
 import { LocalFileStore } from "../stores/panels-store/local-file-store";
-import { SingleEditor, SingleEditor2 } from "./editors/single-editor";
 import { LocalDeviceStore } from "../stores/panels-store/local-device-store";
 import { DeviceDiffStore } from "../stores/panels-store/device-diff-store";
-import { DiffEditor } from "./panels/diff-editor";
 import { ESPHomeCompileStore } from "../stores/panels-store/esphome-compile-store";
 import { LogStream } from "./panels/log-stream";
 import { ESPHomeInstallStore } from "../stores/panels-store/esphome-install-store";
@@ -14,18 +12,17 @@ import { IPanelsStore } from "../stores/panels-store/utils/IPanelsStore";
 import { LocalFilePanel } from "./panels/local-file-panel";
 import { LocalDevicePanel } from "./panels/local-device-panel";
 import { ESPHomeDevicePanel } from "./panels/esphome-device-panel";
+import { DiffPanel } from "./panels/diff-panel";
 
 const PanelContent = observer(({ tabStore } : {tabStore: IPanelsStore}) => {
     if (tabStore instanceof ESPHomeDeviceStore) {
-        return <ESPHomeDevicePanel store={tabStore} />;
+        return <ESPHomeDevicePanel device_id={tabStore.device.id} />;
     } else if (tabStore instanceof LocalFileStore) {
-        return <LocalFilePanel store={tabStore} />;
+        return <LocalFilePanel device_id={tabStore.device.id} file={tabStore.file} />;
     } else if (tabStore instanceof LocalDeviceStore) {
-        return <LocalDevicePanel store={tabStore} />;
+        return <LocalDevicePanel device_id={tabStore.device.id} />;
     } else if (tabStore instanceof DeviceDiffStore) {
-        return <DiffEditor 
-            left_store={tabStore.left_file}
-            right_store={tabStore.right_file} />;
+        return <DiffPanel device_id={tabStore.device.id} />;
     } else if (tabStore instanceof ESPHomeCompileStore) {
         return <LogStream store={tabStore.data} />;
     }

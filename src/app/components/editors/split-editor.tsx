@@ -1,7 +1,7 @@
 import { useState } from "react";
 import SplitPane, { Pane } from "split-pane-react";
-import { SingleEditor2 } from "./single-editor";
-import { TEditorFileProps } from "@/app/stores/panels-store/local-file-store";
+import { SingleEditor } from "./single-editor";
+import { TEditorFileProps } from "@/app/stores/panels-store/types";
 
 type TProps = {
     leftEditor: TEditorFileProps;
@@ -20,17 +20,17 @@ export const SplitEditor = (props: TProps) => {
             sizes={sizes}
             onChange={(sizes) => setSizes(sizes)}        >
             <Pane minSize={20}>
-                <SingleEditor2
+                <SingleEditor
                     {...props.leftEditor}
                  />
             </Pane>
             <Pane minSize={20}>
-                <SingleEditor2 
+                <SingleEditor
                     {...props.rightEditor}
                 />
             </Pane>
         </SplitPane>
-        : <SingleEditor2 
+        : <SingleEditor
                 {...props.leftEditor}
             />;
 }

@@ -1,21 +1,13 @@
-import { makeAutoObservable } from "mobx";
-import { TDevice, TLocalFile } from "@/server/devices/types";
-import { createMonacoFileStore_url, createMonacoFileStore_local, MonacoFileStore } from "./utils/monaco-file-store";
 import { api } from "@/app/utils/api-client";
 import { IPanelsStore } from "./utils/IPanelsStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { languages } from "monaco-editor";
-import { read } from "fs";
+import { TEditorFileProps } from "./types";
+import { TDevice, TLocalFile } from "@/server/devices/types";
 
-export type TEditorFileProps ={
-    value: string;
-    language: string;
-    onValueChange?: (v: string) => void;
-}
+export const useLocalFileStore = (device_id: string, file: TLocalFile) => {
+    const file_path = file.path;
+    const hasRightFile = file.compiler !== "none";
 
-export const useLocalFileQuery = (store: LocalFileStore) => {
-    const device_id = store.device.id;
-    const file_path = store.file.path;
 
     const leftQuery = useQuery({
         queryKey: ["device", device_id, "local-file", file_path],
@@ -25,58 +17,39 @@ export const useLocalFileQuery = (store: LocalFileStore) => {
     const rightQuery = useQuery({
         queryKey: ["device", device_id, "local-file", file_path, "compiled"],
         queryFn: async () => api.local_path_compile(device_id, file_path, ""),
-        enabled: !!store.right_file
+        enabled: hasRightFile
     });
 
     const queryClient = useQueryClient();
     const leftMutation = useMutation({
-         mutationFn: async (v: string) => api.local_save(device_id, file_path, v),
-         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["device", device_id, "local-file", file_path, "compiled"]})
-         }
+        mutationFn: async (v: string) => api.local_save(device_id, file_path, v),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["device", device_id, "local-file", file_path, "compiled"] })
+        }
     });
 
-    return { 
+    return {
         leftEditor: <TEditorFileProps>{
             value: leftQuery.data?.content ?? "",
-            language: store.left_file.language,
+            language: "yaml",
             onValueChange: (v) => leftMutation.mutate(v),
         },
-        rightEditor: store.right_file && {
-            value: rightQuery.data?.content ?? "",
-            language: "yaml",
-        }
+        rightEditor: hasRightFile
+            ? <TEditorFileProps>{
+                value: rightQuery.data?.content ?? "",
+                language: "yaml",
+            }
+            : null
     }
 };
 
 
 
 export class LocalFileStore implements IPanelsStore {
-    readonly dataPath:string;
-    readonly left_file: MonacoFileStore;
-    readonly right_file: MonacoFileStore | null;
-
-    
+    readonly dataPath: string;
     constructor(readonly device: TDevice, readonly file: TLocalFile) {
         this.dataPath = file.path;
-        this.left_file = createMonacoFileStore_url(false, "yaml", api.url_local_path(device.id, file.path));
-        
-        this.right_file = file.compiler !== "none"
-            ? new MonacoFileStore(true, "yaml",() => api.local_path_compile(device.id, file.path, ""))
-            : null;
-        makeAutoObservable(this);
-
-        this.left_file.onChange = async (newContent: string) => {
-            await api.local_save(device.id, file.path, newContent);
-            await this.right_file?.reload();
-        }
     }
 
-    async loadIfNeeded() {
-        await Promise.all([
-            this.left_file.loadIfNeeded(),
-            this.right_file?.loadIfNeeded(),
-        ]);
-    }
-    
+    async loadIfNeeded() { }
 }

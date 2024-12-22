@@ -1,8 +1,8 @@
-import { ESPHomeDeviceStore, useESPHomeDeviceQuery } from "@/app/stores/panels-store/esphome-device-store";
-import { SingleEditor2 } from "../editors/single-editor";
+import { useESPHomeDeviceStore } from "@/app/stores/panels-store/esphome-device-store";
+import { SingleEditor } from "../editors/single-editor";
 
-export const ESPHomeDevicePanel = ({store} : {store: ESPHomeDeviceStore}) => {
-    const data = useESPHomeDeviceQuery(store);
+export const ESPHomeDevicePanel = ({device_id} : {device_id: string}) => {
+    const data = useESPHomeDeviceStore(device_id);
 
-    return <SingleEditor2 {...data} />;
+    return <SingleEditor {...data} />;
 }
