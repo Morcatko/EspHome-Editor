@@ -1,14 +1,13 @@
 import { TEditorFileProps } from "@/app/stores/panels-store/types";
 import { useDarkTheme } from "@/app/utils/hooks";
 import { DiffEditor as MonacoDiffEditor } from "@monaco-editor/react";
-import { observer } from "mobx-react-lite";
 
 type TProps = {
     leftEditor: TEditorFileProps;
     rightEditor: TEditorFileProps;
 }
 
-export const DiffEditor = observer((props: TProps) => {
+export const DiffEditor = (props: TProps) => {
     const isDarkMode = useDarkTheme();
 
     return <MonacoDiffEditor
@@ -21,4 +20,4 @@ export const DiffEditor = observer((props: TProps) => {
             readOnly: !!props.leftEditor.onValueChange,
         }}
     />
-});
+};

@@ -1,5 +1,4 @@
-import { LocalFileStore, useLocalFileStore } from "@/app/stores/panels-store/local-file-store";
-import { observer } from "mobx-react-lite";
+import { useLocalFileStore } from "@/app/stores/panels-store/local-file-store";
 import { SplitEditor } from "../editors/split-editor";
 import { useState } from "react";
 import { TLocalFile } from "@/server/devices/types";
@@ -38,7 +37,7 @@ import { TLocalFile } from "@/server/devices/types";
 //             return null;
 //     }
 // }
-export const LocalFilePanel = observer(({ device_id, file }: { device_id: string, file: TLocalFile }) => {
+export const LocalFilePanel = ({ device_id, file }: { device_id: string, file: TLocalFile }) => {
     const [sizes, setSizes] = useState<(number | string)[]>([
         '150px',
         'auto',
@@ -49,4 +48,4 @@ export const LocalFilePanel = observer(({ device_id, file }: { device_id: string
     return <SplitEditor
         leftEditor={data.leftEditor} 
         rightEditor={data.rightEditor} />;
-});
+};
