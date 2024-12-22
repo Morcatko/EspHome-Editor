@@ -1,7 +1,7 @@
+import { TEditorFileProps } from "@/app/stores/panels-store/local-file-store";
 import { MonacoFileStore } from "@/app/stores/panels-store/utils/monaco-file-store";
 import { useDarkTheme } from "@/app/utils/hooks";
 import { Editor } from "@monaco-editor/react";
-import { useQuery } from "@tanstack/react-query";
 import { observer } from "mobx-react-lite";
 
 type props = {
@@ -21,12 +21,8 @@ export const SingleEditor = observer((props: props) => {
     />
 });
 
-export type TSingleEditorProps = {
-    value: string;
-    onValueChange?: (v: string) => void;
-    language: string;
-    readonly: boolean;
-}
+
+type TSingleEditorProps = TEditorFileProps;
 
 export const SingleEditor2 = (props: TSingleEditorProps) => {
     const isDarkMode = useDarkTheme();

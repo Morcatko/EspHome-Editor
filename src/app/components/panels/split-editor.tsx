@@ -5,6 +5,7 @@ import SplitPane, { Pane } from "split-pane-react";
 import { SingleEditor, SingleEditor2, TSingleEditorProps } from "./single-editor";
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { api } from "@/app/utils/api-client";
+import { TEditorFileProps } from "@/app/stores/panels-store/local-file-store";
 
 type props = {
     left_store: MonacoFileStore;
@@ -32,8 +33,8 @@ export const SplitEditor = observer((props: props) => {
 });
 
 type TProps2 = {
-    leftEditor: TSingleEditorProps;
-    rightEditor: TSingleEditorProps;
+    leftEditor: TEditorFileProps;
+    rightEditor: TEditorFileProps | null;
 }
 
 export const SplitEditor2 = (props: TProps2) => {
