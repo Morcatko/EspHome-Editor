@@ -12,6 +12,7 @@ import { ESPHomeInstallStore } from "../stores/panels-store/esphome-install-stor
 import { ESPHomeLogStore } from "../stores/panels-store/esphome-log-store";
 import { IPanelsStore } from "../stores/panels-store/utils/IPanelsStore";
 import { LocalFilePanel } from "./panels/local-file-panel";
+import { Onboarding } from "./onboarding";
 
 const PanelContent = observer(({ tabStore } : {tabStore: IPanelsStore}) => {
     if (tabStore instanceof ESPHomeDeviceStore) {
@@ -45,7 +46,7 @@ export const PanelsContainer = observer(() => {
     tabStore?.loadIfNeeded();
 
     if (!tabStore) {
-        return null;
+        return <Onboarding  />;
     }
 
     return <div style={{
