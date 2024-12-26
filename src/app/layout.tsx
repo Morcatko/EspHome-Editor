@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import 'flexlayout-react/style/light.css';  
 import 'split-pane-react/esm/themes/default.css';
 import { ClientLayout } from "./client-layout";
 import { Toaster } from "react-hot-toast";
