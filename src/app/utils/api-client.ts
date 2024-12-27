@@ -103,8 +103,8 @@ export namespace api {
         await callDelete(url_local_path(device_id, path));
     }
 
-    export async function local_path_compile(device: TDevice, path: string, test_content: string | undefined) {
-        return await callPost(url_local_path(device.id, path, "compile"), test_content ?? "", false);
+    export async function local_path_compile(device_id: string, path: string, test_content: string | undefined) {
+        return await callPost(url_local_path(device_id, path, "compile"), test_content ?? "", false);
     }
 
     export async function getStatus() {
