@@ -6,7 +6,7 @@ import { ActionBar, ActionList, ActionMenu, ButtonBaseProps, IconButton, TreeVie
 import { useStore } from "../stores";
 import { TDevice, TLocalFileOrDirectory, TParent } from "@/server/devices/types";
 import { BeakerIcon, CodeIcon, DownloadIcon, KebabHorizontalIcon, FileDirectoryIcon, GitCompareIcon, LightBulbIcon, LogIcon, UploadIcon, PencilIcon, FileCodeIcon, QuestionIcon, XIcon } from "@primer/octicons-react";
-import { color_esphome, color_local, color_offline, color_online } from "../utils/const";
+import { color_esphome, color_gray, color_local, color_offline, color_online } from "../utils/const";
 import etajsIcon from "../etajs-logo.svg";
 import { api } from "../utils/api-client";
 
@@ -112,7 +112,7 @@ const DeviceToolbar = ({ device }: { device: TDevice }) => {
 
     const bothProps = {
         disabled: !hasBoth,
-        sx: { color: hasBoth ? undefined : "lightgrey" },
+        sx: { color: hasBoth ? color_gray : "lightgrey" },
     }
 
     const espHomeProps = {
@@ -145,7 +145,8 @@ export const DevicesTreeView = observer(() => {
     const pinQuery = useQuery({
         queryKey: ['ping'],
         refetchInterval: 1000,
-        queryFn: api.getPing 
+        queryFn: api.getPing,
+        enabled: false
     });
 
     const getDeviceColor = (d: TDevice) => 
@@ -153,7 +154,7 @@ export const DevicesTreeView = observer(() => {
             ? pinQuery?.data?.[d.esphome_config]
                 ? color_online
                 : color_offline
-            : undefined;
+            : color_gray
 
     return (
         <TreeView>
