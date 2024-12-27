@@ -2227,6 +2227,11 @@ flatted@^3.2.9:
   resolved "https://registry.yarnpkg.com/flatted/-/flatted-3.3.1.tgz#21db470729a6734d4997002f439cb308987f567a"
   integrity sha512-X8cqMLLie7KsNUDSdzeN8FYK9rEt4Dt67OsG/DNGnYTSDBG4uFAJFBnUeiV+zCVAvwFy56IjM9sH51jVaEhNxw==
 
+flexlayout-react@^0.8.1:
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/flexlayout-react/-/flexlayout-react-0.8.1.tgz#9ea310fdf8326f6af2c13ace61b166471d937d3e"
+  integrity sha512-zNB++3bnx1XGjslpJyaDvVYkgjXNZyeHAabBvZp0REha9skljtxJYApOR9XazlFCKloqLF8Uk8ado3LsNW/rPg==
+
 focus-visible@^5.2.0:
   version "5.2.1"
   resolved "https://registry.yarnpkg.com/focus-visible/-/focus-visible-5.2.1.tgz#38615e8be4d4df7819a0d9d92cdee4fda183ac96"
