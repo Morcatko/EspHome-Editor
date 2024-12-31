@@ -25,6 +25,25 @@ const useDeviceExpandedStore = () => {
     }
 }
 
+async function showToast(
+    call: () => Promise<any>,
+    invlidateKeys: string[],
+    loading: string | null,
+    success: string | null,
+    error: string | null) {
+    await toast.promise(
+        (async () => {
+            await call();
+            await queryClient.invalidateQueries({ queryKey: invlidateKeys });
+        })(),
+        {
+            loading: loading,
+            success: success,
+            error: error,
+        },
+    );
+}
+
 async function localDevice_addDirectory(device: TDevice, parent_path: string) {
     const directory_name = await rootStore.inputTextDialog.tryShowModal({
         title: "Create new directory",
@@ -32,19 +51,14 @@ async function localDevice_addDirectory(device: TDevice, parent_path: string) {
         defaultValue: "new directory",
     });
 
-    if (directory_name) {
-        await toast.promise(
-            (async () => {
-                await api.local_createDirectory(device.id, parent_path + "/" + directory_name,);
-                await queryClient.invalidateQueries({ queryKey: ["devices"]});
-            })(),
-            {
-                loading: "Creating...",
-                success: "Created!",
-                error: "Failed to create",
-            },
+    if (directory_name)
+        await showToast(
+            () => api.local_createDirectory(device.id, parent_path + "/" + directory_name),
+            ["devices"],
+            "Creating...",
+            "Created!",
+            "Failed to create",
         );
-    }
 }
 
 async function localDevice_addFile(device: TDevice, parent_path: string) {
@@ -54,46 +68,33 @@ async function localDevice_addFile(device: TDevice, parent_path: string) {
         defaultValue: "newfile.yaml",
     });
 
-    if (file_name) {
-        await toast.promise(
-            (async () => {
-                await api.local_save(device.id, parent_path + "/" + file_name, "");
-                await queryClient.invalidateQueries({ queryKey: ["devices"]});
-            })(),
-            {
-                loading: "Creating...",
-                success: "Created!",
-                error: "Failed to create",
-            },
+    if (file_name)
+        await showToast(
+            () => api.local_save(device.id, parent_path + "/" + file_name, ""),
+            ["devices"],
+            "Creating...",
+            "Created!",
+            "Failed to create",
         );
-    }
 }
 
 async function localDevice_import(device: TDevice) {
-    await toast.promise(
-        (async () => { 
-            await api.callPost(api.url_device(device.id, "local"), null);
-            await queryClient.invalidateQueries({ queryKey: ["devices"]});
-        })(),
-        {
-            loading: null,
-            success: "Created!",
-            error: "Failed to create",
-        },
+    await showToast(
+        () => api.callPost(api.url_device(device.id, "local"), null),
+        ["devices"],
+        "Creating...",
+        "Created!",
+        "Failed to create",
     );
 }
 
 async function espHome_upload(device: TDevice) {
-    await toast.promise(
-        (async () => {
-            await api.callPost(api.url_device(device.id, "esphome"), null);
-            await queryClient.invalidateQueries({ queryKey: ["device", device.id, "esphome"]});
-        })(),
-        {
-            loading: null,
-            success: "Uploaded!",
-            error: "Failed to upload",
-        },
+    await showToast(
+        () => api.callPost(api.url_device(device.id, "esphome"), null),
+        ["device", device.id, "esphome"],
+        "Uploading...",
+        "Uploaded!",
+        "Failed to upload",
     );
 }
 
@@ -104,19 +105,14 @@ async function local_renameFoD(device: TDevice, file: TLocalFileOrDirectory) {
         defaultValue: file.name,
     });
 
-    if (newName) {
-        await toast.promise(
-            (async () => {
-                await api.local_rename(device.id, file.path, newName);
-                await queryClient.invalidateQueries({ queryKey: ["devices"]});
-            })(),
-            {
-                loading: "Renaming...",
-                success: "Renamed!",
-                error: "Failed to rename",
-            },
+    if (newName)
+        await showToast(
+            () => api.local_rename(device.id, file.path, newName),
+            ["devices"],
+            "Renaming...",
+            "Renamed!",
+            "Failed to rename",
         );
-    }
 }
 
 async function local_deleteFoD(device: TDevice, file: TLocalFileOrDirectory) {
@@ -125,23 +121,17 @@ async function local_deleteFoD(device: TDevice, file: TLocalFileOrDirectory) {
         subtitle: `${device.name} - ${file.path}`,
         text: "Are you sure you want to delete this file or directory?",
     });
-    if (del) {
-        toast.promise(
-            (async () => {
-                await api.local_delete(device.id, file.path);
-                await queryClient.invalidateQueries({ queryKey: ["devices"]});
-            })(),
-            {
-                loading: "Deleting...",
-                success: "Deleted!",
-                error: "Failed to delete",
-            },
+    if (del)
+        showToast(
+            () => api.local_delete(device.id, file.path),
+            ["devices"],
+            "Deleting...",
+            "Deleted!",
+            "Failed to delete",
         );
-    }
 }
 
 export const useDevicesStore = () => {
-    //const queryClient = useQueryClient();
     const devicesQuery = useQuery({
         queryKey: ["devices"],
         queryFn: async () => api.callGet_json<TDevice[]>("/api/device")
