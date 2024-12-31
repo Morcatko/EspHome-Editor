@@ -5,9 +5,9 @@ import { api } from "../utils/api-client";
 import { type RootStore } from ".";
 import { useQuery } from "@tanstack/react-query";
 import { useLocalStorage } from "usehooks-ts";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
-export const useDeviceExpandedStore = () => {
+const useDeviceExpandedStore = () => {
     const [value, setValue] = useLocalStorage<string[]>('devices.expanded', [], {
         serializer: JSON.stringify,
         deserializer: JSON.parse,
@@ -32,7 +32,10 @@ export const useDevicesStore = () => {
         queryFn: async () => api.callGet_json<TDevice[]>("/api/device")
     });
 
-    return devicesQuery;
+    return {
+        expanded: useDeviceExpandedStore(),
+        query: devicesQuery,
+    }
 };
 
 export class DevicesStore {

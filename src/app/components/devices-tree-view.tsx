@@ -9,7 +9,7 @@ import { BeakerIcon, CodeIcon, DownloadIcon, KebabHorizontalIcon, FileDirectoryI
 import { color_esphome, color_local, color_offline, color_online } from "../utils/const";
 import etajsIcon from "../etajs-logo.svg";
 import { api } from "../utils/api-client";
-import { useDeviceExpandedStore, useDevicesStore } from "../stores/devices-store";
+import { useDevicesStore } from "../stores/devices-store";
 
 const FileTypeIcon = ({ fod }: { fod: TLocalFileOrDirectory }) => {
     if (fod.type === "directory")
@@ -33,15 +33,14 @@ const ThreeDotProps = {
 const LocalFileOrDirectory = ({ device, fod }: { device: TDevice, fod: TLocalFileOrDirectory }) => {
     const store = useStore();
     const panels = store.panels;
-    const devices = store.devices;    
-
-    const expandedStore = useDeviceExpandedStore();
+    const devices = store.devices;
+    const exp = useDevicesStore().expanded;
 
     return <TreeView.Item
         key={fod.path}
         id={fod.id}
-        expanded={expandedStore.get(`${device.id}/${fod.path}`)}
-        onExpandedChange={(e) => expandedStore.set(`${device.id}/${fod.path}`, e)}
+        expanded={exp.get(`${device.id}/${fod.path}`)}
+        onExpandedChange={(e) => exp.set(`${device.id}/${fod.path}`, e)}
         onSelect={
             (fod.type === "file")
                 ? () => panels.add_localFile(device, fod)
@@ -143,7 +142,7 @@ const DeviceToolbar = ({ device }: { device: TDevice }) => {
 export const DevicesTreeView = observer(() => {
     const oldDevices = useStore().devices;
     const devices = useDevicesStore();
-    const expandedStore = useDeviceExpandedStore();
+    const exp = devices.expanded;
 
     const pinQuery = useQuery({
         queryKey: ['ping'],
@@ -161,15 +160,15 @@ export const DevicesTreeView = observer(() => {
 
     return (
         <TreeView>
-            {devices.data?.map((d) =>
+            {devices.query.data?.map((d) =>
                 { 
                     const isLib = d.name == ".lib";
                 
                     return <TreeView.Item
                         key={d.id}
                         id={d.id}
-                        expanded={expandedStore.get(d.id)}
-                        onExpandedChange={(e) => expandedStore.set(d.id, e)}
+                        expanded={exp.get(d.id)}
+                        onExpandedChange={(e) => exp.set(d.id, e)}
                     >
                         <span className="font-semibold text-[color:--foreground]">{d.name}</span>
                         <TreeView.LeadingVisual>
