@@ -1,10 +1,29 @@
 "use client";
 import { TDevice, TLocalFileOrDirectory } from "@/server/devices/types";
-import { makeAutoObservable } from "mobx";
 import toast from "react-hot-toast";
 import { api } from "../utils/api-client";
 import { type RootStore } from ".";
 import { useQuery } from "@tanstack/react-query";
+import { useLocalStorage } from "usehooks-ts";
+import { useCallback } from "react";
+
+export const useDeviceExpandedStore = () => {
+    const [value, setValue] = useLocalStorage<string[]>('devices.expanded', [], {
+        serializer: JSON.stringify,
+        deserializer: JSON.parse,
+    });
+
+    return {
+        get: useCallback((id: string) => value.includes(id), [value]),
+        set: useCallback((id: string, expanded: boolean) => {
+            if (expanded) {
+                setValue([...value, id]);
+            } else {
+                setValue(value.filter((i) => i !== id));
+            }
+        }, [value, setValue]),
+    }
+}
 
 export const useDevicesStore = () => {
     //const queryClient = useQueryClient();
@@ -17,32 +36,6 @@ export const useDevicesStore = () => {
 };
 
 export class DevicesStore {
-    readonly expanded = new class {
-        private readonly expanded: string[] = [];
-        constructor() {
-            makeAutoObservable(this);
-            if (typeof window !== "undefined") {
-                this.expanded = JSON.parse(
-                    localStorage.getItem("devices.expanded") || "[]",
-                );
-            }
-        }
-        public get(id: string) {
-            return this.expanded.includes(id);
-        }
-        public set(id: string, expanded: boolean) {
-            if (expanded) {
-                this.expanded.push(id);
-            } else {
-                this.expanded.splice(this.expanded.indexOf(id), 1);
-            }
-            localStorage.setItem(
-                "devices.expanded",
-                JSON.stringify(this.expanded),
-            );
-        }
-    }();
-
     constructor(private readonly rootStore: RootStore) {
     }
 
