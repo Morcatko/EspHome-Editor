@@ -1,33 +1,56 @@
 import Convert from "ansi-to-html";
-import { AsyncState } from "../../utils";
-import { makeAutoObservable, runInAction } from "mobx";
-import { api } from "@/app/utils/api-client";
+import { useEffect, useState } from "react";
+import useWebSocket from "react-use-websocket";
 
 const convert = new Convert({
     stream: true,
 });
 
-export class StreamingStore {
-    loadState: AsyncState = "none";
-    readonly data: string[] = [];
-    content: string = "";
+export const useStreamingStore = (url: string) => {
+    const [data, setData] = useState<string[]>([]);
 
-    constructor(private readonly url: string) {
-        makeAutoObservable(this);
-    }
+    /*
+const finalUrl = new URL(fixUrl(url), location.href);
+        finalUrl.protocol = finalUrl.protocol === "http:" ? "ws:" : "wss:";
 
-    async loadIfNeeded() {
-        if ((this.loadState === "none") || (this.loadState === "error")) {
-            this.loadState = "loading";
+        const ws = new WebSocket(finalUrl.toString());
+        ws.onmessage = (ev) => {
+            const msg = JSON.parse(ev.data);
+            switch (msg.event) {
+                case "completed":
+                    log.verbose("Stream completed");
+                    ws.close();;
+                    break;
+                case "error":
+                    log.error("Stream error", msg.data);
+                    ws.close();
+                    break;
+                case "message":
+                    onMessage(msg.data as string);
+                    break;
+                default:
+                    log.warn("Unknown event", msg);
+                    break;
+            }
+        };
+        */
+    const ws = useWebSocket<{
+        event: string;
+        data: string;
+    }>(url, {
+        share: true
+    });
 
-            await api.getStream(
-                this.url,
-                m => {
-                    const html = convert.toHtml(
-                        m.replaceAll("\\033", "\x1b"),
-                    );
-                    runInAction(() => this.data.push(html));
-                });
+    useEffect(() => {
+        if (ws.lastJsonMessage?.data) {
+            const html = convert.toHtml(
+                ws.lastJsonMessage?.data.replaceAll("\\033", "\x1b"),
+            );
+            setData(val => [...val, html]);
         }
-    }
+    }, [ws.lastJsonMessage]);
+
+    useEffect(() => setData([]), [url]);
+
+    return data;
 }

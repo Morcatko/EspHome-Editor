@@ -114,33 +114,4 @@ export namespace api {
     export async function getPing() {
         return await callGet_json("/api/device/ping");
     }
-
-    export async function getStream(
-        url: string,
-        onMessage: (message: string) => void,
-    ) {
-        const finalUrl = new URL(fixUrl(url), location.href);
-        finalUrl.protocol = finalUrl.protocol === "http:" ? "ws:" : "wss:";
-
-        const ws = new WebSocket(finalUrl.toString());
-        ws.onmessage = (ev) => {
-            const msg = JSON.parse(ev.data);
-            switch (msg.event) {
-                case "completed":
-                    log.verbose("Stream completed");
-                    ws.close();;
-                    break;
-                case "error":
-                    log.error("Stream error", msg.data);
-                    ws.close();
-                    break;
-                case "message":
-                    onMessage(msg.data as string);
-                    break;
-                default:
-                    log.warn("Unknown event", msg);
-                    break;
-            }
-        };
-    }
 }
