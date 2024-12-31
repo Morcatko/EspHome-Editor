@@ -2,10 +2,10 @@
 import { TDevice, TLocalFileOrDirectory } from "@/server/devices/types";
 import toast from "react-hot-toast";
 import { api } from "../utils/api-client";
-import { queryClient, rootStore, type RootStore } from ".";
+import { queryClient, rootStore } from ".";
 import { useQuery } from "@tanstack/react-query";
 import { useLocalStorage } from "usehooks-ts";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 
 const useDeviceExpandedStore = () => {
     const [value, setValue] = useLocalStorage<string[]>('devices.expanded', [], {
