@@ -1,15 +1,22 @@
 "use client";
 import { TDevice, TLocalFileOrDirectory } from "@/server/devices/types";
-import { makeAutoObservable, runInAction } from "mobx";
+import { makeAutoObservable } from "mobx";
 import toast from "react-hot-toast";
-import { type AsyncState } from "./utils";
 import { api } from "../utils/api-client";
 import { type RootStore } from ".";
+import { useQuery } from "@tanstack/react-query";
+
+export const useDevicesStore = () => {
+    //const queryClient = useQueryClient();
+    const devicesQuery = useQuery({
+        queryKey: ["devices"],
+        queryFn: async () => api.callGet_json<TDevice[]>("/api/device")
+    });
+
+    return devicesQuery;
+};
 
 export class DevicesStore {
-    public devices: TDevice[] = [];
-    public asyncState: AsyncState = "none";
-
     readonly expanded = new class {
         private readonly expanded: string[] = [];
         constructor() {
@@ -37,24 +44,9 @@ export class DevicesStore {
     }();
 
     constructor(private readonly rootStore: RootStore) {
-        makeAutoObservable(this);
     }
 
     public async reload(silent: boolean) {
-        if (!silent) {
-            this.asyncState = "loading";
-        }
-        const json = await api.callGet_json<TDevice[]>("/api/device");
-        runInAction(() => {
-            this.asyncState = "loaded";
-            this.devices = json;
-        });
-    }
-
-    public async loadIfNeeded() {
-        if ((this.asyncState === "none") || (this.asyncState === "error")) {
-            await this.reload(false);
-        }
     }
 
     public async localDevice_import(device: TDevice) {

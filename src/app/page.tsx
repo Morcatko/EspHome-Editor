@@ -8,19 +8,18 @@ import { observer } from "mobx-react-lite";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "./utils/api-client";
 import { LinkExternalIcon } from "@primer/octicons-react";
+import { useDevicesStore } from "./stores/devices-store";
 
 export default observer(() => {
 	const store = useStore();
-	useEffect(() => {
-		store.devices.loadIfNeeded()
-	});
+	const devices = useDevicesStore();
 
 	const query = useQuery({
 		queryKey: ['status'],
 		queryFn: api.getStatus
 	});
 
-	return (store.devices.asyncState !== "loaded")
+	return (devices.isLoading)
 		? <div className="h-screen flex items-center justify-center">
 			<Spinner className="content-center" />
 		</div>

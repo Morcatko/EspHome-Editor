@@ -9,6 +9,7 @@ import { BeakerIcon, CodeIcon, DownloadIcon, KebabHorizontalIcon, FileDirectoryI
 import { color_esphome, color_local, color_offline, color_online } from "../utils/const";
 import etajsIcon from "../etajs-logo.svg";
 import { api } from "../utils/api-client";
+import { useDevicesStore } from "../stores/devices-store";
 
 const FileTypeIcon = ({ fod }: { fod: TLocalFileOrDirectory }) => {
     if (fod.type === "directory")
@@ -139,8 +140,9 @@ const DeviceToolbar = ({ device }: { device: TDevice }) => {
 }
 
 export const DevicesTreeView = observer(() => {
-    const devices = useStore().devices;
-    const exp = devices.expanded;
+    const oldDevices = useStore().devices;
+    const exp = oldDevices.expanded;
+    const devices = useDevicesStore();
 
     const pinQuery = useQuery({
         queryKey: ['ping'],
@@ -158,7 +160,7 @@ export const DevicesTreeView = observer(() => {
 
     return (
         <TreeView>
-            {devices.devices.map((d) =>
+            {devices.data?.map((d) =>
                 { 
                     const isLib = d.name == ".lib";
                 
@@ -186,13 +188,13 @@ export const DevicesTreeView = observer(() => {
                                 </ActionMenu.Anchor>
                                 <ActionMenu.Overlay width="auto" >
                                     <ActionList>
-                                    <ActionList.Item onSelect={(e) => { devices.localDevice_addFile(d, "/"); e.stopPropagation(); }} >
+                                    <ActionList.Item onSelect={(e) => { oldDevices.localDevice_addFile(d, "/"); e.stopPropagation(); }} >
                                             <ActionList.LeadingVisual>
                                                 <FileCodeIcon />
                                             </ActionList.LeadingVisual>
                                             New File...
                                         </ActionList.Item>
-                                        <ActionList.Item onSelect={(e) => { devices.localDevice_addDirectory(d, "/"); e.stopPropagation(); }}>
+                                        <ActionList.Item onSelect={(e) => { oldDevices.localDevice_addDirectory(d, "/"); e.stopPropagation(); }}>
                                             <ActionList.LeadingVisual>
                                                 <FileDirectoryIcon />
                                             </ActionList.LeadingVisual>
