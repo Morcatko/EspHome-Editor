@@ -21,7 +21,7 @@ const findFile = (fods: TLocalFileOrDirectory[], file_path: string): TLocalFile 
 
 export const useLocalFileStore = (device_id: string, file_path : string) => {
     
-    const devices = useDevicesStore().data;
+    const devices = useDevicesStore().query.data;
     const device = devices?.find(d => d.id === device_id);
     const file = findFile(device?.files ?? [], file_path)!;
 
