@@ -19,7 +19,7 @@ export default observer(() => {
 		queryFn: api.getStatus
 	});
 
-	return (devices.isLoading)
+	return (devices.query.isLoading)
 		? <div className="h-screen flex items-center justify-center">
 			<Spinner className="content-center" />
 		</div>
