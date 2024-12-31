@@ -1,3 +1,4 @@
+import { log } from "@/shared/log";
 import Convert from "ansi-to-html";
 import { useEffect, useState } from "react";
 import useWebSocket from "react-use-websocket";
@@ -42,11 +43,27 @@ const finalUrl = new URL(fixUrl(url), location.href);
     });
 
     useEffect(() => {
-        if (ws.lastJsonMessage?.data) {
-            const html = convert.toHtml(
-                ws.lastJsonMessage?.data.replaceAll("\\033", "\x1b"),
-            );
-            setData(val => [...val, html]);
+        if (!ws.lastJsonMessage?.event) return;
+        switch (ws.lastJsonMessage.event) {
+            case "completed":
+                log.verbose("Stream completed");
+                //ws.getWebSocket()!.close();
+                break;
+            case "error":
+                log.error("Stream error", ws.lastJsonMessage?.data);
+                //ws.getWebSocket()!.close();
+                break;
+            case "message":
+                if (ws.lastJsonMessage?.data) {
+                    const html = convert.toHtml(
+                        ws.lastJsonMessage?.data.replaceAll("\\033", "\x1b"),
+                    );
+                    setData(val => [...val, html]);
+                }
+                break;
+            default:
+                log.warn("Unknown event", ws.lastJsonMessage);
+                break
         }
     }, [ws.lastJsonMessage]);
 
