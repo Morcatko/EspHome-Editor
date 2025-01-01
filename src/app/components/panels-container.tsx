@@ -10,10 +10,10 @@ import { ESPHomeCompileStore } from "../stores/panels-store/esphome-compile-stor
 import { LogStream } from "./panels/log-stream";
 import { ESPHomeInstallStore } from "../stores/panels-store/esphome-install-store";
 import { ESPHomeLogStore } from "../stores/panels-store/esphome-log-store";
-import { IPanelsStore } from "../stores/panels-store/utils/IPanelsStore";
 import { LocalFilePanel } from "./panels/local-file-panel";
+import { PanelStoreBase } from "../stores/panels-store/types";
 
-const PanelContent = observer(({ tabStore } : {tabStore: IPanelsStore}) => {
+const PanelContent = observer(({ tabStore }: { tabStore: PanelStoreBase }) => {
     if (tabStore instanceof ESPHomeDeviceStore) {
         return <SingleEditor store={tabStore.monaco_file} />;
     } else if (tabStore instanceof LocalFileStore) {
@@ -21,7 +21,7 @@ const PanelContent = observer(({ tabStore } : {tabStore: IPanelsStore}) => {
     } else if (tabStore instanceof LocalDeviceStore) {
         return <SingleEditor store={tabStore.monaco_file} />;
     } else if (tabStore instanceof DeviceDiffStore) {
-        return <DiffEditor 
+        return <DiffEditor
             left_store={tabStore.left_file}
             right_store={tabStore.right_file} />;
     } else if (tabStore instanceof ESPHomeCompileStore) {
@@ -34,6 +34,31 @@ const PanelContent = observer(({ tabStore } : {tabStore: IPanelsStore}) => {
         return <LogStream store={tabStore.data} />;
     }
 
+    return <div>Noting selected</div>;
+});
+
+const PanelHeader = observer(({ tabStore }: { tabStore: PanelStoreBase }) => {
+    if (!tabStore)
+        return null;
+
+    const panel = tabStore.panel;
+
+    switch (panel.operation) {
+        case "local_file":
+            return <div>{panel.device_id} -  {panel.path}</div>;
+        case "local_device":
+            return <div>Local - {panel.device_id}</div>;
+        case "esphome_device":
+            return <div>ESPHome - {panel.device_id}</div>;
+        case "diff":
+            return <div>DIFF - {panel.device_id}</div>;
+        case "esphome_compile":
+            return <div>Compile - {panel.device_id}</div>;
+        case "esphome_install":
+            return <div>Install - {panel.device_id}</div>;
+        case "esphome_log":
+            return <div>Log - {panel.device_id}</div>;
+    }
     return <div>Noting selected</div>;
 });
 
@@ -53,11 +78,8 @@ export const PanelsContainer = observer(() => {
         display: "grid",
         gridTemplateRows: "auto 1fr",
     }}>
-        <div>
-            <span>{tabStore.device.name} - </span>
-            <span>{tabStore.dataPath}</span>
-        </div>
+        <PanelHeader tabStore={tabStore} />
         <PanelContent tabStore={tabStore} />
     </div>
-    
+
 });

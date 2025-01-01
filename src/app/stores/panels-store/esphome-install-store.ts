@@ -1,17 +1,17 @@
-import { TDevice } from "@/server/devices/types";
-import { makeAutoObservable } from "mobx";
-import { IPanelsStore } from "./utils/IPanelsStore";
 import { StreamingStore } from "./utils/streaming-store";
 import { api } from "@/app/utils/api-client";
+import { PanelStoreBase, TPanel } from "./types";
 
 
-export class ESPHomeInstallStore implements IPanelsStore{
-    readonly dataPath =  "Install";
+export class ESPHomeInstallStore extends PanelStoreBase{
     readonly data: StreamingStore;
 
-    constructor(readonly device: TDevice) {
-        makeAutoObservable(this);
-        this.data = new StreamingStore(api.url_device(device.id, "esphome/install"));
+    constructor(device_id: string) {
+        super({
+            device_id,
+            operation: "esphome_install",
+        });
+        this.data = new StreamingStore(api.url_device(device_id, "esphome/install"));
     }
 
     async loadIfNeeded() {

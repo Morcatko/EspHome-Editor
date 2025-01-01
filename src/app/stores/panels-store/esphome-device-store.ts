@@ -1,16 +1,16 @@
-import { TDevice } from "@/server/devices/types";
-import { makeAutoObservable } from "mobx";
 import { createMonacoFileStore_url, MonacoFileStore } from "./utils/monaco-file-store";
-import { IPanelsStore } from "./utils/IPanelsStore";
 import { api } from "@/app/utils/api-client";
+import { PanelStoreBase, TPanel } from "./types";
 
-export class ESPHomeDeviceStore implements IPanelsStore {
-    readonly dataPath = "ESPHome";
+export class ESPHomeDeviceStore extends PanelStoreBase {
     readonly monaco_file: MonacoFileStore;
 
-    constructor(readonly device: TDevice) {
-        this.monaco_file = createMonacoFileStore_url(true, "yaml", api.url_device(device.id, "esphome"));
-        makeAutoObservable(this);
+    constructor(device_id: string) {
+        super({
+            device_id,
+            operation: "esphome_device",
+        });
+        this.monaco_file = createMonacoFileStore_url(true, "yaml", api.url_device(device_id, "esphome"));
     }
 
     async loadIfNeeded() {
