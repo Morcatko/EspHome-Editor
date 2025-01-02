@@ -1,18 +1,17 @@
-import { useQueryState, parseAsJson } from 'nuqs'
+//import { useQueryState, parseAsJson } from 'nuqs'
 import { TDevice, TLocalFile } from "@/server/devices/types";
 import { TPanel } from "./panels-store/types";
+import { useSessionStorage } from 'usehooks-ts';
 
 export const usePanelsStore = () => {
-    
-    const [qsPanel, setQsPanel] = useQueryState<TPanel>('panel', parseAsJson(v => v as TPanel));
-
-    const setPanel = (panel: TPanel) => {
-        console.log("setPanel", panel);
-        setQsPanel(panel);
-    }
+    //const [panel, setPanel] = useQueryState<TPanel>('panel', parseAsJson(v => v as TPanel));
+    const [panel, setPanel] = useSessionStorage<TPanel | null>("panel", null,{
+        serializer: JSON.stringify,
+        deserializer: JSON.parse,
+    });
 
     return {
-        panel: qsPanel,
+        panel: panel,
         add_localDevice: (device: TDevice) => setPanel({ device_id: device.id, operation: "local_device" }),
         add_localFile: (device: TDevice, file: TLocalFile) => setPanel({ device_id: device.id, operation: "local_file", path: file.path }),
         add_diff: (device: TDevice) => setPanel({device_id: device.id, operation: "diff"}),
