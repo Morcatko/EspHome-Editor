@@ -140,7 +140,7 @@ export const DevicesTreeView = () => {
     const devicesStore = useDevicesStore();
     const exp = devicesStore.expanded;
 
-    const pinQuery = useQuery({
+    const pingQuery = useQuery({
         queryKey: ['ping'],
         refetchInterval: 1000,
         queryFn: api.getPing,
@@ -149,7 +149,7 @@ export const DevicesTreeView = () => {
 
     const getDeviceColor = (d: TDevice) => 
         d.esphome_config
-            ? pinQuery?.data?.[d.esphome_config]
+            ? pingQuery?.data?.[d.esphome_config]
                 ? color_online
                 : color_offline
             : undefined;
