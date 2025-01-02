@@ -38,12 +38,5 @@ export const usePanelsStore = () => {
     return {
         panel: panel,
         handleClick,
-        /*add_localDevice: (device: TDevice) => goTo({ device_id: device.id, operation: "local_device" }),
-        add_localFile: (device: TDevice, file: TLocalFile) => goTo({ device_id: device.id, operation: "local_file", path: file.path }),
-        add_diff: (device: TDevice) => goTo({ device_id: device.id, operation: "diff" }),
-        add_espHomeDevice: (device: TDevice) => goTo({ device_id: device.id, operation: "esphome_device" }),
-        add_espHomeCompile: (device: TDevice) => goTo({ device_id: device.id, operation: "esphome_compile" }),
-        add_espHomeInstall: (device: TDevice) => goTo({ device_id: device.id, operation: "esphome_install" }),
-        add_espHomeLog: (device: TDevice) => goTo({ device_id: device.id, operation: "esphome_log" }),*/
     };
 }
