@@ -25,6 +25,7 @@
     "monaco-editor": "^0.52.2",
     "next": "^15.1.0",
     "next-ws": "^1.1.1",
+    "nuqs": "^2.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hot-toast": "^2.4.1",

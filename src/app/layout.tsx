@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import "./globals.css";
 import 'split-pane-react/esm/themes/default.css';
 import { ClientLayout } from "./client-layout";
@@ -18,10 +19,12 @@ export default function RootLayout({
       <body
         className={`antialiased h-full`}
       >
-        <ClientLayout>
-          {children}
-          <Toaster />
-        </ClientLayout>
+        <NuqsAdapter>
+          <ClientLayout>
+            {children}
+            <Toaster />
+          </ClientLayout>
+        </NuqsAdapter>
       </body>
     </html>
   );

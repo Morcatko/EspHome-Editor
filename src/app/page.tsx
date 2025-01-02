@@ -1,17 +1,13 @@
 "use client";
-import { useEffect } from "react";
 import { DevicesTreeView } from "./components/devices-tree-view";
 import { PanelsContainer } from "./components/panels-container";
-import { useStore } from "./stores";
 import { Heading, Spinner } from "@primer/react";
-import { observer } from "mobx-react-lite";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "./utils/api-client";
 import { LinkExternalIcon } from "@primer/octicons-react";
 import { useDevicesStore } from "./stores/devices-store";
 
-export default observer(() => {
-	const store = useStore();
+export default () => {
 	const devices = useDevicesStore();
 
 	const query = useQuery({
@@ -34,4 +30,4 @@ export default observer(() => {
 			</div>
 			<div style={{ gridArea: "1/2/4/2" }} className="border-l border-slate-200"><PanelsContainer /></div>
 		</div>
-});
+};

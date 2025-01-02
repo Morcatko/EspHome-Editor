@@ -2,13 +2,13 @@
 import { useQuery } from "@tanstack/react-query";
 import Image from 'next/image';
 import { ActionBar, ActionList, ActionMenu, ButtonBaseProps, IconButton, TreeView } from "@primer/react";
-import { useStore } from "../stores";
 import { TDevice, TLocalFileOrDirectory, TParent } from "@/server/devices/types";
 import { BeakerIcon, CodeIcon, DownloadIcon, KebabHorizontalIcon, FileDirectoryIcon, GitCompareIcon, LightBulbIcon, LogIcon, UploadIcon, PencilIcon, FileCodeIcon, QuestionIcon, XIcon } from "@primer/octicons-react";
 import { color_esphome, color_local, color_offline, color_online } from "../utils/const";
 import etajsIcon from "../etajs-logo.svg";
 import { api } from "../utils/api-client";
 import { useDevicesStore } from "../stores/devices-store";
+import { usePanelsStore } from "../stores/panels-store";
 
 const FileTypeIcon = ({ fod }: { fod: TLocalFileOrDirectory }) => {
     if (fod.type === "directory")
@@ -30,8 +30,7 @@ const ThreeDotProps = {
 }
 
 const LocalFileOrDirectory = ({ device, fod }: { device: TDevice, fod: TLocalFileOrDirectory }) => {
-    const store = useStore();
-    const panels = store.panels;
+    const panels = usePanelsStore();
     const devicesStore = useDevicesStore();
     const exp = devicesStore.expanded;
 
@@ -102,9 +101,8 @@ const LocalFiles = ({ device, parent }: { device: TDevice, parent: TParent }) =>
 }
 
 const DeviceToolbar = ({ device }: { device: TDevice }) => {
-    const store = useStore();
     const devicesStore = useDevicesStore();
-    const panels = store.panels;
+    const panels = usePanelsStore()
 
     const hasLocalFiles = !!device.files;
     const hasESPHomeConfig = !!device.esphome_config;
