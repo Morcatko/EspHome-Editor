@@ -8,7 +8,7 @@ export namespace api {
         content: string;
     };
 
-    const fixUrl = (url: string) => {
+    export const fixUrl = (url: string) => {
         url = url
             .replace("//", "/") // Replace double //
             .replace(/\/$/, ""); // Remove / at the end of url
