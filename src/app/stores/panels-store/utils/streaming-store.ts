@@ -1,3 +1,4 @@
+import { api } from "@/app/utils/api-client";
 import { log } from "@/shared/log";
 import Convert from "ansi-to-html";
 import { useEffect, useState } from "react";
@@ -10,9 +11,10 @@ const convert = new Convert({
 export const useStreamingStore = (url: string) => {
     const [data, setData] = useState<string[]>([]);
 
+    const finalUrl = new URL(api.fixUrl(url), location.href);
+    finalUrl.protocol = finalUrl.protocol === "http:" ? "ws:" : "wss:";
+    
     /*
-const finalUrl = new URL(fixUrl(url), location.href);
-        finalUrl.protocol = finalUrl.protocol === "http:" ? "ws:" : "wss:";
 
         const ws = new WebSocket(finalUrl.toString());
         ws.onmessage = (ev) => {
@@ -38,7 +40,7 @@ const finalUrl = new URL(fixUrl(url), location.href);
     const ws = useWebSocket<{
         event: string;
         data: string;
-    }>(url, {
+    }>(finalUrl.toString(), {
         share: true
     });
 
