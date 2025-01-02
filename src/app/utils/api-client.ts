@@ -1,6 +1,5 @@
-import { TDevice } from "@/server/devices/types";
 import { assertResponseAndJsonOk, assertResponseOk } from "@/shared/http-utils";
-import { log } from "@/shared/log";
+import { TGetStatus } from "../api/status/route";
 
 export namespace api {
     export type TCallResult = {
@@ -8,7 +7,7 @@ export namespace api {
         content: string;
     };
 
-    export const fixUrl = (url: string) => {
+    const fixUrl = (url: string) => {
         url = url
             .replace("//", "/") // Replace double //
             .replace(/\/$/, ""); // Remove / at the end of url
@@ -24,6 +23,12 @@ export namespace api {
             ;
 
         return encodeURIComponent(fixed);
+    }
+
+    export const getWsUrl = (url: string) => {
+        const finalUrl = new URL(fixUrl(url), location.href);
+        finalUrl.protocol = finalUrl.protocol === "http:" ? "ws:" : "wss:";
+        return finalUrl.toString();
     }
 
     export async function callGet_text(url: string): Promise<TCallResult> {
@@ -108,7 +113,7 @@ export namespace api {
     }
 
     export async function getStatus() {
-        return await callGet_json("/api/status");
+        return await callGet_json<TGetStatus>("/api/status");
     }
 
     export async function getPing() {
