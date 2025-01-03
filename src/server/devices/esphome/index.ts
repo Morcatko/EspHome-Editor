@@ -2,6 +2,7 @@ import { c } from "@/server/config";
 import type { TDevice } from "../types";
 import { esphome_stream, type StreamEvent } from "./client";
 import { log } from "@/shared/log";
+import { assertResponseAndJsonOk, assertResponseOk } from "@/shared/http-utils";
 
 type TEspHomeDevice = {
     name: string;
@@ -23,8 +24,8 @@ export namespace espHome {
             return [];
 
         try {
-            const devicesResponse: TEspHomeDevicesResponse =
-                await (await fetch(url)).json();
+            const devicesResponse = await assertResponseAndJsonOk<TEspHomeDevicesResponse>(await fetch(url))
+
             return devicesResponse
                 .configured
                 .map((d) => <TDevice>({
@@ -41,14 +42,20 @@ export namespace espHome {
         }
     };
 
-    const getDevice = async (device_id: string) =>
-        (await tryGetDevices()).find((d) => d.id === device_id);
+    const getDevice = async (device_id: string) => {
+        const device = (await tryGetDevices()).find((d) => d.id === device_id);
+        if (!device || !device.esphome_config) {
+            throw new Error(`ESPHome Device not found: ${device_id}`);
+        }
+        return device;
+    }
 
     export const getConfiguration = async (device_id: string) => {
         const device = await getDevice(device_id);
         const url = `${c.espHomeUrl}/edit?configuration=${device.esphome_config}`;
         log.debug("Getting ESPHome configuration", url);
         const response = await fetch(url);
+        assertResponseOk(response);
         return await response.text();
     };
 
@@ -56,16 +63,27 @@ export namespace espHome {
         const device = await getDevice(device_id);
         const url = `${c.espHomeUrl}/edit?configuration=${device.esphome_config}`;
         log.debug("Saving ESPHome configuration", url);
-        await fetch(url, {
+        const response = await fetch(url, {
             method: "POST",
             body: content,
         });
+        assertResponseOk(response);
     }
 
-    export const stream = (
+    export const getPing = async () => {
+        const url = `${c.espHomeUrl}/ping`;
+        //log.debug("Pinging ESPHome", url);
+        const response = await fetch(url);
+        return await assertResponseAndJsonOk(response);
+    }
+
+    export const stream = async (
         device_id: string,
         path: string,
         spawnParams: Record<string, any> | null,
         onEvent: (event: StreamEvent) => void,
-    ) => esphome_stream(path, { ...spawnParams, configuration: device_id }, onEvent);
+    ) => {
+        const device = await getDevice(device_id);
+        await esphome_stream(path, { ...spawnParams, configuration: device.esphome_config }, onEvent);
+    }
 }

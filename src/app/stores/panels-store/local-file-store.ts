@@ -17,7 +17,7 @@ export class LocalFileStore implements IPanelsStore {
         this.left_file = createMonacoFileStore_url(false, "yaml", api.url_local_path(device.id, file.path));
         
         this.right_file = file.compiler !== "none"
-            ? new MonacoFileStore(true, "yaml",() => api.local_path_compile(device, file.path, this.test_file?.content))
+            ? new MonacoFileStore(true, "yaml",() => api.local_path_compile(device.id, file.path, this.test_file?.content))
             : null;
         makeAutoObservable(this);
 

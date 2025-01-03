@@ -13,7 +13,7 @@ import { ESPHomeLogStore } from "../stores/panels-store/esphome-log-store";
 import { IPanelsStore } from "../stores/panels-store/utils/IPanelsStore";
 import { LocalFilePanel } from "./panels/local-file-panel";
 
-const PanelContent = observer(({ tabStore } : {tabStore: IPanelsStore}) => {
+const PanelContent = observer(({ tabStore }: { tabStore: IPanelsStore }) => {
     if (tabStore instanceof ESPHomeDeviceStore) {
         return <SingleEditor store={tabStore.monaco_file} />;
     } else if (tabStore instanceof LocalFileStore) {
@@ -21,7 +21,7 @@ const PanelContent = observer(({ tabStore } : {tabStore: IPanelsStore}) => {
     } else if (tabStore instanceof LocalDeviceStore) {
         return <SingleEditor store={tabStore.monaco_file} />;
     } else if (tabStore instanceof DeviceDiffStore) {
-        return <DiffEditor 
+        return <DiffEditor
             left_store={tabStore.left_file}
             right_store={tabStore.right_file} />;
     } else if (tabStore instanceof ESPHomeCompileStore) {
@@ -37,14 +37,21 @@ const PanelContent = observer(({ tabStore } : {tabStore: IPanelsStore}) => {
     return <div>Noting selected</div>;
 });
 
+const PanelHeader = observer(({ panel }: { panel: IPanelsStore }) => {
+    return <div>
+        <span>{panel.device.name} - </span>
+        <span>{panel.dataPath}</span>
+    </div>
+});
+
 export const PanelsContainer = observer(() => {
     const store = useStore();
 
-    const tabStore = store.panels.tab;
+    const panel = store.panels.tab;
 
-    tabStore?.loadIfNeeded();
+    panel?.loadIfNeeded();
 
-    if (!tabStore) {
+    if (!panel) {
         return null;
     }
 
@@ -53,11 +60,8 @@ export const PanelsContainer = observer(() => {
         display: "grid",
         gridTemplateRows: "auto 1fr",
     }}>
-        <div>
-            <span>{tabStore.device.name} - </span>
-            <span>{tabStore.dataPath}</span>
-        </div>
-        <PanelContent tabStore={tabStore} />
+        <PanelHeader panel={panel} />
+        <PanelContent tabStore={panel} />
     </div>
-    
+
 });

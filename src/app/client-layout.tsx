@@ -2,9 +2,10 @@
 import { useEffect } from "react";
 import { loader } from "@monaco-editor/react";
 import { ThemeProvider, BaseStyles } from '@primer/react'
-import { rootStore, RootStoreContext } from "./stores";
+import { queryClient, rootStore, RootStoreContext } from "./stores";
 import { InputTextDialog } from "./components/dialogs/input-text-dialog";
 import { ConfirmationDialog } from "./components/dialogs/confirmation-dialog";
+import { QueryClientProvider } from "@tanstack/react-query";
 
 export function ClientLayout({
   children,
@@ -23,11 +24,13 @@ export function ClientLayout({
   });
 
   return (<RootStoreContext.Provider value={rootStore}>
-    <ThemeProvider colorMode="auto" preventSSRMismatch>
-      {children}
-      <InputTextDialog />
-      <ConfirmationDialog />
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider colorMode="auto" preventSSRMismatch>
+        {children}
+        <InputTextDialog />
+        <ConfirmationDialog />
+      </ThemeProvider>
+    </QueryClientProvider>
   </RootStoreContext.Provider>
   );
 }

@@ -8,10 +8,9 @@ export async function init() {
 
     await initConfig();
 
-        
     if (!await directoryExists(c.devicesDir)) {
-        log.fatal('Devices directory does not exist:', c.devicesDir);
-        return;
+        log.info('Creating devices directory');
+        await fs.mkdir(c.devicesDir);
     }
     if (!await directoryExists(c.devicesDir + "/.lib"))
     {
@@ -22,6 +21,7 @@ export async function init() {
     log.info("Config:", {
         devicesDir: c.devicesDir,
         espHomeUrl: c.espHomeUrl,
+        version: c.version,
     });
 
     log.success("Initialization complete");
