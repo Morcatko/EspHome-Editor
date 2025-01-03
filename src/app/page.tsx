@@ -15,7 +15,7 @@ export default () => {
 		? <div className="h-screen flex items-center justify-center">
 			<Spinner className="content-center" />
 		</div>
-		: <div style={{ gridTemplateColumns: "18rem 1fr", gridTemplateRows: "56px 1fr auto", gridGap: "1px" }} className="h-screen grid" >
+		: <div style={{ gridTemplateColumns: "18rem 1fr", gridTemplateRows: "56px 1fr auto", gridGap: "1px" }} className="h-screen w-screen grid" >
 			<div style={{ gridArea: "1/1/1/1", lineHeight: '56px' }} className="border-b border-slate-200 text-center" >
 				<Heading className="inline-block align-baseline text-slate-600 dark:text-slate-400" variant="small" >Editor for ESPHome</Heading>
 			</div>
