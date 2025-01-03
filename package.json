@@ -19,6 +19,7 @@
     "@types/ws": "^8.5.13",
     "ansi-to-html": "^0.7.2",
     "consola": "^3.2.3",
+    "dockview-react": "^3.0.0",
     "eta": "^3.5.0",
     "mobx": "^6.13.5",
     "mobx-react-lite": "^4.1.0",

@@ -20,8 +20,6 @@ export const usePanelsStore = () => {
         operation: TPanel["operation"],
         file: TLocalFileOrDirectory | undefined = undefined) => {
 
-        console.log("handle click", e);
-
         const panel: TPanel = (operation === "local_file")
             ? { device_id: device.id, operation, path: file!.path }
             : { device_id: device.id, operation };
