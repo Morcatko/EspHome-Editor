@@ -4,11 +4,32 @@ import { TDevice, TLocalFileOrDirectory } from "@/server/devices/types";
 import { TPanel } from "./panels-store/types";
 import { useSessionStorage } from 'usehooks-ts';
 import { useStatusStore } from "./status-store";
-import { useState } from 'react';
 import { DockviewApi } from 'dockview-react';
 
 const setLastClickAtom = atom<string>("initial");
 const dockViewApiAtom = atom<DockviewApi | null>(null);
+
+function getPanelTitle(panel: TPanel) {
+    switch (panel.operation) {
+        case "local_file":
+            return `${panel.device_id} -  ${panel.path}`;
+        case "local_device":
+            return `Local - ${panel.device_id}`;
+        case "esphome_device":
+            return `ESPHome - ${panel.device_id}`;
+        case "diff":
+            return `DIFF - ${panel.device_id}`;
+        case "esphome_compile":
+            return `Compile - ${panel.device_id}`;
+        case "esphome_install":
+            return `Install - ${panel.device_id}`;
+        case "esphome_log":
+            return `Log - ${panel.device_id}`;
+        default:
+            return `Unknown`;
+    }
+}
+
 
 export const usePanelsStore = () => {
     const status = useStatusStore();
@@ -34,6 +55,7 @@ export const usePanelsStore = () => {
         else
             api.addPanel<TPanel>({
                 id: id,
+                title: getPanelTitle(panel),
                 component: "panel",
                 params: panel,
             });

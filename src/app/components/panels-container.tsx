@@ -7,27 +7,7 @@ import { EspHomeInstallPanel } from "./panels/esphome-install-panel";
 import { EspHomeCompilePanel } from "./panels/esphome-compile-panel";
 import { TPanel } from "../stores/panels-store/types";
 import { usePanelsStore } from "../stores/panels-store";
-import { DockviewDefaultTab, DockviewReact, DockviewReadyEvent, IDockviewPanelProps } from "dockview-react";
-
-const PanelHeader = ({ panel }: { panel: TPanel }) => {
-    switch (panel.operation) {
-        case "local_file":
-            return <div>{panel.device_id} -  {panel.path}</div>;
-        case "local_device":
-            return <div>Local - {panel.device_id}</div>;
-        case "esphome_device":
-            return <div>ESPHome - {panel.device_id}</div>;
-        case "diff":
-            return <div>DIFF - {panel.device_id}</div>;
-        case "esphome_compile":
-            return <div>Compile - {panel.device_id}</div>;
-        case "esphome_install":
-            return <div>Install - {panel.device_id}</div>;
-        case "esphome_log":
-            return <div>Log - {panel.device_id}</div>;
-    }
-    return <div>Unknown</div>;
-};
+import { DockviewDefaultTab, DockviewReact, IDockviewPanelHeaderProps, IDockviewPanelProps } from "dockview-react";
 
 const components = {
     panel: (p: IDockviewPanelProps<TPanel>) => {
@@ -53,20 +33,19 @@ const components = {
     }
 };
 
+/*const tabComponents = {
+    panel: (p: IDockviewPanelHeaderProps<TPanel>) => {
+        return <DockviewDefaultTab {...p}  hideClose />;
+    }
+};*/
 
 export const PanelsContainer = () => {
     const panelsStore = usePanelsStore();
-    
-    const onReady = (event: DockviewReadyEvent) => panelsStore.setApi(event.api);
 
-    return <div style={{
-        height: "100%",
-    }}>
-        <DockviewReact
-            className='dockview-theme-light'
-            onReady={onReady}
-            components={components}
-            //defaultTabComponent={(props) => <DockviewDefaultTab {...props} hideClose />}
-        />
-    </div>
+    return <DockviewReact
+        className='dockview-theme-light h-full'
+        onReady={(e) => panelsStore.setApi(e.api)}
+        components={components}
+        //tabComponents={tabComponents}
+    />
 };
