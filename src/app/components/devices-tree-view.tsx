@@ -144,7 +144,6 @@ export const DevicesTreeView = () => {
         queryKey: ['ping'],
         refetchInterval: 1000,
         queryFn: api.getPing,
-        enabled: false
     });
 
     const getDeviceColor = (d: TDevice) => 
