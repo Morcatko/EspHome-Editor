@@ -1,8 +1,11 @@
+import { atom, useAtom } from 'jotai';
 import { useQueryState, parseAsJson } from 'nuqs'
 import { TDevice, TLocalFileOrDirectory } from "@/server/devices/types";
 import { TPanel } from "./panels-store/types";
 import { useSessionStorage } from 'usehooks-ts';
 import { useStatusStore } from "./status-store";
+
+const setLastClickAtom = atom<string>("initial");
 
 export const usePanelsStore = () => {
     const status = useStatusStore();
@@ -13,6 +16,8 @@ export const usePanelsStore = () => {
             deserializer: JSON.parse,
         })
         : useQueryState<TPanel>('panel', parseAsJson(v => v as TPanel));
+
+    const [lastClick, setLastClick] = useAtom(setLastClickAtom);
 
     const handleClick = (
         e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>,
@@ -29,12 +34,15 @@ export const usePanelsStore = () => {
             currentUrl.searchParams.set('panel', JSON.stringify(panel));
             window.open(currentUrl.toString(), '_blank')?.focus();
         }
-        else
+        else {
             setPanel(panel);
+            setLastClick(new Date().toISOString());
+        }
     }
 
     return {
         panel: panel,
+        lastClick: lastClick,
         handleClick,
     };
 }
