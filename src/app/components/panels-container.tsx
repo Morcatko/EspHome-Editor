@@ -42,14 +42,10 @@ const components = {
 export const PanelsContainer = () => {
     const panelsStore = usePanelsStore();
 
-    return <div
-    className="absolute h-full"
-        style={{ left: '18rem', right: 0 }}
-    ><DockviewReact
-            className='dockview-theme-light'
+    return <DockviewReact
+            className='dockview-theme-light absolute h-full w-full'
             onReady={(e) => panelsStore.setApi(e.api)}
             components={components}
         //tabComponents={tabComponents}
-        />
-        </div>;
+        />;
 };
