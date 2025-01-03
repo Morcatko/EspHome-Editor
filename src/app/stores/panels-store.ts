@@ -4,19 +4,40 @@ import { TDevice, TLocalFileOrDirectory } from "@/server/devices/types";
 import { TPanel } from "./panels-store/types";
 import { useSessionStorage } from 'usehooks-ts';
 import { useStatusStore } from "./status-store";
+import { useState } from 'react';
+import { DockviewApi } from 'dockview-react';
 
 const setLastClickAtom = atom<string>("initial");
+const dockViewApiAtom = atom<DockviewApi | null>(null);
 
 export const usePanelsStore = () => {
     const status = useStatusStore();
 
-    const [panel, setPanel] = status.isHaAddon
+     const [api, setApi] = useAtom(dockViewApiAtom);
+
+/*    const [panel, setPanel] = status.isHaAddon
         ? useSessionStorage<TPanel | null>("panel", null, {
             serializer: JSON.stringify,
             deserializer: JSON.parse,
         })
         : useQueryState<TPanel>('panel', parseAsJson(v => v as TPanel));
+*/
 
+    const setPanel = (panel: TPanel) => {
+        if (!api) return;
+        const id = `${panel.operation}_${panel.device_id}_${(panel as any)?.path}`;
+
+        const existingPanel = api?.panels.find(p => p.id === id)
+        
+        if (existingPanel) 
+            existingPanel.focus();
+        else
+            api.addPanel<TPanel>({
+                id: id,
+                component: "panel",
+                params: panel,
+            });
+    }
     const [lastClick, setLastClick] = useAtom(setLastClickAtom);
 
     const handleClick = (
@@ -41,8 +62,9 @@ export const usePanelsStore = () => {
     }
 
     return {
-        panel: panel,
+        //panel: panel,
         lastClick: lastClick,
+        setApi: setApi,
         handleClick,
     };
 }
