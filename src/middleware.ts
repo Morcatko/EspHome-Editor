@@ -8,7 +8,6 @@ export function middleware(request: NextRequest) {
     return NextResponse.rewrite(newUrl);
 }
 
-// See "Matching Paths" below to learn more
 export const config = {
     matcher: '/_next/static/css/_next/static/:path*',
 }
