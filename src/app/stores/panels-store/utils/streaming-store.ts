@@ -4,6 +4,7 @@ import { log } from "@/shared/log";
 import Convert from "ansi-to-html";
 import { useEffect, useState } from "react";
 import useWebSocket from "react-use-websocket";
+import { usePanelsStore } from "../../panels-store";
 
 const convert = new Convert({
     stream: true,
@@ -11,11 +12,24 @@ const convert = new Convert({
 
 export const useStreamingStore = (url: string) => {
     const [data, setData] = useState<string[]>([]);
+    const [connect, setConnect] = useState<boolean>(true);
+    const { lastClick } = usePanelsStore();
 
     const ws = useWebSocket<TWsMessage>(
         api.getWsUrl(url), {
         share: true
-    });
+    }, connect);
+
+
+    //Set connect to false -> true when lastClick (or url) changes
+    useEffect(() => {
+        if (!connect) {
+            setConnect(true);
+            setData([]);
+        }
+    }, [connect, url]);
+
+    useEffect(() => setConnect(false), [lastClick]);
 
     useEffect(() => {
         if (!ws.lastJsonMessage?.event) return;
@@ -42,7 +56,7 @@ export const useStreamingStore = (url: string) => {
         }
     }, [ws.lastJsonMessage]);
 
-    useEffect(() => setData([]), [url]);
-
-    return data;
+    return data
 }
+
+
