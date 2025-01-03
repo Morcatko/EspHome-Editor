@@ -43,7 +43,8 @@ export const useLocalFileStore = (device_id: string, file_path : string) => {
     const leftMutation = useMutation({
         mutationFn: async (v: string) => api.local_save(device_id, file_path, v),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["device", device_id, "local-file", file_path, "compiled"] })
+            queryClient.invalidateQueries({ queryKey: ["device", device_id, "local-file", file_path, "compiled"] });
+            queryClient.invalidateQueries({ queryKey: ["device", device_id, "local"] });
         }
     });
 
