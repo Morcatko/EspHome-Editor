@@ -1,22 +1,17 @@
 "use client";
-import { useEffect } from "react";
 import { DevicesTreeView } from "./components/devices-tree-view";
 import { PanelsContainer } from "./components/panels-container";
-import { useStore } from "./stores";
 import { Heading, Spinner } from "@primer/react";
-import { observer } from "mobx-react-lite";
 import { LinkExternalIcon } from "@primer/octicons-react";
+import { useDevicesStore } from "./stores/devices-store";
 import { useStatusStore } from "./stores/status-store";
 
-export default observer(() => {
-	const store = useStore();
-	useEffect(() => {
-		store.devices.loadIfNeeded()
-	});
+export default () => {
+	const devices = useDevicesStore();
 
 	const statusStore = useStatusStore();
 
-	return (store.devices.asyncState !== "loaded")
+	return (devices.query.isLoading)
 		? <div className="h-screen flex items-center justify-center">
 			<Spinner className="content-center" />
 		</div>
@@ -31,4 +26,4 @@ export default observer(() => {
 			</div>
 			<div style={{ gridArea: "1/2/4/2" }} className="border-l border-slate-200"><PanelsContainer /></div>
 		</div>
-});
+};

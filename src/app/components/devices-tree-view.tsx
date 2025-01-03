@@ -1,14 +1,14 @@
 "use client";
-import { observer } from "mobx-react-lite";
 import { useQuery } from "@tanstack/react-query";
 import Image from 'next/image';
 import { ActionBar, ActionList, ActionMenu, ButtonBaseProps, IconButton, TreeView } from "@primer/react";
-import { useStore } from "../stores";
 import { TDevice, TLocalFileOrDirectory, TParent } from "@/server/devices/types";
 import { BeakerIcon, CodeIcon, DownloadIcon, KebabHorizontalIcon, FileDirectoryIcon, GitCompareIcon, LightBulbIcon, LogIcon, UploadIcon, PencilIcon, FileCodeIcon, QuestionIcon, XIcon } from "@primer/octicons-react";
 import { color_esphome, color_local, color_offline, color_online } from "../utils/const";
 import etajsIcon from "../etajs-logo.svg";
 import { api } from "../utils/api-client";
+import { useDevicesStore } from "../stores/devices-store";
+import { usePanelsStore } from "../stores/panels-store";
 
 const FileTypeIcon = ({ fod }: { fod: TLocalFileOrDirectory }) => {
     if (fod.type === "directory")
@@ -30,9 +30,8 @@ const ThreeDotProps = {
 }
 
 const LocalFileOrDirectory = ({ device, fod }: { device: TDevice, fod: TLocalFileOrDirectory }) => {
-    const store = useStore();
-    const panels = store.panels;
-    const devicesStore = store.devices;
+    const panels = usePanelsStore();
+    const devicesStore = useDevicesStore();
     const exp = devicesStore.expanded;
 
     return <TreeView.Item
@@ -42,7 +41,7 @@ const LocalFileOrDirectory = ({ device, fod }: { device: TDevice, fod: TLocalFil
         onExpandedChange={(e) => exp.set(`${device.id}/${fod.path}`, e)}
         onSelect={
             (fod.type === "file")
-                ? () => panels.add_localFile(device, fod)
+                ? (e) => panels.handleClick(e, device, "local_file", fod)
                 : undefined} >
         <TreeView.LeadingVisual>
             <div style={{ opacity: "55%" }}>
@@ -102,9 +101,8 @@ const LocalFiles = ({ device, parent }: { device: TDevice, parent: TParent }) =>
 }
 
 const DeviceToolbar = ({ device }: { device: TDevice }) => {
-    const store = useStore();
-    const devicesStore = store.devices;
-    const panels = store.panels;
+    const devicesStore = useDevicesStore();
+    const panels = usePanelsStore()
 
     const hasLocalFiles = !!device.files;
     const hasESPHomeConfig = !!device.esphome_config;
@@ -123,29 +121,29 @@ const DeviceToolbar = ({ device }: { device: TDevice }) => {
     return <div style={{ marginLeft: '-16px' }}>
         <ActionBar aria-label="Device tools" size="small">
             {hasLocalFiles
-                ? <ActionBar.IconButton key="show_local" sx={{ color: color_local }} icon={CodeIcon} onClick={() => panels.add_localDevice(device)} aria-label="Show local yaml configuration" />
+                ? <ActionBar.IconButton key="show_local" sx={{ color: color_local }} icon={CodeIcon} onClick={(e) => panels.handleClick(e, device, "local_device")} aria-label="Show local yaml configuration" />
                 : <ActionBar.IconButton key="create_local" sx={{ color: color_local }} icon={DownloadIcon} onClick={() => devicesStore.localDevice_import(device)} aria-label="Import yaml configuration" />
             }
             <ActionBar.Divider key="div1" />
-            <ActionBar.IconButton key="diff" {...bothProps} icon={GitCompareIcon} onClick={() => panels.add_diff(device)} aria-label="Show local vs ESPHome diff" />
+            <ActionBar.IconButton key="diff" {...bothProps} icon={GitCompareIcon} onClick={(e) => panels.handleClick(e, device, "diff")} aria-label="Show local vs ESPHome diff" />
             <ActionBar.IconButton key="upload" {...bothProps} icon={UploadIcon} onClick={() => devicesStore.espHome_upload(device)} aria-label="Upload local to ESPHome" />
             <ActionBar.Divider key="div2" />
-            <ActionBar.IconButton key="show_esphome" {...espHomeProps} icon={CodeIcon} onClick={() => panels.add_espHomeDevice(device)} aria-label="Show ESPHome configuration" />
-            <ActionBar.IconButton key="compile" {...espHomeProps} icon={BeakerIcon} onClick={() => panels.add_espHomeCompile(device)} aria-label="Compile ESPHome configuration" />
-            <ActionBar.IconButton key="install" {...espHomeProps} icon={UploadIcon} onClick={() => panels.add_espHomeInstall(device)} aria-label="Install ESPHome configuration to device" />
-            <ActionBar.IconButton key="log" {...espHomeProps} icon={LogIcon} onClick={() => panels.add_espHomeLog(device)} aria-label="Show ESPHome device logs" />
+            <ActionBar.IconButton key="show_esphome" {...espHomeProps} icon={CodeIcon} onClick={(e) => panels.handleClick(e, device, "esphome_device")} aria-label="Show ESPHome configuration" />
+            <ActionBar.IconButton key="compile" {...espHomeProps} icon={BeakerIcon} onClick={(e) => panels.handleClick(e, device, "esphome_compile")} aria-label="Compile ESPHome configuration" />
+            <ActionBar.IconButton key="install" {...espHomeProps} icon={UploadIcon} onClick={(e) => panels.handleClick(e, device, "esphome_install")} aria-label="Install ESPHome configuration to device" />
+            <ActionBar.IconButton key="log" {...espHomeProps} icon={LogIcon} onClick={(e) => panels.handleClick(e, device, "esphome_log")} aria-label="Show ESPHome device logs" />
         </ActionBar>
     </div>;
 }
 
-export const DevicesTreeView = observer(() => {
-    const devicesStore = useStore().devices;
+export const DevicesTreeView = () => {
+    const devicesStore = useDevicesStore();
     const exp = devicesStore.expanded;
 
     const pingQuery = useQuery({
         queryKey: ['ping'],
         refetchInterval: 1000,
-        queryFn: api.getPing 
+        queryFn: api.getPing,
     });
 
     const getDeviceColor = (d: TDevice) => 
@@ -157,7 +155,7 @@ export const DevicesTreeView = observer(() => {
 
     return (
         <TreeView>
-            {devicesStore.devices.map((d) =>
+            {devicesStore.query.data?.map((d) =>
                 { 
                     const isLib = d.name == ".lib";
                 
@@ -205,4 +203,4 @@ export const DevicesTreeView = observer(() => {
                 })
         }
         </TreeView>);
-});
+};
