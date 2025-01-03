@@ -1,11 +1,30 @@
 import { api } from "@/app/utils/api-client";
-import { IPanelsStore } from "./utils/IPanelsStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { TEditorFileProps } from "./types";
-import { TDevice, TLocalFile } from "@/server/devices/types";
+import { TLocalFile, TLocalFileOrDirectory } from "@/server/devices/types";
+import { useDevicesStore } from "../devices-store";
 
-export const useLocalFileStore = (device_id: string, file: TLocalFile) => {
-    const file_path = file.path;
+const findFile = (fods: TLocalFileOrDirectory[], file_path: string): TLocalFile | null => {
+    for (const fod of fods) {
+        if (fod.type === "file" && fod.path === file_path) {
+            return fod;
+        }
+        if (fod.type === "directory") {
+            const file = findFile(fod.files!, file_path);
+            if (file) {
+                return file;
+            }
+        }
+    }
+    return null;
+}
+
+export const useLocalFileStore = (device_id: string, file_path : string) => {
+    
+    const devices = useDevicesStore().query.data;
+    const device = devices?.find(d => d.id === device_id);
+    const file = findFile(device?.files ?? [], file_path)!;
+
     const hasRightFile = file.compiler !== "none";
 
 
@@ -42,14 +61,3 @@ export const useLocalFileStore = (device_id: string, file: TLocalFile) => {
             : null
     }
 };
-
-
-
-export class LocalFileStore implements IPanelsStore {
-    readonly dataPath: string;
-    constructor(readonly device: TDevice, readonly file: TLocalFile) {
-        this.dataPath = file.path;
-    }
-
-    async loadIfNeeded() { }
-}

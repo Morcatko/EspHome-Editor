@@ -99,9 +99,28 @@ const model = Model.fromJson(json);
 export const PanelsContainer = observer(() => {
     const store = useStore();
 
-    const tabStore = store.panels.tab;
+const PanelHeader = ({ panel }: { panel: TPanel }) => {
+    switch (panel.operation) {
+        case "local_file":
+            return <div>{panel.device_id} -  {panel.path}</div>;
+        case "local_device":
+            return <div>Local - {panel.device_id}</div>;
+        case "esphome_device":
+            return <div>ESPHome - {panel.device_id}</div>;
+        case "diff":
+            return <div>DIFF - {panel.device_id}</div>;
+        case "esphome_compile":
+            return <div>Compile - {panel.device_id}</div>;
+        case "esphome_install":
+            return <div>Install - {panel.device_id}</div>;
+        case "esphome_log":
+            return <div>Log - {panel.device_id}</div>;
+    }
+    return <div>Unknown</div>;
+};
 
-    tabStore?.loadIfNeeded();
+export const PanelsContainer = () => {
+    const panel = usePanelsStore().panel;
 
     if (!tabStore) {
         return <div className="relative h-full w-full"><Layout
@@ -117,11 +136,8 @@ export const PanelsContainer = observer(() => {
         display: "grid",
         gridTemplateRows: "auto 1fr",
     }}>
-        <div>
-            <span>{tabStore.device.name} - </span>
-            <span>{tabStore.dataPath}</span>
-        </div>
-        <PanelContent tabStore={tabStore} />
+        <PanelHeader panel={panel} />
+        <PanelContent panel={panel} />
     </div>
 
 });

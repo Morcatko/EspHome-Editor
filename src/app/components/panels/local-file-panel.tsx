@@ -1,7 +1,6 @@
 import { useLocalFileStore } from "@/app/stores/panels-store/local-file-store";
 import { SplitEditor } from "../editors/split-editor";
 import { useState } from "react";
-import { TLocalFile } from "@/server/devices/types";
 
 // const EtaJsBanner = ({ store }: { store: LocalFileStore }) => {
 //     const [sizes, setSizes] = useState<(number | string)[]>([
@@ -37,13 +36,8 @@ import { TLocalFile } from "@/server/devices/types";
 //             return null;
 //     }
 // }
-export const LocalFilePanel = ({ device_id, file }: { device_id: string, file: TLocalFile }) => {
-    const [sizes, setSizes] = useState<(number | string)[]>([
-        '150px',
-        'auto',
-    ]);
-
-    const data = useLocalFileStore(device_id, file);
+export const LocalFilePanel = ({ device_id, file_path }: { device_id: string, file_path: string }) => {
+    const data = useLocalFileStore(device_id, file_path);
 
     return <SplitEditor
         leftEditor={data.leftEditor} 

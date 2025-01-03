@@ -1,26 +1,17 @@
 "use client";
-import { useEffect } from "react";
 import { DevicesTreeView } from "./components/devices-tree-view";
 import { PanelsContainer } from "./components/panels-container";
-import { useStore } from "./stores";
 import { Heading, Spinner } from "@primer/react";
-import { observer } from "mobx-react-lite";
-import { useQuery } from "@tanstack/react-query";
-import { api } from "./utils/api-client";
 import { LinkExternalIcon } from "@primer/octicons-react";
+import { useDevicesStore } from "./stores/devices-store";
+import { useStatusStore } from "./stores/status-store";
 
-export default observer(() => {
-	const store = useStore();
-	useEffect(() => {
-		store.devices.loadIfNeeded()
-	});
+export default () => {
+	const devices = useDevicesStore();
 
-	const query = useQuery({
-		queryKey: ['status'],
-		queryFn: api.getStatus
-	});
+	const statusStore = useStatusStore();
 
-	return (store.devices.asyncState !== "loaded")
+	return (devices.query.isLoading)
 		? <div className="h-screen flex items-center justify-center">
 			<Spinner className="content-center" />
 		</div>
@@ -30,9 +21,9 @@ export default observer(() => {
 			</div>
 			<div style={{ gridArea: "2/1/2/1" }} className="pl-1 overflow-y-auto"><DevicesTreeView /></div>
 			<div style={{ gridArea: "3/1/3/1" }} className="border-t border-slate-200 text-center">
-				<div className="text-slate-400">{query.isSuccess && query.data?.version}</div>
+				<div className="text-slate-400">{statusStore.query.isSuccess && statusStore.query.data?.version}</div>
 				<div className="text-blue-300 text-sm underline"><a href="https://github.com/Morcatko/EspHome-Editor/issues" target="_blank">feedback <LinkExternalIcon className="inline" /></a></div>
 			</div>
 			<div style={{ gridArea: "1/2/4/2" }} className="border-l border-slate-200"><PanelsContainer /></div>
 		</div>
-});
+};
