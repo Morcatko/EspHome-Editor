@@ -1,7 +1,7 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
 import Image from 'next/image';
-import { ActionBar, ActionList, ActionMenu, ButtonBaseProps, IconButton, TreeView } from "@primer/react";
+import { ActionBar, ActionList, ActionMenu, ButtonBaseProps, IconButton, IconButtonProps, TreeView } from "@primer/react";
 import { TDevice, TLocalFileOrDirectory, TParent } from "@/server/devices/types";
 import { BeakerIcon, CodeIcon, DownloadIcon, KebabHorizontalIcon, FileDirectoryIcon, GitCompareIcon, LightBulbIcon, LogIcon, UploadIcon, PencilIcon, FileCodeIcon, QuestionIcon, XIcon } from "@primer/octicons-react";
 import { color_esphome, color_local, color_offline, color_online } from "../utils/const";
@@ -108,12 +108,18 @@ const DeviceToolbar = ({ device }: { device: TDevice }) => {
     const hasESPHomeConfig = !!device.esphome_config;
     const hasBoth = hasLocalFiles && hasESPHomeConfig;
 
+    const allProps = {
+        tooltipDirection: "n" as (IconButtonProps["tooltipDirection"]),
+    }
+
     const bothProps = {
+        ...allProps,
         disabled: !hasBoth,
         sx: { color: hasBoth ? undefined : "lightgrey" },
     }
 
     const espHomeProps = {
+        ...allProps,
         disabled: !hasESPHomeConfig,
         sx: { color: hasESPHomeConfig ? color_esphome : "lightgrey" },
     };
@@ -121,8 +127,8 @@ const DeviceToolbar = ({ device }: { device: TDevice }) => {
     return <div style={{ marginLeft: '-16px' }}>
         <ActionBar aria-label="Device tools" size="small">
             {hasLocalFiles
-                ? <ActionBar.IconButton key="show_local" sx={{ color: color_local }} icon={CodeIcon} onClick={(e) => panels.handleClick(e, device, "local_device")} aria-label="Show local yaml configuration" />
-                : <ActionBar.IconButton key="create_local" sx={{ color: color_local }} icon={DownloadIcon} onClick={() => devicesStore.localDevice_import(device)} aria-label="Import yaml configuration" />
+                ? <ActionBar.IconButton key="show_local" {...allProps} sx={{ color: color_local }} icon={CodeIcon} onClick={(e) => panels.handleClick(e, device, "local_device")} aria-label="Show local yaml configuration" />
+                : <ActionBar.IconButton key="create_local"  {...allProps} sx={{ color: color_local }} icon={DownloadIcon} onClick={() => devicesStore.localDevice_import(device)} aria-label="Import yaml configuration" />
             }
             <ActionBar.Divider key="div1" />
             <ActionBar.IconButton key="diff" {...bothProps} icon={GitCompareIcon} onClick={(e) => panels.handleClick(e, device, "diff")} aria-label="Show local vs ESPHome diff" />
