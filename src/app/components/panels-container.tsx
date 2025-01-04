@@ -52,7 +52,7 @@ export const PanelsContainer = observer(() => {
 
     panel?.loadIfNeeded();
 
-    if (!tabStore) {
+    if (!panel) {
         return <Onboarding  />;
     }
 
