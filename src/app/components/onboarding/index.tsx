@@ -44,7 +44,7 @@ export const Onboarding = () => {
                 {/* Section: Introduction */}
                 <Section title="Introduction">
                     <p className="text-gray-700 mt-2">
-                        With the ESPHome Editor, you can combine multiple YAML files to create robust configurations for your devices. YAML files can either be written manually or generated using the Etajs template engine.
+                        With the Editor for ESPHome, you can combine multiple YAML files to create robust configurations for your devices. YAML files can either be written manually or generated using the Etajs template engine.
                     </p>
                 </Section>
 
