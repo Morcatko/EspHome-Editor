@@ -22,7 +22,7 @@ const components = {
             case "diff":
                 return <DiffPanel device_id={panel.device_id} />;
             case "esphome_compile":
-                return <EspHomeCompilePanel device_id={panel.device_id} />;
+                return <EspHomeCompilePanel key={panel.last_click ?? "last_click_none"} device_id={panel.device_id} />;
             case "esphome_install":
                 return <EspHomeInstallPanel device_id={panel.device_id} />;
             case "esphome_log":
