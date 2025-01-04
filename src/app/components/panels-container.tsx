@@ -7,7 +7,8 @@ import { EspHomeInstallPanel } from "./panels/esphome-install-panel";
 import { EspHomeCompilePanel } from "./panels/esphome-compile-panel";
 import { TPanel } from "../stores/panels-store/types";
 import { usePanelsStore } from "../stores/panels-store";
-import { DockviewDefaultTab, DockviewReact, IDockviewPanelHeaderProps, IDockviewPanelProps } from "dockview-react";
+import { DockviewReact, IDockviewPanelProps } from "dockview-react";
+import { useDarkTheme } from "@/app/utils/hooks";
 
 const components = {
     panel: (p: IDockviewPanelProps<TPanel>) => {
@@ -40,10 +41,11 @@ const components = {
 };*/
 
 export const PanelsContainer = () => {
+    const isDarkMode = useDarkTheme();
     const panelsStore = usePanelsStore();
 
     return <DockviewReact
-            className='dockview-theme-light absolute h-full w-full'
+            className={`absolute h-full w-full ${isDarkMode ? "dockview-theme-dark" : "dockview-theme-light"}`}
             onReady={(e) => panelsStore.setApi(e.api)}
             components={components}
         //tabComponents={tabComponents}
