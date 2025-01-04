@@ -13,17 +13,17 @@ function getPanelTitle(panel: TPanel) {
         case "local_file":
             return `${panel.device_id} -  ${panel.path}`;
         case "local_device":
-            return `Local - ${panel.device_id}`;
+            return `${panel.device_id} (Local)`;
         case "esphome_device":
-            return `ESPHome - ${panel.device_id}`;
+            return `${panel.device_id }(ESPHome)`;
         case "diff":
-            return `DIFF - ${panel.device_id}`;
+            return `${panel.device_id} (Diff)`;
         case "esphome_compile":
-            return `Compile - ${panel.device_id}`;
+            return `${panel.device_id} (Compile)`;
         case "esphome_install":
-            return `Install - ${panel.device_id}`;
+            return `${panel.device_id} (Install)`;
         case "esphome_log":
-            return `Log - ${panel.device_id}`;
+            return `${panel.device_id} (Log)`;
         default:
             return `Unknown`;
     }
