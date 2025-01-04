@@ -3,57 +3,72 @@ import { BeakerIcon, CodeIcon, DownloadIcon, GitCompareIcon, LogIcon, UploadIcon
 
 export const Onboarding = () => {
 
-    return <div className="md:w-3/5 md:mx-auto m-8">
-        <div className="mb-3">
-            Welcome to Editor for ESPHome. Here you can learn how to use it.
-            You can build each ESPHome device by combining multiple YAML files together.
-            The YAML file can be writtern manually or generated using etajs template.
+    return <div className="container mx-auto p-8">
+    <div className="max-w-3xl mx-auto space-y-6">
+        <div className="text-center">
+            <h1 className="text-2xl font-bold text-gray-800">Welcome to the ESPHome Editor</h1>
+            <p className="text-gray-600 mt-2">
+                Get started by learning how to use this tool to build and manage your ESPHome devices effortlessly.
+            </p>
         </div>
 
-        <div className="mb-3">
-            On the left side you can see all your ESPHome devices, The color of a loght bulb indicates its status
-            <ul className="ml-10 list-disc">
-                <li><span style={{ color: color_gray }}>gray</span> - Editor only Device</li>
-                <li>colored - Device exists in your ESPHome instance and is currently <span style={{ color: color_offline }}>offline</span>/<span style={{ color: color_online }}>online</span></li>
+        
+        <div className="bg-gray-50 p-6 rounded-lg shadow">
+            <p className="text-gray-700">
+                With the ESPHome Editor, you can combine multiple YAML files to create robust configurations for your devices. YAML files can either be written manually or generated using the Etajs template engine.
+            </p>
+        </div>
+
+        <div className="bg-gray-50 p-6 rounded-lg shadow">
+            <h2 className="text-lg font-semibold text-gray-800">Understanding Device Status</h2>
+            <p className="text-gray-700 mt-2">
+                On the left panel, you’ll see all your ESPHome devices. The status of each device is indicated by the color of the light bulb:
+            </p>
+            <ul className="list-disc ml-8 mt-3 text-gray-700 space-y-2">
+                <li><span style={{color: color_gray}} className="font-semibold">Gray</span> - Editor-only device</li>
+                <li>Colored - Device exists in your ESPHome instance and is currently <span style={{color: color_online}} className="font-semibold">online</span>/<span style={{color: color_offline}} className="font-semibold">offline</span></li>
             </ul>
         </div>
 
-        <div className="mb-3">
-            Now try expanding one of the devices. (Or create a new one - no imtplemented yet)
-            Each device has its own toolbar with quick actions (available actions depend on the device status)
-
-            <ul className="ml-5">
-                <li><DownloadIcon className="inline" fill={color_local} /> - Import configuration from ESPHome instance</li>
-                <li><CodeIcon className="inline" fill={color_local} /> - Show final compiled local version of ESPHome config</li>
-                <li><GitCompareIcon className="inline" fill={color_gray} /> - Compare local vs ESPHome config</li>
-                <li><UploadIcon className="inline" fill={color_gray} /> - Upload local configuration to ESPHome</li>
-                <li><CodeIcon className="inline" fill={color_esphome} /> - Show ESPHome configration</li>
-                <li><BeakerIcon className="inline" fill={color_esphome} /> - Compile ESPHome configration</li>
-                <li><UploadIcon className="inline" fill={color_esphome} /> - Install ESPHome configuration to a device</li>
-                <li><LogIcon className="inline" fill={color_esphome} /> - Show log stream</li>
+        <div className="bg-gray-50 p-6 rounded-lg shadow">
+            <h2 className="text-lg font-semibold text-gray-800">Device Toolbar Actions</h2>
+            <p className="text-gray-700 mt-2">
+                Expand a device or create a new one to access its toolbar. The available actions depend on the device status:
+            </p>
+            <ul className="mt-4 space-y-3">
+                <li><DownloadIcon className="inline mr-2" fill={color_local} /> Import configuration from ESPHome instance</li>
+                <li><CodeIcon className="inline mr-2" fill={color_local} /> View the compiled local ESPHome configuration</li>
+                <li><GitCompareIcon className="inline mr-2" fill={color_gray} /> Compare local vs. ESPHome configuration</li>
+                <li><UploadIcon className="inline mr-2" fill={color_gray} /> Upload local configuration to ESPHome</li>
+                <li><CodeIcon className="inline mr-2" fill={color_esphome} /> View ESPHome configuration</li>
+                <li><BeakerIcon className="inline mr-2" fill={color_esphome} /> Compile ESPHome configuration</li>
+                <li><UploadIcon className="inline mr-2" fill={color_esphome} /> Install configuration to a device</li>
+                <li><LogIcon className="inline mr-2" fill={color_esphome} /> View log stream</li>
             </ul>
         </div>
 
-        <div className="mb-3">
-            The final .yaml configuration is a result of merging multiple .yaml files together.
-            <ul className="ml-5 list-disc">
-                <li>You can use .lib folder for your shared code. Each device can have its own local .lib folder as well.</li>
-                <li>Compiler will find all .eta files in devices root folder and convert it to .yaml.</li>
-                <li>Then it will look for all .yaml file (both manually created and result of previous compilations) and merge them together into singe configuration yaml file.</li>
+        <div className="bg-gray-50 p-6 rounded-lg shadow">
+            <h2 className="text-lg font-semibold text-gray-800">How YAML Configurations Work</h2>
+            <p className="text-gray-700 mt-2">
+                The final YAML configuration is a combination of multiple YAML files. Here's how it works:
+            </p>
+            <ul className="list-disc ml-8 mt-3 text-gray-700 space-y-2">
+                <li>Use the <code>.lib</code> folder for shared code, with optional device-specific local <code>.lib</code> folders.</li>
+                <li>The compiler processes all <code>.eta</code> files in the root folder, converting them into YAML files.</li>
+                <li>It merges manually created YAML files and compiled YAML files into a single final configuration file.</li>
             </ul>
         </div>
 
-        <div className="mb-3">
-            Lets make some configurations. You can make many same devices like a humidity sensor for each of your flowers or one device with multiple same components. Something like a PLC with tens of inputs.
-            You can combine both approaches together but for now lets start with one of them.
-            <div className="flex flex-wrap">
-                <div className="flex-1">
-                    Flowers
-                </div>
-                <div className="flex-1">
-                    PLC
-                </div>
+        <div className="bg-gray-50 p-6 rounded-lg shadow">
+            <h2 className="text-lg font-semibold text-gray-800">Getting Started</h2>
+            <p className="text-gray-700 mt-2">
+                Let’s start building configurations. Choose between creating multiple devices (e.g., humidity sensors for flowers) or a single device with multiple components (e.g., a PLC with multiple inputs).
+            </p>
+            <div className="flex justify-around mt-4">
+                <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Flowers</button>
+                <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">PLC</button>
             </div>
         </div>
-    </div>;
+    </div>
+</div>;
 }
