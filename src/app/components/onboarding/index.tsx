@@ -35,7 +35,7 @@ export const Onboarding = () => {
             <div className="max-w-3xl mx-auto space-y-6">
                 {/* Header */}
                 <div className="text-center">
-                    <h1 className="text-2xl font-bold text-gray-800">Welcome to the ESPHome Editor</h1>
+                    <h1 className="text-2xl font-bold text-gray-800">Welcome to the Editor for ESPHome</h1>
                     <p className="text-gray-600 mt-2">
                         Get started by learning how to use this tool to build and manage your ESPHome devices effortlessly.
                     </p>
