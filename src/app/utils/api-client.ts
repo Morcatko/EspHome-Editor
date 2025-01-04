@@ -1,6 +1,6 @@
-import { TDevice } from "@/server/devices/types";
 import { assertResponseAndJsonOk, assertResponseOk } from "@/shared/http-utils";
 import { log } from "@/shared/log";
+import { TGetStatus } from "../api/status/route";
 
 export namespace api {
     export type TCallResult = {
@@ -24,6 +24,12 @@ export namespace api {
             ;
 
         return encodeURIComponent(fixed);
+    }
+
+    export const getWsUrl = (url: string) => {
+        const finalUrl = new URL(fixUrl(url), location.href);
+        finalUrl.protocol = finalUrl.protocol === "http:" ? "ws:" : "wss:";
+        return finalUrl.toString();
     }
 
     export async function callGet_text(url: string): Promise<TCallResult> {
@@ -108,7 +114,7 @@ export namespace api {
     }
 
     export async function getStatus() {
-        return await callGet_json("/api/status");
+        return await callGet_json<TGetStatus>("/api/status");
     }
 
     export async function getPing() {
@@ -119,10 +125,9 @@ export namespace api {
         url: string,
         onMessage: (message: string) => void,
     ) {
-        const finalUrl = new URL(fixUrl(url), location.href);
-        finalUrl.protocol = finalUrl.protocol === "http:" ? "ws:" : "wss:";
+        const finalUrl = getWsUrl(url);
 
-        const ws = new WebSocket(finalUrl.toString());
+        const ws = new WebSocket(finalUrl);
         ws.onmessage = (ev) => {
             const msg = JSON.parse(ev.data);
             switch (msg.event) {

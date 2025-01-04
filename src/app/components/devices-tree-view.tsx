@@ -32,8 +32,8 @@ const ThreeDotProps = {
 const LocalFileOrDirectory = ({ device, fod }: { device: TDevice, fod: TLocalFileOrDirectory }) => {
     const store = useStore();
     const panels = store.panels;
-    const devices = store.devices;
-    const exp = devices.expanded;
+    const devicesStore = store.devices;
+    const exp = devicesStore.expanded;
 
     return <TreeView.Item
         key={fod.path}
@@ -58,13 +58,13 @@ const LocalFileOrDirectory = ({ device, fod }: { device: TDevice, fod: TLocalFil
                 <ActionMenu.Overlay width="auto">
                     <ActionList>
                         {(fod.type === "directory") && <>
-                            <ActionList.Item onSelect={(e) => { devices.localDevice_addFile(device, fod.path); e.stopPropagation(); }} >
+                            <ActionList.Item onSelect={(e) => { devicesStore.localDevice_addFile(device, fod.path); e.stopPropagation(); }} >
                                 <ActionList.LeadingVisual>
                                     <FileCodeIcon />
                                 </ActionList.LeadingVisual>
                                 New File...
                             </ActionList.Item>
-                            <ActionList.Item onSelect={(e) => { devices.localDevice_addDirectory(device, fod.path); e.stopPropagation(); }}>
+                            <ActionList.Item onSelect={(e) => { devicesStore.localDevice_addDirectory(device, fod.path); e.stopPropagation(); }}>
                                 <ActionList.LeadingVisual>
                                     <FileDirectoryIcon />
                                 </ActionList.LeadingVisual>
@@ -73,13 +73,13 @@ const LocalFileOrDirectory = ({ device, fod }: { device: TDevice, fod: TLocalFil
                             <ActionList.Divider />
                         </>
                         }
-                        <ActionList.Item onSelect={(e) => { devices.local_renameFoD(device, fod); e.stopPropagation(); }}>
+                        <ActionList.Item onSelect={(e) => { devicesStore.local_renameFoD(device, fod); e.stopPropagation(); }}>
                             <ActionList.LeadingVisual>
                                 <PencilIcon />
                             </ActionList.LeadingVisual>
                             Rename
                         </ActionList.Item>
-                        <ActionList.Item onSelect={(e) => { devices.local_deleteFoD(device, fod); e.stopPropagation(); }} variant="danger">
+                        <ActionList.Item onSelect={(e) => { devicesStore.local_deleteFoD(device, fod); e.stopPropagation(); }} variant="danger">
                             <ActionList.LeadingVisual>
                                 <XIcon />
                             </ActionList.LeadingVisual>
@@ -103,7 +103,7 @@ const LocalFiles = ({ device, parent }: { device: TDevice, parent: TParent }) =>
 
 const DeviceToolbar = ({ device }: { device: TDevice }) => {
     const store = useStore();
-    const devices = store.devices;
+    const devicesStore = store.devices;
     const panels = store.panels;
 
     const hasLocalFiles = !!device.files;
@@ -124,11 +124,11 @@ const DeviceToolbar = ({ device }: { device: TDevice }) => {
         <ActionBar aria-label="Device tools" size="small">
             {hasLocalFiles
                 ? <ActionBar.IconButton key="show_local" sx={{ color: color_local }} icon={CodeIcon} onClick={() => panels.add_localDevice(device)} aria-label="Show local yaml configuration" />
-                : <ActionBar.IconButton key="create_local" sx={{ color: color_local }} icon={DownloadIcon} onClick={() => devices.localDevice_import(device)} aria-label="Import yaml configuration" />
+                : <ActionBar.IconButton key="create_local" sx={{ color: color_local }} icon={DownloadIcon} onClick={() => devicesStore.localDevice_import(device)} aria-label="Import yaml configuration" />
             }
             <ActionBar.Divider key="div1" />
             <ActionBar.IconButton key="diff" {...bothProps} icon={GitCompareIcon} onClick={() => panels.add_diff(device)} aria-label="Show local vs ESPHome diff" />
-            <ActionBar.IconButton key="upload" {...bothProps} icon={UploadIcon} onClick={() => devices.espHome_upload(device)} aria-label="Upload local to ESPHome" />
+            <ActionBar.IconButton key="upload" {...bothProps} icon={UploadIcon} onClick={() => devicesStore.espHome_upload(device)} aria-label="Upload local to ESPHome" />
             <ActionBar.Divider key="div2" />
             <ActionBar.IconButton key="show_esphome" {...espHomeProps} icon={CodeIcon} onClick={() => panels.add_espHomeDevice(device)} aria-label="Show ESPHome configuration" />
             <ActionBar.IconButton key="compile" {...espHomeProps} icon={BeakerIcon} onClick={() => panels.add_espHomeCompile(device)} aria-label="Compile ESPHome configuration" />
@@ -139,10 +139,10 @@ const DeviceToolbar = ({ device }: { device: TDevice }) => {
 }
 
 export const DevicesTreeView = observer(() => {
-    const devices = useStore().devices;
-    const exp = devices.expanded;
+    const devicesStore = useStore().devices;
+    const exp = devicesStore.expanded;
 
-    const pinQuery = useQuery({
+    const pingQuery = useQuery({
         queryKey: ['ping'],
         refetchInterval: 1000,
         queryFn: api.getPing,
@@ -151,14 +151,14 @@ export const DevicesTreeView = observer(() => {
 
     const getDeviceColor = (d: TDevice) => 
         d.esphome_config
-            ? pinQuery?.data?.[d.esphome_config]
+            ? pingQuery?.data?.[d.esphome_config]
                 ? color_online
                 : color_offline
             : color_gray
 
     return (
         <TreeView>
-            {devices.devices.map((d) =>
+            {devicesStore.devices.map((d) =>
                 { 
                     const isLib = d.name == ".lib";
                 
@@ -186,13 +186,13 @@ export const DevicesTreeView = observer(() => {
                                 </ActionMenu.Anchor>
                                 <ActionMenu.Overlay width="auto" >
                                     <ActionList>
-                                    <ActionList.Item onSelect={(e) => { devices.localDevice_addFile(d, "/"); e.stopPropagation(); }} >
+                                    <ActionList.Item onSelect={(e) => { devicesStore.localDevice_addFile(d, "/"); e.stopPropagation(); }} >
                                             <ActionList.LeadingVisual>
                                                 <FileCodeIcon />
                                             </ActionList.LeadingVisual>
                                             New File...
                                         </ActionList.Item>
-                                        <ActionList.Item onSelect={(e) => { devices.localDevice_addDirectory(d, "/"); e.stopPropagation(); }}>
+                                        <ActionList.Item onSelect={(e) => { devicesStore.localDevice_addDirectory(d, "/"); e.stopPropagation(); }}>
                                             <ActionList.LeadingVisual>
                                                 <FileDirectoryIcon />
                                             </ActionList.LeadingVisual>

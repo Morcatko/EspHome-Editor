@@ -2,12 +2,10 @@
 import { useEffect } from "react";
 import { loader } from "@monaco-editor/react";
 import { ThemeProvider, BaseStyles } from '@primer/react'
-import { rootStore, RootStoreContext } from "./stores";
+import { queryClient, rootStore, RootStoreContext } from "./stores";
 import { InputTextDialog } from "./components/dialogs/input-text-dialog";
 import { ConfirmationDialog } from "./components/dialogs/confirmation-dialog";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-const queryClient = new QueryClient()
+import { QueryClientProvider } from "@tanstack/react-query";
 
 export function ClientLayout({
   children,
