@@ -2,14 +2,16 @@ import { color_esphome, color_gray, color_local, color_offline, color_online } f
 import { BeakerIcon, CodeIcon, DownloadIcon, GitCompareIcon, LogIcon, UploadIcon } from "@primer/octicons-react";
 import { set } from "mobx";
 import { useState } from "react";
+import { useLocalStorage } from "usehooks-ts";
 
 type TSectionProps = {
+    step: string;
     title: string;
     children: React.ReactNode;
 };
 
-const Section = ({ title, children }: TSectionProps) => {
-    const [hidden, setHidden] = useState(false);
+const Section = ({ step, title, children }: TSectionProps) => {
+    const [hidden, setHidden] = useLocalStorage(`onboarding.${step}`, false);
 
     return <>
         <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow">
@@ -47,14 +49,14 @@ export const Onboarding = () => {
                 </div>
 
                 {/* Section: Introduction */}
-                <Section title="Introduction">
+                <Section step="intro" title="Introduction">
                     <p>
                         With the Editor for ESPHome, you can combine multiple YAML files to create robust configurations for your devices. YAML files can either be written manually or generated using the Etajs template engine.
                     </p>
                 </Section>
 
                 {/* Section: Device Status */}
-                <Section title="Understanding Device Status">
+                <Section step="device_status" title="Understanding Device Status">
                     <p>
                         On the Device Panel, you’ll see all your ESPHome devices. The status of each device is indicated by the color of the light bulb:
                     </p>
@@ -65,7 +67,7 @@ export const Onboarding = () => {
                 </Section>
 
                 {/* Section: Device Toolbar */}
-                <Section title="Device Toolbar">
+                <Section step="device_toolbar" title="Device Toolbar">
                     <p>
                         Expand a device to access its toolbar. The available actions depend on the device status:
                     </p>
@@ -82,7 +84,7 @@ export const Onboarding = () => {
                 </Section>
 
                 {/* Section: YAML Configuration */}
-                <Section title="How YAML Configurations Work">
+                <Section step="yaml" title="How YAML Configurations Work">
                     <p>
                         The final YAML configuration is a combination of multiple YAML files. Here's how it works:
                     </p>
@@ -94,7 +96,7 @@ export const Onboarding = () => {
                 </Section>
 
                 {/* Section: Getting Started */}
-                <Section title="Getting Started">
+                <Section step="getting_Started" title="Getting Started">
                     <p>
                         Let’s start building configurations. Choose between creating multiple devices (e.g., humidity sensors for flowers) or a single device with multiple components (e.g., a PLC with multiple inputs).
                     </p>
