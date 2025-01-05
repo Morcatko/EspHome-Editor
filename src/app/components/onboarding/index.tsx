@@ -34,7 +34,7 @@ const Section = ({ title, children }: TSectionProps) => {
 
 export const Onboarding = () => {
     return (
-        <div className="container mx-auto p-8">
+        <div className="container mx-auto p-8 overflow-auto h-full">
             <div className="max-w-3xl mx-auto space-y-6">
                 {/* Header */}
                 <div className="text-center">
