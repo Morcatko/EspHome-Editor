@@ -12,19 +12,22 @@ const Section = ({ title, children }: TSectionProps) => {
     const [hidden, setHidden] = useState(false);
 
     return <>
-        <div className="bg-gray-50 p-6 rounded-lg shadow">
+        <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow">
             <div className="flex justify-between items-center">
-                <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
+                <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200" onClick={() => setHidden(!hidden)}>
+                    {title}
+                </h2>
                 <label>
                     <input
                         type="checkbox"
-                        className="mr-2"
+                        className="mr-2 accent-gray-200 dark:accent-gray-600 scale-150"
                         onChange={() => setHidden(!hidden)}
                     />
-                    Completed
                 </label>
             </div>
-            {!hidden && children}
+            {!hidden && <div className="text-gray-700 dark:text-gray-300 mt-2">
+                {children}
+            </div>}
         </div>
     </>;
 }
@@ -35,26 +38,27 @@ export const Onboarding = () => {
             <div className="max-w-3xl mx-auto space-y-6">
                 {/* Header */}
                 <div className="text-center">
-                    <h1 className="text-2xl font-bold text-gray-800">Welcome to the Editor for ESPHome</h1>
-                    <p className="text-gray-600 mt-2">
+                    <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
+                        Welcome to the Editor for ESPHome
+                    </h1>
+                    <p className="text-gray-600 dark:text-gray-400 mt-2">
                         Get started by learning how to use this tool to build and manage your ESPHome devices effortlessly.
                     </p>
                 </div>
 
                 {/* Section: Introduction */}
                 <Section title="Introduction">
-                    <p className="text-gray-700 mt-2">
+                    <p>
                         With the Editor for ESPHome, you can combine multiple YAML files to create robust configurations for your devices. YAML files can either be written manually or generated using the Etajs template engine.
                     </p>
                 </Section>
 
                 {/* Section: Device Status */}
                 <Section title="Understanding Device Status">
-
-                    <p className="text-gray-700 mt-2">
-                        On the left panel, you’ll see all your ESPHome devices. The status of each device is indicated by the color of the light bulb:
+                    <p>
+                        On the Device Panel, you’ll see all your ESPHome devices. The status of each device is indicated by the color of the light bulb:
                     </p>
-                    <ul className="list-disc ml-8 mt-3 text-gray-700 space-y-2">
+                    <ul className="list-disc ml-8 mt-3 space-y-2">
                         <li><span style={{ color: color_gray }} className="font-semibold">Gray</span> - Editor-only device</li>
                         <li><span style={{ color: color_online }} className="font-semibold">Online</span>/<span style={{ color: color_offline }} className="font-semibold">Offline</span> - status of ESPHome device</li>
                     </ul>
@@ -62,7 +66,7 @@ export const Onboarding = () => {
 
                 {/* Section: Device Toolbar */}
                 <Section title="Device Toolbar">
-                    <p className="text-gray-700 mt-2">
+                    <p>
                         Expand a device to access its toolbar. The available actions depend on the device status:
                     </p>
                     <ul className="mt-4 space-y-3">
@@ -79,10 +83,10 @@ export const Onboarding = () => {
 
                 {/* Section: YAML Configuration */}
                 <Section title="How YAML Configurations Work">
-                    <p className="text-gray-700 mt-2">
+                    <p>
                         The final YAML configuration is a combination of multiple YAML files. Here's how it works:
                     </p>
-                    <ul className="list-disc ml-8 mt-3 text-gray-700 space-y-2">
+                    <ul className="list-disc ml-8 mt-3 space-y-2">
                         <li>Use the <code>.lib</code> folder for shared code, with optional device-specific local <code>.lib</code> folders.</li>
                         <li>The compiler processes all <code>.eta</code> files in the root folder, converting them into YAML files.</li>
                         <li>It merges manually created YAML files and compiled YAML files into a single final configuration file.</li>
@@ -91,7 +95,7 @@ export const Onboarding = () => {
 
                 {/* Section: Getting Started */}
                 <Section title="Getting Started">
-                    <p className="text-gray-700 mt-2">
+                    <p>
                         Let’s start building configurations. Choose between creating multiple devices (e.g., humidity sensors for flowers) or a single device with multiple components (e.g., a PLC with multiple inputs).
                     </p>
                     <div className="flex justify-around mt-4">
