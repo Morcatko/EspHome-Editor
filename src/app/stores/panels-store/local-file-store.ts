@@ -1,40 +1,63 @@
-import { makeAutoObservable } from "mobx";
-import { TDevice, TLocalFile } from "@/server/devices/types";
-import { createMonacoFileStore_url, createMonacoFileStore_local, MonacoFileStore } from "./utils/monaco-file-store";
 import { api } from "@/app/utils/api-client";
-import { IPanelsStore } from "./utils/IPanelsStore";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { TEditorFileProps } from "./types";
+import { TLocalFile, TLocalFileOrDirectory } from "@/server/devices/types";
+import { useDevicesStore } from "../devices-store";
 
-export class LocalFileStore implements IPanelsStore {
-    readonly dataPath:string;
-    readonly left_file: MonacoFileStore;
-    readonly right_file: MonacoFileStore | null;
-    readonly test_file: MonacoFileStore | null;
-
-    
-    constructor(readonly device: TDevice, readonly file: TLocalFile) {
-        this.dataPath = file.path;
-        this.test_file = createMonacoFileStore_local(false, "json", "{}");
-        this.left_file = createMonacoFileStore_url(false, "yaml", api.url_local_path(device.id, file.path));
-        
-        this.right_file = file.compiler !== "none"
-            ? new MonacoFileStore(true, "yaml",() => api.local_path_compile(device.id, file.path, this.test_file?.content))
-            : null;
-        makeAutoObservable(this);
-
-        this.left_file.onChange = async (newContent: string) => {
-            await api.local_save(device.id, file.path, newContent);
-            await this.right_file?.reload();
+const findFile = (fods: TLocalFileOrDirectory[], file_path: string): TLocalFile | null => {
+    for (const fod of fods) {
+        if (fod.type === "file" && fod.path === file_path) {
+            return fod;
         }
-
-        this.test_file.onChange = (newContent: string) => this.right_file?.reload();
+        if (fod.type === "directory") {
+            const file = findFile(fod.files!, file_path);
+            if (file) {
+                return file;
+            }
+        }
     }
-
-    async loadIfNeeded() {
-        await Promise.all([
-            this.left_file.loadIfNeeded(),
-            this.right_file?.loadIfNeeded(),
-            this.test_file?.loadIfNeeded(),
-        ]);
-    }
-    
+    return null;
 }
+
+export const useLocalFileStore = (device_id: string, file_path : string) => {
+    
+    const devices = useDevicesStore().query.data;
+    const device = devices?.find(d => d.id === device_id);
+    const file = findFile(device?.files ?? [], file_path)!;
+
+    const hasRightFile = file.compiler !== "none";
+
+
+    const leftQuery = useQuery({
+        queryKey: ["device", device_id, "local-file", file_path],
+        queryFn: async () => api.callGet_text(api.url_local_path(device_id, file_path))
+    });
+
+    const rightQuery = useQuery({
+        queryKey: ["device", device_id, "local-file", file_path, "compiled"],
+        queryFn: async () => api.local_path_compile(device_id, file_path, ""),
+        enabled: hasRightFile
+    });
+
+    const queryClient = useQueryClient();
+    const leftMutation = useMutation({
+        mutationFn: async (v: string) => api.local_save(device_id, file_path, v),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["device", device_id, "local-file", file_path, "compiled"] })
+        }
+    });
+
+    return {
+        leftEditor: <TEditorFileProps>{
+            value: leftQuery.data?.content ?? "",
+            language: "yaml",
+            onValueChange: (v) => leftMutation.mutate(v),
+        },
+        rightEditor: hasRightFile
+            ? <TEditorFileProps>{
+                value: rightQuery.data?.content ?? "",
+                language: "yaml",
+            }
+            : null
+    }
+};

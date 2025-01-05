@@ -1,56 +1,57 @@
-import { observer } from "mobx-react-lite";
-import { useStore } from "../stores";
-import { ESPHomeDeviceStore } from "../stores/panels-store/esphome-device-store";
-import { LocalFileStore } from "../stores/panels-store/local-file-store";
-import { SingleEditor } from "./panels/single-editor";
-import { LocalDeviceStore } from "../stores/panels-store/local-device-store";
-import { DeviceDiffStore } from "../stores/panels-store/device-diff-store";
-import { DiffEditor } from "./panels/diff-editor";
-import { ESPHomeCompileStore } from "../stores/panels-store/esphome-compile-store";
-import { LogStream } from "./panels/log-stream";
-import { ESPHomeInstallStore } from "../stores/panels-store/esphome-install-store";
-import { ESPHomeLogStore } from "../stores/panels-store/esphome-log-store";
-import { IPanelsStore } from "../stores/panels-store/utils/IPanelsStore";
 import { LocalFilePanel } from "./panels/local-file-panel";
+import { LocalDevicePanel } from "./panels/local-device-panel";
+import { ESPHomeDevicePanel } from "./panels/esphome-device-panel";
+import { DiffPanel } from "./panels/diff-panel";
+import { EspHomeLogPanel } from "./panels/esphome-log-panel";
+import { EspHomeInstallPanel } from "./panels/esphome-install-panel";
+import { EspHomeCompilePanel } from "./panels/esphome-compile-panel";
+import { TPanel } from "../stores/panels-store/types";
+import { usePanelsStore } from "../stores/panels-store";
 import { Onboarding } from "./onboarding";
 
-const PanelContent = observer(({ tabStore }: { tabStore: IPanelsStore }) => {
-    if (tabStore instanceof ESPHomeDeviceStore) {
-        return <SingleEditor store={tabStore.monaco_file} />;
-    } else if (tabStore instanceof LocalFileStore) {
-        return <LocalFilePanel store={tabStore} />;
-    } else if (tabStore instanceof LocalDeviceStore) {
-        return <SingleEditor store={tabStore.monaco_file} />;
-    } else if (tabStore instanceof DeviceDiffStore) {
-        return <DiffEditor
-            left_store={tabStore.left_file}
-            right_store={tabStore.right_file} />;
-    } else if (tabStore instanceof ESPHomeCompileStore) {
-        return <LogStream store={tabStore.data} />;
+const PanelContent = ({ panel }: { panel: TPanel }) => {
+    switch (panel.operation) {
+        case "esphome_device":
+            return <ESPHomeDevicePanel device_id={panel.device_id} />;
+        case "local_file":
+            return <LocalFilePanel device_id={panel.device_id} file_path={panel.path} />;
+        case "local_device":
+            return <LocalDevicePanel device_id={panel.device_id} />;
+        case "diff":
+            return <DiffPanel device_id={panel.device_id} />;
+        case "esphome_compile":
+            return <EspHomeCompilePanel device_id={panel.device_id} />;
+        case "esphome_install":
+            return <EspHomeInstallPanel device_id={panel.device_id} />;
+        case "esphome_log":
+            return <EspHomeLogPanel device_id={panel.device_id} />;
+        default:
+            return <div>Noting selected</div>;
     }
-    else if (tabStore instanceof ESPHomeInstallStore) {
-        return <LogStream store={tabStore.data} />;
+};
+
+const PanelHeader = ({ panel }: { panel: TPanel }) => {
+    switch (panel.operation) {
+        case "local_file":
+            return <div>{panel.device_id} -  {panel.path}</div>;
+        case "local_device":
+            return <div>Local - {panel.device_id}</div>;
+        case "esphome_device":
+            return <div>ESPHome - {panel.device_id}</div>;
+        case "diff":
+            return <div>DIFF - {panel.device_id}</div>;
+        case "esphome_compile":
+            return <div>Compile - {panel.device_id}</div>;
+        case "esphome_install":
+            return <div>Install - {panel.device_id}</div>;
+        case "esphome_log":
+            return <div>Log - {panel.device_id}</div>;
     }
-    else if (tabStore instanceof ESPHomeLogStore) {
-        return <LogStream store={tabStore.data} />;
-    }
+    return <div>Unknown</div>;
+};
 
-    return <div>Noting selected</div>;
-});
-
-const PanelHeader = observer(({ panel }: { panel: IPanelsStore }) => {
-    return <div>
-        <span>{panel.device.name} - </span>
-        <span>{panel.dataPath}</span>
-    </div>
-});
-
-export const PanelsContainer = observer(() => {
-    const store = useStore();
-
-    const panel = store.panels.tab;
-
-    panel?.loadIfNeeded();
+export const PanelsContainer = () => {
+    const panel = usePanelsStore().panel;
 
     if (!panel) {
         return <Onboarding  />;
@@ -62,7 +63,6 @@ export const PanelsContainer = observer(() => {
         gridTemplateRows: "auto 1fr",
     }}>
         <PanelHeader panel={panel} />
-        <PanelContent tabStore={panel} />
+        <PanelContent panel={panel} />
     </div>
-
-});
+};

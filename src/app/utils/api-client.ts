@@ -1,5 +1,4 @@
 import { assertResponseAndJsonOk, assertResponseOk } from "@/shared/http-utils";
-import { log } from "@/shared/log";
 import { TGetStatus } from "../api/status/route";
 
 export namespace api {
@@ -119,33 +118,5 @@ export namespace api {
 
     export async function getPing() {
         return await callGet_json("/api/device/ping");
-    }
-
-    export async function getStream(
-        url: string,
-        onMessage: (message: string) => void,
-    ) {
-        const finalUrl = getWsUrl(url);
-
-        const ws = new WebSocket(finalUrl);
-        ws.onmessage = (ev) => {
-            const msg = JSON.parse(ev.data);
-            switch (msg.event) {
-                case "completed":
-                    log.verbose("Stream completed");
-                    ws.close();;
-                    break;
-                case "error":
-                    log.error("Stream error", msg.data);
-                    ws.close();
-                    break;
-                case "message":
-                    onMessage(msg.data as string);
-                    break;
-                default:
-                    log.warn("Unknown event", msg);
-                    break;
-            }
-        };
     }
 }
