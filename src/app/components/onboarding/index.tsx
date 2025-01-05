@@ -16,12 +16,15 @@ const Section = ({ step, title, children }: TSectionProps) => {
     return <>
         <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow">
             <div className="flex justify-between items-center">
-                <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200" onClick={() => setHidden(!hidden)}>
-                    {title}
-                </h2>
+                <a href="#" onClick={() => setHidden(!hidden)}>
+                    <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200" >
+                        {title}
+                    </h2>
+                </a>
                 <label>
                     <input
                         type="checkbox"
+                        checked={hidden}
                         className="mr-2 accent-gray-200 dark:accent-gray-600 scale-150"
                         onChange={() => setHidden(!hidden)}
                     />
