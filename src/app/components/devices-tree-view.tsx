@@ -1,7 +1,7 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
 import Image from 'next/image';
-import { ActionBar, ActionList, ActionMenu, ButtonBaseProps, IconButton, TreeView } from "@primer/react";
+import { ActionBar, ActionList, ActionMenu, ButtonBaseProps, IconButton, IconButtonProps, TreeView } from "@primer/react";
 import { TDevice, TLocalFileOrDirectory, TParent } from "@/server/devices/types";
 import { BeakerIcon, CodeIcon, DownloadIcon, KebabHorizontalIcon, FileDirectoryIcon, GitCompareIcon, LightBulbIcon, LogIcon, UploadIcon, PencilIcon, FileCodeIcon, QuestionIcon, XIcon } from "@primer/octicons-react";
 import { color_esphome, color_gray, color_local, color_offline, color_online } from "../utils/const";
@@ -9,6 +9,7 @@ import etajsIcon from "../etajs-logo.svg";
 import { api } from "../utils/api-client";
 import { useDevicesStore } from "../stores/devices-store";
 import { usePanelsStore } from "../stores/panels-store";
+import { useDarkTheme } from "../utils/hooks";
 
 const FileTypeIcon = ({ fod }: { fod: TLocalFileOrDirectory }) => {
     if (fod.type === "directory")
@@ -101,6 +102,7 @@ const LocalFiles = ({ device, parent }: { device: TDevice, parent: TParent }) =>
 }
 
 const DeviceToolbar = ({ device }: { device: TDevice }) => {
+    const isDarkMode = useDarkTheme()
     const devicesStore = useDevicesStore();
     const panels = usePanelsStore()
 
@@ -108,12 +110,23 @@ const DeviceToolbar = ({ device }: { device: TDevice }) => {
     const hasESPHomeConfig = !!device.esphome_config;
     const hasBoth = hasLocalFiles && hasESPHomeConfig;
 
+    const allProps = {
+        tooltipDirection: "n" as (IconButtonProps["tooltipDirection"]),
+    }
+
+    const localProps = { ...allProps };
     const bothProps = {
+        ...allProps,
         disabled: !hasBoth,
-        sx: { color: hasBoth ? color_gray : "lightgrey" },
+        sx: {
+            color: (hasBoth)
+                ? (isDarkMode ? "lightgrey" : color_gray)
+                : (isDarkMode ? color_gray : "lightgrey")
+        },
     }
 
     const espHomeProps = {
+        ...allProps,
         disabled: !hasESPHomeConfig,
         sx: { color: hasESPHomeConfig ? color_esphome : "lightgrey" },
     };
@@ -121,8 +134,8 @@ const DeviceToolbar = ({ device }: { device: TDevice }) => {
     return <div style={{ marginLeft: '-16px' }}>
         <ActionBar aria-label="Device tools" size="small">
             {hasLocalFiles
-                ? <ActionBar.IconButton key="show_local" sx={{ color: color_local }} icon={CodeIcon} onClick={(e) => panels.handleClick(e, device, "local_device")} aria-label="Show local yaml configuration" />
-                : <ActionBar.IconButton key="create_local" sx={{ color: color_local }} icon={DownloadIcon} onClick={() => devicesStore.localDevice_import(device)} aria-label="Import yaml configuration" />
+                ? <ActionBar.IconButton key="show_local" {...localProps} sx={{ color: color_local }} icon={CodeIcon} onClick={(e) => panels.handleClick(e, device, "local_device")} aria-label="Show local yaml configuration" />
+                : <ActionBar.IconButton key="create_local"  {...localProps} sx={{ color: color_local }} icon={DownloadIcon} onClick={() => devicesStore.localDevice_import(device)} aria-label="Import yaml configuration" />
             }
             <ActionBar.Divider key="div1" />
             <ActionBar.IconButton key="diff" {...bothProps} icon={GitCompareIcon} onClick={(e) => panels.handleClick(e, device, "diff")} aria-label="Show local vs ESPHome diff" />
@@ -146,61 +159,60 @@ export const DevicesTreeView = () => {
         queryFn: api.getPing,
     });
 
-    const getDeviceColor = (d: TDevice) => 
+    const getDeviceColor = (d: TDevice) =>
         d.esphome_config
             ? pingQuery?.data?.[d.esphome_config]
                 ? color_online
                 : color_offline
-            : color_gray
+            : color_gray;
 
     return (
         <TreeView>
-            {devicesStore.query.data?.map((d) =>
-                { 
-                    const isLib = d.name == ".lib";
-                
-                    return <TreeView.Item
-                        key={d.id}
-                        id={d.id}
-                        expanded={exp.get(d.id)}
-                        onExpandedChange={(e) => exp.set(d.id, e)}
-                    >
-                        <span className="font-semibold text-[color:--foreground]">{d.name}</span>
-                        <TreeView.LeadingVisual>
-                            { (isLib)
-                                ? <FileDirectoryIcon />
-                                : <LightBulbIcon fill={getDeviceColor(d)} />
-                            }
-                        </TreeView.LeadingVisual>
-                        <TreeView.SubTree>
-                            { (!isLib) && <TreeView.Item className="opacity-30 hover:opacity-100" id={`toolbar_${d.id}`} ><DeviceToolbar device={d} /></TreeView.Item>}
-                            <LocalFiles device={d} parent={d} />
-                        </TreeView.SubTree>
-                        <TreeView.TrailingVisual >
-                            <ActionMenu>
-                                <ActionMenu.Anchor>
-                                    <IconButton {...ThreeDotProps} icon={KebabHorizontalIcon} onClick={(e) => e.stopPropagation()} />
-                                </ActionMenu.Anchor>
-                                <ActionMenu.Overlay width="auto" >
-                                    <ActionList>
+            {devicesStore.query.data?.map((d) => {
+                const isLib = d.name == ".lib";
+
+                return <TreeView.Item
+                    key={d.id}
+                    id={d.id}
+                    expanded={exp.get(d.id)}
+                    onExpandedChange={(e) => exp.set(d.id, e)}
+                >
+                    <span className="font-semibold text-[color:--foreground]">{d.name}</span>
+                    <TreeView.LeadingVisual>
+                        {(isLib)
+                            ? <FileDirectoryIcon />
+                            : <LightBulbIcon fill={getDeviceColor(d)} />
+                        }
+                    </TreeView.LeadingVisual>
+                    <TreeView.SubTree>
+                        {(!isLib) && <TreeView.Item className="opacity-30 hover:opacity-100" id={`toolbar_${d.id}`} ><DeviceToolbar device={d} /></TreeView.Item>}
+                        <LocalFiles device={d} parent={d} />
+                    </TreeView.SubTree>
+                    <TreeView.TrailingVisual >
+                        <ActionMenu>
+                            <ActionMenu.Anchor>
+                                <IconButton {...ThreeDotProps} icon={KebabHorizontalIcon} onClick={(e) => e.stopPropagation()} />
+                            </ActionMenu.Anchor>
+                            <ActionMenu.Overlay width="auto" >
+                                <ActionList>
                                     <ActionList.Item onSelect={(e) => { devicesStore.localDevice_addFile(d, "/"); e.stopPropagation(); }} >
-                                            <ActionList.LeadingVisual>
-                                                <FileCodeIcon />
-                                            </ActionList.LeadingVisual>
-                                            New File...
-                                        </ActionList.Item>
-                                        <ActionList.Item onSelect={(e) => { devicesStore.localDevice_addDirectory(d, "/"); e.stopPropagation(); }}>
-                                            <ActionList.LeadingVisual>
-                                                <FileDirectoryIcon />
-                                            </ActionList.LeadingVisual>
-                                            New Folder...
-                                        </ActionList.Item>
-                                    </ActionList>
-                                </ActionMenu.Overlay>
-                            </ActionMenu>
-                        </TreeView.TrailingVisual>
-                    </TreeView.Item>;
-                })
-        }
+                                        <ActionList.LeadingVisual>
+                                            <FileCodeIcon />
+                                        </ActionList.LeadingVisual>
+                                        New File...
+                                    </ActionList.Item>
+                                    <ActionList.Item onSelect={(e) => { devicesStore.localDevice_addDirectory(d, "/"); e.stopPropagation(); }}>
+                                        <ActionList.LeadingVisual>
+                                            <FileDirectoryIcon />
+                                        </ActionList.LeadingVisual>
+                                        New Folder...
+                                    </ActionList.Item>
+                                </ActionList>
+                            </ActionMenu.Overlay>
+                        </ActionMenu>
+                    </TreeView.TrailingVisual>
+                </TreeView.Item>;
+            })
+            }
         </TreeView>);
 };

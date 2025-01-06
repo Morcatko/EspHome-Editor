@@ -1,23 +1,23 @@
-import { atom, useAtom } from 'jotai';
 import { useQueryState, parseAsJson } from 'nuqs'
 import { TDevice, TLocalFileOrDirectory } from "@/server/devices/types";
 import { TPanel } from "./panels-store/types";
 import { useSessionStorage } from 'usehooks-ts';
 import { useStatusStore } from "./status-store";
 
-const setLastClickAtom = atom<string>("initial");
-
 export const usePanelsStore = () => {
     const status = useStatusStore();
 
-    const [panel, setPanel] = status.isHaAddon
+    const [panel, _setPanel] = status.isHaAddon
         ? useSessionStorage<TPanel | null>("panel", null, {
             serializer: JSON.stringify,
             deserializer: JSON.parse,
         })
         : useQueryState<TPanel>('panel', parseAsJson(v => v as TPanel));
 
-    const [lastClick, setLastClick] = useAtom(setLastClickAtom);
+    const setPanel = (panel: TPanel) => {
+        const panelWithClick = { ...panel, last_click: new Date().toISOString() };
+        _setPanel(panelWithClick);
+    }
 
     const handleClick = (
         e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>,
@@ -36,13 +36,11 @@ export const usePanelsStore = () => {
         }
         else {
             setPanel(panel);
-            setLastClick(new Date().toISOString());
         }
     }
 
     return {
         panel: panel,
-        lastClick: lastClick,
         handleClick,
     };
 }
