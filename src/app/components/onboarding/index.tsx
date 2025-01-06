@@ -11,7 +11,7 @@ type TSectionProps = {
 };
 
 const Section = ({ step, title, children }: TSectionProps) => {
-    const [hidden, setHidden] = useLocalStorage(`onboarding.${step}`, false);
+    const [hidden, setHidden] = useLocalStorage(`e4e.onboarding.${step}`, false);
 
     return <>
         <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow">
