@@ -10,27 +10,31 @@ import { usePanelsStore } from "../stores/panels-store";
 import { DockviewReact, IDockviewPanelProps } from "dockview-react";
 import { useDarkTheme } from "@/app/utils/hooks";
 
+const PanelContent = ({ panel }: { panel: TPanel }) => {
+    switch (panel.operation) {
+        case "esphome_device":
+            return <ESPHomeDevicePanel device_id={panel.device_id} />;
+        case "local_file":
+            return <LocalFilePanel device_id={panel.device_id} file_path={panel.path} />;
+        case "local_device":
+            return <LocalDevicePanel device_id={panel.device_id} />;
+        case "diff":
+            return <DiffPanel device_id={panel.device_id} />;
+        case "esphome_compile":
+            return <EspHomeCompilePanel key={panel.last_click ?? "initial"} device_id={panel.device_id} />;
+        case "esphome_install":
+            return <EspHomeInstallPanel device_id={panel.device_id} />;
+        case "esphome_log":
+            return <EspHomeLogPanel device_id={panel.device_id} />;
+        default:
+            return <div>Noting selected</div>;
+    }
+};
+
 const components = {
     panel: (p: IDockviewPanelProps<TPanel>) => {
         const panel = p.params;
-        switch (panel.operation) {
-            case "esphome_device":
-                return <ESPHomeDevicePanel device_id={panel.device_id} />;
-            case "local_file":
-                return <LocalFilePanel device_id={panel.device_id} file_path={panel.path} />
-            case "local_device":
-                return <LocalDevicePanel device_id={panel.device_id} />;
-            case "diff":
-                return <DiffPanel device_id={panel.device_id} />;
-            case "esphome_compile":
-                return <EspHomeCompilePanel key={panel.last_click ?? "last_click_none"} device_id={panel.device_id} />;
-            case "esphome_install":
-                return <EspHomeInstallPanel device_id={panel.device_id} />;
-            case "esphome_log":
-                return <EspHomeLogPanel device_id={panel.device_id} />;
-            default:
-                return <div>Noting selected</div>;
-        }
+        return <PanelContent panel={panel} />;
     }
 };
 
