@@ -1,9 +1,5 @@
-import { atom, useAtom } from 'jotai';
-import { useQueryState, parseAsJson } from 'nuqs'
 import { TDevice, TLocalFileOrDirectory } from "@/server/devices/types";
 import { TPanel } from "./panels-store/types";
-import { useSessionStorage } from 'usehooks-ts';
-import { useStatusStore } from "./status-store";
 import { Model, IJsonModel, Actions, DockLocation } from 'flexlayout-react';
 
 
