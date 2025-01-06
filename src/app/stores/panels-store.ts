@@ -1,7 +1,6 @@
-import { useQueryState, parseAsJson } from 'nuqs'
+import { atom, useAtom } from "jotai";
 import { TDevice, TLocalFileOrDirectory } from "@/server/devices/types";
 import { TPanel } from "./panels-store/types";
-import { useSessionStorage } from 'usehooks-ts';
 import { useStatusStore } from "./status-store";
 import { DockviewApi } from 'dockview-react';
 
