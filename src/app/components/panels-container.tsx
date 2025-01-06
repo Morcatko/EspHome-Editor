@@ -7,6 +7,7 @@ import { EspHomeInstallPanel } from "./panels/esphome-install-panel";
 import { EspHomeCompilePanel } from "./panels/esphome-compile-panel";
 import { TPanel } from "../stores/panels-store/types";
 import { usePanelsStore } from "../stores/panels-store";
+import { Onboarding } from "./onboarding";
 
 const PanelContent = ({ panel }: { panel: TPanel }) => {
     switch (panel.operation) {
@@ -53,7 +54,7 @@ export const PanelsContainer = () => {
     const panel = usePanelsStore().panel;
 
     if (!panel) {
-        return null;
+        return <Onboarding  />;
     }
 
     return <div style={{
