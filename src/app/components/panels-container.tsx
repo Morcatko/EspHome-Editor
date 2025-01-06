@@ -9,6 +9,7 @@ import { TPanel } from "../stores/panels-store/types";
 import { usePanelsStore } from "../stores/panels-store";
 import { DockviewReact, IDockviewPanelProps } from "dockview-react";
 import { useDarkTheme } from "@/app/utils/hooks";
+import { Onboarding } from "./onboarding";
 
 const PanelContent = ({ panel }: { panel: TPanel }) => {
     switch (panel.operation) {
@@ -35,7 +36,8 @@ const components = {
     panel: (p: IDockviewPanelProps<TPanel>) => {
         const panel = p.params;
         return <PanelContent panel={panel} />;
-    }
+    },
+    onboarding: () => <Onboarding />
 };
 
 /*const tabComponents = {

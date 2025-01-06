@@ -13,7 +13,7 @@ function getPanelTitle(panel: TPanel) {
         case "local_device":
             return `${panel.device_id} (Local)`;
         case "esphome_device":
-            return `${panel.device_id }(ESPHome)`;
+            return `${panel.device_id}(ESPHome)`;
         case "diff":
             return `${panel.device_id} (Diff)`;
         case "esphome_compile":
@@ -29,15 +29,16 @@ function getPanelTitle(panel: TPanel) {
 
 
 export const usePanelsStore = () => {
-    const status = useStatusStore();
-
-     const [api, setApi] = useAtom(dockViewApiAtom);
+    const [api, setApi] = useAtom(dockViewApiAtom);
 
 
-    const setPanel = (panel: TPanel) => {
+    const addPanel = (
+        id: string,
+        title: string,
+        component: string,
+        params: any,
+    ) => {
         if (!api) return;
-        const id = `${panel.operation}_${panel.device_id}_${(panel as any)?.path}`;
-        const params = { ...panel, last_click: new Date().toISOString() };
 
         const existingPanel = api?.panels.find(p => p.id === id)
 
@@ -48,11 +49,18 @@ export const usePanelsStore = () => {
         else
             api.addPanel<TPanel>({
                 id: id,
-                title: getPanelTitle(panel),
-                component: "panel",
+                title: title,
+                component: component,
                 params: params,
             });
     }
+
+    const addEditorPanel = (panel: TPanel) =>
+        addPanel(
+            `${panel.operation}_${panel.device_id}_${(panel as any)?.path}`,
+            getPanelTitle(panel),
+            "panel",
+            { ...panel, last_click: new Date().toISOString() });
 
     const handleClick = (
         e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>,
@@ -70,12 +78,13 @@ export const usePanelsStore = () => {
             window.open(currentUrl.toString(), '_blank')?.focus();
         }
         else {
-            setPanel(panel);
+            addEditorPanel(panel);
         }
     }
 
     return {
         setApi: setApi,
+        addOnboarding: () => addPanel("onboarding", "Editor for ESPHome", "onboarding", {}),
         handleClick,
     };
 }

@@ -5,9 +5,11 @@ import { Heading, Spinner } from "@primer/react";
 import { LinkExternalIcon } from "@primer/octicons-react";
 import { useDevicesStore } from "./stores/devices-store";
 import { useStatusStore } from "./stores/status-store";
+import { usePanelsStore } from "./stores/panels-store";
 
 export default () => {
 	const devices = useDevicesStore();
+	const panels = usePanelsStore();
 
 	const statusStore = useStatusStore();
 
@@ -17,7 +19,9 @@ export default () => {
 		</div>
 		: <div style={{ gridTemplateColumns: "18rem 1fr", gridTemplateRows: "56px 1fr auto", gridGap: "1px" }} className="h-screen w-screen grid" >
 			<div style={{ gridArea: "1/1/1/1", lineHeight: '56px' }} className="border-b border-slate-200 dark:border-slate-800 text-center" >
-				<Heading className="inline-block align-baseline text-slate-600 dark:text-slate-400" variant="small" >Editor for ESPHome</Heading>
+				<a href="#" onClick={() => panels.addOnboarding()}>
+					<Heading className="inline-block align-baseline text-slate-600 dark:text-slate-400" variant="small" >Editor for ESPHome</Heading>
+				</a>
 			</div>
 			<div style={{ gridArea: "2/1/2/1" }} className="pl-1 overflow-y-auto"><DevicesTreeView /></div>
 			<div style={{ gridArea: "3/1/3/1" }} className="border-t border-slate-200 dark:border-slate-800 text-center">

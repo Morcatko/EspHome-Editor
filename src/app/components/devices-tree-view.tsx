@@ -5,7 +5,7 @@ import { ActionBar, ActionList, ActionMenu, ButtonBaseProps, IconButton, IconBut
 import { TDevice, TLocalFileOrDirectory, TParent } from "@/server/devices/types";
 import { BeakerIcon, CodeIcon, DownloadIcon, KebabHorizontalIcon, FileDirectoryIcon, GitCompareIcon, LightBulbIcon, LogIcon, UploadIcon, PencilIcon, FileCodeIcon, QuestionIcon, XIcon } from "@primer/octicons-react";
 import { color_esphome, color_gray, color_local, color_offline, color_online } from "../utils/const";
-import etajsIcon from "../etajs-logo.svg";
+import etajsIcon from "@/assets/etajs-logo.svg";
 import { api } from "../utils/api-client";
 import { useDevicesStore } from "../stores/devices-store";
 import { usePanelsStore } from "../stores/panels-store";
