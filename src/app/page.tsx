@@ -24,6 +24,6 @@ export default () => {
 				<div className="text-slate-400">{statusStore.query.isSuccess && statusStore.query.data?.version}</div>
 				<div className="text-blue-300 text-sm underline"><a href="https://github.com/Morcatko/EspHome-Editor/issues" target="_blank">feedback <LinkExternalIcon className="inline" /></a></div>
 			</div>
-			<div style={{ gridArea: "1/2/4/2" }} className="border-l border-slate-200"><PanelsContainer /></div>
+			<div style={{ gridArea: "1/2/4/2" }} className="border-l border-slate-200 relative"><PanelsContainer /></div>
 		</div>
 };

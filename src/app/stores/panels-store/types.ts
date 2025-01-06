@@ -7,6 +7,7 @@ export type TEditorFileProps = {
 
 type TPanelBase = {
     device_id: string;
+    last_click?: string;
 }
 
 
