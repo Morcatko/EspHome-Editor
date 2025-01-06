@@ -48,8 +48,8 @@ export const PanelsContainer = () => {
     const panelsStore = usePanelsStore();
 
     return <Layout
-            // classNameMapper={classNameMapper}
-            model={panelsStore.flexLayoutModel}
-            factory={factory}
-        />
+        // classNameMapper={classNameMapper}
+        model={panelsStore.flexLayoutModel}
+        factory={factory}
+    />
 };
