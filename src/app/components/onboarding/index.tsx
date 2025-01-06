@@ -84,7 +84,7 @@ export const Onboarding = () => {
                     <p>
                         The final YAML configuration is a combination of multiple YAML files. Here's how it works:
                     </p>
-                    <Image src={map} alt="etajs template" unoptimized/>
+                    <Image className='dark:invert' src={map} alt="etajs template" unoptimized />
                     <ul className="list-disc ml-8 mt-3 space-y-2">
                         <li>Use the <code>.lib</code> folder for shared code, with optional device-specific local <code>.lib</code> folders.</li>
                         <li>The compiler processes all <code>.eta</code> files in the root folder, converting them into YAML files.</li>
