@@ -17,7 +17,7 @@ const components = {
             case "esphome_device":
                 return <ESPHomeDevicePanel device_id={panel.device_id} />;
             case "local_file":
-                return <LocalFilePanel device_id={p.params.device_id} file_path={(p.params as any).path} />
+                return <LocalFilePanel device_id={panel.device_id} file_path={panel.path} />
             case "local_device":
                 return <LocalDevicePanel device_id={panel.device_id} />;
             case "diff":
