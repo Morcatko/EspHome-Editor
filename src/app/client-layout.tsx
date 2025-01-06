@@ -25,7 +25,7 @@ export function ClientLayout({
   return (<RootStoreContext.Provider value={rootStore}>
     <QueryClientProvider client={queryClient}>
       <ThemeProvider colorMode="auto" preventSSRMismatch>
-          {children}
+        {children}
         <InputTextDialog />
         <ConfirmationDialog />
       </ThemeProvider>
