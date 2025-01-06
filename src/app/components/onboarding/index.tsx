@@ -1,8 +1,8 @@
+import Image from 'next/image';
 import { color_esphome, color_gray, color_local, color_offline, color_online } from "@/app/utils/const";
 import { BeakerIcon, CodeIcon, DownloadIcon, GitCompareIcon, LogIcon, UploadIcon } from "@primer/octicons-react";
-import { set } from "mobx";
-import { useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
+import map from "@/assets/onboarding/map.png";
 
 type TSectionProps = {
     step: string;
@@ -47,21 +47,14 @@ export const Onboarding = () => {
                         Welcome to the Editor for ESPHome
                     </h1>
                     <p className="text-gray-600 dark:text-gray-400 mt-2">
-                        Get started by learning how to use this tool to build and manage your ESPHome devices effortlessly.
+                        Get started with the Editor for ESPHome to easily build and manage devices by writing or generating YAML files.
                     </p>
                 </div>
-
-                {/* Section: Introduction */}
-                <Section step="intro" title="Introduction">
-                    <p>
-                        With the Editor for ESPHome, you can combine multiple YAML files to create robust configurations for your devices. YAML files can either be written manually or generated using the Etajs template engine.
-                    </p>
-                </Section>
 
                 {/* Section: Device Status */}
                 <Section step="device_status" title="Understanding Device Status">
                     <p>
-                        On the Device Panel, you’ll see all your ESPHome devices. The status of each device is indicated by the color of the light bulb:
+                        On the Devices Panel, you'll see all your ESPHome devices. The status of each device is indicated by the color of the light bulb
                     </p>
                     <ul className="list-disc ml-8 mt-3 space-y-2">
                         <li><span style={{ color: color_gray }} className="font-semibold">Gray</span> - Editor-only device</li>
@@ -72,7 +65,7 @@ export const Onboarding = () => {
                 {/* Section: Device Toolbar */}
                 <Section step="device_toolbar" title="Device Toolbar">
                     <p>
-                        Expand a device to access its toolbar. The available actions depend on the device status:
+                        Expand a device to access its toolbar. (Available actions depend on the device status)
                     </p>
                     <ul className="mt-4 space-y-3">
                         <li><DownloadIcon className="inline mr-2" fill={color_local} /> Import configuration from ESPHome instance</li>
@@ -91,6 +84,7 @@ export const Onboarding = () => {
                     <p>
                         The final YAML configuration is a combination of multiple YAML files. Here's how it works:
                     </p>
+                    <Image src={map} alt="etajs template" unoptimized/>
                     <ul className="list-disc ml-8 mt-3 space-y-2">
                         <li>Use the <code>.lib</code> folder for shared code, with optional device-specific local <code>.lib</code> folders.</li>
                         <li>The compiler processes all <code>.eta</code> files in the root folder, converting them into YAML files.</li>
