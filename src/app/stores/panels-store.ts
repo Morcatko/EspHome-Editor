@@ -1,4 +1,3 @@
-import { atom, useAtom } from 'jotai';
 import { useQueryState, parseAsJson } from 'nuqs'
 import { TDevice, TLocalFileOrDirectory } from "@/server/devices/types";
 import { TPanel } from "./panels-store/types";
@@ -35,13 +34,6 @@ export const usePanelsStore = () => {
 
      const [api, setApi] = useAtom(dockViewApiAtom);
 
-/*    const [panel, setPanel] = status.isHaAddon
-        ? useSessionStorage<TPanel | null>("panel", null, {
-            serializer: JSON.stringify,
-            deserializer: JSON.parse,
-        })
-        : useQueryState<TPanel>('panel', parseAsJson(v => v as TPanel));
-*/
 
     const setPanel = (panel: TPanel) => {
         if (!api) return;

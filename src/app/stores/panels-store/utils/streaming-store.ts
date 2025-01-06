@@ -11,7 +11,7 @@ const convert = new Convert({
 
 export const useStreamingStore = (url: string) => {
     const [data, setData] = useState<string[]>([]);
-    
+
     const ws = useWebSocket<TWsMessage>(
         api.getWsUrl(url), {
         share: true
