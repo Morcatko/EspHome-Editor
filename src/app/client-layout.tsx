@@ -1,5 +1,5 @@
 "use client";
-import { Suspense, useEffect } from "react";
+import { useEffect } from "react";
 import { loader } from "@monaco-editor/react";
 import { ThemeProvider, BaseStyles } from '@primer/react'
 import { queryClient, rootStore, RootStoreContext } from "./stores";
@@ -25,9 +25,7 @@ export function ClientLayout({
   return (<RootStoreContext.Provider value={rootStore}>
     <QueryClientProvider client={queryClient}>
       <ThemeProvider colorMode="auto" preventSSRMismatch>
-        <Suspense>
           {children}
-        </Suspense>
         <InputTextDialog />
         <ConfirmationDialog />
       </ThemeProvider>
