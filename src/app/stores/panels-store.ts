@@ -44,29 +44,39 @@ function getPanelTitle(panel: TPanel) {
 
 export const usePanelsStore = () => {
 
-    const setPanel = (panel: TPanel) => {
-        const id = `tab_${panel.operation}_${panel.device_id}_${(panel as any)?.path}`;
-        const config = { ...panel, last_click: new Date().toISOString() };
-
+    const addPanel = (
+        id: string,
+        title: string,
+        component: string,
+        params: any,
+    ) => {
         const existingNode = flexLayoutModel.getNodeById(id);
-        const js = flexLayoutModel.toJson();
-        const ts = flexLayoutModel.getNodeById("tabset_main")
+        //const js = flexLayoutModel.toJson();
+        //const ts = flexLayoutModel.getNodeById("tabset_main")
 
         //debugger;
         if (existingNode) {
             flexLayoutModel.doAction(Actions.selectTab(id));
-            flexLayoutModel.doAction(Actions.updateNodeAttributes(id, { config: config}));
+            flexLayoutModel.doAction(Actions.updateNodeAttributes(id, { config: params}));
         }
         else {
             flexLayoutModel.doAction(Actions.addNode({
                 id: id,
                 type: "tab",
-                name: getPanelTitle(panel),
-                component: "panel",
-                config: config
+                name: title,
+                component: component,
+                config: params
             },"tabset_main", DockLocation.CENTER, -1, true));
         }
     }
+
+
+    const addEditorPanel = (panel: TPanel) => 
+        addPanel(
+            `tab_${panel.operation}_${panel.device_id}_${(panel as any)?.path}`, 
+            getPanelTitle(panel), 
+            "panel", 
+            { ...panel, last_click: new Date().toISOString() });
 
     const handleClick = (
         e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>,
@@ -84,12 +94,13 @@ export const usePanelsStore = () => {
             window.open(currentUrl.toString(), '_blank')?.focus();
         }
         else {
-            setPanel(panel);
+            addEditorPanel(panel);
         }
     }
 
     return {
         flexLayoutModel: flexLayoutModel,
+        addOnboarding: () => addPanel("onboarding", "Editor for ESPHome", "onboarding", {}),
         handleClick,
     };
 }
