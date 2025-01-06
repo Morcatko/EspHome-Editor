@@ -82,9 +82,9 @@ export const Onboarding = () => {
                 {/* Section: YAML Configuration */}
                 <Section step="yaml" title="How YAML Configurations Work">
                     <p>
-                        The final YAML configuration is a combination of multiple YAML files. Here's how it works:
+                        The final YAML configuration is a combination of multiple YAML files.
                     </p>
-                    <Image className='dark:invert' src={map} alt="etajs template" unoptimized />
+                    <Image className='dark:invert' src={map} alt="etajs template" unoptimized style={{ margin: '-30px' }} />
                     <ul className="list-disc ml-8 mt-3 space-y-2">
                         <li>Use the <code>.lib</code> folder for shared code, with optional device-specific local <code>.lib</code> folders.</li>
                         <li>The compiler processes all <code>.eta</code> files in the root folder, converting them into YAML files.</li>
@@ -93,7 +93,7 @@ export const Onboarding = () => {
                 </Section>
 
                 {/* Section: Getting Started */}
-                <Section step="getting_Started" title="Getting Started">
+                {/* <Section step="getting_Started" title="Getting Started">
                     <p>
                         Let’s start building configurations. Choose between creating multiple devices (e.g., humidity sensors for flowers) or a single device with multiple components (e.g., a PLC with multiple inputs).
                     </p>
@@ -101,7 +101,7 @@ export const Onboarding = () => {
                         <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Flowers</button>
                         <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">PLC</button>
                     </div>
-                </Section>
+                </Section> */}
             </div>
         </div>
     );
