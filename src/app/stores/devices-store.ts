@@ -8,7 +8,7 @@ import { useLocalStorage } from "usehooks-ts";
 import { useCallback } from "react";
 
 const useDeviceExpandedStore = () => {
-    const [value, setValue] = useLocalStorage<string[]>('devices.expanded', [], {
+    const [value, setValue] = useLocalStorage<string[]>('e4e.devices.expanded', [], {
         serializer: JSON.stringify,
         deserializer: JSON.parse,
     });

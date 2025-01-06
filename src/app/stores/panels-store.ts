@@ -8,7 +8,7 @@ export const usePanelsStore = () => {
     const status = useStatusStore();
 
     const [panel, setPanel] = status.isHaAddon
-        ? useSessionStorage<TPanel | null>("panel", null, {
+        ? useSessionStorage<TPanel | null>("e4e.panel", null, {
             serializer: JSON.stringify,
             deserializer: JSON.parse,
         })
