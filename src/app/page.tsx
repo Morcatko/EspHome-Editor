@@ -6,6 +6,8 @@ import { LinkExternalIcon } from "@primer/octicons-react";
 import { useDevicesStore } from "./stores/devices-store";
 import { useStatusStore } from "./stores/status-store";
 import { usePanelsStore } from "./stores/panels-store";
+import Image from "next/image";
+import logo from "@/assets/logo.svg";
 
 export default () => {
 	const statusStore = useStatusStore();
@@ -20,6 +22,7 @@ export default () => {
 		: <div style={{ gridTemplateColumns: "18rem 1fr", gridTemplateRows: "56px 1fr auto", gridGap: "1px" }} className="h-screen w-screen grid" >
 			<div style={{ gridArea: "1/1/1/1", lineHeight: '56px' }} className="border-b border-slate-200 dark:border-slate-800 text-center" >
 				<a href="#" onClick={() => panelsStore.addOnboarding()}>
+					<Image className="inline mr-2" src={logo} alt="ESPHome Editor" width="32" height="32" />
 					<Heading className="inline-block align-baseline text-slate-600 dark:text-slate-400" variant="small" >Editor for ESPHome</Heading>
 				</a>
 			</div>
