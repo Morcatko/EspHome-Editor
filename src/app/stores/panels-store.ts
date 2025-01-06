@@ -7,17 +7,24 @@ import { useStatusStore } from "./status-store";
 export const usePanelsStore = () => {
     const status = useStatusStore();
 
-    const [panel, _setPanel] = status.isHaAddon
+    const [panel, setPanel] = status.isHaAddon
         ? useSessionStorage<TPanel | null>("panel", null, {
             serializer: JSON.stringify,
             deserializer: JSON.parse,
         })
         : useQueryState<TPanel>('panel', parseAsJson(v => v as TPanel));
 
-    const setPanel = (panel: TPanel) => {
-        const panelWithClick = { ...panel, last_click: new Date().toISOString() };
-        _setPanel(panelWithClick);
+    const addPanel = (
+        params: TPanel | null,
+    ) => {
+        setPanel(params);
     }
+
+
+    const addEditorPanel = (panel: TPanel) =>
+        addPanel(
+            { ...panel, last_click: new Date().toISOString() });
+
 
     const handleClick = (
         e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>,
@@ -35,12 +42,13 @@ export const usePanelsStore = () => {
             window.open(currentUrl.toString(), '_blank')?.focus();
         }
         else {
-            setPanel(panel);
+            addEditorPanel(panel);
         }
     }
 
     return {
         panel: panel,
+        addOnboarding: () => addPanel(null),
         handleClick,
     };
 }
