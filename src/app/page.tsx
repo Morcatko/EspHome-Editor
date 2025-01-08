@@ -4,6 +4,7 @@ import { PanelsContainer } from "./components/panels-container";
 import { Heading, Spinner } from "@primer/react";
 import { LinkExternalIcon } from "@primer/octicons-react";
 import { useDevicesStore } from "./stores/devices-store";
+import { useStatusStore } from "./stores/status-store";
 import { usePanelsStore } from "./stores/panels-store";
 import Image from "next/image";
 import logo from "@/assets/logo.svg";
@@ -20,6 +21,7 @@ const Header = () => {
 }
 
 export default () => {
+	const statusStore = useStatusStore();
 	const devicesStore = useDevicesStore();
 
 
