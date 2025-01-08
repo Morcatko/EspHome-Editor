@@ -1,6 +1,5 @@
-import { TDevice } from "@/server/devices/types";
 import { assertResponseAndJsonOk, assertResponseOk } from "@/shared/http-utils";
-import { log } from "@/shared/log";
+import { TGetStatus } from "../api/status/route";
 
 export namespace api {
     export type TCallResult = {
@@ -24,6 +23,12 @@ export namespace api {
             ;
 
         return encodeURIComponent(fixed);
+    }
+
+    export const getWsUrl = (url: string) => {
+        const finalUrl = new URL(fixUrl(url), location.href);
+        finalUrl.protocol = finalUrl.protocol === "http:" ? "ws:" : "wss:";
+        return finalUrl.toString();
     }
 
     export async function callGet_text(url: string): Promise<TCallResult> {
@@ -103,44 +108,15 @@ export namespace api {
         await callDelete(url_local_path(device_id, path));
     }
 
-    export async function local_path_compile(device: TDevice, path: string, test_content: string | undefined) {
-        return await callPost(url_local_path(device.id, path, "compile"), test_content ?? "", false);
+    export async function local_path_compile(device_id: string, path: string, test_content: string | undefined) {
+        return await callPost(url_local_path(device_id, path, "compile"), test_content ?? "", false);
     }
 
     export async function getStatus() {
-        return await callGet_json("/api/status");
+        return await callGet_json<TGetStatus>("/api/status");
     }
 
     export async function getPing() {
         return await callGet_json("/api/device/ping");
-    }
-
-    export async function getStream(
-        url: string,
-        onMessage: (message: string) => void,
-    ) {
-        const finalUrl = new URL(fixUrl(url), location.href);
-        finalUrl.protocol = finalUrl.protocol === "http:" ? "ws:" : "wss:";
-
-        const ws = new WebSocket(finalUrl.toString());
-        ws.onmessage = (ev) => {
-            const msg = JSON.parse(ev.data);
-            switch (msg.event) {
-                case "completed":
-                    log.verbose("Stream completed");
-                    ws.close();;
-                    break;
-                case "error":
-                    log.error("Stream error", msg.data);
-                    ws.close();
-                    break;
-                case "message":
-                    onMessage(msg.data as string);
-                    break;
-                default:
-                    log.warn("Unknown event", msg);
-                    break;
-            }
-        };
     }
 }

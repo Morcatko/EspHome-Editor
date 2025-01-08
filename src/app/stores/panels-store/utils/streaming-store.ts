@@ -1,33 +1,50 @@
-import Convert from "ansi-to-html";
-import { AsyncState } from "../../utils";
-import { makeAutoObservable, runInAction } from "mobx";
+import { TWsMessage } from "@/app/api/device/[device_id]/esphome/utils";
 import { api } from "@/app/utils/api-client";
+import { log } from "@/shared/log";
+import Convert from "ansi-to-html";
+import { useEffect, useState } from "react";
+import useWebSocket from "react-use-websocket";
 
 const convert = new Convert({
     stream: true,
 });
 
-export class StreamingStore {
-    loadState: AsyncState = "none";
-    readonly data: string[] = [];
-    content: string = "";
+export const useStreamingStore = (url: string) => {
+    const [data, setData] = useState<string[]>([]);
 
-    constructor(private readonly url: string) {
-        makeAutoObservable(this);
-    }
+    const ws = useWebSocket<TWsMessage>(
+        api.getWsUrl(url), {
+        share: true
+    });
 
-    async loadIfNeeded() {
-        if ((this.loadState === "none") || (this.loadState === "error")) {
-            this.loadState = "loading";
+    useEffect(() => setData([]), [url]);
 
-            await api.getStream(
-                this.url,
-                m => {
+    useEffect(() => {
+        if (!ws.lastJsonMessage?.event) return;
+        switch (ws.lastJsonMessage.event) {
+            case "completed":
+                log.verbose("Stream completed");
+                //ws.getWebSocket()!.close();
+                break;
+            case "error":
+                log.error("Stream error", ws.lastJsonMessage?.data);
+                //ws.getWebSocket()!.close();
+                break;
+            case "message":
+                if (ws.lastJsonMessage?.data) {
                     const html = convert.toHtml(
-                        m.replaceAll("\\033", "\x1b"),
+                        ws.lastJsonMessage?.data.replaceAll("\\033", "\x1b"),
                     );
-                    runInAction(() => this.data.push(html));
-                });
+                    setData(val => [...val, html]);
+                }
+                break;
+            default:
+                log.warn("Unknown event", ws.lastJsonMessage);
+                break
         }
-    }
+    }, [ws.lastJsonMessage]);
+
+    return data
 }
+
+

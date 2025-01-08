@@ -1,30 +1,54 @@
-import { TDevice, TLocalFile } from "@/server/devices/types";
-import { makeAutoObservable } from "mobx";
-import { ESPHomeDeviceStore } from "./panels-store/esphome-device-store";
-import { LocalFileStore } from "./panels-store/local-file-store";
-import { LocalDeviceStore } from "./panels-store/local-device-store";
-import { DeviceDiffStore } from "./panels-store/device-diff-store";
-import { ESPHomeCompileStore } from "./panels-store/esphome-compile-store";
-import { IPanelsStore } from "./panels-store/utils/IPanelsStore";
-import { ESPHomeLogStore } from "./panels-store/esphome-log-store";
-import { ESPHomeInstallStore } from "./panels-store/esphome-install-store";
+import { useQueryState, parseAsJson } from 'nuqs'
+import { TDevice, TLocalFileOrDirectory } from "@/server/devices/types";
+import { TPanel } from "./panels-store/types";
+import { useSessionStorage } from 'usehooks-ts';
+import { useStatusStore } from "./status-store";
 
-export class PanelsStore {
-    tab: IPanelsStore | null = null;
+export const usePanelsStore = () => {
+    const status = useStatusStore();
 
-    constructor() {
-        makeAutoObservable(this);
+    const [panel, setPanel] = status.isHaAddon
+        ? useSessionStorage<TPanel | null>("e4e.panel", null, {
+            serializer: JSON.stringify,
+            deserializer: JSON.parse,
+        })
+        : useQueryState<TPanel>('panel', parseAsJson(v => v as TPanel));
+
+    const addPanel = (
+        params: TPanel | null,
+    ) => {
+        setPanel(params);
     }
 
-    private add = (tab: IPanelsStore) => {
-        this.tab = tab;
+
+    const addEditorPanel = (panel: TPanel) =>
+        addPanel(
+            { ...panel, last_click: new Date().toISOString() });
+
+
+    const handleClick = (
+        e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>,
+        device: TDevice,
+        operation: TPanel["operation"],
+        file: TLocalFileOrDirectory | undefined = undefined) => {
+
+        const panel: TPanel = (operation === "local_file")
+            ? { device_id: device.id, operation, path: file!.path }
+            : { device_id: device.id, operation };
+
+        if ((e as any).button === 1) {// Middle click
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set('panel', JSON.stringify(panel));
+            window.open(currentUrl.toString(), '_blank')?.focus();
+        }
+        else {
+            addEditorPanel(panel);
+        }
     }
 
-    add_localDevice = (device: TDevice) => this.add(new LocalDeviceStore(device));
-    add_localFile = (device: TDevice, file: TLocalFile) => this.add(new LocalFileStore(device, file));
-    add_diff = (device: TDevice) => this.add(new DeviceDiffStore(device));
-    add_espHomeDevice = (device: TDevice) => this.add(new ESPHomeDeviceStore(device));
-    add_espHomeCompile = (device: TDevice) => this.add(new ESPHomeCompileStore(device));
-    add_espHomeInstall = (device: TDevice) => this.add(new ESPHomeInstallStore(device));
-    add_espHomeLog = (device: TDevice) => this.add(new ESPHomeLogStore(device));
+    return {
+        panel: panel,
+        addOnboarding: () => addPanel(null),
+        handleClick,
+    };
 }
