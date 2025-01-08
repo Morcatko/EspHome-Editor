@@ -9,6 +9,7 @@ COPY package.json ./
 COPY postcss.config.mjs ./
 COPY tailwind.config.ts ./
 COPY tsconfig.json ./
+COPY vitest.config.ts ./
 COPY yarn.lock ./
 
 RUN yarn --frozen-lockfile
