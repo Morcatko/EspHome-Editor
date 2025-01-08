@@ -1,7 +1,7 @@
 import { useEsphomeInstallStore } from "@/app/stores/panels-store/esphome-install-store";
-import { HtmlViewer } from "../editors/html-viewer";
+import { LogStream } from "../editors/log-stream";
 
 export const EspHomeInstallPanel = ({ device_id }: { device_id: string }) => {
     const data = useEsphomeInstallStore(device_id);
-    return <HtmlViewer data={data} />;
+    return <LogStream data={data} />;
 }
