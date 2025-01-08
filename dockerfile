@@ -9,11 +9,13 @@ COPY package.json ./
 COPY postcss.config.mjs ./
 COPY tailwind.config.ts ./
 COPY tsconfig.json ./
+COPY vitest.config.ts ./
 COPY yarn.lock ./
 
 RUN yarn --frozen-lockfile
 
 COPY src ./src
+RUN yarn test run
 RUN yarn build
 
 FROM node:current-alpine AS run
