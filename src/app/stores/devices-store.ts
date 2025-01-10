@@ -6,6 +6,7 @@ import { queryClient, rootStore } from ".";
 import { useQuery } from "@tanstack/react-query";
 import { useLocalStorage } from "usehooks-ts";
 import { useCallback } from "react";
+import { textInputStore } from "./dialogs-store";
 
 const useDeviceExpandedStore = () => {
     const [value, setValue] = useLocalStorage<string[]>('e4e.devices.expanded', [], {
@@ -45,7 +46,7 @@ async function showToast(
 }
 
 async function localDevice_addDirectory(device: TDevice, parent_path: string) {
-    const directory_name = await rootStore.inputTextDialog.tryShowModal({
+    const directory_name = await textInputStore.tryOpen({
         title: "Create new directory",
         subtitle: `${device.name} - ${parent_path}/`,
         defaultValue: "new directory",
@@ -62,7 +63,7 @@ async function localDevice_addDirectory(device: TDevice, parent_path: string) {
 }
 
 async function localDevice_addFile(device: TDevice, parent_path: string) {
-    const file_name = await rootStore.inputTextDialog.tryShowModal({
+    const file_name = await textInputStore.tryOpen({
         title: "Create new file",
         subtitle: `${device.name} - ${parent_path}/`,
         defaultValue: "newfile.yaml",
@@ -99,7 +100,7 @@ async function espHome_upload(device: TDevice) {
 }
 
 async function local_renameFoD(device: TDevice, file: TLocalFileOrDirectory) {
-    const newName = await rootStore.inputTextDialog.tryShowModal({
+    const newName = await textInputStore.tryOpen({
         title: "Rename",
         subtitle: `${device.name} - ${file.path}`,
         defaultValue: file.name,

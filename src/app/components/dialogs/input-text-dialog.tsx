@@ -1,30 +1,29 @@
 import { Box, Dialog, FormControl, TextInput } from "@primer/react"
-import { observer } from "mobx-react-lite";
-import { useStore } from "@/app/stores";
 import { TCommonModalStoreData } from "./common-dialog-store";
+import { useTextInputDialogInternalStore } from "@/app/stores/dialogs-store";
 
 export type TTextInputModalStoreData = TCommonModalStoreData & {
   defaultValue?: string;
 }
 
-export const InputTextDialog = observer(() => {
-  const modalStore = useStore().inputTextDialog;
+export const InputTextDialog = () => {
+  const store = useTextInputDialogInternalStore();
 
-  return modalStore.isOpen &&
+  return store.isOpen &&
     <Dialog
-      title={modalStore.storeData.title}
-      subtitle={modalStore.storeData.subtitle}
-      onClose={() => modalStore.onClose()}
+      title={store.modalContent.title}
+      subtitle={store.modalContent.subtitle}
+      onClose={() => store.onCancel()}
       footerButtons={[
         {
-          buttonType: modalStore.storeData.confirmButtonType ?? 'default',
-          content: modalStore.storeData.cancelLabel ?? 'Cancel',
-          onClick: () => modalStore.onCancel(),
+          buttonType: store.modalContent.confirmButtonType ?? 'default',
+          content: store.modalContent.cancelLabel ?? 'Cancel',
+          onClick: () => store.onCancel(),
         },
         {
-          buttonType: modalStore.storeData.confirmButtonType ?? 'primary',
-          content: modalStore.storeData.confirmLabel ?? 'Confirm',
-          onClick: () => modalStore.onConfirm()
+          buttonType: store.modalContent.confirmButtonType ?? 'primary',
+          content: store.modalContent.confirmLabel ?? 'Confirm',
+          onClick: () => store.onConfirm()
         },
       ]}
     >
@@ -33,12 +32,12 @@ export const InputTextDialog = observer(() => {
         <FormControl>
           {/* <FormControl.Label>New name</FormControl.Label> */}
           <TextInput
-            value={modalStore.value}
-            onChange={(e) => modalStore.setValue(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && modalStore.onConfirm()}
+            value={store.modalContent.value}
+            onChange={(e) => store.setValue(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && store.onConfirm()}
           />
         </FormControl>
       </Box>
 
     </Dialog>;
-});
+};
