@@ -6,6 +6,7 @@ import { queryClient, rootStore, RootStoreContext } from "./stores";
 import { InputTextDialog } from "./components/dialogs/input-text-dialog";
 import { ConfirmationDialog } from "./components/dialogs/confirmation-dialog";
 import { QueryClientProvider } from "@tanstack/react-query";
+import ThemeRegistry from "./ThemeRegistry";
 
 export function ClientLayout({
   children,
@@ -26,9 +27,11 @@ export function ClientLayout({
     <QueryClientProvider client={queryClient}>
       <ThemeProvider colorMode="auto" preventSSRMismatch>
         {children}
+      </ThemeProvider>
+      <ThemeRegistry options={{ key: 'joy' }}>
         <InputTextDialog />
         <ConfirmationDialog />
-      </ThemeProvider>
+      </ThemeRegistry>
     </QueryClientProvider>
   </RootStoreContext.Provider>
   );
