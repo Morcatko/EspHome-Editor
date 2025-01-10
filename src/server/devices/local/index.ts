@@ -6,6 +6,7 @@ import { listDirEntries } from "../../utils/dir-utils";
 import { compileFile as _compileFile, getFileInfo } from "./template-processors";
 import { log } from "@/shared/log";
 import { mergeEspHomeYamlFiles } from "./template-processors/yaml-merger";
+import { patchEspHomeYaml } from "./template-processors/yaml-patcher";
 import { ensureDeviceDirExists, fixPath, getDeviceDir, getDevicePath } from "./utils";
 import { dirname, join } from "node:path";
 
@@ -121,11 +122,13 @@ export namespace local {
             log.success("Compiled patch", filePath);
             outputPatches.push(output);
         }
-
-        //apply patches;
-
-        return mergedYaml.toString();
-    }
+    
+        log.debug("Patching configuration", device_id);
+        const patchedYaml = patchEspHomeYaml(mergedYaml, outputPatches);
+        log.success("Patched configuration", device_id);
+    
+        return patchedYaml.toString();
+}
 
     export const compileFile = _compileFile;
 
