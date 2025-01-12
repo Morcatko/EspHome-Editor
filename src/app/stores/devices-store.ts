@@ -44,6 +44,23 @@ async function showToast(
     );
 }
 
+async function localDevice_create() {
+    const device_name = await rootStore.inputTextDialog.tryShowModal({
+        title: "Add new device",
+        subtitle: "Enter device name",
+        defaultValue: "new device",
+    });
+
+    if (device_name)
+        await showToast(
+            () => api.local_createDevice(device_name),
+            ["devices"],
+            "Creating...",
+            "Created!",
+            "Failed to create",
+        );
+}
+
 async function localDevice_addDirectory(device: TDevice, parent_path: string) {
     const directory_name = await rootStore.inputTextDialog.tryShowModal({
         title: "Create new directory",
@@ -80,7 +97,7 @@ async function localDevice_addFile(device: TDevice, parent_path: string) {
 
 async function localDevice_import(device: TDevice) {
     await showToast(
-        () => api.callPost(api.url_device(device.id, "local"), null),
+        () => api.local_importDevice(device.id),
         ["devices"],
         "Creating...",
         "Created!",
@@ -140,6 +157,7 @@ export const useDevicesStore = () => {
     return {
         expanded: useDeviceExpandedStore(),
         query: devicesQuery,
+        localDevice_create,
         localDevice_addDirectory,
         localDevice_addFile,
         localDevice_import,

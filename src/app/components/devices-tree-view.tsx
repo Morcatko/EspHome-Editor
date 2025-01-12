@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import Image from 'next/image';
 import { ActionBar, ActionList, ActionMenu, ButtonBaseProps, IconButton, IconButtonProps, TreeView } from "@primer/react";
 import { TDevice, TLocalFileOrDirectory, TParent } from "@/server/devices/types";
-import { BeakerIcon, CodeIcon, DownloadIcon, KebabHorizontalIcon, FileDirectoryIcon, GitCompareIcon, LightBulbIcon, LogIcon, UploadIcon, PencilIcon, FileCodeIcon, QuestionIcon, XIcon } from "@primer/octicons-react";
+import { BeakerIcon, CodeIcon, DownloadIcon, KebabHorizontalIcon, FileDirectoryIcon, GitCompareIcon, LightBulbIcon, LogIcon, UploadIcon, PencilIcon, FileCodeIcon, QuestionIcon, XIcon, PlusIcon } from "@primer/octicons-react";
 import { color_esphome, color_gray, color_local, color_offline, color_online } from "../utils/const";
 import etajsIcon from "@/assets/etajs-logo.svg";
 import { api } from "../utils/api-client";
@@ -168,6 +168,17 @@ export const DevicesTreeView = () => {
 
     return (
         <TreeView>
+            <TreeView.Item
+                key="add_device"
+                id="add_device"
+                onSelect={() => devicesStore.localDevice_create()}
+            >
+                New Device
+                <TreeView.LeadingVisual>
+                    <PlusIcon />
+                </TreeView.LeadingVisual>
+
+            </TreeView.Item>
             {devicesStore.query.data?.map((d) => {
                 const isLib = d.name == ".lib";
 
