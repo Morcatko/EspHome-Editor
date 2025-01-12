@@ -30,6 +30,7 @@ export async function GET(
 
 export async function PUT(request: Request, { params }: TParams<TDeviceId>) {
     const { device_id } = await params;
+    //This could use POST/import from "empty" device
     await local.saveFileContent(device_id, "configuration.yaml", "");
 
     return new Response(

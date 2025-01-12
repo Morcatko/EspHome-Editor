@@ -61,6 +61,7 @@ export namespace espHome {
 
     export const saveConfiguration = async (device_id: string, content: string) => {
         const device = await getDevice(device_id);
+        //Create device if it does not exist???
         const url = `${c.espHomeUrl}/edit?configuration=${device.esphome_config}`;
         log.debug("Saving ESPHome configuration", url);
         const response = await fetch(url, {
