@@ -84,7 +84,23 @@ const mainLoop = async () => {
             await createNewVersion();
             break;
         case "docker_prod_build":
-            await dockerBuild("docker buildx build --platform=linux/amd64,linux/arm64 --load", image_name_prod);
+            //https://github.com/home-assistant/supervisor/blob/main/supervisor/data/arch.json
+            //"raspberrypi4-64": ["aarch64", "armv7", "armhf"],
+            // MAP_ARCH in https://github.com/home-assistant/supervisor/blob/main/supervisor/docker/interface.py
+            // MAP_ARCH = {
+            //     CpuArch.ARMV7: "linux/arm/v7",
+            //     CpuArch.ARMHF: "linux/arm/v6",
+            //     CpuArch.AARCH64: "linux/arm64",
+            //     CpuArch.I386: "linux/386",
+            //     CpuArch.AMD64: "linux/amd64",
+            // }
+            const archs = [
+                "linux/amd64",
+                "linux/arm64",
+                "linux/arm/v6",
+                "linux/arm/v7",
+            ]
+            await dockerBuild(`docker buildx build --platform=${archs.join(",")} --load`, image_name_prod);
             break;
     }
 };
