@@ -27,14 +27,16 @@ const useDeviceExpandedStore = () => {
 
 async function showToast(
     call: () => Promise<any>,
-    invlidateKeys: string[],
+    invalidateKeys: string[][],
     loading: string | null,
     success: string | null,
     error: string | null) {
     await toast.promise(
         (async () => {
             await call();
-            await queryClient.invalidateQueries({ queryKey: invlidateKeys });
+            for (const invalidateKey of invalidateKeys) {
+                await queryClient.invalidateQueries({ queryKey: invalidateKey });
+            }
         })(),
         {
             loading: loading,
@@ -48,13 +50,13 @@ async function localDevice_create() {
     const device_name = await rootStore.inputTextDialog.tryShowModal({
         title: "Add new device",
         subtitle: "Enter device name",
-        defaultValue: "new device",
+        defaultValue: "new-device",
     });
 
     if (device_name)
         await showToast(
             () => api.local_createDevice(device_name),
-            ["devices"],
+            [["devices"]],
             "Creating...",
             "Created!",
             "Failed to create",
@@ -71,7 +73,7 @@ async function localDevice_addDirectory(device: TDevice, parent_path: string) {
     if (directory_name)
         await showToast(
             () => api.local_createDirectory(device.id, parent_path + "/" + directory_name),
-            ["devices"],
+            [["devices"]],
             "Creating...",
             "Created!",
             "Failed to create",
@@ -88,7 +90,7 @@ async function localDevice_addFile(device: TDevice, parent_path: string) {
     if (file_name)
         await showToast(
             () => api.local_save(device.id, parent_path + "/" + file_name, ""),
-            ["devices"],
+            [["devices"]],
             "Creating...",
             "Created!",
             "Failed to create",
@@ -98,7 +100,7 @@ async function localDevice_addFile(device: TDevice, parent_path: string) {
 async function localDevice_import(device: TDevice) {
     await showToast(
         () => api.local_importDevice(device.id),
-        ["devices"],
+        [["devices"]],
         "Creating...",
         "Created!",
         "Failed to create",
@@ -108,7 +110,7 @@ async function localDevice_import(device: TDevice) {
 async function espHome_upload(device: TDevice) {
     await showToast(
         () => api.callPost(api.url_device(device.id, "esphome"), null),
-        ["device", device.id, "esphome"],
+        [["device", device.id, "esphome"], device.esphome_config ? ["devices"] : []],
         "Uploading...",
         "Uploaded!",
         "Failed to upload",
@@ -125,7 +127,7 @@ async function local_renameFoD(device: TDevice, file: TLocalFileOrDirectory) {
     if (newName)
         await showToast(
             () => api.local_rename(device.id, file.path, newName),
-            ["devices"],
+            [["devices"]],
             "Renaming...",
             "Renamed!",
             "Failed to rename",
@@ -141,7 +143,7 @@ async function local_deleteFoD(device: TDevice, file: TLocalFileOrDirectory) {
     if (del)
         showToast(
             () => api.local_delete(device.id, file.path),
-            ["devices"],
+            [["devices"]],
             "Deleting...",
             "Deleted!",
             "Failed to delete",
