@@ -49,14 +49,14 @@ export const Home = (props: THomeProps) => {
             <Image className='dark:invert' src={map} alt="etajs template" unoptimized style={{ margin: '-30px' }} />
             <Ul>
                 <li>Use the <Code>.lib</Code> folder for shared code, with optional device-specific local <Code>.lib</Code> folders.</li>
-                <li>The compiler processes all <Code>.eta</Code> files in the root folder, converting them into YAML files.</li>
-                <li>It merges manually created YAML files and compiled YAML files into a single final configuration file.</li>
+                <li>The compiler processes all <Code>.eta</Code> files in the device folder, converting them into <Code>.yaml</Code> files.</li>
+                <li>It merges manually created <Code>.yaml</Code> files and compiled <Code>.yaml</Code> files into a single final configuration file.</li>
             </Ul>
         </Section>
 
         <Section step="getting_Started" title="Getting Started">
             <p>
-                Let’s try building your first configuration. Choose between creating multiple devices (e.g., humidity sensors for flowers) or a single device with multiple components (e.g., a PLC with multiple inputs).
+                Let�s try building your first configuration. Choose between creating multiple devices (e.g., humidity sensors for flowers) or a single device with multiple components (e.g., a PLC with multiple inputs).
             </p>
             <div className="flex justify-around mt-4">
                 <Button  onClick={() => props.onCLick("flowers")}>Flowers</Button>

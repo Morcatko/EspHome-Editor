@@ -48,8 +48,8 @@ async function showToast(
 
 async function localDevice_create() {
     const device_name = await rootStore.inputTextDialog.tryShowModal({
-        title: "Add new device",
-        subtitle: "Enter device name",
+        title: "Add New Device",
+        subtitle: "Enter Device Name",
         defaultValue: "new-device",
     });
 
@@ -59,13 +59,13 @@ async function localDevice_create() {
             [["devices"]],
             "Creating...",
             "Created!",
-            "Failed to create",
+            "Failed to Create",
         );
 }
 
 async function localDevice_addDirectory(device: TDevice, parent_path: string) {
     const directory_name = await rootStore.inputTextDialog.tryShowModal({
-        title: "Create new directory",
+        title: "Create New Directory",
         subtitle: `${device.name} - ${parent_path}/`,
         defaultValue: "new directory",
     });
@@ -76,13 +76,13 @@ async function localDevice_addDirectory(device: TDevice, parent_path: string) {
             [["devices"]],
             "Creating...",
             "Created!",
-            "Failed to create",
+            "Failed to Create",
         );
 }
 
 async function localDevice_addFile(device: TDevice, parent_path: string) {
     const file_name = await rootStore.inputTextDialog.tryShowModal({
-        title: "Create new file",
+        title: "Create New File",
         subtitle: `${device.name} - ${parent_path}/`,
         defaultValue: "newfile.yaml",
     });
@@ -93,7 +93,7 @@ async function localDevice_addFile(device: TDevice, parent_path: string) {
             [["devices"]],
             "Creating...",
             "Created!",
-            "Failed to create",
+            "Failed to Create",
         );
 }
 
@@ -103,7 +103,7 @@ async function localDevice_import(device: TDevice) {
         [["devices"]],
         "Creating...",
         "Created!",
-        "Failed to create",
+        "Failed to Create",
     );
 }
 
@@ -113,7 +113,7 @@ async function espHome_upload(device: TDevice) {
         [["device", device.id, "esphome"], device.esphome_config ? ["devices"] : []],
         "Uploading...",
         "Uploaded!",
-        "Failed to upload",
+        "Failed to Upload",
     );
 }
 
@@ -130,7 +130,7 @@ async function local_renameFoD(device: TDevice, file: TLocalFileOrDirectory) {
             [["devices"]],
             "Renaming...",
             "Renamed!",
-            "Failed to rename",
+            "Failed to Rename",
         );
 }
 
@@ -147,7 +147,7 @@ async function local_deleteFoD(device: TDevice, file: TLocalFileOrDirectory) {
             [["devices"]],
             "Deleting...",
             "Deleted!",
-            "Failed to delete",
+            "Failed to Delete",
         );
 }
 
