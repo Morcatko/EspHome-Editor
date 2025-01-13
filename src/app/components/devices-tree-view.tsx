@@ -115,13 +115,21 @@ const DeviceToolbar = ({ device }: { device: TDevice }) => {
     }
 
     const localProps = { ...allProps };
-    const bothProps = {
+    const diffProps = {
         ...allProps,
         disabled: !hasBoth,
         sx: {
             color: (hasBoth)
                 ? (isDarkMode ? "lightgrey" : color_gray)
                 : (isDarkMode ? color_gray : "lightgrey")
+        },
+    }
+
+    const uploadCreates = !hasESPHomeConfig;
+    const uploadProps = {
+        ...allProps,
+        sx: {
+            color: (isDarkMode ? "lightgrey" : color_gray)
         },
     }
 
@@ -138,8 +146,8 @@ const DeviceToolbar = ({ device }: { device: TDevice }) => {
                 : <ActionBar.IconButton key="create_local"  {...localProps} sx={{ color: color_local }} icon={DownloadIcon} onClick={() => devicesStore.localDevice_import(device)} aria-label="Import yaml configuration" />
             }
             <ActionBar.Divider key="div1" />
-            <ActionBar.IconButton key="diff" {...bothProps} icon={GitCompareIcon} onClick={(e) => panels.handleClick(e, device, "diff")} aria-label="Show local vs ESPHome diff" />
-            <ActionBar.IconButton key="upload" {...bothProps} icon={UploadIcon} onClick={() => devicesStore.espHome_upload(device)} aria-label="Upload local to ESPHome" />
+            <ActionBar.IconButton key="diff" {...diffProps} icon={GitCompareIcon} onClick={(e) => panels.handleClick(e, device, "diff")} aria-label="Show local vs ESPHome diff" />
+            <ActionBar.IconButton key="upload" {...uploadProps} icon={UploadIcon} onClick={() => devicesStore.espHome_upload(device)} aria-label={uploadCreates ? "Create device in ESPHome" : "Upload local to ESPHome"} />
             <ActionBar.Divider key="div2" />
             <ActionBar.IconButton key="show_esphome" {...espHomeProps} icon={CodeIcon} onClick={(e) => panels.handleClick(e, device, "esphome_device")} aria-label="Show ESPHome configuration" />
             <ActionBar.IconButton key="compile" {...espHomeProps} icon={BeakerIcon} onClick={(e) => panels.handleClick(e, device, "esphome_compile")} aria-label="Compile ESPHome configuration" />
