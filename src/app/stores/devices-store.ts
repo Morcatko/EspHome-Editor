@@ -140,6 +140,7 @@ async function local_deleteFoD(device: TDevice, file: TLocalFileOrDirectory) {
         title: "Delete",
         subtitle: `${device.name} - ${file.path}`,
         text: "Are you sure you want to delete this file or directory?",
+        confirmButtonColor: "danger",
     });
     if (del)
         showToast(
