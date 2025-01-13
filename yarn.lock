@@ -3360,9 +3360,9 @@ natural-compare@^1.4.0:
   integrity sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==
 
 next-ws@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/next-ws/-/next-ws-1.1.1.tgz#35bd223478effed4bd3d6aa30ec3d70575eab7ca"
-  integrity sha512-J/wNgcd1lXIkrFbRNP60lNVeAVieIDlxahkQ5jpfX3QJhuLPYLBh/CFvX82nkLUBlXANQbTqg9F9yU4XxjmUIg==
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/next-ws/-/next-ws-1.2.0.tgz#a7e8039806f150929a34fe5a70ebe495850f2faf"
+  integrity sha512-cDyMZ4GxpRe3NrZ8fGIet7Q8IcXfU5PUZdYXVlvj9hQqiJlZsby98G8S++icOUfDuEAVyPSwy4de0tFmKBPL9w==
 
 next@^15.1.4:
   version "15.1.4"

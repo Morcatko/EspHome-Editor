@@ -21,12 +21,12 @@ export default function RootLayout({
       <body
         className={`antialiased h-full`}
       >
-          <NuqsAdapter>
-            <ClientLayout>
-              {children}
-              <Toaster />
-            </ClientLayout>
-          </NuqsAdapter>
+        <NuqsAdapter>
+          <ClientLayout>
+            {children}
+            <Toaster />
+          </ClientLayout>
+        </NuqsAdapter>
       </body>
     </html>
   );
