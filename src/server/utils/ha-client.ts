@@ -42,7 +42,7 @@ export const getEspHomeUrls = async (haUrl: string, haToken: string) => {
         const addon = await ha_getJson(haUrl, haToken, `addons/${espHomeSlug}/info`);
         const port = addon.data.ingress_port
         return {
-            apiUrl: `http://localhost:${port}/api`,
+            apiUrl: `http://localhost:${port}`,
             webUrl: `/${espHomeSlug}`
         };
     } catch (e) {
