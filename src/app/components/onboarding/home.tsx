@@ -4,6 +4,7 @@ import { BeakerIcon, CodeIcon, DownloadIcon, GitCompareIcon, LogIcon, UploadIcon
 import map from "@/assets/onboarding/map.png";
 import type { TPage } from '.';
 import { Code, Heading, Section, Ul } from './components';
+import { Button } from '@mui/joy';
 
 type THomeProps = {
     onCLick: (page: TPage) => void;
@@ -58,8 +59,8 @@ export const Home = (props: THomeProps) => {
                 Let’s try building your first configuration. Choose between creating multiple devices (e.g., humidity sensors for flowers) or a single device with multiple components (e.g., a PLC with multiple inputs).
             </p>
             <div className="flex justify-around mt-4">
-                <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => props.onCLick("flowers")}>Flowers</button>
-                <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">PLC</button>
+                <Button  onClick={() => props.onCLick("flowers")}>Flowers</Button>
+                <Button >PLC</Button>
             </div>
         </Section>
     </>);
