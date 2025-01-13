@@ -3,6 +3,7 @@ import { c } from "@/server/config";
 export const getStatus = () => ({
     version: c.version,
     mode: c.mode,
+    espHomeWebUrl: c.espHomeWebUrl,
 });
 
 export type TGetStatus = ReturnType<typeof getStatus>;
