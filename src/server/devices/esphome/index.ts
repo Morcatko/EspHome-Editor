@@ -42,8 +42,11 @@ export namespace espHome {
         }
     };
 
+    const tryGetDevice = async (device_id: string) =>
+        (await tryGetDevices()).find((d) => d.id === device_id);
+
     const getDevice = async (device_id: string) => {
-        const device = (await tryGetDevices()).find((d) => d.id === device_id);
+        const device = await tryGetDevice(device_id);
         if (!device || !device.esphome_config) {
             throw new Error(`ESPHome Device not found: ${device_id}`);
         }
@@ -60,7 +63,24 @@ export namespace espHome {
     };
 
     export const saveConfiguration = async (device_id: string, content: string) => {
-        const device = await getDevice(device_id);
+        let device = await tryGetDevice(device_id);
+
+        if ((!device || !device.esphome_config)) {
+            log.info("Device not found in ESPHome, creating", device_id);
+            //Create device in ESPHome
+            await fetch(`${c.espHomeUrl}/wizard`, {
+                method: "POST",
+                body: JSON.stringify({
+                    ssid:"!secret wifi_ssid",
+                    psk: "!secret wifi_password",
+                    name: device_id,
+                    board:"esp32-s3-devkitc-1"
+                })
+            });
+            device = await getDevice(device_id);
+        }
+
+        //Create device if it does not exist???
         const url = `${c.espHomeUrl}/edit?configuration=${device.esphome_config}`;
         log.debug("Saving ESPHome configuration", url);
         const response = await fetch(url, {

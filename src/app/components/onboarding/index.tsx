@@ -1,8 +1,8 @@
 import Image from 'next/image';
 import { color_esphome, color_gray, color_local, color_offline, color_online } from "@/app/utils/const";
 import { BeakerIcon, CodeIcon, DownloadIcon, GitCompareIcon, LogIcon, UploadIcon } from "@primer/octicons-react";
-import { useLocalStorage } from "usehooks-ts";
 import map from "@/assets/onboarding/map.png";
+import { Heading, Section } from './components';
 
 type TSectionProps = {
     step: string;
@@ -10,48 +10,14 @@ type TSectionProps = {
     children: React.ReactNode;
 };
 
-const Section = ({ step, title, children }: TSectionProps) => {
-    const [hidden, setHidden] = useLocalStorage(`e4e.onboarding.${step}`, false);
-
-    return <>
-        <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow">
-            <div className="flex justify-between items-center">
-                <a href="#" onClick={() => setHidden(!hidden)}>
-                    <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200" >
-                        {title}
-                    </h2>
-                </a>
-                <label>
-                    <input
-                        type="checkbox"
-                        checked={hidden}
-                        className="mr-2 accent-gray-200 dark:accent-gray-600 scale-150"
-                        onChange={() => setHidden(!hidden)}
-                    />
-                </label>
-            </div>
-            {!hidden && <div className="text-gray-700 dark:text-gray-300 mt-2">
-                {children}
-            </div>}
-        </div>
-    </>;
-}
-
 export const Onboarding = () => {
     return (
         <div className="mx-auto p-8 overflow-auto h-full">
             <div className="max-w-3xl mx-auto space-y-6">
-                {/* Header */}
-                <div className="text-center">
-                    <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
-                        Welcome to the Editor for ESPHome
-                    </h1>
-                    <p className="text-gray-600 dark:text-gray-400 mt-2">
-                        Get started with the Editor for ESPHome to easily build and manage devices by writing or generating YAML files.
-                    </p>
-                </div>
+                <Heading
+                    title="Welcome to the Editor for ESPHome"
+                    subtitle="Get started with the Editor for ESPHome to easily build and manage devices by writing or generating YAML files." />
 
-                {/* Section: Device Status */}
                 <Section step="device_status" title="Understanding Device Status">
                     <p>
                         On the Devices Panel, you'll see all your ESPHome devices. The status of each device is indicated by the color of the light bulb
@@ -62,7 +28,6 @@ export const Onboarding = () => {
                     </ul>
                 </Section>
 
-                {/* Section: Device Toolbar */}
                 <Section step="device_toolbar" title="Device Toolbar">
                     <p>
                         Expand a device to access its toolbar. (Available actions depend on the device status)
@@ -79,7 +44,6 @@ export const Onboarding = () => {
                     </ul>
                 </Section>
 
-                {/* Section: YAML Configuration */}
                 <Section step="yaml" title="How YAML Configurations Work">
                     <p>
                         The final YAML configuration is a combination of multiple YAML files.
@@ -92,7 +56,6 @@ export const Onboarding = () => {
                     </ul>
                 </Section>
 
-                {/* Section: Getting Started */}
                 {/* <Section step="getting_Started" title="Getting Started">
                     <p>
                         Let’s start building configurations. Choose between creating multiple devices (e.g., humidity sensors for flowers) or a single device with multiple components (e.g., a PLC with multiple inputs).
