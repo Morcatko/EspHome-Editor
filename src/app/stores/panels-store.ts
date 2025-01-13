@@ -1,30 +1,66 @@
-import { useQueryState, parseAsJson } from 'nuqs'
+import { atom, useAtom } from "jotai";
 import { TDevice, TLocalFileOrDirectory } from "@/server/devices/types";
 import { TPanel } from "./panels-store/types";
-import { useSessionStorage } from 'usehooks-ts';
 import { useStatusStore } from "./status-store";
+import { DockviewApi } from 'dockview-react';
+
+const dockViewApiAtom = atom<DockviewApi | null>(null);
+
+function getPanelTitle(panel: TPanel) {
+    switch (panel.operation) {
+        case "local_file":
+            return `${panel.device_id} -  ${panel.path}`;
+        case "local_device":
+            return `${panel.device_id} (Local)`;
+        case "esphome_device":
+            return `${panel.device_id}(ESPHome)`;
+        case "diff":
+            return `${panel.device_id} (Diff)`;
+        case "esphome_compile":
+            return `${panel.device_id} (Compile)`;
+        case "esphome_install":
+            return `${panel.device_id} (Install)`;
+        case "esphome_log":
+            return `${panel.device_id} (Log)`;
+        default:
+            return `Unknown`;
+    }
+}
+
 
 export const usePanelsStore = () => {
-    const status = useStatusStore();
+    const [api, setApi] = useAtom(dockViewApiAtom);
 
-    const [panel, setPanel] = status.isHaAddon
-        ? useSessionStorage<TPanel | null>("e4e.panel", null, {
-            serializer: JSON.stringify,
-            deserializer: JSON.parse,
-        })
-        : useQueryState<TPanel>('panel', parseAsJson(v => v as TPanel));
 
     const addPanel = (
-        params: TPanel | null,
+        id: string,
+        title: string,
+        component: string,
+        params: any,
     ) => {
-        setPanel(params);
-    }
+        if (!api) return;
 
+        const existingPanel = api?.panels.find(p => p.id === id)
+
+        if (existingPanel) {
+            existingPanel.update({ params });
+            existingPanel.focus();
+        }
+        else
+            api.addPanel<TPanel>({
+                id: id,
+                title: title,
+                component: component,
+                params: params,
+            });
+    }
 
     const addEditorPanel = (panel: TPanel) =>
         addPanel(
+            `${panel.operation}_${panel.device_id}_${(panel as any)?.path}`,
+            getPanelTitle(panel),
+            "panel",
             { ...panel, last_click: new Date().toISOString() });
-
 
     const handleClick = (
         e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>,
@@ -47,8 +83,8 @@ export const usePanelsStore = () => {
     }
 
     return {
-        panel: panel,
-        addOnboarding: () => addPanel(null),
+        setApi: setApi,
+        addOnboarding: () => addPanel("onboarding", "Editor for ESPHome", "onboarding", {}),
         handleClick,
     };
 }
