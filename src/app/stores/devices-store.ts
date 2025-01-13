@@ -108,7 +108,6 @@ async function localDevice_import(device: TDevice) {
 }
 
 async function espHome_upload(device: TDevice) {
-
     await showToast(
         () => api.callPost(api.url_device(device.id, "esphome"), null),
         [["device", device.id, "esphome"], device.esphome_config ? ["devices"] : []],
