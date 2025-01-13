@@ -1,4 +1,5 @@
 import { useLocalStorage } from "usehooks-ts";
+import { SingleEditor } from "../editors/single-editor";
 
 export const Heading = ({ title, subtitle }: { title: string, subtitle: string }) =>
     <div className="text-center">
@@ -43,3 +44,13 @@ export const Section = ({ step, title, children }: TSectionProps) => {
         </div>
     </>;
 }
+
+export const Code = (p: { fileName: string, heightPx: number, code: string }) => <>
+    <p>{p.fileName}</p>
+    <div
+        style={{ height: `${p.heightPx}px` }}>
+        <SingleEditor
+            language="yaml"
+            value={p.code} />
+    </div>
+</>
