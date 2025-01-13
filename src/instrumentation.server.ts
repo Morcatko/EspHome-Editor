@@ -20,7 +20,8 @@ export async function init() {
 
     log.info("Config:", {
         devicesDir: c.devicesDir,
-        espHomeUrl: c.espHomeUrl,
+        espHomeApiUrl: c.espHomeApiUrl,
+        espHomeWebUrl: c.espHomeWebUrl,
         version: c.version,
     });
 
