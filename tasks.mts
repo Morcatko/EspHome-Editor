@@ -29,7 +29,9 @@ const dockerBuild = async (
     platforms: string[],
     ) => {
 
+    console.log("=========================================");
     console.log(`Building\n ${image_name}\ntags:\n ${tags.join("\n ")}\nplatforms:\n -${platforms.join("\n -")}`);
+    console.log("=========================================");
     await exec(`docker buildx build --platform=${platforms.join(",")} --load ${tags.map(t => `-t ${image_name}:${t}`).join(" ")} -f dockerfile .`);
     if (await confirm({ message: `Push ${image_name}:(${tags.join(", ")})`})) {
         for (const tag of tags) {
