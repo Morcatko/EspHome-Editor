@@ -9,6 +9,7 @@ import { usePanelsStore } from "./stores/panels-store";
 import Image from "next/image";
 import logo from "@/assets/logo.svg";
 import { Suspense } from "react";
+import { useAboutDialogVisible } from "./components/dialogs/about-dialog";
 
 const Header = () => {
 	const panelsStore = usePanelsStore();
@@ -23,6 +24,7 @@ const Header = () => {
 export default () => {
 	const statusStore = useStatusStore();
 	const devicesStore = useDevicesStore();
+	const [_, setAboutDialogVisible] = useAboutDialogVisible();
 
 
 	return (devicesStore.query.isLoading)
@@ -33,9 +35,8 @@ export default () => {
 			<div style={{ gridTemplateColumns: "18rem 1fr", gridTemplateRows: "56px 1fr auto", gridGap: "1px" }} className="h-screen w-screen grid" >
 				<Header />
 				<div style={{ gridArea: "2/1/2/1" }} className="pl-1 overflow-y-auto"><DevicesTreeView /></div>
-				<div style={{ gridArea: "3/1/3/1" }} className="border-t border-slate-200 dark:border-slate-800 text-center">
-					<div className="p-6"><a href="#" onClick={() => {}}>{statusStore.query.isSuccess && statusStore.query.data?.version}</a></div>
-					<div className="text-blue-300 text-sm underline"><a href="https://github.com/Morcatko/EspHome-Editor/issues" target="_blank">feedback <LinkExternalIcon className="inline" /></a></div>
+				<div style={{ gridArea: "3/1/3/1" }} className="border-t border-slate-200 dark:border-slate-800 text-center p-6">
+					<a className="underline text-blue-600 dark:text-blue-800 hover:text-blue-800" href="#" onClick={() => setAboutDialogVisible(true)}>{statusStore.query.isSuccess && statusStore.query.data?.version}</a>
 				</div>
 				<div style={{ gridArea: "1/2/4/2" }} className="border-l border-slate-200 dark:border-slate-800 relative"><PanelsContainer /></div>
 			</div>
