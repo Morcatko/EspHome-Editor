@@ -2,17 +2,26 @@
 import createCache from '@emotion/cache';
 import { useServerInsertedHTML } from 'next/navigation';
 import { CacheProvider } from '@emotion/react';
-import { CssVarsProvider } from '@mui/joy/styles';
-//import CssBaseline from '@mui/joy/CssBaseline';
-import { useState } from 'react';
+import { CssVarsProvider, useColorScheme } from '@mui/joy/styles';
+import { useEffect, useState } from 'react';
+import { useDarkTheme } from './utils/hooks';
 
+const ModeSwitcher = () => {
+  const isDark = useDarkTheme();
+  const cs = useColorScheme();
+  useEffect(() => {
+    cs.setMode(isDark ? 'dark' : 'light');
+  }, [isDark, cs]);
+
+  return null;
+}
 
 //Copied from https://mui.com/joy-ui/integrations/next-js-app-router/
 export default function ThemeRegistry(props: any) {
   const { children } = props;
 
   const [{ cache, flush }] = useState(() => {
-    const cache = createCache({key: "joy"});
+    const cache = createCache({ key: "joy" });
     cache.compat = true;
     const prevInsert = cache.insert;
     let inserted: string[] = [];
@@ -54,8 +63,7 @@ export default function ThemeRegistry(props: any) {
   return (
     <CacheProvider value={cache}>
       <CssVarsProvider>
-        {/* the custom theme is optional */}
-        {/* <CssBaseline /> */}
+        <ModeSwitcher />
         {children}
       </CssVarsProvider>
     </CacheProvider>
