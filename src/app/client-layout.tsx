@@ -29,7 +29,7 @@ export function ClientLayout({
       <ThemeProvider colorMode="auto" preventSSRMismatch>
         {children}
       </ThemeProvider>
-      <ThemeRegistry options={{ key: 'joy' }}>
+      <ThemeRegistry>
         <InputTextDialog />
         <ConfirmationDialog />
         <AboutDialog />

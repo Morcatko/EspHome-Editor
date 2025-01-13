@@ -25,7 +25,7 @@ export const useLocalFileStore = (device_id: string, file_path : string) => {
     const device = devices?.find(d => d.id === device_id);
     const file = findFile(device?.files ?? [], file_path)!;
 
-    const hasRightFile = file.compiler !== "none";
+    const hasRightFile = (file != null) && (file.compiler !== "none");
 
 
     const leftQuery = useQuery({
