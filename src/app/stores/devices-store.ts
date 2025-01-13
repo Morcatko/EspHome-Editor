@@ -50,7 +50,7 @@ async function localDevice_create() {
     const device_name = await rootStore.inputTextDialog.tryShowModal({
         title: "Add new device",
         subtitle: "Enter device name",
-        defaultValue: "new device",
+        defaultValue: "new-device",
     });
 
     if (device_name)
