@@ -1,5 +1,4 @@
-import { SingleEditor } from "../editors/single-editor";
-import { Code, Heading, Section } from "./components";
+import { Editor, Heading, Section } from "./components";
 
 const demo_flower_template_eta =
   `esphome:
@@ -54,42 +53,74 @@ const configuration_eta =
     })
 %>`;
 
+type TChildren = {
+  children: React.ReactNode
+}
+const Ol = (p: TChildren) => <ol className="list-decimal list-inside space-y-2 pl-3">{p.children}</ol>;
+const Ul = (p: TChildren) => <ul className="list-disc list-inside space-y-2 pl-3">{p.children}</ul>;
+const Code = (p: TChildren) => <code className="bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded text-blue-700 dark:text-blue-300 font-mono">{p.children}</code>;
+
 export const Flowers = () => {
   return <>
     <Heading
       title="Flowers"
-      subtitle="We will make an automated plant watering system for all flowers in your house.
-                Each device (a.k.a. plant) will have a moisture sensor, light sensor and a motor to water your plant." />
+      subtitle="We will create an automated watering system for your houseplants, with each plant having its own moisture sensor and motor for watering." />
 
     <Section
       step="flower.shared"
-      title="1. Shared Configuration">
-      We will start by making a file in .lib folder called demo-flower-template.eta. Click on "..." menu in .lib folder and select "New file".
-      <Code
-        fileName=".lib/demo-flower-template.eta"
-        heightPx={350}
-        code={demo_flower_template_eta} />
-      Notice the `&lt;%= it.name %&gt;` (line 2) and  `&lt;%= it.moisture_limit %&gt;` (lines 32 and 35) placeholders. These are used as variables passed whenever tempalte is used.
+      title="Step 1: Shared Configuration">
+      <Ol>
+        <li>Navigate to the <Code>.lib</Code> folder</li>
+        <li>Create a new file called <Code>demo-flower-template.eta</Code>
+          <Ul>
+            <li>Click the <strong>"..."</strong> menu on the <Code>.lib</Code> folder.</li>
+            <li>Select <strong>New File...</strong> and name it <Code>demo-flower-template.eta</Code></li>
+          </Ul>
+        </li>
+        <li>Add the folowing code to the file
+          <Editor
+            heightPx={350}
+            code={demo_flower_template_eta} />
+        </li>
+        <li>Note the placeholders in the
+          <Ul>
+            <li><Code>&lt;= it.name %&gt;</Code> (e.g., Line 2) is used to insert the name of each plant.</li>
+            <li><Code>&lt;= it.moisture_limit  %&gt;</Code> (e.g., Lines 32 and 35) specifies the moisture threshold for watering.</li>
+          </Ul>
+          These placeholders will dynamically update based on the variables you provide when using the template.
+        </li>
+      </Ol>
     </Section>
+
     <Section
       step="flower.flower-1"
-      title="2. Flower Device">
-      Now create a new device called flower-1.
-      Use a "Create device" button in devices panel. This will automatically create a file "configuration.yaml" for you. ¨
-      Rename it to configuration.eta and edit with following content.
-      <Code
-        fileName="flower-1/configuration.eta"
-        heightPx={150}
-        code={configuration_eta} />
+      title="Step 2: Flower Device">
+      <Ol>
+        <li>
+          Add a new device for your first plant:
+          <Ul>
+            <li>In the <strong>Devices</strong> panel, click the <strong>"Create device"</strong> button.</li>
+            <li>Name it <Code>Flower-1</Code></li>
+            <li>A <Code>configuration.yaml</Code> file will be generated automatically.</li>
+          </Ul>
+        </li>
+        <li>Rename <Code>configuration.yaml</Code> to <Code>configuration.eta</Code>.</li>
+        <li>Edit <Code>configuration.eta</Code> with the following content:
+          <Editor
+            heightPx={150}
+            code={configuration_eta} />
+        </li>
+      </Ol>
     </Section>
 
     <Section
       step="flower.flower-2"
-      title="3. Additional Devices">
-      Repeat step 2. to create an automated watering system for every flower in your home.
-      Just change the name in configuration.eta file.
-
-      And that is it. Now you can open your ESPHome dashbpard and flash your configuration to a physical hardware.
+      title="Step 3: Additional Devices">
+      <Ol>
+        <li>Repeat <strong>Step 2</strong> for each additional plant you want to automate. Just change the <Code>name</Code> and <Code>moisture_limit</Code></li>
+        <li>Flash the configuration files to your physical hardware devices.</li>
+        <li>Enjoy your automated plant watering system!</li>
+      </Ol>
     </Section>
   </>;
 }

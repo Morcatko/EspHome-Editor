@@ -45,12 +45,12 @@ export const Section = ({ step, title, children }: TSectionProps) => {
     </>;
 }
 
-export const Code = (p: { fileName: string, heightPx: number, code: string }) => <>
-    <p>{p.fileName}</p>
-    <div
-        style={{ height: `${p.heightPx}px` }}>
-        <SingleEditor
-            language="yaml"
-            value={p.code} />
+export const Editor = (p: { heightPx: number, code: string }) =>
+    <div className="my-2">
+        <div
+            style={{ height: `${p.heightPx}px` }}>
+            <SingleEditor
+                language="yaml"
+                value={p.code} />
+        </div>
     </div>
-</>
