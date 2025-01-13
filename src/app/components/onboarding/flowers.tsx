@@ -6,8 +6,7 @@ export const Flowers = () => {
         <Heading
             title="Flowers"
             subtitle="We will make an automated plant watering system for all flowers in your house.
-                Each device (a.k.a. plant) will have a moisture sensor, light sensor and a motor to water your plant.
-                Additionally each plan will have its own watering schedule." />
+                Each device (a.k.a. plant) will have a moisture sensor, light sensor and a motor to water your plant." />
 
         <Section
             step="flower.shared"
