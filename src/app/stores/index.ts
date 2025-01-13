@@ -6,7 +6,7 @@ import { CommonDialogStore } from "../components/dialogs/common-dialog-store";
 import { QueryClient } from "@tanstack/react-query";
 
 export class RootStore {
-    readonly inputTextDialog = new CommonDialogStore<TTextInputModalStoreData, string>((x) => { x.value = x.storeData.defaultValue ?? ""; });
+    //readonly inputTextDialog = new CommonDialogStore<TTextInputModalStoreData, string>((x) => { x.value = x.storeData.defaultValue ?? ""; });
     readonly confirmationDialog = new CommonDialogStore<TConfirmationModalStoreData, boolean>((x) => { x.value = true; });	
 
   constructor() {
