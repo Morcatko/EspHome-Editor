@@ -1,7 +1,7 @@
-import { Editor, Heading, Section } from "./components";
+import { Code, Editor, Heading, Ol, Section, Ul } from "./components";
 
-const demo_flower_template_eta =
-  `esphome:
+const demo_flower_template_eta = `# demo-flower-template.eta
+esphome:
   name: <%= it.name %>
 
 esp32:
@@ -45,20 +45,14 @@ switch:
     id: relay
     name: "Water pump"`;
 
-const configuration_eta =
-  `<%~ include('../.lib/demo-flower-template', 
+const configuration_eta = `# flower-1/configuration.eta
+<%~ include('../.lib/demo-flower-template', 
     {
         name: 'flower-1', 
         moisture_limit: 35
     })
 %>`;
 
-type TChildren = {
-  children: React.ReactNode
-}
-const Ol = (p: TChildren) => <ol className="list-decimal list-inside space-y-2 pl-3">{p.children}</ol>;
-const Ul = (p: TChildren) => <ul className="list-disc list-inside space-y-2 pl-3">{p.children}</ul>;
-const Code = (p: TChildren) => <code className="bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded text-blue-700 dark:text-blue-300 font-mono">{p.children}</code>;
 
 export const Flowers = () => {
   return <>
@@ -84,8 +78,8 @@ export const Flowers = () => {
         </li>
         <li>Note the placeholders in the
           <Ul>
-            <li><Code>&lt;= it.name %&gt;</Code> (e.g., Line 2) is used to insert the name of each plant.</li>
-            <li><Code>&lt;= it.moisture_limit  %&gt;</Code> (e.g., Lines 32 and 35) specifies the moisture threshold for watering.</li>
+            <li><Code>&lt;= it.name %&gt;</Code> (e.g., Line 3) is used to insert the name of each plant.</li>
+            <li><Code>&lt;= it.moisture_limit  %&gt;</Code> (e.g., Lines 33 and 36) specifies the moisture threshold for watering.</li>
           </Ul>
           These placeholders will dynamically update based on the variables you provide when using the template.
         </li>

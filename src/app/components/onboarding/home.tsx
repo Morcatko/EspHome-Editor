@@ -3,7 +3,7 @@ import { color_esphome, color_gray, color_local, color_offline, color_online } f
 import { BeakerIcon, CodeIcon, DownloadIcon, GitCompareIcon, LogIcon, UploadIcon } from "@primer/octicons-react";
 import map from "@/assets/onboarding/map.png";
 import type { TPage } from '.';
-import { Heading, Section } from './components';
+import { Code, Heading, Section, Ul } from './components';
 
 type THomeProps = {
     onCLick: (page: TPage) => void;
@@ -19,17 +19,17 @@ export const Home = (props: THomeProps) => {
             <p>
                 On the Devices Panel, you'll see all your ESPHome devices. The status of each device is indicated by the color of the light bulb
             </p>
-            <ul className="list-disc ml-8 mt-3 space-y-2">
+            <Ul>
                 <li><span style={{ color: color_gray }} className="font-semibold">Gray</span> - Editor-only device</li>
                 <li><span style={{ color: color_online }} className="font-semibold">Online</span>/<span style={{ color: color_offline }} className="font-semibold">Offline</span> - status of ESPHome device</li>
-            </ul>
+            </Ul>
         </Section>
 
         <Section step="device_toolbar" title="Device Toolbar">
             <p>
                 Expand a device to access its toolbar. (Available actions depend on the device status)
             </p>
-            <ul className="mt-4 space-y-3">
+            <ul className="mt-4 ml-8 space-y-3">
                 <li><DownloadIcon className="inline mr-2" fill={color_local} /> Import configuration from ESPHome instance</li>
                 <li><CodeIcon className="inline mr-2" fill={color_local} /> View the compiled local ESPHome configuration</li>
                 <li><GitCompareIcon className="inline mr-2" fill={color_gray} /> Compare local vs. ESPHome configuration</li>
@@ -46,11 +46,11 @@ export const Home = (props: THomeProps) => {
                 The final YAML configuration is a combination of multiple YAML files.
             </p>
             <Image className='dark:invert' src={map} alt="etajs template" unoptimized style={{ margin: '-30px' }} />
-            <ul className="list-disc ml-8 mt-3 space-y-2">
-                <li>Use the <code>.lib</code> folder for shared code, with optional device-specific local <code>.lib</code> folders.</li>
-                <li>The compiler processes all <code>.eta</code> files in the root folder, converting them into YAML files.</li>
+            <Ul>
+                <li>Use the <Code>.lib</Code> folder for shared code, with optional device-specific local <Code>.lib</Code> folders.</li>
+                <li>The compiler processes all <Code>.eta</Code> files in the root folder, converting them into YAML files.</li>
                 <li>It merges manually created YAML files and compiled YAML files into a single final configuration file.</li>
-            </ul>
+            </Ul>
         </Section>
 
         <Section step="getting_Started" title="Getting Started">
