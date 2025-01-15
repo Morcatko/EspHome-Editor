@@ -45,7 +45,7 @@ switch:
     id: relay
     name: "Water pump"`;
 
-const configuration_eta = `# flower-1/configuration.eta
+const configuration_eta = `# Flower-1/configuration.eta
 <%~ include('../.lib/demo-flower-template', 
     {
         name: 'flower-1', 
@@ -64,8 +64,8 @@ export const Flowers = () => {
       step="flower.shared"
       title="Step 1: Shared Configuration">
       <Ol>
-        <li>Navigate to the <Code>.lib</Code> folder</li>
-        <li>Create a new file called <Code>demo-flower-template.eta</Code>
+        <li>Navigate to the root <Code>.lib</Code> folder</li>
+        <li>Create a new eta template file
           <Ul>
             <li>Click the <strong>"..."</strong> menu on the <Code>.lib</Code> folder.</li>
             <li>Select <strong>New File...</strong> and name it <Code>demo-flower-template.eta</Code></li>
@@ -93,12 +93,12 @@ export const Flowers = () => {
         <li>
           Add a new device for your first plant:
           <Ul>
-            <li>In the <strong>Devices</strong> panel, click the <strong>"Create device"</strong> button.</li>
+            <li>In the Devices Panel, click the <strong>+ New Device</strong> button.</li>
             <li>Name it <Code>Flower-1</Code></li>
             <li>A <Code>configuration.yaml</Code> file will be generated automatically.</li>
           </Ul>
         </li>
-        <li>Rename <Code>configuration.yaml</Code> to <Code>configuration.eta</Code>.</li>
+        <li>Click <strong>"..."</strong> menu on <Code>configuration.yaml</Code> and rename it to <Code>configuration.eta</Code>.</li>
         <li>Edit <Code>configuration.eta</Code> with the following content:
           <Editor
             heightPx={150}
