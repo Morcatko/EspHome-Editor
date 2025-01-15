@@ -1,4 +1,5 @@
 import { useLocalStorage } from "usehooks-ts";
+import { SingleEditor } from "../editors/single-editor";
 
 type TChildren = {
     children: React.ReactNode
@@ -50,3 +51,13 @@ export const Section = ({ step, title, children }: TSectionProps) => {
         </div>
     </>;
 }
+
+export const Editor = (p: { heightPx: number, code: string }) =>
+    <div className="my-2">
+        <div
+            style={{ height: `${p.heightPx}px` }}>
+            <SingleEditor
+                language="yaml"
+                value={p.code} />
+        </div>
+    </div>
