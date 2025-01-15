@@ -56,7 +56,7 @@ export const Home = (props: THomeProps) => {
 
         <Section step="getting_Started" title="Getting Started">
             <p>
-                Let�s try building your first configuration. Choose between creating multiple devices (e.g., humidity sensors for flowers) or a single device with multiple components (e.g., a PLC with multiple inputs).
+                Let's try building your first configuration. Choose between creating multiple devices (e.g., humidity sensors for flowers) or a single device with multiple components (e.g., a PLC with multiple inputs).
             </p>
             <div className="flex justify-around mt-4">
                 <Button  onClick={() => props.onCLick("flowers")}>Flowers</Button>
