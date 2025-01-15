@@ -1,6 +1,7 @@
 import { api } from "@/app/utils/api-client";
 import { useQuery } from "@tanstack/react-query";
 import { TEditorFileProps } from "./types";
+import { queryToContent } from "./utils/query-utils";
 
 export const useESPHomeDeviceStore = (device_id: string) => {
     const query = useQuery({
@@ -8,7 +9,7 @@ export const useESPHomeDeviceStore = (device_id: string) => {
         queryFn: async () => api.callGet_text(api.url_device(device_id, "esphome"))
     })
     return <TEditorFileProps>{
-        value:  query.data?.content ?? "",
+        value:  queryToContent(query),
         language: "yaml",
     }
 }

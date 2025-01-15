@@ -10,14 +10,22 @@ type TProps = {
 export const DiffEditor = (props: TProps) => {
     const isDarkMode = useDarkTheme();
 
-    return <MonacoDiffEditor
-        original={props.leftEditor.value}
-        modified={props.rightEditor.value}
-        originalLanguage={props.leftEditor.language}
-        modifiedLanguage={props.rightEditor.language}
-        theme={isDarkMode ? "vs-dark" : "vs-light"}
-        options={{
-            readOnly: !!props.leftEditor.onValueChange,
-        }}
-    />
+    if (props.leftEditor.value.pending || props.rightEditor.value.pending) {
+        return <div>Loading...</div>;
+    }
+    else if (props.leftEditor.value.error || props.rightEditor.value.error) {
+        return <div>{props.leftEditor.value.error || props.rightEditor.value.error || "Something went wrong"}</div>;
+    }
+    else {
+        return <MonacoDiffEditor
+            original={props.leftEditor.value.content}
+            modified={props.rightEditor.value.content}
+            originalLanguage={props.leftEditor.language}
+            modifiedLanguage={props.rightEditor.language}
+            theme={isDarkMode ? "vs-dark" : "vs-light"}
+            options={{
+                readOnly: !!props.leftEditor.onValueChange,
+            }}
+        />
+    }
 };
