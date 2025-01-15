@@ -1,5 +1,9 @@
 export type TEditorFileProps = {
-    value: string;
+    value: {
+        pending: boolean;
+        error: boolean;
+        content: string;
+    },
     language: string;
     onValueChange?: (v: string) => void;
 }
