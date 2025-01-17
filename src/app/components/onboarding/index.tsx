@@ -11,13 +11,15 @@ export const Onboarding = ({ panel }: { panel: TPanel_Onboarding }) => {
     const isHome = (!panel.step || (panel.step === "home"));
     const isFlowers = (panel.step === "flowers");
     return <div className='overflow-auto h-full'>
-        {!isHome && <Breadcrumbs separator={<ChevronRightIcon />} aria-label="breadcrumbs">
-            <Link color="neutral" onClick={(e) => panelsStore.addPanel(e, { operation: "onboarding", step: "home" })} >
-                Home
-            </Link>
+        <Breadcrumbs separator={<ChevronRightIcon />} aria-label="breadcrumbs">
+            {isHome && <div>&nbsp;</div>}
+            {!isHome &&
+                <Link color="neutral" onClick={(e) => panelsStore.addPanel(e, { operation: "onboarding", step: "home" })} >
+                    Home
+                </Link>}
             {isFlowers && <div>Flowers</div>}
-        </Breadcrumbs>}
-        <div className="mx-auto py-8 px-2">
+        </Breadcrumbs>
+        <div className="mx-auto py-3 px-2">
             <div className="max-w-3xl mx-auto space-y-6">
                 {isHome && <Home />}
                 {isFlowers && <Flowers />}
