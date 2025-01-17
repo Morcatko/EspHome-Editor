@@ -28,6 +28,20 @@ export async function GET(
     );
 }
 
+export async function PUT(request: Request, { params }: TParams<TDeviceId>) {
+    const { device_id } = await params;
+    await local.saveFileContent(device_id, "configuration.yaml", "");
+
+    return new Response(
+        "OK",
+        {
+            headers: {
+                "content-type": "text/plain",
+            },
+        },
+    );
+}
+
 export async function POST(request: Request, { params }: TParams<TDeviceId>) {
     const { device_id } = await params;
     await importEspHomeToLocalDevice(device_id);

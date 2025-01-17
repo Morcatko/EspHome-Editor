@@ -5,12 +5,12 @@ import { DiffPanel } from "./panels/diff-panel";
 import { EspHomeLogPanel } from "./panels/esphome-log-panel";
 import { EspHomeInstallPanel } from "./panels/esphome-install-panel";
 import { EspHomeCompilePanel } from "./panels/esphome-compile-panel";
-import { TPanel } from "../stores/panels-store/types";
+import { TPanelWithClick } from "../stores/panels-store/types";
 import { usePanelsStore } from "../stores/panels-store";
 import { Layout, TabNode } from "flexlayout-react";
 import { Onboarding } from "./onboarding";
 
-const PanelContent = ({ panel }: { panel: TPanel }) => {
+const PanelContent = ({ panel }: { panel: TPanelWithClick }) => {
     switch (panel.operation) {
         case "esphome_device":
             return <ESPHomeDevicePanel device_id={panel.device_id} />;
@@ -26,6 +26,8 @@ const PanelContent = ({ panel }: { panel: TPanel }) => {
             return <EspHomeInstallPanel device_id={panel.device_id} />;
         case "esphome_log":
             return <EspHomeLogPanel device_id={panel.device_id} />;
+        case "onboarding":
+            return <Onboarding />;
         default:
             return <div>Noting selected</div>;
     }
@@ -37,8 +39,6 @@ const factory = (node: TabNode) => {
         case "panel":
             const panel: TPanel = node.getConfig();
             return <PanelContent panel={panel} />;
-        case "onboarding":
-            return <Onboarding />;
         default:
             return <div>Unknown panel</div>;
     }

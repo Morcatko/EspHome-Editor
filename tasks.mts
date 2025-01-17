@@ -24,16 +24,19 @@ const exec = (command: string) => {
 const getVersion = async () => (await import("./package.json")).version;
 
 const dockerBuild = async (
-    build_cmd: string,
-    image_name: string) => {
+    image_name: string,
+    tags: string[],
+    platforms: string[],
+    ) => {
 
-    const tag = await getVersion();
-    console.log(`Building ${image_name}:${tag}`);
-    await exec(`${build_cmd} -t ${image_name}:${tag} -t ${image_name}:latest -f dockerfile .`);
-    
-    if (await confirm({ message: `Push (${image_name}:${tag} and latest) ?` })) {
-        await exec(`docker push ${image_name}:latest`);
-        await exec(`docker push ${image_name}:${tag}`);
+    console.log("=========================================");
+    console.log(`Building\n ${image_name}\ntags:\n ${tags.join("\n ")}\nplatforms:\n -${platforms.join("\n -")}`);
+    console.log("=========================================");
+    await exec(`docker buildx build --platform=${platforms.join(",")} --load ${tags.map(t => `-t ${image_name}:${t}`).join(" ")} -f dockerfile .`);
+    if (await confirm({ message: `Push ${image_name}:(${tags.join(", ")})`})) {
+        for (const tag of tags) {
+            await exec(`docker push ${image_name}:${tag}`);
+        }
     }
 }
 
@@ -54,11 +57,11 @@ const mainLoop = async () => {
         message: "Select a task",
         choices: [
             {
-                name: `Docker Dev - Build (${image_name_dev}:${version})`,
+                name: `Docker Dev - Build (${image_name_dev}:latest)`,
                 value: "docker_dev_build",
             },
             {
-                name: `Docker Dev - Run (${image_name_dev}:${version})`,
+                name: `Docker Dev - Run (${image_name_dev}:latest)`,
                 value: "docker_dev_run",
             },
             new Separator(),
@@ -75,16 +78,36 @@ const mainLoop = async () => {
 
     switch (answer) {
         case "docker_dev_build":
-            await dockerBuild("docker build", image_name_dev);
+            await dockerBuild(image_name_dev, ["latest"], ["linux/amd64"]);
             break;
         case "docker_dev_run":
-            await exec(`docker run --rm -p 8080:3000 -e ESPHOME_URL=http://192.168.0.15:6052/ ${image_name_dev}:${version}`);
+            await exec(`docker run --rm -p 8080:3000 -e ESPHOME_URL=http://192.168.0.15:6052/ ${image_name_dev}:latest`);
             break;
         case "create_new_version":
             await createNewVersion();
             break;
         case "docker_prod_build":
-            await dockerBuild("docker buildx build --platform=linux/amd64,linux/arm64 --load", image_name_prod);
+            //https://github.com/home-assistant/supervisor/blob/main/supervisor/data/arch.json
+            //"raspberrypi4-64": ["aarch64", "armv7", "armhf"],
+            // MAP_ARCH in https://github.com/home-assistant/supervisor/blob/main/supervisor/docker/interface.py
+            // MAP_ARCH = {
+            //     CpuArch.ARMV7: "linux/arm/v7",
+            //     CpuArch.ARMHF: "linux/arm/v6",
+            //     CpuArch.AARCH64: "linux/arm64",
+            //     CpuArch.I386: "linux/386",
+            //     CpuArch.AMD64: "linux/amd64",
+            // }
+            const platforms = [
+                "linux/amd64",
+                "linux/arm64",
+                "linux/arm/v6",
+                "linux/arm/v7",
+            ]
+            const tags = [
+                "latest",
+                await getVersion()
+            ];
+            await dockerBuild(image_name_prod, tags, platforms);
             break;
     }
 };

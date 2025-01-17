@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import Image from 'next/image';
 import { ActionBar, ActionList, ActionMenu, ButtonBaseProps, IconButton, IconButtonProps, TreeView } from "@primer/react";
 import { TDevice, TLocalFileOrDirectory, TParent } from "@/server/devices/types";
-import { BeakerIcon, CodeIcon, DownloadIcon, KebabHorizontalIcon, FileDirectoryIcon, GitCompareIcon, LightBulbIcon, LogIcon, UploadIcon, PencilIcon, FileCodeIcon, QuestionIcon, XIcon } from "@primer/octicons-react";
+import { BeakerIcon, CodeIcon, DownloadIcon, KebabHorizontalIcon, FileDirectoryIcon, GitCompareIcon, LightBulbIcon, LogIcon, UploadIcon, PencilIcon, FileCodeIcon, QuestionIcon, XIcon, PlusIcon } from "@primer/octicons-react";
 import { color_esphome, color_gray, color_local, color_offline, color_online } from "../utils/const";
 import etajsIcon from "@/assets/etajs-logo.svg";
 import { api } from "../utils/api-client";
@@ -42,7 +42,7 @@ const LocalFileOrDirectory = ({ device, fod }: { device: TDevice, fod: TLocalFil
         onExpandedChange={(e) => exp.set(`${device.id}/${fod.path}`, e)}
         onSelect={
             (fod.type === "file")
-                ? (e) => panels.handleClick(e, device, "local_file", fod)
+                ? (e) => panels.addDevicePanel(e, device, "local_file", fod)
                 : undefined} >
         <TreeView.LeadingVisual>
             <div style={{ opacity: "55%" }}>
@@ -115,13 +115,21 @@ const DeviceToolbar = ({ device }: { device: TDevice }) => {
     }
 
     const localProps = { ...allProps };
-    const bothProps = {
+    const diffProps = {
         ...allProps,
         disabled: !hasBoth,
         sx: {
             color: (hasBoth)
                 ? (isDarkMode ? "lightgrey" : color_gray)
                 : (isDarkMode ? color_gray : "lightgrey")
+        },
+    }
+
+    const uploadCreates = !hasESPHomeConfig;
+    const uploadProps = {
+        ...allProps,
+        sx: {
+            color: (isDarkMode ? "lightgrey" : color_gray)
         },
     }
 
@@ -134,17 +142,17 @@ const DeviceToolbar = ({ device }: { device: TDevice }) => {
     return <div style={{ marginLeft: '-16px' }}>
         <ActionBar aria-label="Device tools" size="small">
             {hasLocalFiles
-                ? <ActionBar.IconButton key="show_local" {...localProps} sx={{ color: color_local }} icon={CodeIcon} onClick={(e) => panels.handleClick(e, device, "local_device")} aria-label="Show local yaml configuration" />
+                ? <ActionBar.IconButton key="show_local" {...localProps} sx={{ color: color_local }} icon={CodeIcon} onClick={(e) => panels.addDevicePanel(e, device, "local_device")} aria-label="Show local yaml configuration" />
                 : <ActionBar.IconButton key="create_local"  {...localProps} sx={{ color: color_local }} icon={DownloadIcon} onClick={() => devicesStore.localDevice_import(device)} aria-label="Import yaml configuration" />
             }
             <ActionBar.Divider key="div1" />
-            <ActionBar.IconButton key="diff" {...bothProps} icon={GitCompareIcon} onClick={(e) => panels.handleClick(e, device, "diff")} aria-label="Show local vs ESPHome diff" />
-            <ActionBar.IconButton key="upload" {...bothProps} icon={UploadIcon} onClick={() => devicesStore.espHome_upload(device)} aria-label="Upload local to ESPHome" />
+            <ActionBar.IconButton key="diff" {...diffProps} icon={GitCompareIcon} onClick={(e) => panels.addDevicePanel(e, device, "diff")} aria-label="Show local vs ESPHome diff" />
+            <ActionBar.IconButton key="upload" {...uploadProps} icon={UploadIcon} onClick={() => devicesStore.espHome_upload(device)} aria-label={uploadCreates ? "Create device in ESPHome" : "Upload local to ESPHome"} />
             <ActionBar.Divider key="div2" />
-            <ActionBar.IconButton key="show_esphome" {...espHomeProps} icon={CodeIcon} onClick={(e) => panels.handleClick(e, device, "esphome_device")} aria-label="Show ESPHome configuration" />
-            <ActionBar.IconButton key="compile" {...espHomeProps} icon={BeakerIcon} onClick={(e) => panels.handleClick(e, device, "esphome_compile")} aria-label="Compile ESPHome configuration" />
-            <ActionBar.IconButton key="install" {...espHomeProps} icon={UploadIcon} onClick={(e) => panels.handleClick(e, device, "esphome_install")} aria-label="Install ESPHome configuration to device" />
-            <ActionBar.IconButton key="log" {...espHomeProps} icon={LogIcon} onClick={(e) => panels.handleClick(e, device, "esphome_log")} aria-label="Show ESPHome device logs" />
+            <ActionBar.IconButton key="show_esphome" {...espHomeProps} icon={CodeIcon} onClick={(e) => panels.addDevicePanel(e, device, "esphome_device")} aria-label="Show ESPHome configuration" />
+            <ActionBar.IconButton key="compile" {...espHomeProps} icon={BeakerIcon} onClick={(e) => panels.addDevicePanel(e, device, "esphome_compile")} aria-label="Compile ESPHome configuration" />
+            <ActionBar.IconButton key="install" {...espHomeProps} icon={UploadIcon} onClick={(e) => panels.addDevicePanel(e, device, "esphome_install")} aria-label="Install ESPHome configuration to device" />
+            <ActionBar.IconButton key="log" {...espHomeProps} icon={LogIcon} onClick={(e) => panels.addDevicePanel(e, device, "esphome_log")} aria-label="Show ESPHome device logs" />
         </ActionBar>
     </div>;
 }
@@ -168,6 +176,17 @@ export const DevicesTreeView = () => {
 
     return (
         <TreeView>
+            <TreeView.Item
+                key="add_device"
+                id="add_device"
+                onSelect={() => devicesStore.localDevice_create()}
+            >
+                New Device
+                <TreeView.LeadingVisual>
+                    <PlusIcon />
+                </TreeView.LeadingVisual>
+
+            </TreeView.Item>
             {devicesStore.query.data?.map((d) => {
                 const isLib = d.name == ".lib";
 

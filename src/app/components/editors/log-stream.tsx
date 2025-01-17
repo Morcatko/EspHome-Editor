@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useVirtualizer } from '@tanstack/react-virtual'
 
 type props = {
@@ -6,17 +6,6 @@ type props = {
 }
 
 export const LogStream = (props: props) => {
-    // return <div style={{
-    //     overflow: "auto",
-    //     display: "block",
-    //     unicodeBidi: "embed",
-    //     fontFamily: "monospace",
-    //     whiteSpace: "pre",
-    // }}>
-    //     {props.data.map((line, index) => <div key={index} dangerouslySetInnerHTML={{ __html: line }} />)}
-    // </div>;
-
-
     const parentRef = useRef(null)
 
     const rowVirtualizer = useVirtualizer({
@@ -26,8 +15,18 @@ export const LogStream = (props: props) => {
         overscan: 5,
     })
 
+    useEffect(() => {
+        const lastOffset = rowVirtualizer.getOffsetForIndex(props.data.length - 1)?.[0] || 0;
+        const currentOffset = rowVirtualizer.scrollOffset ?? 0;
+
+        if ((lastOffset - currentOffset) < 80) {
+            rowVirtualizer.scrollToIndex(props.data.length - 1);
+        }
+    }, [props.data.length]);
+
     return <div
         ref={parentRef}
+        className="p-2"
         style={{
             overflow: "auto",
             display: "block",

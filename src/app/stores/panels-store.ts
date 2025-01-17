@@ -45,6 +45,18 @@ function getPanelTitle(panel: TPanel) {
 export const usePanelsStore = () => {
 
     const addPanel = (
+        e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement> | null,
+        panel: TPanel) => {
+        if ((e as any)?.button === 1) {// Middle click
+            //Middle click does not work
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set('panel', JSON.stringify(panel));
+            window.open(currentUrl.toString(), '_blank')?.focus();
+        }
+        else {
+            setPanel({ ...panel, last_click: new Date().toISOString() });
+        }
+    }
         id: string,
         title: string,
         component: string,
@@ -71,14 +83,7 @@ export const usePanelsStore = () => {
     }
 
 
-    const addEditorPanel = (panel: TPanel) => 
-        addPanel(
-            `tab_${panel.operation}_${panel.device_id}_${(panel as any)?.path}`, 
-            getPanelTitle(panel), 
-            "panel", 
-            { ...panel, last_click: new Date().toISOString() });
-
-    const handleClick = (
+    const addDevicePanel = (
         e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>,
         device: TDevice,
         operation: TPanel["operation"],
@@ -88,19 +93,16 @@ export const usePanelsStore = () => {
             ? { device_id: device.id, operation, path: file!.path }
             : { device_id: device.id, operation };
 
-        if ((e as any).button === 1) {// Middle click
-            const currentUrl = new URL(window.location.href);
-            currentUrl.searchParams.set('panel', JSON.stringify(panel));
-            window.open(currentUrl.toString(), '_blank')?.focus();
-        }
-        else {
-            addEditorPanel(panel);
-        }
+        addPanel(e, panel);
     }
 
+    useEffect(() => {
+        if (!panel) addPanel(null, { operation: "onboarding"});
+    }, [panel]);
+
     return {
-        flexLayoutModel: flexLayoutModel,
-        addOnboarding: () => addPanel("onboarding", "Editor for ESPHome", "onboarding", {}),
-        handleClick,
+        panel: <TPanelWithClick | null>panel,
+        addPanel,
+        addDevicePanel
     };
 }
