@@ -80,7 +80,6 @@ export const usePanelsStore = () => {
         addPanel(e, panel);
     }
 
-    
     useEffect(() => {
         if (!api) return;
 
