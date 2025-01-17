@@ -30,8 +30,7 @@ function getPanelTitle(panel: TPanel) {
 }
 
 function getPanelId(panel: TPanel) {
-    //TODO - compute some hash
-    return JSON.stringify(panel);
+    return JSON.stringify(panel, Object.keys(panel).sort());
 }
 
 
@@ -41,7 +40,6 @@ export const usePanelsStore = () => {
     const addDockViewPanel = (
         id: string,
         title: string,
-        component: string,
         params: TPanelWithClick,
     ) => {
         if (!api) return;
@@ -56,7 +54,8 @@ export const usePanelsStore = () => {
             api.addPanel<TPanel>({
                 id: id,
                 title: title,
-                component: component,
+                component: "default",
+                tabComponent: "default",
                 params: params,
             });
     }
@@ -74,7 +73,6 @@ export const usePanelsStore = () => {
             addDockViewPanel(
                 getPanelId(panel),
                 getPanelTitle(panel),
-                "panel",
                 { ...panel, last_click: new Date().toISOString() });
         }
     }
