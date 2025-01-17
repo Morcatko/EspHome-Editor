@@ -1,20 +1,19 @@
 "use client";
+import { Suspense } from "react";
+import { Heading, Spinner } from "@primer/react";
+import Image from "next/image";
 import { DevicesTreeView } from "./components/devices-tree-view";
 import { PanelsContainer } from "./components/panels-container";
-import { Heading, Spinner } from "@primer/react";
-import { LinkExternalIcon } from "@primer/octicons-react";
 import { useDevicesStore } from "./stores/devices-store";
 import { useStatusStore } from "./stores/status-store";
 import { usePanelsStore } from "./stores/panels-store";
-import Image from "next/image";
-import logo from "@/assets/logo.svg";
-import { Suspense } from "react";
 import { useAboutDialogVisible } from "./components/dialogs/about-dialog";
+import logo from "@/assets/logo.svg";
 
 const Header = () => {
 	const panelsStore = usePanelsStore();
 	return <div style={{ gridArea: "1/1/1/1", lineHeight: '56px' }} className="border-b border-slate-200 dark:border-slate-800 text-center" >
-		<a href="#" onClick={() => panelsStore.addOnboarding()}>
+		<a href="#" onClick={(e) => panelsStore.addPanel(e, { operation: "onboarding" })}>
 			<Image className="inline mr-2" src={logo} alt="ESPHome Editor" width="32" height="32" />
 			<Heading className="inline-block align-baseline text-slate-600 dark:text-slate-400" variant="small" >Editor for ESPHome</Heading>
 		</a>
