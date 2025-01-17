@@ -35,11 +35,7 @@ const PanelContent = ({ panel }: { panel: TPanelWithClick }) => {
 };
 
 const components = {
-    panel: (p: IDockviewPanelProps<TPanelWithClick>) => {
-        const panel = p.params;
-        return <PanelContent panel={panel} />;
-    },
-    onboarding: () => <Onboarding />
+    panel: (p: IDockviewPanelProps<TPanelWithClick>) => <PanelContent panel={p.params} />
 };
 
 /*const tabComponents = {

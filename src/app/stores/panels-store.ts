@@ -88,8 +88,8 @@ export const usePanelsStore = () => {
         const panel: TPanel = (operation === "local_file")
             ? { device_id: device.id, operation, path: file!.path }
             : { device_id: device.id, operation };
-        
-            addPanel(e, panel);
+
+        addPanel(e, panel);
     }
 
     
