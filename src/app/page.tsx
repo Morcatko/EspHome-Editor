@@ -13,7 +13,7 @@ import logo from "@/assets/logo.svg";
 const Header = () => {
 	const panelsStore = usePanelsStore();
 	return <div style={{ gridArea: "1/1/1/1", lineHeight: '56px' }} className="border-b border-slate-200 dark:border-slate-800 text-center" >
-		<a href="#" onClick={(e) => panelsStore.openPanel(e, { operation: "onboarding" })}>
+		<a href="#" onClick={(e) => panelsStore.addPanel(e, { operation: "onboarding" })}>
 			<Image className="inline mr-2" src={logo} alt="ESPHome Editor" width="32" height="32" />
 			<Heading className="inline-block align-baseline text-slate-600 dark:text-slate-400" variant="small" >Editor for ESPHome</Heading>
 		</a>
