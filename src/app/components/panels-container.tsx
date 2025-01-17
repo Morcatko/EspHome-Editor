@@ -7,62 +7,56 @@ import { EspHomeInstallPanel } from "./panels/esphome-install-panel";
 import { EspHomeCompilePanel } from "./panels/esphome-compile-panel";
 import { TPanelWithClick } from "../stores/panels-store/types";
 import { usePanelsStore } from "../stores/panels-store";
+import { DockviewDefaultTab, DockviewReact, IDockviewPanelHeaderProps, IDockviewPanelProps } from "dockview-react";
+import { useDarkTheme } from "@/app/utils/hooks";
 import { Onboarding } from "./onboarding";
 
-const PanelContent = ({ panel }: { panel: TPanelWithClick }) => {
-    switch (panel.operation) {
-        case "esphome_device":
-            return <ESPHomeDevicePanel device_id={panel.device_id} />;
-        case "local_file":
-            return <LocalFilePanel device_id={panel.device_id} file_path={panel.path} />;
-        case "local_device":
-            return <LocalDevicePanel device_id={panel.device_id} />;
-        case "diff":
-            return <DiffPanel device_id={panel.device_id} />;
-        case "esphome_compile":
-            return <EspHomeCompilePanel key={panel.last_click ?? "initial"} device_id={panel.device_id} />;
-        case "esphome_install":
-            return <EspHomeInstallPanel device_id={panel.device_id} />;
-        case "esphome_log":
-            return <EspHomeLogPanel device_id={panel.device_id} />;
-        case "onboarding":
-            return <Onboarding panel={panel} />;
-        default:
-            return <div>Noting selected</div>;
+const components = {
+    default: (p: IDockviewPanelProps<TPanelWithClick>) => {
+        const panel = p.params;
+        switch (panel.operation) {
+            case "esphome_device":
+                return <ESPHomeDevicePanel device_id={panel.device_id} />;
+            case "local_file":
+                return <LocalFilePanel device_id={panel.device_id} file_path={panel.path} />;
+            case "local_device":
+                return <LocalDevicePanel device_id={panel.device_id} />;
+            case "diff":
+                return <DiffPanel device_id={panel.device_id} />;
+            case "esphome_compile":
+                return <EspHomeCompilePanel key={panel.last_click ?? "initial"} device_id={panel.device_id} />;
+            case "esphome_install":
+                return <EspHomeInstallPanel device_id={panel.device_id} />;
+            case "esphome_log":
+                return <EspHomeLogPanel device_id={panel.device_id} />;
+            case "onboarding":
+                return <Onboarding panel={panel} />;
+            default:
+                return <div>Noting selected</div>;
+        }
     }
 };
 
-const PanelHeader = ({ panel }: { panel: TPanelWithClick }) => {
-    switch (panel.operation) {
-        case "local_file":
-            return <div>{panel.device_id} -  {panel.path}</div>;
-        case "local_device":
-            return <div>Local - {panel.device_id}</div>;
-        case "esphome_device":
-            return <div>ESPHome - {panel.device_id}</div>;
-        case "diff":
-            return <div>DIFF - {panel.device_id}</div>;
-        case "esphome_compile":
-            return <div>Compile - {panel.device_id}</div>;
-        case "esphome_install":
-            return <div>Install - {panel.device_id}</div>;
-        case "esphome_log":
-            return <div>Log - {panel.device_id}</div>;
-        case "onboarding":
-            return null;
+const tabComponents = {
+    default: (p: IDockviewPanelHeaderProps<TPanelWithClick>) => {
+        const panel = p.params;
+        switch  (panel.operation) {
+            case "onboarding":
+                return <DockviewDefaultTab {...p}  hideClose />;
+            default:
+                return <DockviewDefaultTab {...p} />;
+        }
     }
-    return <div>Unknown</div>;
 };
 
 export const PanelsContainer = () => {
-    const panel = usePanelsStore().panel;
+    const isDarkMode = useDarkTheme();
+    const panelsStore = usePanelsStore();
 
-    return panel && <div style={{
-            height: "100%",
-            display: "grid",
-            gridTemplateRows: "auto 1fr",
-        }}>
-            <PanelHeader panel={panel} />
-            <PanelContent panel={panel} />
-        </div>;
+    return <DockviewReact
+            className={`absolute h-full w-full ${isDarkMode ? "dockview-theme-dark" : "dockview-theme-light"}`}
+            onReady={(e) => panelsStore.initApi(e.api)}
+            components={components}
+            tabComponents={tabComponents}
+        />;
 };
