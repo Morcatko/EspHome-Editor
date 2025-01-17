@@ -26,7 +26,7 @@ export async function streamToWs(
       spawnParams,
       (e) => send("message", e.data)
     )
-    .then((r) => {send("completed", ""); client.close();})
+    .then(() => {send("completed", ""); client.close();})
     .catch((e) => { send("error", e.toString()); client.close(); });
 }
   

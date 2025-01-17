@@ -1,5 +1,4 @@
 import { useLocalFileStore } from "@/app/stores/panels-store/local-file-store";
-import { useEffect, useState } from "react";
 import { DockviewApi, DockviewDefaultTab, DockviewReact, IDockviewPanelProps } from "dockview-react";
 import { useDarkTheme } from "@/app/utils/hooks";
 import { SingleEditor } from "../editors/single-editor";

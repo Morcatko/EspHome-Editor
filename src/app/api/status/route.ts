@@ -1,6 +1,6 @@
 import { c } from "@/server/config";
 
-export const getStatus = () => ({
+const getStatus = () => ({
     version: c.version,
     mode: c.mode,
     espHomeWebUrl: c.espHomeWebUrl,
