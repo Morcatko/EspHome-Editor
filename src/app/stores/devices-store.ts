@@ -90,7 +90,8 @@ async function localDevice_addFile(device: TDevice, parent_path: string) {
     if (file_name)
         await showToast(
             () => api.local_save(device.id, parent_path + "/" + file_name, ""),
-            [["devices"]],
+            [["devices"],
+            ["device", device.id, "local"]],
             "Creating...",
             "Created!",
             "Failed to Create",
@@ -100,7 +101,8 @@ async function localDevice_addFile(device: TDevice, parent_path: string) {
 async function localDevice_import(device: TDevice) {
     await showToast(
         () => api.local_importDevice(device.id),
-        [["devices"]],
+        [["devices"],
+        ["device", device.id, "local"]],
         "Creating...",
         "Created!",
         "Failed to Create",
@@ -127,7 +129,10 @@ async function local_renameFoD(device: TDevice, file: TLocalFileOrDirectory) {
     if (newName)
         await showToast(
             () => api.local_rename(device.id, file.path, newName),
-            [["devices"]],
+            [["devices"],
+            ["device", device.id, "local"],
+            ["device", device.id, "local-file", file.path],
+            ["device", device.id, "local-file", file.path, "compiled"]],
             "Renaming...",
             "Renamed!",
             "Failed to Rename",
@@ -144,7 +149,11 @@ async function local_deleteFoD(device: TDevice, file: TLocalFileOrDirectory) {
     if (del)
         showToast(
             () => api.local_delete(device.id, file.path),
-            [["devices"]],
+            [["devices"],
+            ["device", device.id, "local"],
+            ["device", device.id, "local-file", file.path],
+            ["device", device.id, "local-file", file.path, "compiled"]
+            ],
             "Deleting...",
             "Deleted!",
             "Failed to Delete",
