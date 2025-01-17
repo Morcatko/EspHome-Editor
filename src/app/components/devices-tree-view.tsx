@@ -42,7 +42,7 @@ const LocalFileOrDirectory = ({ device, fod }: { device: TDevice, fod: TLocalFil
         onExpandedChange={(e) => exp.set(`${device.id}/${fod.path}`, e)}
         onSelect={
             (fod.type === "file")
-                ? (e) => panels.handleClick(e, device, "local_file", fod)
+                ? (e) => panels.openDevicePanel(e, device, "local_file", fod)
                 : undefined} >
         <TreeView.LeadingVisual>
             <div style={{ opacity: "55%" }}>
@@ -142,17 +142,17 @@ const DeviceToolbar = ({ device }: { device: TDevice }) => {
     return <div style={{ marginLeft: '-16px' }}>
         <ActionBar aria-label="Device tools" size="small">
             {hasLocalFiles
-                ? <ActionBar.IconButton key="show_local" {...localProps} sx={{ color: color_local }} icon={CodeIcon} onClick={(e) => panels.handleClick(e, device, "local_device")} aria-label="Show local yaml configuration" />
+                ? <ActionBar.IconButton key="show_local" {...localProps} sx={{ color: color_local }} icon={CodeIcon} onClick={(e) => panels.openDevicePanel(e, device, "local_device")} aria-label="Show local yaml configuration" />
                 : <ActionBar.IconButton key="create_local"  {...localProps} sx={{ color: color_local }} icon={DownloadIcon} onClick={() => devicesStore.localDevice_import(device)} aria-label="Import yaml configuration" />
             }
             <ActionBar.Divider key="div1" />
-            <ActionBar.IconButton key="diff" {...diffProps} icon={GitCompareIcon} onClick={(e) => panels.handleClick(e, device, "diff")} aria-label="Show local vs ESPHome diff" />
+            <ActionBar.IconButton key="diff" {...diffProps} icon={GitCompareIcon} onClick={(e) => panels.openDevicePanel(e, device, "diff")} aria-label="Show local vs ESPHome diff" />
             <ActionBar.IconButton key="upload" {...uploadProps} icon={UploadIcon} onClick={() => devicesStore.espHome_upload(device)} aria-label={uploadCreates ? "Create device in ESPHome" : "Upload local to ESPHome"} />
             <ActionBar.Divider key="div2" />
-            <ActionBar.IconButton key="show_esphome" {...espHomeProps} icon={CodeIcon} onClick={(e) => panels.handleClick(e, device, "esphome_device")} aria-label="Show ESPHome configuration" />
-            <ActionBar.IconButton key="compile" {...espHomeProps} icon={BeakerIcon} onClick={(e) => panels.handleClick(e, device, "esphome_compile")} aria-label="Compile ESPHome configuration" />
-            <ActionBar.IconButton key="install" {...espHomeProps} icon={UploadIcon} onClick={(e) => panels.handleClick(e, device, "esphome_install")} aria-label="Install ESPHome configuration to device" />
-            <ActionBar.IconButton key="log" {...espHomeProps} icon={LogIcon} onClick={(e) => panels.handleClick(e, device, "esphome_log")} aria-label="Show ESPHome device logs" />
+            <ActionBar.IconButton key="show_esphome" {...espHomeProps} icon={CodeIcon} onClick={(e) => panels.openDevicePanel(e, device, "esphome_device")} aria-label="Show ESPHome configuration" />
+            <ActionBar.IconButton key="compile" {...espHomeProps} icon={BeakerIcon} onClick={(e) => panels.openDevicePanel(e, device, "esphome_compile")} aria-label="Compile ESPHome configuration" />
+            <ActionBar.IconButton key="install" {...espHomeProps} icon={UploadIcon} onClick={(e) => panels.openDevicePanel(e, device, "esphome_install")} aria-label="Install ESPHome configuration to device" />
+            <ActionBar.IconButton key="log" {...espHomeProps} icon={LogIcon} onClick={(e) => panels.openDevicePanel(e, device, "esphome_log")} aria-label="Show ESPHome device logs" />
         </ActionBar>
     </div>;
 }

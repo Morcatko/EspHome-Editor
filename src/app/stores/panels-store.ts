@@ -1,8 +1,8 @@
 import { atom, useAtom } from "jotai";
 import { TDevice, TLocalFileOrDirectory } from "@/server/devices/types";
-import { TPanel } from "./panels-store/types";
-import { useStatusStore } from "./status-store";
+import { TPanel, TPanelWithClick } from "./panels-store/types";
 import { DockviewApi } from 'dockview-react';
+import { useEffect } from "react";
 
 const dockViewApiAtom = atom<DockviewApi | null>(null);
 
@@ -22,21 +22,27 @@ function getPanelTitle(panel: TPanel) {
             return `${panel.device_id} (Install)`;
         case "esphome_log":
             return `${panel.device_id} (Log)`;
+        case "onboarding":
+            return "Welcome";
         default:
             return `Unknown`;
     }
+}
+
+function getPanelId(panel: TPanel) {
+    //TODO - compute some hash
+    return JSON.stringify(panel);
 }
 
 
 export const usePanelsStore = () => {
     const [api, setApi] = useAtom(dockViewApiAtom);
 
-
     const addPanel = (
         id: string,
         title: string,
         component: string,
-        params: any,
+        params: TPanelWithClick,
     ) => {
         if (!api) return;
 
@@ -55,14 +61,24 @@ export const usePanelsStore = () => {
             });
     }
 
-    const addEditorPanel = (panel: TPanel) =>
-        addPanel(
-            `${panel.operation}_${panel.device_id}_${(panel as any)?.path}`,
-            getPanelTitle(panel),
-            "panel",
-            { ...panel, last_click: new Date().toISOString() });
+    const openPanel = (
+        e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement> | null,
+        panel: TPanel) => {
+        if ((e as any)?.button === 1) {// Middle click
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set('panel', JSON.stringify(panel));
+            window.open(currentUrl.toString(), '_blank')?.focus();
+        }
+        else {
+            addPanel(
+                getPanelId(panel),
+                getPanelTitle(panel),
+                "panel",
+                { ...panel, last_click: new Date().toISOString() });
+        }
+    }
 
-    const handleClick = (
+    const openDevicePanel = (
         e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>,
         device: TDevice,
         operation: TPanel["operation"],
@@ -71,20 +87,18 @@ export const usePanelsStore = () => {
         const panel: TPanel = (operation === "local_file")
             ? { device_id: device.id, operation, path: file!.path }
             : { device_id: device.id, operation };
-
-        if ((e as any).button === 1) {// Middle click
-            const currentUrl = new URL(window.location.href);
-            currentUrl.searchParams.set('panel', JSON.stringify(panel));
-            window.open(currentUrl.toString(), '_blank')?.focus();
-        }
-        else {
-            addEditorPanel(panel);
-        }
+        
+        openPanel(e, panel);
     }
+
+    
+    useEffect(() => {
+        if (api && api.panels.length === 0) openPanel(null, { operation: "onboarding" });
+    }, [api]);
 
     return {
         setApi: setApi,
-        addOnboarding: () => addPanel("onboarding", "Editor for ESPHome", "onboarding", {}),
-        handleClick,
+        openPanel,
+        openDevicePanel,
     };
 }
