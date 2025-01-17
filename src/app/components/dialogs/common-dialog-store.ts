@@ -1,13 +1,13 @@
-import { DialogButtonProps } from "@primer/react";
+import { ColorPaletteProp } from "@mui/joy";
 import { makeAutoObservable } from "mobx";
 
 export type TCommonModalStoreData = {
     title: string;
     subtitle?: string;
     confirmLabel?: string;
-    confirmButtonType?: DialogButtonProps["buttonType"];
+    confirmButtonColor?: ColorPaletteProp;
     cancelLabel?: string;
-    cancelButtonType?: DialogButtonProps["buttonType"];
+    cancelButtonColor?: ColorPaletteProp;
 }
 
 export class CommonDialogStore<TStoreData extends TCommonModalStoreData, TValue> {

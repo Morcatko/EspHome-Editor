@@ -11,7 +11,7 @@ export const esphome_stream = async (
     spawnParams: Record<string, any>,
     onEvent: (event: StreamEvent) => void,
 ): Promise<number> => {
-    const url = new URL(`${c.espHomeUrl}/${path}`);
+    const url = new URL(`${c.espHomeApiUrl}/${path}`);
     url.protocol = url.protocol === "http:" ? "ws:" : "wss:";
     const socket = new WebSocket(url.toString());
 

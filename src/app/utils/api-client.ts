@@ -80,13 +80,21 @@ export namespace api {
         return await callPostPut("POST", url, content, throwOnError);
     }
 
-    async function callPut(url: string, content: string): Promise<TCallResult> {
+    async function callPut(url: string, content: string | null): Promise<TCallResult> {
         return await callPostPut("PUT", url, content, true);
     }
 
     export const url_device = (device_id: string, suffix: string = "") => `/api/device/${encodeURIComponent(device_id)}/${suffix}`;
     export const url_local_path = (device_id: string, path: string, suffix: string = "") =>
         url_device(device_id, `/local/${fixPath(path)}/${suffix}`);
+
+    export async function local_createDevice(device_id: string) {
+        await callPut(url_device(device_id, "local"), null);
+    }
+
+    export async function local_importDevice(device_id: string) {
+        await callPost(url_device(device_id, "local"), null);
+    }
 
     export async function local_createDirectory(device_id: string, directory_path: string) {
         await callPut(url_local_path(device_id, directory_path), "directory");
