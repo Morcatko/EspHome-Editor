@@ -1,8 +1,7 @@
 import { atom, useAtom } from "jotai";
 import { TDevice, TLocalFileOrDirectory } from "@/server/devices/types";
 import { TPanel, TPanelWithClick } from "./panels-store/types";
-import { DockviewApi, IPanel } from 'dockview-react';
-import { useEffect } from "react";
+import { DockviewApi } from 'dockview-react';
 
 const dockViewApiAtom = atom<DockviewApi | null>(null);
 
@@ -50,12 +49,12 @@ export const usePanelsStore = () => {
         const existingPanel = api?.panels.find(p => p.id === id)
 
         if (existingPanel) {
-            existingPanel.api.updateParameters(params);
+            existingPanel.api.updateParameters(params)
             existingPanel.focus();
         }
         else
-            api.addPanel<TPanel>({
-                id: id,
+            api.addPanel<TPanelWithClick>({
+                id: getPanelId(panel),
                 title: getPanelTitle(panel),
                 component: "default",
                 tabComponent: "default",
@@ -91,7 +90,7 @@ export const usePanelsStore = () => {
 
     const initApi = (_api: DockviewApi) => {
         api = _api!;
-        
+
         try {
             const layout = JSON.parse(localStorage.getItem('e4e.dockView') ?? "{}");
             api.fromJSON(layout);        
@@ -99,14 +98,14 @@ export const usePanelsStore = () => {
             const queryPanelString = new URLSearchParams(window.location.search).get('panel');
             const queryPanel = queryPanelString ? JSON.parse(queryPanelString) as TPanelWithClick : null;
             if (queryPanel) addDockViewPanel(queryPanel);
-            
+
             const onboardingPanelProps: TPanel = { operation: "onboarding" };
             const id = getPanelId(onboardingPanelProps);
             if (!api.panels.find(p => p.id === id))
                 addDockViewPanel(onboardingPanelProps);
 
         } catch (err) { }
-        
+
         api.onDidLayoutChange(() => localStorage.setItem("e4e.dockView", JSON.stringify(api!.toJSON())));
 
         setApi(api);
