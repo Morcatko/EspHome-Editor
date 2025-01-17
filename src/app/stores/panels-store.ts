@@ -38,7 +38,7 @@ function getPanelId(panel: TPanel) {
 export const usePanelsStore = () => {
     const [api, setApi] = useAtom(dockViewApiAtom);
 
-    const addPanel = (
+    const addDockViewPanel = (
         id: string,
         title: string,
         component: string,
@@ -61,16 +61,17 @@ export const usePanelsStore = () => {
             });
     }
 
-    const openPanel = (
+    const addPanel = (
         e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement> | null,
         panel: TPanel) => {
         if ((e as any)?.button === 1) {// Middle click
+            //Middle click does not work
             const currentUrl = new URL(window.location.href);
             currentUrl.searchParams.set('panel', JSON.stringify(panel));
             window.open(currentUrl.toString(), '_blank')?.focus();
         }
         else {
-            addPanel(
+            addDockViewPanel(
                 getPanelId(panel),
                 getPanelTitle(panel),
                 "panel",
@@ -78,7 +79,7 @@ export const usePanelsStore = () => {
         }
     }
 
-    const openDevicePanel = (
+    const addDevicePanel = (
         e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>,
         device: TDevice,
         operation: TPanel["operation"],
@@ -88,17 +89,17 @@ export const usePanelsStore = () => {
             ? { device_id: device.id, operation, path: file!.path }
             : { device_id: device.id, operation };
         
-        openPanel(e, panel);
+            addPanel(e, panel);
     }
 
     
     useEffect(() => {
-        if (api && api.panels.length === 0) openPanel(null, { operation: "onboarding" });
+        if (api && api.panels.length === 0) addPanel(null, { operation: "onboarding" });
     }, [api]);
 
     return {
         setApi: setApi,
-        openPanel,
-        openDevicePanel,
+        addPanel,
+        addDevicePanel,
     };
 }
