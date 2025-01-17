@@ -7,6 +7,7 @@ import { EspHomeInstallPanel } from "./panels/esphome-install-panel";
 import { EspHomeCompilePanel } from "./panels/esphome-compile-panel";
 import { TPanelWithClick } from "../stores/panels-store/types";
 import { usePanelsStore } from "../stores/panels-store";
+import { Layout, TabNode } from "flexlayout-react";
 import { Onboarding } from "./onboarding";
 
 const PanelContent = ({ panel }: { panel: TPanelWithClick }) => {
@@ -32,37 +33,23 @@ const PanelContent = ({ panel }: { panel: TPanelWithClick }) => {
     }
 };
 
-const PanelHeader = ({ panel }: { panel: TPanelWithClick }) => {
-    switch (panel.operation) {
-        case "local_file":
-            return <div>{panel.device_id} -  {panel.path}</div>;
-        case "local_device":
-            return <div>Local - {panel.device_id}</div>;
-        case "esphome_device":
-            return <div>ESPHome - {panel.device_id}</div>;
-        case "diff":
-            return <div>DIFF - {panel.device_id}</div>;
-        case "esphome_compile":
-            return <div>Compile - {panel.device_id}</div>;
-        case "esphome_install":
-            return <div>Install - {panel.device_id}</div>;
-        case "esphome_log":
-            return <div>Log - {panel.device_id}</div>;
-        case "onboarding":
-            return null;
+const factory = (node: TabNode) => {
+    var component = node.getComponent();
+    switch (component) {
+        case "panel":
+            const panel: TPanel = node.getConfig();
+            return <PanelContent panel={panel} />;
+        default:
+            return <div>Unknown panel</div>;
     }
-    return <div>Unknown</div>;
-};
+}
 
 export const PanelsContainer = () => {
-    const panel = usePanelsStore().panel;
+    const panelsStore = usePanelsStore();
 
-    return panel && <div style={{
-            height: "100%",
-            display: "grid",
-            gridTemplateRows: "auto 1fr",
-        }}>
-            <PanelHeader panel={panel} />
-            <PanelContent panel={panel} />
-        </div>;
+    return <Layout
+        // classNameMapper={classNameMapper}
+        model={panelsStore.flexLayoutModel}
+        factory={factory}
+    />
 };

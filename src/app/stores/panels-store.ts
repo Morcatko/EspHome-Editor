@@ -1,20 +1,83 @@
-import { useQueryState, parseAsJson } from 'nuqs'
 import { TDevice, TLocalFileOrDirectory } from "@/server/devices/types";
 import { TPanel, TPanelWithClick } from "./panels-store/types";
-import { useSessionStorage } from 'usehooks-ts';
-import { useStatusStore } from "./status-store";
-import { useEffect } from 'react';
+import { Model, IJsonModel, Actions, DockLocation } from 'flexlayout-react';
+import { useEffect } from "react";
+
+
+const flexLayoutDefaultJson: IJsonModel = {
+    global: {},
+    borders: [],
+    layout: {
+        type: "row",
+        weight: 100,
+        children: [
+            {
+                id: "tabset_main",
+                type: "tabset",
+                enableDeleteWhenEmpty: false,
+                children: []
+            }
+        ]
+    }
+};
+const flexLayoutModel = Model.fromJson(flexLayoutDefaultJson);
+
+function getPanelTitle(panel: TPanel) {
+    switch (panel.operation) {
+        case "local_file":
+            return `${panel.device_id} -  ${panel.path}`;
+        case "local_device":
+            return `${panel.device_id} (Local)`;
+        case "esphome_device":
+            return `${panel.device_id}(ESPHome)`;
+        case "diff":
+            return `${panel.device_id} (Diff)`;
+        case "esphome_compile":
+            return `${panel.device_id} (Compile)`;
+        case "esphome_install":
+            return `${panel.device_id} (Install)`;
+        case "esphome_log":
+            return `${panel.device_id} (Log)`;
+        case "onboarding":
+            return "Welcome";
+        default:
+            return `Unknown`;
+    }
+}
+
+function getPanelId(panel: TPanel) {
+    //TODO - compute some hash
+    return JSON.stringify(panel);
+}
 
 export const usePanelsStore = () => {
-    const status = useStatusStore();
 
-    const [panel, setPanel] = status.isHaAddon
-        ? useSessionStorage<TPanelWithClick | null>("e4e.panel", null, {
-            serializer: JSON.stringify,
-            deserializer: JSON.parse,
-        })
-        : useQueryState<TPanelWithClick>('panel', parseAsJson(v => v as TPanelWithClick));
-     
+    const addFlexLayoutPanel = (
+        id: string,
+        title: string,
+        params: TPanelWithClick) => {
+
+        const existingNode = flexLayoutModel.getNodeById(id);
+        //const js = flexLayoutModel.toJson();
+        //const ts = flexLayoutModel.getNodeById("tabset_main")
+
+        //debugger;
+        if (existingNode) {
+            flexLayoutModel.doAction(Actions.selectTab(id));
+            flexLayoutModel.doAction(Actions.updateNodeAttributes(id, { config: params }));
+        }
+        else {
+            flexLayoutModel.doAction(Actions.addNode({
+                id: id,
+                type: "tab",
+                name: title,
+                component: "panel",
+                config: params
+            }, "tabset_main", DockLocation.CENTER, -1, true));
+        }
+
+    }
+
     const addPanel = (
         e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement> | null,
         panel: TPanel) => {
@@ -25,10 +88,12 @@ export const usePanelsStore = () => {
             window.open(currentUrl.toString(), '_blank')?.focus();
         }
         else {
-            setPanel({ ...panel, last_click: new Date().toISOString() });
+            addFlexLayoutPanel(
+                getPanelId(panel),
+                getPanelTitle(panel),
+                { ...panel, last_click: new Date().toISOString() });
         }
     }
-
 
     const addDevicePanel = (
         e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>,
@@ -44,11 +109,11 @@ export const usePanelsStore = () => {
     }
 
     useEffect(() => {
-        if (!panel) addPanel(null, { operation: "onboarding"});
-    }, [panel]);
+        addPanel(null, { operation: "onboarding" });
+    }, []);
 
     return {
-        panel: <TPanelWithClick | null>panel,
+        flexLayoutModel,
         addPanel,
         addDevicePanel
     };
