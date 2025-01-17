@@ -1,20 +1,59 @@
-import { useQueryState, parseAsJson } from 'nuqs'
+import { atom, useAtom } from "jotai";
 import { TDevice, TLocalFileOrDirectory } from "@/server/devices/types";
 import { TPanel, TPanelWithClick } from "./panels-store/types";
-import { useSessionStorage } from 'usehooks-ts';
-import { useStatusStore } from "./status-store";
-import { useEffect } from 'react';
+import { DockviewApi } from 'dockview-react';
+import { useEffect } from "react";
+
+const dockViewApiAtom = atom<DockviewApi | null>(null);
+
+function getPanelTitle(panel: TPanel) {
+    switch (panel.operation) {
+        case "local_file":
+            return `${panel.device_id} -  ${panel.path}`;
+        case "local_device":
+            return `${panel.device_id} (Local)`;
+        case "esphome_device":
+            return `${panel.device_id}(ESPHome)`;
+        case "diff":
+            return `${panel.device_id} (Diff)`;
+        case "esphome_compile":
+            return `${panel.device_id} (Compile)`;
+        case "esphome_install":
+            return `${panel.device_id} (Install)`;
+        case "esphome_log":
+            return `${panel.device_id} (Log)`;
+        case "onboarding":
+            return "Welcome";
+        default:
+            return `Unknown`;
+    }
+}
 
 export const usePanelsStore = () => {
-    const status = useStatusStore();
+    const [api, setApi] = useAtom(dockViewApiAtom);
 
-    const [panel, setPanel] = status.isHaAddon
-        ? useSessionStorage<TPanelWithClick | null>("e4e.panel", null, {
-            serializer: JSON.stringify,
-            deserializer: JSON.parse,
-        })
-        : useQueryState<TPanelWithClick>('panel', parseAsJson(v => v as TPanelWithClick));
-     
+    const addDockViewPanel = (panel: TPanel) => {
+        if (!api) return;
+
+        //generate ID from some hash
+        const id = JSON.stringify(panel, Object.keys(panel).sort());
+        const params: TPanelWithClick = { ...panel, last_click: new Date().toISOString() };
+        const existingPanel = api?.panels.find(p => p.id === id)
+
+        if (existingPanel) {
+            existingPanel.update({ params });
+            existingPanel.focus();
+        }
+        else
+            api.addPanel<TPanel>({
+                id: id,
+                title: getPanelTitle(panel),
+                component: "default",
+                tabComponent: "default",
+                params: params,
+            });
+    }
+
     const addPanel = (
         e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement> | null,
         panel: TPanel) => {
@@ -24,11 +63,9 @@ export const usePanelsStore = () => {
             currentUrl.searchParams.set('panel', JSON.stringify(panel));
             window.open(currentUrl.toString(), '_blank')?.focus();
         }
-        else {
-            setPanel({ ...panel, last_click: new Date().toISOString() });
-        }
+        else
+            addDockViewPanel(panel);
     }
-
 
     const addDevicePanel = (
         e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>,
@@ -44,12 +81,28 @@ export const usePanelsStore = () => {
     }
 
     useEffect(() => {
-        if (!panel) addPanel(null, { operation: "onboarding"});
-    }, [panel]);
+        if (!api) return;
+
+        addDockViewPanel({ operation: "onboarding" });
+
+        api.onDidLayoutChange(() => {
+            localStorage.setItem("e4e.dockView", JSON.stringify(api.toJSON()));
+        });
+
+        try {
+            const layout = JSON.parse(localStorage.getItem('e4e.dockView') ?? "{}");
+            api.fromJSON(layout);
+
+            const queryPanelString = new URLSearchParams(window.location.search).get('panel');
+            const queryPanel = queryPanelString ? JSON.parse(queryPanelString) as TPanelWithClick : null;
+            if (queryPanel) addDockViewPanel(queryPanel);
+        } catch (err) {
+        }
+    }, [api]);
 
     return {
-        panel: <TPanelWithClick | null>panel,
+        initApi: setApi,
         addPanel,
-        addDevicePanel
+        addDevicePanel,
     };
 }
