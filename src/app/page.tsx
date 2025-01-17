@@ -20,7 +20,7 @@ const Header = () => {
 	</div>
 }
 
-export default () => {
+const Page =  () => {
 	const statusStore = useStatusStore();
 	const devicesStore = useDevicesStore();
 	const [_, setAboutDialogVisible] = useAboutDialogVisible();
@@ -41,3 +41,4 @@ export default () => {
 			</div>
 		</Suspense>
 };
+export default Page;
