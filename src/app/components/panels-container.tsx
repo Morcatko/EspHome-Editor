@@ -37,8 +37,7 @@ const factory = (node: TabNode) => {
     var component = node.getComponent();
     switch (component) {
         case "panel":
-            const panel: TPanel = node.getConfig();
-            return <PanelContent panel={panel} />;
+            return <PanelContent panel={node.getConfig() as TPanelWithClick} />;
         default:
             return <div>Unknown panel</div>;
     }
