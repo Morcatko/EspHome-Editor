@@ -54,11 +54,11 @@ export const Home = () => {
 
         <Section step="getting_Started" title="Getting Started">
             <p>
-                Let's try building your first configuration. Choose between creating multiple devices (e.g., humidity sensors for flowers) or a single device with multiple components (e.g., a PLC with multiple inputs).
+                Let's try building your first configuration. This will help you understand how to create and manage devices in the Editor for ESPHome.
+                {/* Choose between creating multiple devices (e.g., humidity sensors for flowers) or a single device with multiple components (e.g., a PLC with multiple inputs). */}
             </p>
             <div className="flex justify-around mt-4">
-                <Button onClick={(e) => panelsStore.addPanel(e, { operation: "onboarding", step: "flowers" })}>Flowers</Button>
-                <Button >PLC</Button>
+                <Button onClick={(e) => panelsStore.addPanel(e, { operation: "onboarding", step: "flowers" })}>Let's go</Button>
             </div>
         </Section>
     </>);
