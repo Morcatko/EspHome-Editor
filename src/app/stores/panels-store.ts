@@ -93,8 +93,8 @@ export const usePanelsStore = () => {
 
         try {
             const layout = JSON.parse(localStorage.getItem('e4e.dockView') ?? "{}");
-            api.fromJSON(layout);        
-            
+            api.fromJSON(layout);
+
             const queryPanelString = new URLSearchParams(window.location.search).get('panel');
             const queryPanel = queryPanelString ? JSON.parse(queryPanelString) as TPanelWithClick : null;
             if (queryPanel) addDockViewPanel(queryPanel);
