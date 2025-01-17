@@ -5,11 +5,11 @@ import { DiffPanel } from "./panels/diff-panel";
 import { EspHomeLogPanel } from "./panels/esphome-log-panel";
 import { EspHomeInstallPanel } from "./panels/esphome-install-panel";
 import { EspHomeCompilePanel } from "./panels/esphome-compile-panel";
-import { TPanel } from "../stores/panels-store/types";
+import { TPanelWithClick } from "../stores/panels-store/types";
 import { usePanelsStore } from "../stores/panels-store";
 import { Onboarding } from "./onboarding";
 
-const PanelContent = ({ panel }: { panel: TPanel }) => {
+const PanelContent = ({ panel }: { panel: TPanelWithClick }) => {
     switch (panel.operation) {
         case "esphome_device":
             return <ESPHomeDevicePanel device_id={panel.device_id} />;
@@ -25,12 +25,14 @@ const PanelContent = ({ panel }: { panel: TPanel }) => {
             return <EspHomeInstallPanel device_id={panel.device_id} />;
         case "esphome_log":
             return <EspHomeLogPanel device_id={panel.device_id} />;
+        case "onboarding":
+            return <Onboarding />;
         default:
             return <div>Noting selected</div>;
     }
 };
 
-const PanelHeader = ({ panel }: { panel: TPanel }) => {
+const PanelHeader = ({ panel }: { panel: TPanelWithClick }) => {
     switch (panel.operation) {
         case "local_file":
             return <div>{panel.device_id} -  {panel.path}</div>;
@@ -46,6 +48,8 @@ const PanelHeader = ({ panel }: { panel: TPanel }) => {
             return <div>Install - {panel.device_id}</div>;
         case "esphome_log":
             return <div>Log - {panel.device_id}</div>;
+        case "onboarding":
+            return null;
     }
     return <div>Unknown</div>;
 };
@@ -53,16 +57,12 @@ const PanelHeader = ({ panel }: { panel: TPanel }) => {
 export const PanelsContainer = () => {
     const panel = usePanelsStore().panel;
 
-    if (!panel) {
-        return <Onboarding  />;
-    }
-
-    return <div style={{
-        height: "100%",
-        display: "grid",
-        gridTemplateRows: "auto 1fr",
-    }}>
-        <PanelHeader panel={panel} />
-        <PanelContent panel={panel} />
-    </div>
+    return panel && <div style={{
+            height: "100%",
+            display: "grid",
+            gridTemplateRows: "auto 1fr",
+        }}>
+            <PanelHeader panel={panel} />
+            <PanelContent panel={panel} />
+        </div>;
 };

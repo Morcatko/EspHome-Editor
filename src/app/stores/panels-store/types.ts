@@ -9,18 +9,27 @@ export type TEditorFileProps = {
 }
 
 
-type TPanelBase = {
+type TPanel_DeviceBase = {
     device_id: string;
-    last_click?: string;
 }
 
 
-type TPanel_localFile = {
+type TPanel_DeviceLocalFile = {
     operation: "local_file";
     path: string;
 }
 
-type TPanel_Others = {
+type TPanel_DeviceOthers = {
     operation: "local_device" | "esphome_device" | "diff" | "esphome_compile" | "esphome_install" | "esphome_log" ;
 }
-export type TPanel = TPanelBase & (TPanel_localFile | TPanel_Others);
+
+type TPanel_Device = TPanel_DeviceBase & (TPanel_DeviceLocalFile | TPanel_DeviceOthers);
+
+type TPanel_Onboarding = {
+    operation: "onboarding";
+}
+
+
+export type TPanel = (TPanel_Device | TPanel_Onboarding)
+
+export type TPanelWithClick = TPanel & { last_click: string };
