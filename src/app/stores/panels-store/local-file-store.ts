@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { TEditorFileProps } from "./types";
 import { TLocalFile, TLocalFileOrDirectory } from "@/server/devices/types";
 import { useDevicesStore } from "../devices-store";
+import { queryToContent } from "./utils/query-utils";
 
 const findFile = (fods: TLocalFileOrDirectory[], file_path: string): TLocalFile | null => {
     for (const fod of fods) {
@@ -19,8 +20,8 @@ const findFile = (fods: TLocalFileOrDirectory[], file_path: string): TLocalFile 
     return null;
 }
 
-export const useLocalFileStore = (device_id: string, file_path : string) => {
-    
+export const useLocalFileStore = (device_id: string, file_path: string) => {
+
     const devices = useDevicesStore().query.data;
     const device = devices?.find(d => d.id === device_id);
     const file = findFile(device?.files ?? [], file_path)!;
@@ -50,13 +51,13 @@ export const useLocalFileStore = (device_id: string, file_path : string) => {
 
     return {
         leftEditor: <TEditorFileProps>{
-            value: leftQuery.data?.content ?? "",
+            value: queryToContent(leftQuery),
             language: "yaml",
             onValueChange: (v) => leftMutation.mutate(v),
         },
         rightEditor: hasRightFile
             ? <TEditorFileProps>{
-                value: rightQuery.data?.content ?? "",
+                value: queryToContent(rightQuery),
                 language: "yaml",
             }
             : null
