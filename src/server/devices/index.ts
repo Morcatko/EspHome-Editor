@@ -24,7 +24,7 @@ export const getTreeData = async () => {
                 ...local_device,
             };
         })
-        .sort((a, b) => a.name.localeCompare(b.name));
+        .sort((a, b) => a.name!.localeCompare(b.name!));
 
     return data;
 };
