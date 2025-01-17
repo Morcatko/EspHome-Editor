@@ -20,7 +20,7 @@ const Header = () => {
 	</div>
 }
 
-const Page =  () => {
+const Page = () => {
 	const statusStore = useStatusStore();
 	const devicesStore = useDevicesStore();
 	const [_, setAboutDialogVisible] = useAboutDialogVisible();
