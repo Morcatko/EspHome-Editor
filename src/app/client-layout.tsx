@@ -1,7 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import { loader } from "@monaco-editor/react";
-import { ThemeProvider, BaseStyles } from '@primer/react'
+import { ThemeProvider } from '@primer/react'
 import { queryClient, rootStore, RootStoreContext } from "./stores";
 import { InputTextDialog } from "./components/dialogs/input-text-dialog";
 import { ConfirmationDialog } from "./components/dialogs/confirmation-dialog";
@@ -17,7 +17,7 @@ export function ClientLayout({
 
   useEffect(() => {
     if (typeof window !== undefined) {
-      (window as any).rootStore = rootStore;
+      (window as unknown as any).rootStore = rootStore;
     }
     import('monaco-editor')
       .then((monaco) =>

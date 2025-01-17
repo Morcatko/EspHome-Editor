@@ -22,7 +22,7 @@ export const LogStream = (props: props) => {
         if ((lastOffset - currentOffset) < 80) {
             rowVirtualizer.scrollToIndex(props.data.length - 1);
         }
-    }, [props.data.length]);
+    }, [props.data.length, rowVirtualizer]);
 
     return <div
         ref={parentRef}
