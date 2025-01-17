@@ -1,6 +1,7 @@
 import { TDevice, TLocalFileOrDirectory } from "@/server/devices/types";
 import { TPanel, TPanelWithClick } from "./panels-store/types";
 import { Model, IJsonModel, Actions, DockLocation } from 'flexlayout-react';
+import { useEffect } from "react";
 
 
 const flexLayoutDefaultJson: IJsonModel = {
@@ -37,6 +38,8 @@ function getPanelTitle(panel: TPanel) {
             return `${panel.device_id} (Install)`;
         case "esphome_log":
             return `${panel.device_id} (Log)`;
+        case "onboarding":
+            return "Welcome";
         default:
             return `Unknown`;
     }
@@ -77,7 +80,7 @@ export const usePanelsStore = () => {
 
     const addPanel = (
         e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement> | null,
-        panel: TPanel) => {  
+        panel: TPanel) => {
         if ((e as any)?.button === 1) {// Middle click
             //Middle click does not work
             const currentUrl = new URL(window.location.href);
@@ -104,6 +107,10 @@ export const usePanelsStore = () => {
 
         addPanel(e, panel);
     }
+
+    useEffect(() => {
+        addPanel(null, { operation: "onboarding" });
+    }, []);
 
     return {
         flexLayoutModel,
