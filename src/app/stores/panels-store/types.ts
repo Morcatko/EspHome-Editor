@@ -27,7 +27,7 @@ type TPanel_Device = TPanel_DeviceBase & (TPanel_DeviceLocalFile | TPanel_Device
 
 export type TPanel_Onboarding = {
     operation: "onboarding";
-    step?: null | "flowers";
+    step?: "home" | "flowers";
 } 
 
 
