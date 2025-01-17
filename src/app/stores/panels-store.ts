@@ -2,7 +2,6 @@ import { atom, useAtom } from "jotai";
 import { TDevice, TLocalFileOrDirectory } from "@/server/devices/types";
 import { TPanel, TPanelWithClick } from "./panels-store/types";
 import { DockviewApi } from 'dockview-react';
-import { useEffect } from "react";
 
 const dockViewApiAtom = atom<DockviewApi | null>(null);
 
@@ -29,8 +28,17 @@ function getPanelTitle(panel: TPanel) {
     }
 }
 
+function getPanelId(panel: TPanel) {
+    switch (panel.operation) {
+        case "onboarding":
+            return "onboarding";
+        default:
+            return JSON.stringify(panel, Object.keys(panel).sort());
+    }
+}
+
 export const usePanelsStore = () => {
-    const [api, setApi] = useAtom(dockViewApiAtom);
+    let [api, setApi] = useAtom(dockViewApiAtom);
 
     const addDockViewPanel = (panel: TPanel) => {
         if (!api) return;
@@ -45,8 +53,8 @@ export const usePanelsStore = () => {
             existingPanel.focus();
         }
         else
-            api.addPanel<TPanel>({
-                id: id,
+            api.addPanel<TPanelWithClick>({
+                id: getPanelId(panel),
                 title: getPanelTitle(panel),
                 component: "default",
                 tabComponent: "default",
@@ -80,14 +88,8 @@ export const usePanelsStore = () => {
         addPanel(e, panel);
     }
 
-    useEffect(() => {
-        if (!api) return;
-
-        addDockViewPanel({ operation: "onboarding" });
-
-        api.onDidLayoutChange(() => {
-            localStorage.setItem("e4e.dockView", JSON.stringify(api.toJSON()));
-        });
+    const initApi = (_api: DockviewApi) => {
+        api = _api!;
 
         try {
             const layout = JSON.parse(localStorage.getItem('e4e.dockView') ?? "{}");
@@ -96,12 +98,21 @@ export const usePanelsStore = () => {
             const queryPanelString = new URLSearchParams(window.location.search).get('panel');
             const queryPanel = queryPanelString ? JSON.parse(queryPanelString) as TPanelWithClick : null;
             if (queryPanel) addDockViewPanel(queryPanel);
-        } catch (err) {
-        }
-    }, [api]);
+
+            const onboardingPanelProps: TPanel = { operation: "onboarding" };
+            const id = getPanelId(onboardingPanelProps);
+            if (!api.panels.find(p => p.id === id))
+                addDockViewPanel(onboardingPanelProps);
+
+        } catch (err) { }
+
+        api.onDidLayoutChange(() => localStorage.setItem("e4e.dockView", JSON.stringify(api!.toJSON())));
+
+        setApi(api);
+    };
 
     return {
-        initApi: setApi,
+        initApi,
         addPanel,
         addDevicePanel,
     };
