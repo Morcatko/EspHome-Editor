@@ -58,7 +58,7 @@ export const Flowers = () => {
   return <>
     <Heading
       title="Flowers"
-      subtitle="We will create an automated watering system for your houseplants, with each plant having its own moisture sensor and motor for watering." />
+      subtitle="We will create an automated watering system for your flowers, with each plant having its own moisture sensor and motor for watering." />
 
     <Section
       step="flower.shared"

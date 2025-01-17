@@ -58,6 +58,10 @@ export const Editor = (p: { heightPx: number, code: string }) =>
             style={{ height: `${p.heightPx}px` }}>
             <SingleEditor
                 language="yaml"
-                value={p.code} />
+                value={{
+                    pending: false,
+                    error: false,
+                    content: p.code
+                }} />
         </div>
     </div>

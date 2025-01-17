@@ -2,15 +2,13 @@ import Image from 'next/image';
 import { color_esphome, color_gray, color_local, color_offline, color_online } from "@/app/utils/const";
 import { BeakerIcon, CodeIcon, DownloadIcon, GitCompareIcon, LogIcon, UploadIcon } from "@primer/octicons-react";
 import map from "@/assets/onboarding/map.png";
-import type { TPage } from '.';
 import { Code, Heading, Section, Ul } from './components';
 import { Button } from '@mui/joy';
+import { usePanelsStore } from '@/app/stores/panels-store';
 
-type THomeProps = {
-    onCLick: (page: TPage) => void;
-}
 
-export const Home = (props: THomeProps) => {
+export const Home = () => {
+    const panelsStore = usePanelsStore();
     return (<>
         <Heading
             title="Welcome to the Editor for ESPHome"
@@ -59,7 +57,7 @@ export const Home = (props: THomeProps) => {
                 Let's try building your first configuration. Choose between creating multiple devices (e.g., humidity sensors for flowers) or a single device with multiple components (e.g., a PLC with multiple inputs).
             </p>
             <div className="flex justify-around mt-4">
-                <Button  onClick={() => props.onCLick("flowers")}>Flowers</Button>
+                <Button  onClick={(e) => panelsStore.addPanel(e, { operation: "onboarding", step: "flowers"})}>Flowers</Button>
                 <Button >PLC</Button>
             </div>
         </Section>
