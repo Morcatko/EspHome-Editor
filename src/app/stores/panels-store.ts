@@ -1,5 +1,5 @@
 import { TDevice, TLocalFileOrDirectory } from "@/server/devices/types";
-import { TPanel } from "./panels-store/types";
+import { TPanel, TPanelWithClick } from "./panels-store/types";
 import { Model, IJsonModel, Actions, DockLocation } from 'flexlayout-react';
 
 
@@ -42,26 +42,18 @@ function getPanelTitle(panel: TPanel) {
     }
 }
 
+function getPanelId(panel: TPanel) {
+    //TODO - compute some hash
+    return JSON.stringify(panel);
+}
+
 export const usePanelsStore = () => {
 
-    const addPanel = (
-        e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement> | null,
-        panel: TPanel) => {
-        if ((e as any)?.button === 1) {// Middle click
-            //Middle click does not work
-            const currentUrl = new URL(window.location.href);
-            currentUrl.searchParams.set('panel', JSON.stringify(panel));
-            window.open(currentUrl.toString(), '_blank')?.focus();
-        }
-        else {
-            setPanel({ ...panel, last_click: new Date().toISOString() });
-        }
-    }
+    const addFlexLayoutPanel = (
         id: string,
         title: string,
-        component: string,
-        params: any,
-    ) => {
+        params: TPanelWithClick) => {
+
         const existingNode = flexLayoutModel.getNodeById(id);
         //const js = flexLayoutModel.toJson();
         //const ts = flexLayoutModel.getNodeById("tabset_main")
@@ -69,19 +61,36 @@ export const usePanelsStore = () => {
         //debugger;
         if (existingNode) {
             flexLayoutModel.doAction(Actions.selectTab(id));
-            flexLayoutModel.doAction(Actions.updateNodeAttributes(id, { config: params}));
+            flexLayoutModel.doAction(Actions.updateNodeAttributes(id, { config: params }));
         }
         else {
             flexLayoutModel.doAction(Actions.addNode({
                 id: id,
                 type: "tab",
                 name: title,
-                component: component,
+                component: "panel",
                 config: params
-            },"tabset_main", DockLocation.CENTER, -1, true));
+            }, "tabset_main", DockLocation.CENTER, -1, true));
         }
+
     }
 
+    const addPanel = (
+        e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement> | null,
+        panel: TPanel) => {  
+        if ((e as any)?.button === 1) {// Middle click
+            //Middle click does not work
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set('panel', JSON.stringify(panel));
+            window.open(currentUrl.toString(), '_blank')?.focus();
+        }
+        else {
+            addFlexLayoutPanel(
+                getPanelId(panel),
+                getPanelTitle(panel),
+                { ...panel, last_click: new Date().toISOString() });
+        }
+    }
 
     const addDevicePanel = (
         e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>,
@@ -96,12 +105,8 @@ export const usePanelsStore = () => {
         addPanel(e, panel);
     }
 
-    useEffect(() => {
-        if (!panel) addPanel(null, { operation: "onboarding"});
-    }, [panel]);
-
     return {
-        panel: <TPanelWithClick | null>panel,
+        flexLayoutModel,
         addPanel,
         addDevicePanel
     };
