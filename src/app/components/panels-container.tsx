@@ -55,7 +55,7 @@ export const PanelsContainer = () => {
 
     return <DockviewReact
             className={`absolute h-full w-full ${isDarkMode ? "dockview-theme-dark" : "dockview-theme-light"}`}
-            onReady={(e) => panelsStore.setApi(e.api)}
+            onReady={(e) => panelsStore.initApi(e.api)}
             components={components}
             tabComponents={tabComponents}
         />;
