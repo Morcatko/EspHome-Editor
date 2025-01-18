@@ -44,12 +44,12 @@ export const usePanelsStore = () => {
         if (!api) return;
 
         //generate ID from some hash
-        const id = JSON.stringify(panel, Object.keys(panel).sort());
+        const id = getPanelId(panel);
         const params: TPanelWithClick = { ...panel, last_click: new Date().toISOString() };
         const existingPanel = api?.panels.find(p => p.id === id)
 
         if (existingPanel) {
-            existingPanel.update({ params });
+            existingPanel.api.updateParameters(params)
             existingPanel.focus();
         }
         else
@@ -94,17 +94,18 @@ export const usePanelsStore = () => {
         try {
             const layout = JSON.parse(localStorage.getItem('e4e.dockView') ?? "{}");
             api.fromJSON(layout);
+        } catch (err) { }
 
+        try {
             const queryPanelString = new URLSearchParams(window.location.search).get('panel');
             const queryPanel = queryPanelString ? JSON.parse(queryPanelString) as TPanelWithClick : null;
             if (queryPanel) addDockViewPanel(queryPanel);
-
-            const onboardingPanelProps: TPanel = { operation: "onboarding" };
-            const id = getPanelId(onboardingPanelProps);
-            if (!api.panels.find(p => p.id === id))
-                addDockViewPanel(onboardingPanelProps);
-
         } catch (err) { }
+
+        const onboardingPanelProps: TPanel = { operation: "onboarding" };
+        const id = getPanelId(onboardingPanelProps);
+        if (!api.panels.find(p => p.id === id))
+            addDockViewPanel(onboardingPanelProps);
 
         api.onDidLayoutChange(() => localStorage.setItem("e4e.dockView", JSON.stringify(api!.toJSON())));
 
