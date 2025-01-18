@@ -1,4 +1,5 @@
 import { useLocalStorage } from "usehooks-ts";
+import { SingleEditor } from "../editors/single-editor";
 
 type TChildren = {
     children: React.ReactNode
@@ -6,7 +7,7 @@ type TChildren = {
 
 export const Ol = (p: TChildren) => <ol className="list-decimal ml-8 mt-3 space-y-2">{p.children}</ol>;
 export const Ul = (p: TChildren) => <ul className="list-disc ml-8 mt-3 space-y-2">{p.children}</ul>;
-export const Code = (p: TChildren) => <code className="bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded text-blue-700 dark:text-blue-300 font-mono">{p.children}</code>;
+export const Code = (p: TChildren) => <code className="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-[#0451a5] dark:text-[#ce9178] font-mono">{p.children}</code>;
 
 export const Heading = ({ title, subtitle }: { title: string, subtitle: string }) =>
     <div className="text-center">
@@ -50,3 +51,17 @@ export const Section = ({ step, title, children }: TSectionProps) => {
         </div>
     </>;
 }
+
+export const Editor = (p: { heightPx: number, code: string }) =>
+    <div className="my-2">
+        <div
+            style={{ height: `${p.heightPx}px` }}>
+            <SingleEditor
+                language="yaml"
+                value={{
+                    pending: false,
+                    error: false,
+                    content: p.code
+                }} />
+        </div>
+    </div>
