@@ -8,8 +8,10 @@
     "start": "next start",
     "lint": "next lint",
     "test": "vitest",
-    "postinstall": "npx --yes next-ws-cli@latest patch -y",
-    "tasks": "npx tsx --env-file=.env.local ./tasks.mts"
+    "_postinstall": "npx --yes next-ws-cli@latest patch -y",
+    "tasks": "npx tsx --env-file=.env.local ./tasks.mts",
+    "ws_old":"npx --yes next-ws-cli@latest verify",
+    "ws": "npx tsx --tsconfig ./next-ws/packages/cli/tsconfig.json ./next-ws/packages/cli/src/program.ts patch"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
