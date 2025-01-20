@@ -43,7 +43,7 @@ const components = {
             case "esphome_log":
                 return <EspHomeLogPanel device_id={panel.device_id} />;
             case "onboarding":
-                return <Onboarding />;
+                return <Onboarding panel={panel} />;
             default:
                 return <div>Noting selected</div>;
         }
