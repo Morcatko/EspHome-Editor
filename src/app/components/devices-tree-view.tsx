@@ -139,7 +139,7 @@ const DeviceToolbar = ({ device }: { device: TDevice }) => {
         sx: { color: hasESPHomeConfig ? color_esphome : "lightgrey" },
     };
 
-    return <div style={{ marginLeft: 'auto', maringRight: '0', width: '250px' }}>
+    return <div style={{ marginLeft: 'auto', marginRight: '0', width: '250px' }}>
         <ActionBar aria-label="Device tools" size="small">
             {hasLocalFiles
                 ? <ActionBar.IconButton key="show_local" {...localProps} sx={{ color: color_local }} icon={CodeIcon} onClick={(e) => panels.addDevicePanel(e, device, "local_device")} aria-label="Show local yaml configuration" />
