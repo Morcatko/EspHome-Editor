@@ -26,7 +26,7 @@ export const LogStream = (props: props) => {
 
     return <div
         ref={parentRef}
-        className="p-2"
+        className="p-2 h-full"
         style={{
             overflow: "auto",
             display: "block",
