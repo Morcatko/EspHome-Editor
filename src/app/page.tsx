@@ -1,14 +1,14 @@
 "use client";
-import { Suspense } from "react";
-import { Heading, Spinner } from "@primer/react";
+import { Heading } from "@primer/react";
 import Image from "next/image";
 import { DevicesTreeView } from "./components/devices-tree-view";
 import { PanelsContainer } from "./components/panels-container";
-import { useDevicesStore } from "./stores/devices-store";
 import { useStatusStore } from "./stores/status-store";
 import { usePanelsStore } from "./stores/panels-store";
 import { useAboutDialogVisible } from "./components/dialogs/about-dialog";
 import logo from "@/assets/logo.svg";
+import { Orientation, SplitviewReact, SplitviewReadyEvent } from "dockview-react";
+import { useDarkTheme } from "./utils/hooks";
 
 const Header = () => {
 	const panelsStore = usePanelsStore();
@@ -20,25 +20,46 @@ const Header = () => {
 	</div>
 }
 
-const Page = () => {
-	const statusStore = useStatusStore();
-	const devicesStore = useDevicesStore();
+const DevicesPanel = () => {
 	const [_, setAboutDialogVisible] = useAboutDialogVisible();
+	const statusStore = useStatusStore();
 
-
-	return (devicesStore.query.isLoading)
-		? <div className="h-screen flex items-center justify-center">
-			<Spinner className="content-center" />
+	return <div style={{ gridTemplateRows: "56px 1fr auto", gridGap: "1px" }} className="h-screen grid" >
+		<Header />
+		<div className="pl-1 overflow-y-auto"><DevicesTreeView /></div>
+		<div className="border-t border-slate-200 dark:border-slate-800 text-center p-6">
+			<a className="underline text-blue-600 dark:text-blue-800 hover:text-blue-800" href="#" onClick={() => setAboutDialogVisible(true)}>{statusStore.query.isSuccess && statusStore.query.data?.version}</a>
 		</div>
-		: <Suspense>
-			<div style={{ gridTemplateColumns: "18rem 1fr", gridTemplateRows: "56px 1fr auto", gridGap: "1px" }} className="h-screen w-screen grid" >
-				<Header />
-				<div style={{ gridArea: "2/1/2/1" }} className="pl-1 overflow-y-auto"><DevicesTreeView /></div>
-				<div style={{ gridArea: "3/1/3/1" }} className="border-t border-slate-200 dark:border-slate-800 text-center p-6">
-					<a className="underline text-blue-600 dark:text-blue-800 hover:text-blue-800" href="#" onClick={() => setAboutDialogVisible(true)}>{statusStore.query.isSuccess && statusStore.query.data?.version}</a>
-				</div>
-				<div style={{ gridArea: "1/2/4/2" }} className="border-l border-slate-200 dark:border-slate-800 relative"><PanelsContainer /></div>
-			</div>
-		</Suspense>
+	</div>;
+}
+
+const components = {
+	"devices-panel": () => <DevicesPanel />,
+	"panels-container": () => <PanelsContainer />
+};
+
+const Page = () => {
+	const isDarkMode = useDarkTheme();
+
+	const onReady = (event: SplitviewReadyEvent) => {
+		event.api.addPanel({
+			id: 'devices-panel',
+			component: 'devices-panel',
+			minimumSize: 65,
+			maximumSize: 400,
+			size: 300
+		});
+		event.api.addPanel({
+			id: 'panels-container',
+			component: 'panels-container'
+		});
+	}
+
+	return <SplitviewReact
+		orientation={Orientation.HORIZONTAL}
+		components={components}
+		onReady={onReady}
+		className={`${isDarkMode ? "dockview-theme-dark" : "dockview-theme-light"}`}
+	/>
 };
 export default Page;

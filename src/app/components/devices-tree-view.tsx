@@ -139,7 +139,7 @@ const DeviceToolbar = ({ device }: { device: TDevice }) => {
         sx: { color: hasESPHomeConfig ? color_esphome : "lightgrey" },
     };
 
-    return <div style={{ marginLeft: '-16px' }}>
+    return <div style={{ marginLeft: 'auto', maringRight: '0', width: '250px' }}>
         <ActionBar aria-label="Device tools" size="small">
             {hasLocalFiles
                 ? <ActionBar.IconButton key="show_local" {...localProps} sx={{ color: color_local }} icon={CodeIcon} onClick={(e) => panels.addDevicePanel(e, device, "local_device")} aria-label="Show local yaml configuration" />
@@ -176,62 +176,64 @@ export const DevicesTreeView = () => {
 
     return (
         <TreeView>
-            <TreeView.Item
-                key="add_device"
-                id="add_device"
-                onSelect={() => devicesStore.localDevice_create()}
-            >
-                <span className="font-semibold text-[color:--foreground]">New Device</span>
-                <TreeView.LeadingVisual>
-                    <PlusIcon />
-                </TreeView.LeadingVisual>
+            {devicesStore.query.isSuccess
+                ? <>
+                    <TreeView.Item
+                        key="add_device"
+                        id="add_device"
+                        onSelect={() => devicesStore.localDevice_create()}
+                    >
+                        <span className="font-semibold text-[color:--foreground]">New Device</span>
+                        <TreeView.LeadingVisual>
+                            <PlusIcon />
+                        </TreeView.LeadingVisual>
+                    </TreeView.Item>
+                    {devicesStore.query.data?.map((d) => {
+                        const isLib = d.name == ".lib";
 
-            </TreeView.Item>
-            {devicesStore.query.data?.map((d) => {
-                const isLib = d.name == ".lib";
-
-                return <TreeView.Item
-                    key={d.id}
-                    id={d.id}
-                    expanded={exp.get(d.id)}
-                    onExpandedChange={(e) => exp.set(d.id, e)}
-                >
-                    <span className="font-semibold text-[color:--foreground]">{d.name}</span>
-                    <TreeView.LeadingVisual>
-                        {(isLib)
-                            ? <FileDirectoryIcon />
-                            : <LightBulbIcon fill={getDeviceColor(d)} />
-                        }
-                    </TreeView.LeadingVisual>
-                    <TreeView.SubTree>
-                        {(!isLib) && <TreeView.Item className="opacity-30 hover:opacity-100" id={`toolbar_${d.id}`} ><DeviceToolbar device={d} /></TreeView.Item>}
-                        <LocalFiles device={d} parent={d} />
-                    </TreeView.SubTree>
-                    <TreeView.TrailingVisual >
-                        <ActionMenu>
-                            <ActionMenu.Anchor>
-                                <IconButton {...ThreeDotProps} icon={KebabHorizontalIcon} onClick={(e) => e.stopPropagation()} />
-                            </ActionMenu.Anchor>
-                            <ActionMenu.Overlay width="auto" >
-                                <ActionList>
-                                    <ActionList.Item onSelect={(e) => { devicesStore.localDevice_addFile(d, "/"); e.stopPropagation(); }} >
-                                        <ActionList.LeadingVisual>
-                                            <FileCodeIcon />
-                                        </ActionList.LeadingVisual>
-                                        New File...
-                                    </ActionList.Item>
-                                    <ActionList.Item onSelect={(e) => { devicesStore.localDevice_addDirectory(d, "/"); e.stopPropagation(); }}>
-                                        <ActionList.LeadingVisual>
-                                            <FileDirectoryIcon />
-                                        </ActionList.LeadingVisual>
-                                        New Folder...
-                                    </ActionList.Item>
-                                </ActionList>
-                            </ActionMenu.Overlay>
-                        </ActionMenu>
-                    </TreeView.TrailingVisual>
-                </TreeView.Item>;
-            })
-            }
+                        return <TreeView.Item
+                            key={d.id}
+                            id={d.id}
+                            expanded={exp.get(d.id)}
+                            onExpandedChange={(e) => exp.set(d.id, e)}
+                        >
+                            <span className="font-semibold text-[color:--foreground]">{d.name}</span>
+                            <TreeView.LeadingVisual>
+                                {(isLib)
+                                    ? <FileDirectoryIcon />
+                                    : <LightBulbIcon fill={getDeviceColor(d)} />
+                                }
+                            </TreeView.LeadingVisual>
+                            <TreeView.SubTree>
+                                {(!isLib) && <TreeView.Item className="opacity-30 hover:opacity-100" id={`toolbar_${d.id}`} ><DeviceToolbar device={d} /></TreeView.Item>}
+                                <LocalFiles device={d} parent={d} />
+                            </TreeView.SubTree>
+                            <TreeView.TrailingVisual >
+                                <ActionMenu>
+                                    <ActionMenu.Anchor>
+                                        <IconButton {...ThreeDotProps} icon={KebabHorizontalIcon} onClick={(e) => e.stopPropagation()} />
+                                    </ActionMenu.Anchor>
+                                    <ActionMenu.Overlay width="auto" >
+                                        <ActionList>
+                                            <ActionList.Item onSelect={(e) => { devicesStore.localDevice_addFile(d, "/"); e.stopPropagation(); }} >
+                                                <ActionList.LeadingVisual>
+                                                    <FileCodeIcon />
+                                                </ActionList.LeadingVisual>
+                                                New File...
+                                            </ActionList.Item>
+                                            <ActionList.Item onSelect={(e) => { devicesStore.localDevice_addDirectory(d, "/"); e.stopPropagation(); }}>
+                                                <ActionList.LeadingVisual>
+                                                    <FileDirectoryIcon />
+                                                </ActionList.LeadingVisual>
+                                                New Folder...
+                                            </ActionList.Item>
+                                        </ActionList>
+                                    </ActionMenu.Overlay>
+                                </ActionMenu>
+                            </TreeView.TrailingVisual>
+                        </TreeView.Item>;
+                    })}
+                </>
+                : <TreeView.Item key="__loading" id="__loading">Loading</TreeView.Item>}
         </TreeView>);
 };
