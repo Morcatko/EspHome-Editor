@@ -1,5 +1,6 @@
 import * as YAML from "yaml";
 
+// @ts-ignore  
 import { parse as jp_parse } from "jsonpathly";
 import {
     BracketExpressionContent,
@@ -7,6 +8,7 @@ import {
     FilterExpressionContent,
     Root,
     Subscript,
+// @ts-ignore  
 } from "jsonpathly/parser/types";
 
 
