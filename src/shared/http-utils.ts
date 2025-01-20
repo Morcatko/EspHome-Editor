@@ -20,6 +20,6 @@ export const assertResponseAndJsonOk = async <T = any>(response: Response) => {
         return (await response.json() as T);
     } catch (e) {
         log.error("Failed to parse json", e);
-        throw new Error("Failed to parse json", e);
+        throw new Error(`Failed to parse json ${e}`);
     }
 }
