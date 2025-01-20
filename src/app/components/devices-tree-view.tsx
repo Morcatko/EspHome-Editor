@@ -181,7 +181,7 @@ export const DevicesTreeView = () => {
                 id="add_device"
                 onSelect={() => devicesStore.localDevice_create()}
             >
-                New Device
+                <span className="font-semibold text-[color:--foreground]">New Device</span>
                 <TreeView.LeadingVisual>
                     <PlusIcon />
                 </TreeView.LeadingVisual>

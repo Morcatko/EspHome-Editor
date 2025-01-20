@@ -11,6 +11,19 @@ import { DockviewDefaultTab, DockviewReact, IDockviewPanelHeaderProps, IDockview
 import { useDarkTheme } from "@/app/utils/hooks";
 import { Onboarding } from "./onboarding";
 
+const OnClickRerender = ({ last_click, children }: { last_click?: string, children: React.ReactNode }) => {
+    if (!last_click) 
+        return <div>Click again</div>;
+    const currentTime = new Date();
+    const lastClick = new Date(last_click);
+    const diff = currentTime.getTime() - lastClick.getTime();
+
+    if (diff < 1000)
+        return children;
+
+    return <div>Click again</div>;
+}
+
 const components = {
     default: (p: IDockviewPanelProps<TPanelWithClick>) => {
         const panel = p.params;
@@ -24,9 +37,9 @@ const components = {
             case "diff":
                 return <DiffPanel device_id={panel.device_id} />;
             case "esphome_compile":
-                return <EspHomeCompilePanel key={panel.last_click ?? "initial"} device_id={panel.device_id} />;
+                return <OnClickRerender last_click={panel.last_click}><EspHomeCompilePanel device_id={panel.device_id} /></OnClickRerender>;
             case "esphome_install":
-                return <EspHomeInstallPanel device_id={panel.device_id} />;
+                return <OnClickRerender last_click={panel.last_click}><EspHomeInstallPanel device_id={panel.device_id} /></OnClickRerender>;
             case "esphome_log":
                 return <EspHomeLogPanel device_id={panel.device_id} />;
             case "onboarding":
@@ -40,9 +53,9 @@ const components = {
 const tabComponents = {
     default: (p: IDockviewPanelHeaderProps<TPanelWithClick>) => {
         const panel = p.params;
-        switch  (panel.operation) {
+        switch (panel.operation) {
             case "onboarding":
-                return <DockviewDefaultTab {...p}  hideClose />;
+                return <DockviewDefaultTab {...p} hideClose />;
             default:
                 return <DockviewDefaultTab {...p} />;
         }
@@ -54,9 +67,9 @@ export const PanelsContainer = () => {
     const panelsStore = usePanelsStore();
 
     return <DockviewReact
-            className={`absolute h-full w-full ${isDarkMode ? "dockview-theme-dark" : "dockview-theme-light"}`}
-            onReady={(e) => panelsStore.initApi(e.api)}
-            components={components}
-            tabComponents={tabComponents}
-        />;
+        className={`absolute h-full w-full ${isDarkMode ? "dockview-theme-dark" : "dockview-theme-light"}`}
+        onReady={(e) => panelsStore.initApi(e.api)}
+        components={components}
+        tabComponents={tabComponents}
+    />;
 };
