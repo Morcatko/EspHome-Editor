@@ -1,6 +1,5 @@
 import * as YAML from "yaml";
 
-// @ts-ignore  
 import { parse as jp_parse } from "jsonpathly";
 import {
     BracketExpressionContent,
@@ -8,8 +7,7 @@ import {
     FilterExpressionContent,
     Root,
     Subscript,
-// @ts-ignore  
-} from "jsonpathly/parser/types";
+} from "jsonpathly/dist/parser/types";
 
 
 //import { log as logger } from "@/shared/log";
@@ -73,7 +71,7 @@ const _applyFilterExpression = (nodes: YAML.Node[], path: FilterExpressionConten
                 if (res.length === 0)
                     return false;
                 else if (res.length === 1)
-                    return res[0] === rightValue;
+                    return (res[0] as any) === rightValue;
                 else 
                     throw new Error("Multiple results in filter expression");
 
