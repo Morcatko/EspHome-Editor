@@ -17,6 +17,7 @@ export const SplitEditor = (props: TProps) => {
     return (props.rightEditor)
         ? <SplitPane
             split="vertical"
+            sashRender={(index, active) => null}
             sizes={sizes}
             onChange={(sizes) => setSizes(sizes)}        >
             <Pane minSize={20}>
