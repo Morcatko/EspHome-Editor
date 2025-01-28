@@ -114,7 +114,7 @@ export namespace local {
         for (const file of inputFiles.filter(i => i.info.type === "basic")) {
             const filePath = getDevicePath(device_id, file.id)
             log.debug("Compiling Configuration", filePath);
-            const output = await compileFile(device_id, file.id, null);
+            const output = await compileFile(device_id, file.id, false);
             log.success("Compiled Configuration", filePath);
             outputYamls.push(output);
         }
@@ -126,7 +126,7 @@ export namespace local {
         for (const file of inputFiles.filter(i => i.info.type === "patch")) {
             const filePath = getDevicePath(device_id, file.id)
             log.debug("Compiling patch", filePath);
-            const output = await compileFile(device_id, file.id, null);
+            const output = await compileFile(device_id, file.id, false);
             log.success("Compiled patch", filePath);
             outputPatches.push(output);
         }

@@ -9,7 +9,7 @@ export async function GET(
     let result: string;
     let status = 200;
     try {
-        result = await local.compileFile(device_id, path);
+        result = await local.compileFile(device_id, path, true);
     } catch (e) {
         const error = e as Error;
         result = error.message + "\n" + error.stack;

@@ -43,13 +43,13 @@ export const getFileInfo = (file_path: string): FileInfo => {
     }
 }
 
-export const compileFile = async (device_id: string, file_path: string) => {
+export const compileFile = async (device_id: string, file_path: string, useTestData: boolean) => {
     const filePath = getDevicePath(device_id, file_path);
     const fileInfo = getFileInfo(file_path);
     switch (fileInfo.compiler) {
         case "etajs":
             const testDataPath = getDevicePath(device_id, file_path + ".testdata");
-            const testData = await fileExists(testDataPath)
+            const testData = useTestData && await fileExists(testDataPath)
                 ? await readFile(testDataPath, 'utf-8')
                 : null;
             return processTemplate_eta(device_id + "/" + file_path, testData);
