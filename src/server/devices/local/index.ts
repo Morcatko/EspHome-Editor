@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 
 import type { TDevice, TLocalDirectory, TLocalFile, TLocalFileOrDirectory } from "../types";
 import { c } from "../../config";
-import { listDirEntries } from "../../utils/dir-utils";
+import { fileExists, listDirEntries } from "../../utils/fs-utils";
 import { compileFile as _compileFile, getFileInfo } from "./template-processors";
 import { log } from "@/shared/log";
 import { mergeEspHomeYamlFiles } from "./template-processors/yaml-merger";
@@ -79,9 +79,13 @@ export namespace local {
 
     export const getFileContent = async (device_id: string, file_path: string) => {
         const path = getDevicePath(device_id, file_path);
-        const content = await fs.readFile(path, "utf-8");
-        return content;
+        return await fs.readFile(path, "utf-8");
     }
+
+    export const tryGetFileContent = async (device_id: string, file_path: string) => {
+        const path = getDevicePath(device_id, file_path);
+        return await fileExists(path) ? await fs.readFile(path, "utf-8") : "";
+    } 
 
     export const saveFileContent = async (device_id: string, file_path: string, content: string) => {
         await ensureDeviceDirExists(device_id);

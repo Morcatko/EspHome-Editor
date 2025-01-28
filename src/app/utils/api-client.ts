@@ -104,21 +104,34 @@ export namespace api {
         await callPut(url_local_path(device_id, directory_path), "file");
     }
 
-    export async function local_save(device_id: string, file_path: string, content: string) {
+    export async function local_path_save(device_id: string, file_path: string, content: string) {
         await callPost(url_local_path(device_id, file_path), content, true);
     }
 
-    export async function local_rename(device_id: string, path: string, newName: string) {
+    export async function local_path_rename(device_id: string, path: string, newName: string) {
         await callPost(url_local_path(device_id, path, `rename_to/${fixPath(newName)}`), "", true);
     }
 
-    export async function local_delete(device_id: string, path: string) {
+    export async function local_path_delete(device_id: string, path: string) {
         await callDelete(url_local_path(device_id, path));
     }
 
-    export async function local_path_compile(device_id: string, path: string, test_content: string | undefined) {
-        return await callPost(url_local_path(device_id, path, "compile"), test_content ?? "", false);
+    export async function local_path_get(device_id: string, path: string) {
+        return await callGet_text(url_local_path(device_id, path));
     }
+
+    export async function local_path_compiled(device_id: string, path: string) {
+        return await callGet_text(url_local_path(device_id, path, "compiled"));
+    }
+
+    export async function local_path_testData_get(device_id:string, path: string) {
+        return await callGet_text(url_local_path(device_id, path, "test-data"));        
+    }
+
+    export async function local_path_testData_post(device_id:string, path: string, content: string) {
+        return await callPost(url_local_path(device_id, path, "test-data"), content);        
+    }
+
 
     export async function getStatus() {
         return await callGet_json<TGetStatus>("/api/status");
