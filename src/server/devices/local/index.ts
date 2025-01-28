@@ -20,28 +20,32 @@ const awaitArray = async <T>(arr: Promise<T>[]): Promise<T[]> =>
 const scanDirectory = async (fullPath: string, parentPath: string | null): Promise<TLocalFileOrDirectory[]> => {
     const resAsync =
         (await listDirEntries(fullPath, _ => true))
-            .map(async (d) => {
-                const path = parentPath ? `${parentPath}/${d.name}` : d.name;
-                if (d.isDirectory()) {
+            .map(async (e) => {
+                const path = parentPath ? `${parentPath}/${e.name}` : e.name;
+                if (e.isDirectory()) {
                     return <TLocalDirectory>{
-                        id: d.name,
-                        name: d.name,
+                        id: e.name,
+                        name: e.name,
                         path: path,
                         type: "directory",
-                        files: await scanDirectory(`${fullPath}/${d.name}`, path),
+                        files: await scanDirectory(`${fullPath}/${e.name}`, path),
                     };
                 } else {
+                    if (e.name.endsWith(".testdata"))
+                        return null;
+
                     return <TLocalFile>{
-                        id: d.name,
+                        id: e.name,
                         path: path,
-                        name: d.name,
-                        compiler: getFileInfo(`${fullPath}/${d.name}`).compiler,
+                        name: e.name,
+                        compiler: getFileInfo(`${fullPath}/${e.name}`).compiler,
                         type: "file",
                     };
                 }
-            })
+            });
 
     return (await awaitArray(resAsync))
+        .filter((e) => e !== null)
         .sort((a, b) => a.type.localeCompare(b.type));
 };
 
