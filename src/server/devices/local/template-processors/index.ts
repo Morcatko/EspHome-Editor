@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { processTemplate_eta } from "./eta";
-import { getDevicePath } from "../utils";
+import { fixPath, getDevicePath } from "../utils";
 import { fileExists } from "@/server/utils/fs-utils";
 
 
@@ -44,7 +44,8 @@ export const getFileInfo = (file_path: string): FileInfo => {
 }
 
 export const compileFile = async (device_id: string, file_path: string, useTestData: boolean) => {
-    const filePath = getDevicePath(device_id, file_path);
+    const fullFilePath = getDevicePath(device_id, file_path);
+    const fixedFilePath = fixPath(file_path);
     const fileInfo = getFileInfo(file_path);
     switch (fileInfo.compiler) {
         case "etajs":
@@ -52,9 +53,9 @@ export const compileFile = async (device_id: string, file_path: string, useTestD
             const testData = useTestData && await fileExists(testDataPath)
                 ? await readFile(testDataPath, 'utf-8')
                 : null;
-            return processTemplate_eta(device_id + "/" + file_path, testData);
+            return processTemplate_eta(device_id + "/" + fixedFilePath, testData);
         case "none":
-            return readFile(filePath, 'utf-8');
+            return readFile(fullFilePath, 'utf-8');
         default:
             throw new Error(`Unsupported file type:${fileInfo.compiler}`);
     }
