@@ -40,12 +40,25 @@ export const useLocalFileStore = (device_id: string, file_path: string) => {
         enabled: hasRightFile
     });
 
+    const hasTestData = hasRightFile && ((device_id === ".lib") || file_path.startsWith(".lib/"));
+    const testDataQuery = useQuery({
+        queryKey: ["device", device_id, "local-file", file_path, "test-data"],
+        queryFn: async () => api.local_path_testData_get(device_id, file_path),
+        enabled: hasTestData
+    });
+
     const queryClient = useQueryClient();
     const leftMutation = useMutation({
         mutationFn: async (v: string) => api.local_path_save(device_id, file_path, v),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["device", device_id, "local-file", file_path, "compiled"] });
             queryClient.invalidateQueries({ queryKey: ["device", device_id, "local"] });
+        }
+    });
+    const testDataMutation = useMutation({
+        mutationFn: async (v: string) => api.local_path_testData_post(device_id, file_path, v),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["device", device_id, "local-file", file_path, "compiled"] });
         }
     });
 
@@ -60,6 +73,13 @@ export const useLocalFileStore = (device_id: string, file_path: string) => {
                 value: queryToContent(rightQuery),
                 language: "yaml",
             }
-            : null
+            : null,
+        testDataEditor: hasTestData
+            ? <TEditorFileProps>{
+                value: queryToContent(testDataQuery),
+                language: "json",
+                onValueChange: (v) => testDataMutation.mutate(v),
+            }
+            : null,
     }
 };

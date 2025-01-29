@@ -124,6 +124,15 @@ export namespace api {
         return await callGet_text(url_local_path(device_id, path, "compiled"));
     }
 
+    export async function local_path_testData_get(device_id:string, path: string) {
+        return await callGet_text(url_local_path(device_id, path, "test-data"));        
+    }
+
+    export async function local_path_testData_post(device_id:string, path: string, content: string) {
+        return await callPost(url_local_path(device_id, path, "test-data"), content);        
+    }
+
+
     export async function getStatus() {
         return await callGet_json<TGetStatus>("/api/status");
     }

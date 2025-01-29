@@ -12,7 +12,11 @@ const components = {
     compiled: (p: IDockviewPanelProps) => {
         const data = useLocalFileStore(p.params.device_id, p.params.file_path);
         return <SingleEditor {...data.rightEditor!} />;
-    }
+    },
+    testdata: (p: IDockviewPanelProps) => {
+        const data = useLocalFileStore(p.params.device_id, p.params.file_path);
+        return <SingleEditor {...data.testDataEditor!} />;
+    },
 };
 
 type TProps = {
@@ -38,6 +42,17 @@ export const LocalFilePanel = (props: TProps) => {
             params: props,
             position: { referencePanel: panelLeft, direction: 'right' },
         });
+        if (data.testDataEditor) {
+            api.addPanel<TProps>({
+                id: "testdata",
+                title: "Test Data",
+                component: "testdata",
+                params: props,
+                initialHeight: 250,
+                position: { referencePanel: panelLeft, direction: 'above' },
+            });
+        }
+
     };
 
     return data.rightEditor
