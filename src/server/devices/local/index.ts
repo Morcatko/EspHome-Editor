@@ -88,7 +88,7 @@ export namespace local {
 
     export const tryGetFileContent = async (device_id: string, file_path: string) => {
         const path = getDevicePath(device_id, file_path);
-        return await fileExists(path) ? await fs.readFile(path, "utf-8") : "";
+        return await fileExists(path) ? await fs.readFile(path, "utf-8") : null;
     } 
 
     export const saveFileContent = async (device_id: string, file_path: string, content: string) => {

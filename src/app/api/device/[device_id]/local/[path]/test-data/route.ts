@@ -6,7 +6,7 @@ export async function GET(
     { params }: TParams<TDeviceIdAndPath>) {
     const { device_id, path } = await params;
 
-    const content = await local.tryGetFileContent(device_id, path + ".testdata");
+    const content = await local.tryGetFileContent(device_id, path + ".testdata") ?? "{\n}";
 
     return new Response(
         content,

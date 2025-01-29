@@ -40,7 +40,7 @@ export const useLocalFileStore = (device_id: string, file_path: string) => {
         enabled: hasRightFile
     });
 
-    const hasTestData = hasRightFile;
+    const hasTestData = hasRightFile && ((device_id === ".lib") || file_path.startsWith(".lib/"));
     const testDataQuery = useQuery({
         queryKey: ["device", device_id, "local-file", file_path, "test-data"],
         queryFn: async () => api.local_path_testData_get(device_id, file_path),
