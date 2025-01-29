@@ -57,7 +57,7 @@ const tabComponents = {
             case "onboarding":
                 return <DockviewDefaultTab {...p} hideClose />;
             default:
-                return <DockviewDefaultTab {...p} />;
+                return <DockviewDefaultTab {...p} onAuxClick={(e) => { if (e.button === 1) p.api.close();}} />;
         }
     }
 };
