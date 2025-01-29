@@ -29,8 +29,8 @@ sensor:
     update_interval: 10s
     filters:
       - calibrate_linear:
-        - 1.795 -> 0.0
-        - 1.43 -> 100.0
+        - 0 -> 0.0
+        - 1.5 -> 100.0
     on_value_range:
       - below: <%= it.moisture_limit %>
         then:
@@ -68,6 +68,9 @@ export const Flowers = () => {
     <Section
       step="flower.shared"
       title="Step 1: Shared Configuration">
+      <p>
+        In this step we will write a shared configuration template for all the plants. This template will be used to generate the configuration for each plant.
+      </p>
       <Ol>
         <li>Navigate to the root <Code>.lib</Code> folder</li>
         <li>Create a new eta template file
@@ -86,7 +89,7 @@ export const Flowers = () => {
           </Ul>
           These placeholders will dynamically update based on the variables you provide when using the template.
           You can test that by entering the following code in to "Test Data" panel:
-          <Editor heightPx={100} code={demo_flower_template_eta_testdata} language="json"/>
+          <Editor heightPx={100} code={demo_flower_template_eta_testdata} language="json" />
         </li>
       </Ol>
     </Section>
@@ -94,6 +97,9 @@ export const Flowers = () => {
     <Section
       step="flower.flower-1"
       title="Step 2: Flower Device">
+      <p>
+        Here we will create a configuration for your first plant.
+      </p>
       <Ol>
         <li>
           Add a new device for your first plant:
