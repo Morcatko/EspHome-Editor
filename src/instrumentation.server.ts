@@ -1,5 +1,5 @@
 import fs from 'node:fs/promises';
-import { directoryExists } from "./server/utils/dir-utils";
+import { directoryExists } from "./server/utils/fs-utils";
 import { log } from "./shared/log";
 import { c, initConfig } from './server/config';
 
