@@ -31,18 +31,18 @@ export const useLocalFileStore = (device_id: string, file_path: string) => {
 
     const leftQuery = useQuery({
         queryKey: ["device", device_id, "local-file", file_path],
-        queryFn: async () => api.callGet_text(api.url_local_path(device_id, file_path))
+        queryFn: async () => api.local_path_get(device_id, file_path)
     });
 
     const rightQuery = useQuery({
         queryKey: ["device", device_id, "local-file", file_path, "compiled"],
-        queryFn: async () => api.local_path_compile(device_id, file_path, ""),
+        queryFn: async () => api.local_path_compiled(device_id, file_path),
         enabled: hasRightFile
     });
 
     const queryClient = useQueryClient();
     const leftMutation = useMutation({
-        mutationFn: async (v: string) => api.local_save(device_id, file_path, v),
+        mutationFn: async (v: string) => api.local_path_save(device_id, file_path, v),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["device", device_id, "local-file", file_path, "compiled"] });
             queryClient.invalidateQueries({ queryKey: ["device", device_id, "local"] });

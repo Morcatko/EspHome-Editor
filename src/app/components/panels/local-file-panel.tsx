@@ -3,40 +3,6 @@ import { DockviewApi, DockviewDefaultTab, DockviewReact, IDockviewPanelProps } f
 import { useDarkTheme } from "@/app/utils/hooks";
 import { SingleEditor } from "../editors/single-editor";
 
-// const EtaJsBanner = ({ store }: { store: LocalFileStore }) => {
-//     const [sizes, setSizes] = useState<(number | string)[]>([
-//         '50%',
-//         'auto',
-//     ]);
-
-//     return <SplitPane
-//         split="vertical"
-//         sizes={sizes}
-//         onChange={(sizes) => setSizes(sizes)} >
-//         <Pane minSize={20}>
-//             <Editor
-//                 language={store.test_file?.language}
-//                 options={{ minimap: { enabled: false }, lineNumbers: "off" }}
-//                 value={store.test_file?.content}
-//                 onChange={(v) => store.test_file?.changeContent(v ?? "")} />
-//         </Pane>
-//         <Pane minSize={20}>
-//             <ul className="flex-grow text-right">
-//                 <li><Link href="https://eta.js.org/docs/intro/template-syntax" target="_blank" rel="noreferrer">Template syntax</Link></li>
-//                 <li><Link href="https://eta.js.org/docs/intro/syntax-cheatsheet" target="_blank" rel="noreferrer">Syntax cheatsheat</Link></li>
-//             </ul>
-//         </Pane>
-//     </SplitPane>;
-// }
-
-// const getBanner = (store: LocalFileStore) => {
-//     switch (store.file.compiler) {
-//         /*case "etajs":
-//             return <EtaJsBanner store={store} />;*/
-//         default:
-//             return null;
-//     }
-// }
 
 const components = {
     left: (p: IDockviewPanelProps) => {

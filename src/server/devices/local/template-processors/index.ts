@@ -42,12 +42,12 @@ export const getFileInfo = (file_path: string): FileInfo => {
     }
 }
 
-export const compileFile = async (device_id: string, file_path: string, testData: string | null) => {
+export const compileFile = async (device_id: string, file_path: string) => {
     const filePath = getDevicePath(device_id, file_path);
     const fileInfo = getFileInfo(file_path);
     switch (fileInfo.compiler) {
         case "etajs":
-            return processTemplate_eta(device_id + "/" + file_path, testData);
+            return processTemplate_eta(device_id + "/" + file_path, null);
         case "none":
             return readFile(filePath, 'utf-8');
         default:
