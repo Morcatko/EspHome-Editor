@@ -79,8 +79,7 @@ export namespace local {
 
     export const getFileContent = async (device_id: string, file_path: string) => {
         const path = getDevicePath(device_id, file_path);
-        const content = await fs.readFile(path, "utf-8");
-        return content;
+        return await fs.readFile(path, "utf-8");
     }
 
     export const saveFileContent = async (device_id: string, file_path: string, content: string) => {

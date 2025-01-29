@@ -121,7 +121,7 @@ export namespace api {
     }
 
     export async function local_path_compiled(device_id: string, path: string) {
-        return await callGet_text(url_local_path(device_id, path, "compile"));
+        return await callGet_text(url_local_path(device_id, path, "compiled"));
     }
 
     export async function getStatus() {
