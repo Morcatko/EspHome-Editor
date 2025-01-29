@@ -45,6 +45,11 @@ switch:
     id: relay
     name: "Water pump"`;
 
+const demo_flower_template_eta_testdata = `{
+  "name": "sample",
+  "moisture_limit": 99
+}`
+
 const configuration_eta = `# Flower-1/configuration.eta
 <%~ include('../.lib/demo-flower-template', 
     {
@@ -71,10 +76,8 @@ export const Flowers = () => {
             <li>Select <strong>New File...</strong> and name it <Code>demo-flower-template.eta</Code></li>
           </Ul>
         </li>
-        <li>Add the folowing code to the file
-          <Editor
-            heightPx={350}
-            code={demo_flower_template_eta} />
+        <li>Add the folowing code to the file (Source panel)
+          <Editor heightPx={350} code={demo_flower_template_eta} />
         </li>
         <li>Note the placeholders in the
           <Ul>
@@ -82,6 +85,8 @@ export const Flowers = () => {
             <li><Code>&lt;= it.moisture_limit  %&gt;</Code> (e.g., Lines 33 and 36) specifies the moisture threshold for watering.</li>
           </Ul>
           These placeholders will dynamically update based on the variables you provide when using the template.
+          You can test that by entering the following code in to "Test Data" panel:
+          <Editor heightPx={100} code={demo_flower_template_eta_testdata} language="json"/>
         </li>
       </Ol>
     </Section>
@@ -100,9 +105,7 @@ export const Flowers = () => {
         </li>
         <li>Click <strong>"..."</strong> menu on <Code>configuration.yaml</Code> and rename it to <Code>configuration.eta</Code>.</li>
         <li>Edit <Code>configuration.eta</Code> with the following content:
-          <Editor
-            heightPx={150}
-            code={configuration_eta} />
+          <Editor heightPx={150} code={configuration_eta} />
         </li>
       </Ol>
     </Section>
