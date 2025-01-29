@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 
 import type { TDevice, TLocalDirectory, TLocalFile, TLocalFileOrDirectory } from "../types";
 import { c } from "../../config";
-import { listDirEntries } from "../../utils/dir-utils";
+import { listDirEntries } from "../../utils/fs-utils";
 import { compileFile as _compileFile, getFileInfo } from "./template-processors";
 import { log } from "@/shared/log";
 import { mergeEspHomeYamlFiles } from "./template-processors/yaml-merger";
@@ -20,22 +20,22 @@ const awaitArray = async <T>(arr: Promise<T>[]): Promise<T[]> =>
 const scanDirectory = async (fullPath: string, parentPath: string | null): Promise<TLocalFileOrDirectory[]> => {
     const resAsync =
         (await listDirEntries(fullPath, _ => true))
-            .map(async (d) => {
-                const path = parentPath ? `${parentPath}/${d.name}` : d.name;
-                if (d.isDirectory()) {
+            .map(async (e) => {
+                const path = parentPath ? `${parentPath}/${e.name}` : e.name;
+                if (e.isDirectory()) {
                     return <TLocalDirectory>{
-                        id: d.name,
-                        name: d.name,
+                        id: e.name,
+                        name: e.name,
                         path: path,
                         type: "directory",
-                        files: await scanDirectory(`${fullPath}/${d.name}`, path),
+                        files: await scanDirectory(`${fullPath}/${e.name}`, path),
                     };
                 } else {
                     return <TLocalFile>{
-                        id: d.name,
+                        id: e.name,
                         path: path,
-                        name: d.name,
-                        compiler: getFileInfo(`${fullPath}/${d.name}`).compiler,
+                        name: e.name,
+                        compiler: getFileInfo(`${fullPath}/${e.name}`).compiler,
                         type: "file",
                     };
                 }
@@ -106,7 +106,7 @@ export namespace local {
         for (const file of inputFiles.filter(i => i.info.type === "basic")) {
             const filePath = getDevicePath(device_id, file.id)
             log.debug("Compiling Configuration", filePath);
-            const output = await compileFile(device_id, file.id, null);
+            const output = await compileFile(device_id, file.id);
             log.success("Compiled Configuration", filePath);
             outputYamls.push(output);
         }
@@ -118,7 +118,7 @@ export namespace local {
         for (const file of inputFiles.filter(i => i.info.type === "patch")) {
             const filePath = getDevicePath(device_id, file.id)
             log.debug("Compiling patch", filePath);
-            const output = await compileFile(device_id, file.id, null);
+            const output = await compileFile(device_id, file.id);
             log.success("Compiled patch", filePath);
             outputPatches.push(output);
         }
