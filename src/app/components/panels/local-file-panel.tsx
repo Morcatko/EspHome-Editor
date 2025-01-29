@@ -5,14 +5,18 @@ import { SingleEditor } from "../editors/single-editor";
 
 
 const components = {
-    left: (p: IDockviewPanelProps) => {
+    source: (p: IDockviewPanelProps) => {
         const data = useLocalFileStore(p.params.device_id, p.params.file_path);
         return <SingleEditor {...data.leftEditor} />;
     },
-    right: (p: IDockviewPanelProps) => {
+    compiled: (p: IDockviewPanelProps) => {
         const data = useLocalFileStore(p.params.device_id, p.params.file_path);
         return <SingleEditor {...data.rightEditor!} />;
-    }
+    },
+    testdata: (p: IDockviewPanelProps) => {
+        const data = useLocalFileStore(p.params.device_id, p.params.file_path);
+        return <SingleEditor {...data.testDataEditor!} />;
+    },
 };
 
 type TProps = {
@@ -28,24 +32,37 @@ export const LocalFilePanel = (props: TProps) => {
         const panelLeft = api.addPanel<TProps>({
             id: "left",
             title: "Source",
-            component: "left",
+            component: "source",
             params: props
         });
         api.addPanel<TProps>({
             id: "right",
             title: "Compiled",
-            component: "right",
+            component: "compiled",
             params: props,
             position: { referencePanel: panelLeft, direction: 'right' },
         });
+        if (data.testDataEditor) {
+            api.addPanel<TProps>({
+                id: "testdata",
+                title: "Test Data",
+                component: "testdata",
+                params: props,
+                initialHeight: 250,
+                position: { referencePanel: panelLeft, direction: 'above' },
+            });
+        }
+
     };
 
     return data.rightEditor
-        ? <DockviewReact
-            className={`absolute h-full w-full ${isDarkMode ? "dockview-theme-dark" : "dockview-theme-light"}`}
-            onReady={(e) => onReady(e.api)}
-            defaultTabComponent={p => <DockviewDefaultTab {...p} hideClose />}
-            components={components} />
+        ? <div className="relative h-full">
+            <DockviewReact
+                className={`absolute w-full ${isDarkMode ? "dockview-theme-dark" : "dockview-theme-light"}`}
+                onReady={(e) => onReady(e.api)}
+                defaultTabComponent={p => <DockviewDefaultTab {...p} hideClose />}
+                components={components} />
+        </div>
         : <SingleEditor {...data.leftEditor} />
 
 };
