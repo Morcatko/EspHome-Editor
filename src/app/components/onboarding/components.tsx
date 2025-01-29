@@ -6,7 +6,7 @@ type TChildren = {
 
 export const Ol = (p: TChildren) => <ol className="list-decimal ml-8 mt-3 space-y-2">{p.children}</ol>;
 export const Ul = (p: TChildren) => <ul className="list-disc ml-8 mt-3 space-y-2">{p.children}</ul>;
-export const Code = (p: TChildren) => <code className="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-[#0451a5] dark:text-[#ce9178] font-mono">{p.children}</code>;
+export const Code = (p: TChildren) => <code className="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded-sm text-[#0451a5] dark:text-[#ce9178] font-mono">{p.children}</code>;
 
 export const Heading = ({ title, subtitle }: { title: string, subtitle: string }) =>
     <div className="text-center">
@@ -28,7 +28,7 @@ export const Section = ({ step, title, children }: TSectionProps) => {
     const [hidden, setHidden] = useLocalStorage(`e4e.onboarding.${step}`, false);
 
     return <>
-        <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow">
+        <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow-sm">
             <div className="flex justify-between items-center">
                 <a href="#" onClick={() => setHidden(!hidden)}>
                     <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200" >
