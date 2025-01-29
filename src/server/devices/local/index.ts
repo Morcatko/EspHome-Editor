@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 
 import type { TDevice, TLocalDirectory, TLocalFile, TLocalFileOrDirectory } from "../types";
 import { c } from "../../config";
-import { fileExists, listDirEntries } from "../../utils/fs-utils";
+import { listDirEntries } from "../../utils/fs-utils";
 import { compileFile as _compileFile, getFileInfo } from "./template-processors";
 import { log } from "@/shared/log";
 import { mergeEspHomeYamlFiles } from "./template-processors/yaml-merger";
@@ -31,9 +31,6 @@ const scanDirectory = async (fullPath: string, parentPath: string | null): Promi
                         files: await scanDirectory(`${fullPath}/${e.name}`, path),
                     };
                 } else {
-                    if (e.name.endsWith(".testdata"))
-                        return null;
-
                     return <TLocalFile>{
                         id: e.name,
                         path: path,
@@ -42,10 +39,9 @@ const scanDirectory = async (fullPath: string, parentPath: string | null): Promi
                         type: "file",
                     };
                 }
-            });
+            })
 
     return (await awaitArray(resAsync))
-        .filter((e) => e !== null)
         .sort((a, b) => a.type.localeCompare(b.type));
 };
 
@@ -86,11 +82,6 @@ export namespace local {
         return await fs.readFile(path, "utf-8");
     }
 
-    export const tryGetFileContent = async (device_id: string, file_path: string) => {
-        const path = getDevicePath(device_id, file_path);
-        return await fileExists(path) ? await fs.readFile(path, "utf-8") : "";
-    } 
-
     export const saveFileContent = async (device_id: string, file_path: string, content: string) => {
         await ensureDeviceDirExists(device_id);
         const path = getDevicePath(device_id, file_path);
@@ -114,7 +105,7 @@ export namespace local {
         for (const file of inputFiles.filter(i => i.info.type === "basic")) {
             const filePath = getDevicePath(device_id, file.id)
             log.debug("Compiling Configuration", filePath);
-            const output = await compileFile(device_id, file.id, false);
+            const output = await compileFile(device_id, file.id);
             log.success("Compiled Configuration", filePath);
             outputYamls.push(output);
         }
@@ -126,7 +117,7 @@ export namespace local {
         for (const file of inputFiles.filter(i => i.info.type === "patch")) {
             const filePath = getDevicePath(device_id, file.id)
             log.debug("Compiling patch", filePath);
-            const output = await compileFile(device_id, file.id, false);
+            const output = await compileFile(device_id, file.id);
             log.success("Compiled patch", filePath);
             outputPatches.push(output);
         }
