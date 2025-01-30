@@ -3,9 +3,9 @@
   "version": "0.9.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 50106",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 50106",
     "lint": "next lint",
     "test": "vitest",
     "postinstall": "npx --yes next-ws-cli@latest patch -y",

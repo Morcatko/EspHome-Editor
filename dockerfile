@@ -24,7 +24,7 @@ COPY examples /app/work-folder/devices
 COPY --from=builder /build/.next/standalone ./
 COPY --from=builder /build/.next/static ./.next/static
 
-EXPOSE 3000
-ENV PORT=3000
+EXPOSE 50106
+ENV PORT=50106
 CMD HOSTNAME="0.0.0.0" node server.js
 #ENTRYPOINT [ "node", "server.js" ]

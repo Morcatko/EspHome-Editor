@@ -81,7 +81,7 @@ const mainLoop = async () => {
             await dockerBuild(image_name_dev, ["latest"], ["linux/amd64"]);
             break;
         case "docker_dev_run":
-            await exec(`docker run --rm -p 8080:3000 -e ESPHOME_URL=http://192.168.0.15:6052/ ${image_name_dev}:latest`);
+            await exec(`docker run --rm -p 8080:50106 -e ESPHOME_URL=http://192.168.0.15:6052/ ${image_name_dev}:latest`);
             break;
         case "create_new_version":
             await createNewVersion();

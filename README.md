@@ -22,7 +22,7 @@ Editor for ESPHome works as
 [![Open your Home Assistant instance and show the add add-on repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2FMorcatko%2Fha-addons)
 
 <a name="standalone"></a>
-If you only want to see how it works then run `docker run -d -p 8080:3000 morcatko/esphome-editor`. It will run Editor on port 8080 with some sample devices
+If you only want to see how it works then run `docker run -d -p 8080:50106 morcatko/esphome-editor`. It will run Editor on port 8080 with some sample devices
 
 Otherwise continue with following steps:
 
@@ -38,7 +38,7 @@ services:
     environment:
       - ESPHOME_URL=__ESPHOME_URL__                               # e.g., ESPHOME_URL=http://192.168.0.99:6052
     ports:
-      - __EXTERNAL_PORT__:3000                                    # e.g., 8080:3000
+      - __EXTERNAL_PORT__:50106                                   # e.g., 8080:50106
     volumes:
       - __path_to_editor_config__:/app/work-folder/devices        # e.g., /home/editor/devices:/app/work-folder/devices (!!! Not a path to ESPHome config files !!!)
 ```
