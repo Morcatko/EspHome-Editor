@@ -1,6 +1,6 @@
 "use client";
 import { Suspense } from "react";
-import { Heading, Spinner } from "@primer/react";
+import { Loader } from "@mantine/core";
 import Image from "next/image";
 import { DevicesTreeView } from "./components/devices-tree-view";
 import { PanelsContainer } from "./components/panels-container";
@@ -9,14 +9,13 @@ import { useStatusStore } from "./stores/status-store";
 import { usePanelsStore } from "./stores/panels-store";
 import { openAboutDialog } from "./components/dialogs/about-dialog";
 import logo from "@/assets/logo.svg";
-import { modals, ModalsProvider } from "@mantine/modals";
 
 const Header = () => {
 	const panelsStore = usePanelsStore();
 	return <div style={{ gridArea: "1/1/1/1", lineHeight: '56px' }} className="border-b border-slate-200 dark:border-slate-800 text-center" >
 		<a href="#" onClick={(e) => panelsStore.addPanel(e, { operation: "onboarding", step: "home" })}>
 			<Image className="inline mr-2 align-middle" src={logo} alt="ESPHome Editor" width="32" height="32" />
-			<Heading className="inline-block align-baseline text-slate-600 dark:text-slate-400" variant="small" >Editor for ESPHome</Heading>
+			<h4 className="inline-block align-baseline text-slate-600 dark:text-slate-400 m-0 font-semibold" >Editor for ESPHome</h4>
 		</a>
 	</div>
 }
@@ -30,7 +29,7 @@ const Page = () => {
 
 	return (devicesStore.query.isLoading)
 		? <div className="h-screen flex items-center justify-center">
-			<Spinner className="content-center" />
+			<Loader className="content-center" />
 		</div>
 		: <Suspense>
 			<div style={{ gridTemplateColumns: "18rem 1fr", gridTemplateRows: "56px 1fr auto", gridGap: "1px" }} className="h-screen w-screen grid" >
