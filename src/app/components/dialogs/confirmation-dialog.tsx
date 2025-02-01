@@ -4,23 +4,25 @@ type TContentProps = {
   subtitle: string;
   text: string;
 }
+
 const ConfirmationDialogContent = (props: TContentProps) => <>
   <div>{props.subtitle}</div>
   <div>{props.text}</div>
 </>;
 
-export const openConfirmationDialog = (
-  title: string,
-  subtitle: string,
-  text: string,
-  danger: boolean = false
-) =>
+type TDialogProps = {
+  title: string;
+  subtitle: string;
+  text: string;
+  danger: boolean
+}
+export const openConfirmationDialog = (props: TDialogProps) =>
   new Promise<boolean>((res, rej) =>
     modals.openConfirmModal({
-      title: title,
-      children: <ConfirmationDialogContent subtitle={subtitle} text={text} />,
+      title: props.title,
+      children: <ConfirmationDialogContent subtitle={props.subtitle} text={props.text} />,
       labels: { confirm: 'Confirm', cancel: 'Cancel' },
-      confirmProps: { color: danger ? "red" : "default" },
+      confirmProps: { color: props.danger ? "red" : "default" },
       onConfirm: () => res(true),
       onCancel: () => res(false),
     })
