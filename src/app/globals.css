@@ -48,10 +48,6 @@ body {
   background: var(--background);
 }
 
-#__primerPortalRoot__ {
-  z-index: 10;
-}
-
 .monaco-editor {
   position: absolute !important;
 }
