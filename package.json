@@ -17,6 +17,7 @@
     "@fontsource/inter": "^5.1.1",
     "@mantine/core": "^7.16.2",
     "@mantine/hooks": "^7.16.2",
+    "@mantine/modals": "^7.16.2",
     "@monaco-editor/react": "^4.6.0",
     "@mui/joy": "^5.0.0-beta.51",
     "@primer/octicons-react": "^19.14.0",

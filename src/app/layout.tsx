@@ -6,6 +6,7 @@ import '@mantine/core/styles.css';
 import { ClientLayout } from "./client-layout";
 import { Toaster } from "react-hot-toast";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
+import { ModalsProvider } from "@mantine/modals";
 
 export const metadata: Metadata = {
   title: "Editor for ESPHome",
@@ -28,8 +29,10 @@ export default function RootLayout({
         <MantineProvider defaultColorScheme="auto">
           <NuqsAdapter>
             <ClientLayout>
-              {children}
-              <Toaster />
+              <ModalsProvider modalProps={{centered: true}} >
+                {children}
+                <Toaster />
+              </ModalsProvider>
             </ClientLayout>
           </NuqsAdapter>
         </MantineProvider>
