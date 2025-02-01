@@ -6,6 +6,7 @@ import { queryClient, rootStore } from ".";
 import { useQuery } from "@tanstack/react-query";
 import { useLocalStorage } from "usehooks-ts";
 import { useCallback } from "react";
+import { openConfirmationDialog } from "../components/dialogs/confirmation-dialog";
 
 const useDeviceExpandedStore = () => {
     const [value, setValue] = useLocalStorage<string[]>('e4e.devices.expanded', [], {
@@ -140,12 +141,12 @@ async function local_renameFoD(device: TDevice, file: TLocalFileOrDirectory) {
 }
 
 async function local_deleteFoD(device: TDevice, file: TLocalFileOrDirectory) {
-    const del = await rootStore.confirmationDialog.tryShowModal({
-        title: "Delete",
-        subtitle: `${device.name} - ${file.path}`,
-        text: "Are you sure you want to delete this file or directory?",
-        confirmButtonColor: "danger",
-    });
+    const del = await openConfirmationDialog(
+        "Delete",
+        `${device.name} - ${file.path}`,
+        "Are you sure you want to delete this file or directory?",
+        true
+    );
     if (del)
         showToast(
             () => api.local_path_delete(device.id, file.path),
