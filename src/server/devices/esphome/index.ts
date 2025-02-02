@@ -91,6 +91,9 @@ export namespace espHome {
     }
 
     export const getPing = async () => {
+        if (!c.espHomeApiUrl)
+            return null;
+
         const url = `${c.espHomeApiUrl}/ping`;
         //log.debug("Pinging ESPHome", url);
         const response = await fetch(url);
