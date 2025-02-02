@@ -1,6 +1,7 @@
 import { useStatusStore } from '@/app/stores/status-store';
 import { LinkExternalIcon } from '@primer/octicons-react';
 import { modals } from '@mantine/modals';
+import { Anchor } from '@mantine/core';
 
 const AboutDialogContent = () => {
     const statusStore = useStatusStore();
@@ -8,11 +9,11 @@ const AboutDialogContent = () => {
         {statusStore.query.isSuccess && <>
             <div>Version: {statusStore.query.data?.version}</div>
             <div>
-                <a className="underline text-blue-600 dark:text-blue-800 hover:text-blue-800" href={statusStore.query.data?.espHomeWebUrl} target="_blank">ESPHome <LinkExternalIcon className="inline" /></a>
+                <Anchor href={statusStore.query.data?.espHomeWebUrl} target="_blank">ESPHome <LinkExternalIcon className="inline" /></Anchor>
             </div>
         </>}
         <div >
-            <a className="underline text-blue-600 dark:text-blue-800 hover:text-blue-800" href="https://github.com/Morcatko/EspHome-Editor/issues" target="_blank">Provide Feedback <LinkExternalIcon className="inline" /></a>
+            <Anchor href="https://github.com/Morcatko/EspHome-Editor/issues" target="_blank">Provide Feedback <LinkExternalIcon className="inline" /></Anchor>
         </div>
     </div>;
 }

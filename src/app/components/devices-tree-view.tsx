@@ -205,10 +205,10 @@ export const DevicesTreeView = () => {
                                 </ActionIcon>
                             </Menu.Target>
                             <Menu.Dropdown>
-                                <Menu.Item leftSection={<FileCodeIcon />} onClick={(e) => devicesStore.localDevice_addFile(d, "/")} >
+                                <Menu.Item leftSection={<FileCodeIcon />} onClick={(e) => { devicesStore.localDevice_addFile(d, "/"); e.stopPropagation(); }} >
                                     New File...
                                 </Menu.Item>
-                                <Menu.Item leftSection={<FileDirectoryIcon />} onClick={(e) => devicesStore.localDevice_addDirectory(d, "/")} >
+                                <Menu.Item leftSection={<FileDirectoryIcon />} onClick={(e) => { devicesStore.localDevice_addDirectory(d, "/"); e.stopPropagation(); }} >
                                     New Folder...
                                 </Menu.Item>
                             </Menu.Dropdown>

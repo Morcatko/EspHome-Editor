@@ -1,6 +1,6 @@
 "use client";
 import { Suspense } from "react";
-import { Loader } from "@mantine/core";
+import { Anchor, Loader } from "@mantine/core";
 import Image from "next/image";
 import { DevicesTreeView } from "./components/devices-tree-view";
 import { PanelsContainer } from "./components/panels-container";
@@ -36,7 +36,7 @@ const Page = () => {
 				<Header />
 				<div style={{ gridArea: "2/1/2/1" }} className="pl-1 overflow-y-auto"><DevicesTreeView /></div>
 				<div style={{ gridArea: "3/1/3/1" }} className="border-t border-slate-200 dark:border-slate-800 text-center p-6">
-					<a className="underline text-blue-600 dark:text-blue-800 hover:text-blue-800" href="#" onClick={() => openAboutDialog()}>{statusStore.query.isSuccess && statusStore.query.data?.version}</a>
+					<Anchor href="#" onClick={() => openAboutDialog()}>{statusStore.query.isSuccess && statusStore.query.data?.version }</Anchor>
 				</div>
 				<div style={{ gridArea: "1/2/4/2" }} className="border-l border-slate-200 dark:border-slate-800 relative"><PanelsContainer /></div>
 			</div>
