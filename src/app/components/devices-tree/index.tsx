@@ -120,7 +120,7 @@ export const DevicesTree = () => {
                         }
                     </TreeView.LeadingVisual>
                     <TreeView.SubTree>
-                        {(!isLib) && <TreeView.Item className="opacity-30 hover:opacity-100" id={`toolbar_${d.id}`} ><DeviceToolbar device={d} /></TreeView.Item>}
+                        {(!isLib) && <TreeView.Item className="opacity-50 hover:opacity-100" id={`toolbar_${d.id}`} ><DeviceToolbar device={d} /></TreeView.Item>}
                         <LocalFiles device={d} parent={d} />
                     </TreeView.SubTree>
                     <TreeView.TrailingVisual >

@@ -17,6 +17,7 @@ export const DeviceToolbar = ({ device }: { device: TDevice }) => {
 
     const allProps = {
         variant: "subtle" as ActionIconProps["variant"],
+        className: "opacity-80 hover:opacity-100",
     }
 
     const localProps: ActionIconProps = {

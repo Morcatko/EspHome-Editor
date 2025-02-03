@@ -18,10 +18,10 @@ export const Home = () => {
             <p>
                 On the Devices Panel, you'll see all your ESPHome devices. The status of each device is indicated by the color of the light bulb
             </p>
-            <Ul>
+            <L>
                 <li><span style={{ color: color_gray }} className="font-semibold">Gray</span> - Editor-only device</li>
                 <li><span style={{ color: color_online }} className="font-semibold">Online</span>/<span style={{ color: color_offline }} className="font-semibold">Offline</span> - status of ESPHome device</li>
-            </Ul>
+            </L>
         </Section>
 
         <Section step="device_toolbar" title="Device Toolbar">
