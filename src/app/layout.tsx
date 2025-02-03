@@ -3,10 +3,11 @@ import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import "./globals.css";
 import 'dockview-react/dist/styles/dockview.css';
 import '@mantine/core/styles.css';
+import '@mantine/notifications/styles.css';
 import { ClientLayout } from "./client-layout";
-import { Toaster } from "react-hot-toast";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import { ModalsProvider } from "@mantine/modals";
+import { Notifications } from "@mantine/notifications";
 
 export const metadata: Metadata = {
   title: "Editor for ESPHome",
@@ -29,9 +30,9 @@ export default function RootLayout({
         <MantineProvider defaultColorScheme="auto">
           <NuqsAdapter>
             <ClientLayout>
+              <Notifications position="top-center" />
               <ModalsProvider modalProps={{centered: true}} >
                 {children}
-                <Toaster />
               </ModalsProvider>
             </ClientLayout>
           </NuqsAdapter>

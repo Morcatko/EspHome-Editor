@@ -1,6 +1,5 @@
 "use client";
 import { TDevice, TLocalFileOrDirectory } from "@/server/devices/types";
-import toast from "react-hot-toast";
 import { api } from "../utils/api-client";
 import { queryClient } from ".";
 import { useQuery } from "@tanstack/react-query";
@@ -8,6 +7,7 @@ import { useLocalStorage } from "usehooks-ts";
 import { useCallback } from "react";
 import { openConfirmationDialog } from "../components/dialogs/confirmation-dialog";
 import { openInputTextDialog } from "../components/dialogs/input-text-dialog";
+import { notifications } from "@mantine/notifications";
 
 const useDeviceExpandedStore = () => {
     const [value, setValue] = useLocalStorage<string[]>('e4e.devices.expanded', [], {
@@ -33,19 +33,16 @@ async function showToast(
     loading: string | null,
     success: string | null,
     error: string | null) {
-    await toast.promise(
-        (async () => {
-            await call();
-            for (const invalidateKey of invalidateKeys) {
-                await queryClient.invalidateQueries({ queryKey: invalidateKey });
-            }
-        })(),
-        {
-            loading: loading,
-            success: success,
-            error: error,
-        },
-    );
+    const notificationId = notifications.show({ title: loading, message: null, loading: true, autoClose: false, withCloseButton: false });
+    try {
+        await call();
+        for (const invalidateKey of invalidateKeys) {
+            await queryClient.invalidateQueries({ queryKey: invalidateKey });
+        }
+        notifications.update({ id: notificationId, title: success, message: null, loading: false, autoClose: 1500 });
+    } catch (e) {
+        notifications.update({ id: notificationId, title: error, message: e?.toString(), loading: false, color: "red", withCloseButton: true });
+    }
 }
 
 async function localDevice_create() {
