@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { color_esphome, color_gray, color_local, color_offline, color_online } from "@/app/utils/const";
 import { BeakerIcon, CodeIcon, DownloadIcon, GitCompareIcon, LogIcon, UploadIcon } from "@primer/octicons-react";
 import map from "@/assets/onboarding/map.png";
-import { Code, Heading, Section, Ul } from './components';
+import { Code, Heading, L, Section, Ul } from './components';
 import { Button } from '@mantine/core';
 import { usePanelsStore } from '@/app/stores/panels-store';
 
@@ -28,7 +28,7 @@ export const Home = () => {
             <p>
                 Expand a device to access its toolbar. (Available actions depend on the device status)
             </p>
-            <ul className="mt-4 ml-8 space-y-3">
+            <L>
                 <li><DownloadIcon className="inline mr-2" fill={color_local} /> Import configuration from ESPHome instance</li>
                 <li><CodeIcon className="inline mr-2" fill={color_local} /> View the compiled local ESPHome configuration</li>
                 <li><GitCompareIcon className="inline mr-2" fill={color_gray} /> Compare local vs. ESPHome configuration</li>
@@ -37,7 +37,7 @@ export const Home = () => {
                 <li><BeakerIcon className="inline mr-2" fill={color_esphome} /> Compile ESPHome configuration</li>
                 <li><UploadIcon className="inline mr-2" fill={color_esphome} /> Install configuration to a device</li>
                 <li><LogIcon className="inline mr-2" fill={color_esphome} /> View log stream</li>
-            </ul>
+            </L>
         </Section>
 
         <Section step="yaml" title="How YAML Configurations Work">

@@ -2,7 +2,7 @@
 import { Suspense } from "react";
 import { Anchor, Loader } from "@mantine/core";
 import Image from "next/image";
-import { DevicesTreeView } from "./components/devices-tree-view";
+import { DevicesTree } from "./components/devices-tree";
 import { PanelsContainer } from "./components/panels-container";
 import { useDevicesStore } from "./stores/devices-store";
 import { useStatusStore } from "./stores/status-store";
@@ -34,7 +34,7 @@ const Page = () => {
 		: <Suspense>
 			<div style={{ gridTemplateColumns: "18rem 1fr", gridTemplateRows: "56px 1fr auto", gridGap: "1px" }} className="h-screen w-screen grid" >
 				<Header />
-				<div style={{ gridArea: "2/1/2/1" }} className="pl-1 overflow-y-auto"><DevicesTreeView /></div>
+				<div style={{ gridArea: "2/1/2/1" }} className="pl-1 overflow-y-auto"><DevicesTree /></div>
 				<div style={{ gridArea: "3/1/3/1" }} className="border-t border-slate-200 dark:border-slate-800 text-center p-6">
 					<Anchor href="#" onClick={() => openAboutDialog()}>{statusStore.query.isSuccess && statusStore.query.data?.version }</Anchor>
 				</div>

@@ -6,8 +6,9 @@ type TChildren = {
     children: React.ReactNode
 }
 
-export const Ol = (p: TChildren) => <ol className="list-decimal ml-8 mt-3 space-y-2">{p.children}</ol>;
-export const Ul = (p: TChildren) => <ul className="list-disc ml-8 mt-3 space-y-2">{p.children}</ul>;
+export const Ol = (p: TChildren) => <ol className="list-decimal ml-4 mt-3 space-y-2">{p.children}</ol>;
+export const Ul = (p: TChildren) => <ul className="list-disc ml-4 mt-3 space-y-2">{p.children}</ul>;
+export const L = (p: TChildren) => <ul className="list-none ml-4 mt-3 space-y-2">{p.children}</ul>;
 export const Code = (p: TChildren) => <code className="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded-sm text-[#0451a5] dark:text-[#ce9178] font-mono">{p.children}</code>;
 
 export const Heading = ({ title, subtitle }: { title: string, subtitle: string }) =>
