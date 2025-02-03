@@ -1,7 +1,7 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
 import Image from 'next/image';
-import { ActionBar, IconButtonProps, TreeView } from "@primer/react";
+import { IconButtonProps, TreeView } from "@primer/react";
 import { TDevice, TLocalFileOrDirectory, TParent } from "@/server/devices/types";
 import { BeakerIcon, CodeIcon, DownloadIcon, KebabHorizontalIcon, FileDirectoryIcon, GitCompareIcon, LightBulbIcon, LogIcon, UploadIcon, PencilIcon, FileCodeIcon, QuestionIcon, XIcon, PlusIcon } from "@primer/octicons-react";
 import { color_esphome, color_gray, color_local, color_offline, color_online } from "../utils/const";
@@ -10,7 +10,7 @@ import { api } from "../utils/api-client";
 import { useDevicesStore } from "../stores/devices-store";
 import { usePanelsStore } from "../stores/panels-store";
 import { useDarkTheme } from "../utils/hooks";
-import { ActionIcon, Menu } from "@mantine/core";
+import { ActionIcon, ActionIconProps, Divider, Menu, PolymorphicComponentProps, Tooltip } from "@mantine/core";
 
 const FileTypeIcon = ({ fod }: { fod: TLocalFileOrDirectory }) => {
     if (fod.type === "directory")
@@ -25,11 +25,11 @@ const FileTypeIcon = ({ fod }: { fod: TLocalFileOrDirectory }) => {
     }
 }
 
-const ThreeDotProps = {
-    variant: "transparent" as IconButtonProps["variant"],
-    color: "gray" as IconButtonProps["color"],
+const ThreeDotProps: PolymorphicComponentProps<"button", ActionIconProps> = {
+    variant: "transparent",
+    color: "gray" as ActionIconProps["color"],
     className: "opacity-30 hover:opacity-100",
-    onClick: (e: React.MouseEvent) => e.stopPropagation(),
+    onClick: (e) => e.stopPropagation()
 };
 
 const LocalFileOrDirectory = ({ device, fod }: { device: TDevice, fod: TLocalFileOrDirectory }) => {
@@ -101,51 +101,51 @@ const DeviceToolbar = ({ device }: { device: TDevice }) => {
     const hasBoth = hasLocalFiles && hasESPHomeConfig;
 
     const allProps = {
-        tooltipDirection: "n" as (IconButtonProps["tooltipDirection"]),
+        variant: "subtle" as IconButtonProps["variant"],
     }
 
-    const localProps = { ...allProps };
-    const diffProps = {
+    const localProps: ActionIconProps = {
+        ...allProps,
+        color: color_local
+    };
+
+    const diffProps: ActionIconProps = {
         ...allProps,
         disabled: !hasBoth,
-        sx: {
-            color: (hasBoth)
-                ? (isDarkMode ? "lightgrey" : color_gray)
-                : (isDarkMode ? color_gray : "lightgrey")
-        },
+        color: (hasBoth)
+            ? (isDarkMode ? "lightgrey" : color_gray)
+            : (isDarkMode ? color_gray : "lightgrey")
     }
 
     const uploadCreates = !hasESPHomeConfig;
-    const uploadProps = {
+    const uploadProps: ActionIconProps = {
         ...allProps,
-        sx: {
-            color: (isDarkMode ? "lightgrey" : color_gray)
-        },
-    }
-
-    const espHomeProps = {
-        ...allProps,
-        disabled: !hasESPHomeConfig,
-        sx: { color: hasESPHomeConfig ? color_esphome : "lightgrey" },
+        color: (isDarkMode ? "lightgrey" : color_gray)
     };
 
-    return <div style={{ marginLeft: '-16px' }}>
-        <ActionBar aria-label="Device tools" size="small">
+    const espHomeProps: ActionIconProps = {
+        ...allProps,
+        disabled: !hasESPHomeConfig,
+        color: hasESPHomeConfig ? color_esphome : "lightgrey",
+    };
+
+    return <div style={{ marginLeft: '0px' }}>
+        <ActionIcon.Group>
             {hasLocalFiles
-                ? <ActionBar.IconButton key="show_local" {...localProps} sx={{ color: color_local }} icon={CodeIcon} onClick={(e) => panels.addDevicePanel(e, device, "local_device")} aria-label="Show local yaml configuration" />
-                : <ActionBar.IconButton key="create_local"  {...localProps} sx={{ color: color_local }} icon={DownloadIcon} onClick={() => devicesStore.localDevice_import(device)} aria-label="Import yaml configuration" />
+                ? <Tooltip label="Show local yaml configuration"><ActionIcon {...localProps} onClick={(e) => panels.addDevicePanel(e, device, "local_device")} ><CodeIcon /></ActionIcon></Tooltip>
+                : <Tooltip label="Import yaml configuration"><ActionIcon {...localProps} onClick={(e) => devicesStore.localDevice_import(device)} ><DownloadIcon /></ActionIcon></Tooltip>
             }
-            <ActionBar.Divider key="div1" />
-            <ActionBar.IconButton key="diff" {...diffProps} icon={GitCompareIcon} onClick={(e) => panels.addDevicePanel(e, device, "diff")} aria-label="Show local vs ESPHome diff" />
-            <ActionBar.IconButton key="upload" {...uploadProps} icon={UploadIcon} onClick={() => devicesStore.espHome_upload(device)} aria-label={uploadCreates ? "Create device in ESPHome" : "Upload local to ESPHome"} />
-            <ActionBar.Divider key="div2" />
-            <ActionBar.IconButton key="show_esphome" {...espHomeProps} icon={CodeIcon} onClick={(e) => panels.addDevicePanel(e, device, "esphome_device")} aria-label="Show ESPHome configuration" />
-            <ActionBar.IconButton key="compile" {...espHomeProps} icon={BeakerIcon} onClick={(e) => panels.addDevicePanel(e, device, "esphome_compile")} aria-label="Compile ESPHome configuration" />
-            <ActionBar.IconButton key="install" {...espHomeProps} icon={UploadIcon} onClick={(e) => panels.addDevicePanel(e, device, "esphome_install")} aria-label="Install ESPHome configuration to device" />
-            <ActionBar.IconButton key="log" {...espHomeProps} icon={LogIcon} onClick={(e) => panels.addDevicePanel(e, device, "esphome_log")} aria-label="Show ESPHome device logs" />
-        </ActionBar>
+            <ActionIcon.GroupSection {...allProps}> <Divider orientation="vertical" /></ActionIcon.GroupSection>
+            <Tooltip label="Show local vs ESPHome diff"><ActionIcon {...diffProps} onClick={(e) => panels.addDevicePanel(e, device, "diff")} ><GitCompareIcon /></ActionIcon></Tooltip>
+            <Tooltip label={uploadCreates ? "Create device in ESPHome" : "Upload local to ESPHome"}><ActionIcon {...uploadProps} onClick={() => devicesStore.espHome_upload(device)} ><UploadIcon /></ActionIcon></Tooltip>
+            <ActionIcon.GroupSection {...allProps}> <Divider orientation="vertical" /></ActionIcon.GroupSection>
+            <Tooltip label="Show ESPHome configuration"><ActionIcon  {...espHomeProps} onClick={(e) => panels.addDevicePanel(e, device, "esphome_device")} ><CodeIcon /></ActionIcon></Tooltip>
+            <Tooltip label="Compile ESPHome configuration"><ActionIcon  {...espHomeProps} onClick={(e) => panels.addDevicePanel(e, device, "esphome_compile")} ><BeakerIcon /></ActionIcon></Tooltip>
+            <Tooltip label="Install ESPHome configuration to device"><ActionIcon  {...espHomeProps} onClick={(e) => panels.addDevicePanel(e, device, "esphome_install")} ><UploadIcon /></ActionIcon></Tooltip>
+            <Tooltip label="Show ESPHome device logs"><ActionIcon  {...espHomeProps} onClick={(e) => panels.addDevicePanel(e, device, "esphome_log")} ><LogIcon /></ActionIcon></Tooltip>
+        </ActionIcon.Group>
     </div>;
-}
+};
 
 export const DevicesTreeView = () => {
     const devicesStore = useDevicesStore();
