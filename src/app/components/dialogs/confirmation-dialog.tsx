@@ -1,32 +1,29 @@
-import { Button, DialogActions, DialogContent, DialogTitle, Modal, ModalClose, ModalDialog } from "@mui/joy";
-import { observer } from "mobx-react-lite";
-import { useStore } from "@/app/stores";
-import { TCommonModalStoreData } from "./common-dialog-store";
+import { modals } from "@mantine/modals";
 
-export type TConfirmationModalStoreData = TCommonModalStoreData & {
+type TContentProps = {
+  subtitle: string;
   text: string;
 }
 
-export const ConfirmationDialog = observer(() => {
-  const modalStore = useStore().confirmationDialog;
+const ConfirmationDialogContent = (props: TContentProps) => <>
+  <div>{props.subtitle}</div>
+  <div>{props.text}</div>
+</>;
 
-  return modalStore.isOpen &&
-    <Modal open={modalStore.isOpen} onClose={() => modalStore.onClose()} >
-      <ModalDialog>
-        <ModalClose />
-        <DialogTitle>{modalStore.storeData.title}</DialogTitle>
-        <DialogContent>
-          <div>{modalStore.storeData.subtitle}</div>
-          <div>{modalStore.storeData.text}</div>
-        </DialogContent>
-        <DialogActions>
-          <Button variant="soft" color={modalStore.storeData.confirmButtonColor ?? "success"} onClick={() => modalStore.onConfirm()}>
-            {modalStore.storeData.confirmLabel ?? 'Confirm'}
-          </Button>
-          <Button variant="soft" color={modalStore.storeData.cancelButtonColor ?? "neutral"} onClick={() => modalStore.onCancel()}>
-            {modalStore.storeData.cancelLabel ?? 'Cancel'}
-          </Button>
-        </DialogActions>
-      </ModalDialog>
-    </Modal>;
-});
+type TDialogProps = {
+  title: string;
+  subtitle: string;
+  text: string;
+  danger: boolean
+}
+export const openConfirmationDialog = (props: TDialogProps) =>
+  new Promise<boolean>((res, rej) =>
+    modals.openConfirmModal({
+      title: props.title,
+      children: <ConfirmationDialogContent subtitle={props.subtitle} text={props.text} />,
+      labels: { confirm: 'Confirm', cancel: 'Cancel' },
+      confirmProps: { color: props.danger ? "red" : "default" },
+      onConfirm: () => res(true),
+      onCancel: () => res(false),
+    })
+  );

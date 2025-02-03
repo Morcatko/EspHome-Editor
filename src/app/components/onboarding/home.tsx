@@ -3,7 +3,7 @@ import { color_esphome, color_gray, color_local, color_offline, color_online } f
 import { BeakerIcon, CodeIcon, DownloadIcon, GitCompareIcon, LogIcon, UploadIcon } from "@primer/octicons-react";
 import map from "@/assets/onboarding/map.png";
 import { Code, Heading, Section, Ul } from './components';
-import { Button } from '@mui/joy';
+import { Button } from '@mantine/core';
 import { usePanelsStore } from '@/app/stores/panels-store';
 
 
@@ -44,7 +44,7 @@ export const Home = () => {
             <p>
                 The final YAML configuration is a combination of multiple YAML files.
             </p>
-            <Image className='dark:invert' src={map} alt="etajs template" unoptimized style={{ margin: '-30px' }} />
+            <Image className='dark:invert max-w-full h-auto' src={map} alt="etajs template" unoptimized style={{ margin: '-30px' }} />
             <Ul>
                 <li>Use the <Code>.lib</Code> folder for shared code, with optional device-specific local <Code>.lib</Code> folders.</li>
                 <li>The compiler processes all <Code>.eta</Code> files in the device folder, converting them into <Code>.yaml</Code> files.</li>
@@ -58,7 +58,7 @@ export const Home = () => {
                 {/* Choose between creating multiple devices (e.g., humidity sensors for flowers) or a single device with multiple components (e.g., a PLC with multiple inputs). */}
             </p>
             <div className="flex justify-around mt-4">
-                <Button onClick={(e) => panelsStore.addPanel(e, { operation: "onboarding", step: "flowers" })}>Let's go</Button>
+                <Button variant='primary' onClick={(e) => panelsStore.addPanel(e, { operation: "onboarding", step: "flowers" })}>Let's go</Button>
             </div>
         </Section>
     </>);

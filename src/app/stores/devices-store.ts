@@ -2,10 +2,12 @@
 import { TDevice, TLocalFileOrDirectory } from "@/server/devices/types";
 import toast from "react-hot-toast";
 import { api } from "../utils/api-client";
-import { queryClient, rootStore } from ".";
+import { queryClient } from ".";
 import { useQuery } from "@tanstack/react-query";
 import { useLocalStorage } from "usehooks-ts";
 import { useCallback } from "react";
+import { openConfirmationDialog } from "../components/dialogs/confirmation-dialog";
+import { openInputTextDialog } from "../components/dialogs/input-text-dialog";
 
 const useDeviceExpandedStore = () => {
     const [value, setValue] = useLocalStorage<string[]>('e4e.devices.expanded', [], {
@@ -47,7 +49,7 @@ async function showToast(
 }
 
 async function localDevice_create() {
-    const device_name = await rootStore.inputTextDialog.tryShowModal({
+    const device_name = await openInputTextDialog({
         title: "Add New Device",
         subtitle: "Enter Device Name",
         defaultValue: "new-device",
@@ -64,7 +66,7 @@ async function localDevice_create() {
 }
 
 async function localDevice_addDirectory(device: TDevice, parent_path: string) {
-    const directory_name = await rootStore.inputTextDialog.tryShowModal({
+    const directory_name = await openInputTextDialog({
         title: "Create New Directory",
         subtitle: `${device.name} - ${parent_path}/`,
         defaultValue: "new directory",
@@ -81,12 +83,11 @@ async function localDevice_addDirectory(device: TDevice, parent_path: string) {
 }
 
 async function localDevice_addFile(device: TDevice, parent_path: string) {
-    const file_name = await rootStore.inputTextDialog.tryShowModal({
+    const file_name = await openInputTextDialog({
         title: "Create New File",
         subtitle: `${device.name} - ${parent_path}/`,
-        defaultValue: "newfile.yaml",
+        defaultValue: "newfile.yaml"
     });
-
     if (file_name)
         await showToast(
             () => api.local_path_save(device.id, parent_path + "/" + file_name, ""),
@@ -120,7 +121,7 @@ async function espHome_upload(device: TDevice) {
 }
 
 async function local_renameFoD(device: TDevice, file: TLocalFileOrDirectory) {
-    const newName = await rootStore.inputTextDialog.tryShowModal({
+    const newName = await openInputTextDialog({
         title: "Rename",
         subtitle: `${device.name} - ${file.path}`,
         defaultValue: file.name,
@@ -140,11 +141,11 @@ async function local_renameFoD(device: TDevice, file: TLocalFileOrDirectory) {
 }
 
 async function local_deleteFoD(device: TDevice, file: TLocalFileOrDirectory) {
-    const del = await rootStore.confirmationDialog.tryShowModal({
+    const del = await openConfirmationDialog({
         title: "Delete",
         subtitle: `${device.name} - ${file.path}`,
         text: "Are you sure you want to delete this file or directory?",
-        confirmButtonColor: "danger",
+        danger: true
     });
     if (del)
         showToast(

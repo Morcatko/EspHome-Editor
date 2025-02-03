@@ -1,7 +1,7 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
 import Image from 'next/image';
-import { ActionBar, ActionList, ActionMenu, ButtonBaseProps, IconButton, IconButtonProps, TreeView } from "@primer/react";
+import { ActionBar, IconButtonProps, TreeView } from "@primer/react";
 import { TDevice, TLocalFileOrDirectory, TParent } from "@/server/devices/types";
 import { BeakerIcon, CodeIcon, DownloadIcon, KebabHorizontalIcon, FileDirectoryIcon, GitCompareIcon, LightBulbIcon, LogIcon, UploadIcon, PencilIcon, FileCodeIcon, QuestionIcon, XIcon, PlusIcon } from "@primer/octicons-react";
 import { color_esphome, color_gray, color_local, color_offline, color_online } from "../utils/const";
@@ -10,6 +10,7 @@ import { api } from "../utils/api-client";
 import { useDevicesStore } from "../stores/devices-store";
 import { usePanelsStore } from "../stores/panels-store";
 import { useDarkTheme } from "../utils/hooks";
+import { ActionIcon, Menu } from "@mantine/core";
 
 const FileTypeIcon = ({ fod }: { fod: TLocalFileOrDirectory }) => {
     if (fod.type === "directory")
@@ -25,10 +26,11 @@ const FileTypeIcon = ({ fod }: { fod: TLocalFileOrDirectory }) => {
 }
 
 const ThreeDotProps = {
-    variant: ("invisible" as ButtonBaseProps["variant"]),
+    variant: "transparent" as IconButtonProps["variant"],
+    color: "gray" as IconButtonProps["color"],
     className: "opacity-30 hover:opacity-100",
-    "aria-label": ""
-}
+    onClick: (e: React.MouseEvent) => e.stopPropagation(),
+};
 
 const LocalFileOrDirectory = ({ device, fod }: { device: TDevice, fod: TLocalFileOrDirectory }) => {
     const panels = usePanelsStore();
@@ -51,43 +53,31 @@ const LocalFileOrDirectory = ({ device, fod }: { device: TDevice, fod: TLocalFil
         </TreeView.LeadingVisual>
         <span className="text-(color:--foreground)">{fod.name}</span>
         <TreeView.TrailingVisual>
-            <ActionMenu>
-                <ActionMenu.Anchor>
-                    <IconButton {...ThreeDotProps} icon={KebabHorizontalIcon} onClick={(e) => e.stopPropagation()} />
-                </ActionMenu.Anchor>
-                <ActionMenu.Overlay width="auto">
-                    <ActionList>
-                        {(fod.type === "directory") && <>
-                            <ActionList.Item onSelect={(e) => { devicesStore.localDevice_addFile(device, fod.path); e.stopPropagation(); }} >
-                                <ActionList.LeadingVisual>
-                                    <FileCodeIcon />
-                                </ActionList.LeadingVisual>
-                                New File...
-                            </ActionList.Item>
-                            <ActionList.Item onSelect={(e) => { devicesStore.localDevice_addDirectory(device, fod.path); e.stopPropagation(); }}>
-                                <ActionList.LeadingVisual>
-                                    <FileDirectoryIcon />
-                                </ActionList.LeadingVisual>
-                                New Folder...
-                            </ActionList.Item>
-                            <ActionList.Divider />
-                        </>
-                        }
-                        <ActionList.Item onSelect={(e) => { devicesStore.local_renameFoD(device, fod); e.stopPropagation(); }}>
-                            <ActionList.LeadingVisual>
-                                <PencilIcon />
-                            </ActionList.LeadingVisual>
-                            Rename
-                        </ActionList.Item>
-                        <ActionList.Item onSelect={(e) => { devicesStore.local_deleteFoD(device, fod); e.stopPropagation(); }} variant="danger">
-                            <ActionList.LeadingVisual>
-                                <XIcon />
-                            </ActionList.LeadingVisual>
-                            Delete
-                        </ActionList.Item>
-                    </ActionList>
-                </ActionMenu.Overlay>
-            </ActionMenu>
+            <Menu width={150}>
+                <Menu.Target>
+                    <ActionIcon {...ThreeDotProps}>
+                        <KebabHorizontalIcon />
+                    </ActionIcon>
+                </Menu.Target>
+                <Menu.Dropdown>
+                    {(fod.type === "directory") && <>
+                        <Menu.Item leftSection={<FileCodeIcon />} onClick={(e) => { devicesStore.localDevice_addFile(device, fod.path); e.stopPropagation(); }} >
+                            New File...
+                        </Menu.Item>
+                        <Menu.Item leftSection={<FileDirectoryIcon />} onClick={(e) => { devicesStore.localDevice_addDirectory(device, fod.path); e.stopPropagation(); }}>
+                            New Folder...
+                        </Menu.Item>
+                        <Menu.Divider />
+                    </>
+                    }
+                    <Menu.Item leftSection={<PencilIcon />} onClick={(e) => { devicesStore.local_renameFoD(device, fod); e.stopPropagation(); }}>
+                        Rename...
+                    </Menu.Item>
+                    <Menu.Item leftSection={<XIcon />} onClick={(e) => { devicesStore.local_deleteFoD(device, fod); e.stopPropagation(); }} variant="danger">
+                        Delete...
+                    </Menu.Item>
+                </Menu.Dropdown>
+            </Menu>
         </TreeView.TrailingVisual>
         {fod.type === "directory"
             ? <TreeView.SubTree><LocalFiles device={device} parent={fod} /></TreeView.SubTree>
@@ -208,27 +198,21 @@ export const DevicesTreeView = () => {
                         <LocalFiles device={d} parent={d} />
                     </TreeView.SubTree>
                     <TreeView.TrailingVisual >
-                        <ActionMenu>
-                            <ActionMenu.Anchor>
-                                <IconButton {...ThreeDotProps} icon={KebabHorizontalIcon} onClick={(e) => e.stopPropagation()} />
-                            </ActionMenu.Anchor>
-                            <ActionMenu.Overlay width="auto" >
-                                <ActionList>
-                                    <ActionList.Item onSelect={(e) => { devicesStore.localDevice_addFile(d, "/"); e.stopPropagation(); }} >
-                                        <ActionList.LeadingVisual>
-                                            <FileCodeIcon />
-                                        </ActionList.LeadingVisual>
-                                        New File...
-                                    </ActionList.Item>
-                                    <ActionList.Item onSelect={(e) => { devicesStore.localDevice_addDirectory(d, "/"); e.stopPropagation(); }}>
-                                        <ActionList.LeadingVisual>
-                                            <FileDirectoryIcon />
-                                        </ActionList.LeadingVisual>
-                                        New Folder...
-                                    </ActionList.Item>
-                                </ActionList>
-                            </ActionMenu.Overlay>
-                        </ActionMenu>
+                        <Menu width={150}>
+                            <Menu.Target>
+                                <ActionIcon {...ThreeDotProps}>
+                                    <KebabHorizontalIcon />
+                                </ActionIcon>
+                            </Menu.Target>
+                            <Menu.Dropdown>
+                                <Menu.Item leftSection={<FileCodeIcon />} onClick={(e) => { devicesStore.localDevice_addFile(d, "/"); e.stopPropagation(); }} >
+                                    New File...
+                                </Menu.Item>
+                                <Menu.Item leftSection={<FileDirectoryIcon />} onClick={(e) => { devicesStore.localDevice_addDirectory(d, "/"); e.stopPropagation(); }} >
+                                    New Folder...
+                                </Menu.Item>
+                            </Menu.Dropdown>
+                        </Menu>
                     </TreeView.TrailingVisual>
                 </TreeView.Item>;
             })

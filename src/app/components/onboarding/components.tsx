@@ -1,5 +1,6 @@
 import { useLocalStorage } from "usehooks-ts";
 import { SingleEditor } from "../editors/single-editor";
+import { Anchor } from "@mantine/core";
 
 type TChildren = {
     children: React.ReactNode
@@ -31,11 +32,11 @@ export const Section = ({ step, title, children }: TSectionProps) => {
     return <>
         <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow-sm">
             <div className="flex justify-between items-center">
-                <a href="#" onClick={() => setHidden(!hidden)}>
+                <Anchor component="span" underline="never" onClick={() => setHidden(!hidden)}>
                     <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200" >
                         {title}
                     </h2>
-                </a>
+                </Anchor>
                 <label>
                     <input
                         type="checkbox"
