@@ -44,7 +44,7 @@ export const Home = () => {
             <p>
                 The final YAML configuration is a combination of multiple YAML files.
             </p>
-            <Image className='dark:invert' src={map} alt="etajs template" unoptimized style={{ margin: '-30px' }} />
+            <Image className='dark:invert max-w-full h-auto' src={map} alt="etajs template" unoptimized style={{ margin: '-30px' }} />
             <Ul>
                 <li>Use the <Code>.lib</Code> folder for shared code, with optional device-specific local <Code>.lib</Code> folders.</li>
                 <li>The compiler processes all <Code>.eta</Code> files in the device folder, converting them into <Code>.yaml</Code> files.</li>
