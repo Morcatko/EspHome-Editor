@@ -32,6 +32,7 @@ export const LogStream = (props: props) => {
             display: "block",
             unicodeBidi: "embed",
             fontFamily: "monospace",
+            fontSize: "0.8rem",
             whiteSpace: "pre",
         }}>
         <div
