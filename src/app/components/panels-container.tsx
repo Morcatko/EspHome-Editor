@@ -10,16 +10,17 @@ import { usePanelsStore } from "../stores/panels-store";
 import { DockviewDefaultTab, DockviewReact, IDockviewPanelHeaderProps, IDockviewPanelProps } from "dockview-react";
 import { useDarkTheme } from "@/app/utils/hooks";
 import { Onboarding } from "./onboarding";
+import React from "react";
 
 const OnClickRerender = ({ last_click, children }: { last_click?: string, children: React.ReactNode }) => {
-    if (!last_click) 
+    if (!last_click)
         return <div>Click again</div>;
     const currentTime = new Date();
     const lastClick = new Date(last_click);
     const diff = currentTime.getTime() - lastClick.getTime();
 
     if (diff < 1000)
-        return children;
+        return <React.Fragment key={last_click}>{children}</React.Fragment>;
 
     return <div>Click again</div>;
 }
@@ -57,7 +58,7 @@ const tabComponents = {
             case "onboarding":
                 return <DockviewDefaultTab {...p} hideClose />;
             default:
-                return <DockviewDefaultTab {...p} onAuxClick={(e) => { if (e.button === 1) p.api.close();}} />;
+                return <DockviewDefaultTab {...p} onAuxClick={(e) => { if (e.button === 1) p.api.close(); }} />;
         }
     }
 };
