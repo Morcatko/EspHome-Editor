@@ -65,6 +65,7 @@ export const usePanelsStore = () => {
     const addPanel = (
         e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement> | null,
         panel: TPanel) => {
+            console.log(e);
         if ((e as any)?.button === 1) {// Middle click
             //Middle click does not work
             const currentUrl = new URL(window.location.href);

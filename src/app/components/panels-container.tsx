@@ -4,7 +4,7 @@ import { ESPHomeDevicePanel } from "./panels/esphome-device-panel";
 import { DiffPanel } from "./panels/diff-panel";
 import { EspHomeLogPanel } from "./panels/esphome-log-panel";
 import { EspHomeInstallPanel } from "./panels/esphome-install-panel";
-import { EspHomeCompilePanel } from "./panels/esphome-compile-panel";
+import { EspHomeCompilePanel, EspHomeCompileToolbar } from "./panels/esphome-compile-panel";
 import { TPanelWithClick } from "../stores/panels-store/types";
 import { usePanelsStore } from "../stores/panels-store";
 import { DockviewDefaultTab, DockviewReact, IDockviewPanelHeaderProps, IDockviewPanelProps } from "dockview-react";
@@ -52,7 +52,10 @@ const components = {
             case "diff":
                 return <DiffPanel device_id={panel.device_id} />;
             case "esphome_compile":
-                return <OnClickRerender last_click={panel.last_click}><EspHomeCompilePanel device_id={panel.device_id} /></OnClickRerender>;
+                return <Panel
+                    toolbar={<EspHomeCompileToolbar device_id={panel.device_id} />}
+                    panel={<OnClickRerender last_click={panel.last_click}><EspHomeCompilePanel device_id={panel.device_id} /></OnClickRerender>}
+                />;
             case "esphome_install":
                 return <OnClickRerender last_click={panel.last_click}><EspHomeInstallPanel device_id={panel.device_id} /></OnClickRerender>;
             case "esphome_log":
