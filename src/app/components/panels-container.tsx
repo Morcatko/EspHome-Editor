@@ -1,4 +1,4 @@
-import { LocalFilePanel } from "./panels/local-file-panel";
+import { LocalFilePanel, LocalFileToolbar } from "./panels/local-file-panel";
 import { LocalDevicePanel } from "./panels/local-device-panel";
 import { ESPHomeDevicePanel } from "./panels/esphome-device-panel";
 import { DiffPanel } from "./panels/diff-panel";
@@ -12,7 +12,7 @@ import { useDarkTheme } from "@/app/utils/hooks";
 import { Onboarding } from "./onboarding";
 
 const OnClickRerender = ({ last_click, children }: { last_click?: string, children: React.ReactNode }) => {
-    if (!last_click) 
+    if (!last_click)
         return <div>Click again</div>;
     const currentTime = new Date();
     const lastClick = new Date(last_click);
@@ -24,6 +24,17 @@ const OnClickRerender = ({ last_click, children }: { last_click?: string, childr
     return <div>Click again</div>;
 }
 
+type TPanelProps = {
+    toolbar: React.ReactNode;
+    panel: React.ReactNode;
+}
+const Panel = (p: TPanelProps) => {
+    return <div className="flex flex-col h-full">
+        <div className="flex-none">{p.toolbar}</div>
+        <div className="flex-grow">{p.panel}</div>
+    </div>;
+}
+
 const components = {
     default: (p: IDockviewPanelProps<TPanelWithClick>) => {
         const panel = p.params;
@@ -31,7 +42,10 @@ const components = {
             case "esphome_device":
                 return <ESPHomeDevicePanel device_id={panel.device_id} />;
             case "local_file":
-                return <LocalFilePanel device_id={panel.device_id} file_path={panel.path} />;
+                return <Panel
+                    toolbar={<LocalFileToolbar device_id={panel.device_id} file_path={panel.path} />}
+                    panel={<LocalFilePanel device_id={panel.device_id} file_path={panel.path} />}
+                />;
             case "local_device":
                 return <LocalDevicePanel device_id={panel.device_id} />;
             case "diff":
@@ -57,7 +71,7 @@ const tabComponents = {
             case "onboarding":
                 return <DockviewDefaultTab {...p} hideClose />;
             default:
-                return <DockviewDefaultTab {...p} onAuxClick={(e) => { if (e.button === 1) p.api.close();}} />;
+                return <DockviewDefaultTab {...p} onAuxClick={(e) => { if (e.button === 1) p.api.close(); }} />;
         }
     }
 };

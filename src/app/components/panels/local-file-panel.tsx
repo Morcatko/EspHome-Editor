@@ -1,7 +1,9 @@
-import { useLocalFileStore } from "@/app/stores/panels-store/local-file-store";
+import { useLocalFile, useLocalFileStore } from "@/app/stores/panels-store/local-file-store";
 import { DockviewApi, DockviewDefaultTab, DockviewReact, IDockviewPanelProps } from "dockview-react";
 import { useDarkTheme } from "@/app/utils/hooks";
 import { SingleEditor } from "../editors/single-editor";
+import { ActionIcon, ActionIconProps } from "@mantine/core";
+import { QuestionIcon  } from "@primer/octicons-react";
 
 
 const components = {
@@ -22,6 +24,39 @@ const components = {
 type TProps = {
     device_id: string;
     file_path: string;
+}
+
+
+
+
+export const LocalFileToolbar = (props: TProps) => {
+    const file = useLocalFile(props.device_id, props.file_path);
+
+    if (!file)
+        return null;
+
+    const compiler = file.compiler;
+    //const fileType = file.type;
+
+    const getHelpIcon = () => {
+        if (compiler === "none"){
+            return <ActionIcon {...allProps} component="a" href="https://esphome.io/" target="_blank" ><QuestionIcon  /></ActionIcon>
+        } else if (compiler === "etajs"){
+            return <ActionIcon {...allProps} component="a" href="https://eta.js.org/docs" target="_blank" ><QuestionIcon  /></ActionIcon>
+        } else {
+            return null;
+        }
+    }
+
+
+    const allProps = {
+            variant: "subtle" as ActionIconProps["variant"],
+        }
+
+    return <ActionIcon.Group>
+        <ActionIcon.GroupSection {...allProps} w='100%' />
+        {getHelpIcon()}
+    </ActionIcon.Group>
 }
 
 export const LocalFilePanel = (props: TProps) => {
