@@ -2,9 +2,9 @@ import { LocalFilePanel } from "./panels/local-file-panel";
 import { LocalDevicePanel } from "./panels/local-device-panel";
 import { ESPHomeDevicePanel } from "./panels/esphome-device-panel";
 import { DiffPanel } from "./panels/diff-panel";
-import { EspHomeLogPanel } from "./panels/esphome-log-panel";
-import { EspHomeInstallPanel } from "./panels/esphome-install-panel";
-import { EspHomeCompilePanel } from "./panels/esphome-compile-panel";
+import { EspHomeLogPanel, EspHomeLogToolbar } from "./panels/esphome-log-panel";
+import { EspHomeInstallPanel, EspHomeInstallToolbar } from "./panels/esphome-install-panel";
+import { EspHomeCompilePanel, EspHomeCompileToolbar, } from "./panels/esphome-compile-panel";
 import { TPanelWithClick } from "../stores/panels-store/types";
 import { usePanelsStore } from "../stores/panels-store";
 import { DockviewDefaultTab, DockviewReact, IDockviewPanelHeaderProps, IDockviewPanelProps } from "dockview-react";
@@ -22,10 +22,27 @@ const OnClickRerender = ({ last_click, children }: { last_click?: string, childr
     if (diff < 1000)
         return <React.Fragment key={last_click}>{children}</React.Fragment>;
 
-    return <div>Click again</div>;
+    return <div>Click Refresh</div>;
 }
 
-const components = {
+type TPanelProps = {
+    toolbar: React.ReactNode;
+    panel: React.ReactNode;
+    last_click?: string;
+}
+const Panel = (p: TPanelProps) => {
+    return <div className="flex flex-col h-full">
+        <div className="flex-none">{p.toolbar}</div>
+        <div className="flex-grow h-full">
+            {p.last_click
+                ? <OnClickRerender last_click={p.last_click}>{p.panel}</OnClickRerender>
+                : p.panel
+            }
+        </div>
+    </div>;
+}
+
+const dockViewComponents = {
     default: (p: IDockviewPanelProps<TPanelWithClick>) => {
         const panel = p.params;
         switch (panel.operation) {
@@ -38,11 +55,21 @@ const components = {
             case "diff":
                 return <DiffPanel device_id={panel.device_id} />;
             case "esphome_compile":
-                return <OnClickRerender last_click={panel.last_click}><EspHomeCompilePanel device_id={panel.device_id} /></OnClickRerender>;
+                return <Panel
+                    last_click={panel.last_click}
+                    toolbar={<EspHomeCompileToolbar device_id={panel.device_id} />}
+                    panel={<EspHomeCompilePanel device_id={panel.device_id} />}
+                />;
             case "esphome_install":
-                return <OnClickRerender last_click={panel.last_click}><EspHomeInstallPanel device_id={panel.device_id} /></OnClickRerender>;
+                return <Panel
+                    last_click={panel.last_click}
+                    toolbar={<EspHomeInstallToolbar device_id={panel.device_id} />}
+                    panel={<EspHomeInstallPanel device_id={panel.device_id} />} />;
             case "esphome_log":
-                return <EspHomeLogPanel device_id={panel.device_id} />;
+                return <Panel
+                    last_click={panel.last_click}
+                    toolbar={<EspHomeLogToolbar device_id={panel.device_id} />}
+                    panel={<EspHomeLogPanel device_id={panel.device_id} />} />;
             case "onboarding":
                 return <Onboarding panel={panel} />;
             default:
@@ -51,7 +78,7 @@ const components = {
     }
 };
 
-const tabComponents = {
+const dockViewTabComponents = {
     default: (p: IDockviewPanelHeaderProps<TPanelWithClick>) => {
         const panel = p.params;
         switch (panel.operation) {
@@ -70,7 +97,7 @@ export const PanelsContainer = () => {
     return <DockviewReact
         className={`absolute h-full w-full ${isDarkMode ? "dockview-theme-dark" : "dockview-theme-light"}`}
         onReady={(e) => panelsStore.initApi(e.api)}
-        components={components}
-        tabComponents={tabComponents}
+        components={dockViewComponents}
+        tabComponents={dockViewTabComponents}
     />;
 };

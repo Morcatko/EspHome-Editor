@@ -3,8 +3,12 @@ import { DockviewApi, DockviewDefaultTab, DockviewReact, IDockviewPanelProps } f
 import { useDarkTheme } from "@/app/utils/hooks";
 import { SingleEditor } from "../editors/single-editor";
 
+type TProps = {
+    device_id: string;
+    file_path: string;
+}
 
-const components = {
+const dockViewComponents  = {
     source: (p: IDockviewPanelProps) => {
         const data = useLocalFileStore(p.params.device_id, p.params.file_path);
         return <SingleEditor {...data.leftEditor} />;
@@ -18,11 +22,6 @@ const components = {
         return <SingleEditor {...data.testDataEditor!} />;
     },
 };
-
-type TProps = {
-    device_id: string;
-    file_path: string;
-}
 
 export const LocalFilePanel = (props: TProps) => {
     const isDarkMode = useDarkTheme();
@@ -61,7 +60,7 @@ export const LocalFilePanel = (props: TProps) => {
                 className={`absolute w-full ${isDarkMode ? "dockview-theme-dark" : "dockview-theme-light"}`}
                 onReady={(e) => onReady(e.api)}
                 defaultTabComponent={p => <DockviewDefaultTab {...p} hideClose />}
-                components={components} />
+                components={dockViewComponents} />
         </div>
         : <SingleEditor {...data.leftEditor} />
 

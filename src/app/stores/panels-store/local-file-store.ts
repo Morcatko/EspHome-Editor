@@ -2,7 +2,7 @@ import { api } from "@/app/utils/api-client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { TEditorFileProps } from "./types";
 import { TLocalFile, TLocalFileOrDirectory } from "@/server/devices/types";
-import { useDevicesStore } from "../devices-store";
+import { useDevice } from "../devices-store";
 import { queryToContent } from "./utils/query-utils";
 
 const findFile = (fods: TLocalFileOrDirectory[], file_path: string): TLocalFile | null => {
@@ -20,12 +20,15 @@ const findFile = (fods: TLocalFileOrDirectory[], file_path: string): TLocalFile 
     return null;
 }
 
-export const useLocalFileStore = (device_id: string, file_path: string) => {
-
-    const devices = useDevicesStore().query.data;
-    const device = devices?.find(d => d.id === device_id);
+export const useLocalFile = (device_id: string, file_path: string) => {
+   const device = useDevice(device_id);
     const file = findFile(device?.files ?? [], file_path)!;
+    return file;
+}
 
+export const useLocalFileStore = (device_id: string, file_path: string) => {
+    const file = useLocalFile(device_id, file_path);
+    
     const hasRightFile = (file != null) && (file.compiler !== "none");
 
 

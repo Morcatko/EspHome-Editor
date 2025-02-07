@@ -1,5 +1,5 @@
 import { atom, useAtom } from "jotai";
-import { TDevice, TLocalFileOrDirectory } from "@/server/devices/types";
+import { TLocalFileOrDirectory } from "@/server/devices/types";
 import { TPanel, TPanelWithClick } from "./panels-store/types";
 import { DockviewApi } from 'dockview-react';
 
@@ -37,10 +37,23 @@ function getPanelId(panel: TPanel) {
     }
 }
 
+export enum PanelMode {
+    Default,
+    NewWindow
+}
+
 export const usePanelsStore = () => {
     let [api, setApi] = useAtom(dockViewApiAtom);
 
-    const addDockViewPanel = (panel: TPanel) => {
+    const addPanel = (
+        mode: PanelMode,
+        panel: TPanel) => {
+        if (mode === PanelMode.NewWindow) {
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set('panel', JSON.stringify(panel));
+            window.open(currentUrl.toString(), '_blank')?.focus();
+        }
+
         if (!api) return;
 
         //generate ID from some hash
@@ -52,40 +65,28 @@ export const usePanelsStore = () => {
             existingPanel.api.updateParameters(params)
             existingPanel.focus();
         }
-        else
-            api.addPanel<TPanelWithClick>({
+        else {
+            const dockViewPanel = api.addPanel<TPanelWithClick>({
                 id: getPanelId(panel),
                 title: getPanelTitle(panel),
                 component: "default",
                 tabComponent: "default",
                 params: params,
             });
-    }
-
-    const addPanel = (
-        e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement> | null,
-        panel: TPanel) => {
-        if ((e as any)?.button === 1) {// Middle click
-            //Middle click does not work
-            const currentUrl = new URL(window.location.href);
-            currentUrl.searchParams.set('panel', JSON.stringify(panel));
-            window.open(currentUrl.toString(), '_blank')?.focus();
         }
-        else
-            addDockViewPanel(panel);
     }
 
     const addDevicePanel = (
-        e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>,
-        device: TDevice,
+        mode: PanelMode,
+        device_id: string,
         operation: TPanel["operation"],
         file: TLocalFileOrDirectory | undefined = undefined) => {
 
         const panel: TPanel = (operation === "local_file")
-            ? { device_id: device.id, operation, path: file!.path }
-            : { device_id: device.id, operation };
+            ? { device_id: device_id, operation, path: file!.path }
+            : { device_id: device_id, operation };
 
-        addPanel(e, panel);
+        addPanel(mode, panel);
     }
 
     const initApi = (_api: DockviewApi) => {
@@ -99,13 +100,13 @@ export const usePanelsStore = () => {
         try {
             const queryPanelString = new URLSearchParams(window.location.search).get('panel');
             const queryPanel = queryPanelString ? JSON.parse(queryPanelString) as TPanelWithClick : null;
-            if (queryPanel) addDockViewPanel(queryPanel);
+            if (queryPanel) addPanel(PanelMode.Default, queryPanel);
         } catch (err) { }
 
         const onboardingPanelProps: TPanel = { operation: "onboarding" };
         const id = getPanelId(onboardingPanelProps);
         if (!api.panels.find(p => p.id === id))
-            addDockViewPanel(onboardingPanelProps);
+            addPanel(PanelMode.Default, onboardingPanelProps);
 
         api.onDidLayoutChange(() => localStorage.setItem("e4e.dockView", JSON.stringify(api!.toJSON())));
 
