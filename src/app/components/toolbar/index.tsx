@@ -1,4 +1,8 @@
-import { ActionIcon, Divider, MantineColor, Tooltip } from "@mantine/core";
+import { ActionIcon, ActionIconGroup, ActionIconProps, Divider, MantineColor, Tooltip } from "@mantine/core";
+
+const allProps = {
+        variant: "subtle" as ActionIconProps["variant"],
+    }
 
 export type TToolbarButtonProps = {
     tooltip: string;
@@ -9,10 +13,10 @@ export type TToolbarButtonProps = {
     icon: React.ReactNode;
 }
 
-export const ToolbarButton = (p: TToolbarButtonProps) => {
+const ToolbarButton = (p: TToolbarButtonProps) => {
     return <Tooltip label={p.tooltip}>
         <ActionIcon
-            variant="subtle"
+            {...allProps}
             color={p.color}
             disabled={p.disabled}
             className={p.className}
@@ -23,5 +27,11 @@ export const ToolbarButton = (p: TToolbarButtonProps) => {
     </Tooltip>;
 }
 
-export const ToolbarDivider = () =>
-    <ActionIcon.GroupSection variant="subtle"><Divider orientation="vertical" /></ActionIcon.GroupSection>
+export const Toolbar = ActionIconGroup;
+
+export const ToolbarItem = {
+    AllProps: allProps,
+    Stretch: () => <ActionIcon.GroupSection {...allProps} w='100%' />,
+    Divider: () => <ActionIcon.GroupSection {...allProps} ><Divider orientation="vertical" /></ActionIcon.GroupSection>,
+    Button: ToolbarButton
+};

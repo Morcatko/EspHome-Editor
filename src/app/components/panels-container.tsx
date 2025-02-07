@@ -36,7 +36,7 @@ const Panel = (p: TPanelProps) => {
     </div>;
 }
 
-const components = {
+const dockViewComponents = {
     default: (p: IDockviewPanelProps<TPanelWithClick>) => {
         const panel = p.params;
         switch (panel.operation) {
@@ -68,7 +68,7 @@ const components = {
     }
 };
 
-const tabComponents = {
+const dockViewTabComponents = {
     default: (p: IDockviewPanelHeaderProps<TPanelWithClick>) => {
         const panel = p.params;
         switch (panel.operation) {
@@ -87,7 +87,7 @@ export const PanelsContainer = () => {
     return <DockviewReact
         className={`absolute h-full w-full ${isDarkMode ? "dockview-theme-dark" : "dockview-theme-light"}`}
         onReady={(e) => panelsStore.initApi(e.api)}
-        components={components}
-        tabComponents={tabComponents}
+        components={dockViewComponents}
+        tabComponents={dockViewTabComponents}
     />;
 };

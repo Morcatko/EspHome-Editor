@@ -96,11 +96,11 @@ async function localDevice_addFile(device: TDevice, parent_path: string) {
         );
 }
 
-async function localDevice_import(device: TDevice) {
+async function localDevice_import(device_id: string) {
     await showToast(
-        () => api.local_importDevice(device.id),
+        () => api.local_importDevice(device_id),
         [["devices"],
-        ["device", device.id, "local"]],
+        ["device", device_id, "local"]],
         "Creating...",
         "Created!",
         "Failed to Create",
@@ -158,6 +158,11 @@ async function local_deleteFoD(device: TDevice, file: TLocalFileOrDirectory) {
         );
 }
 
+export const useDevice = (device_id: string)=> {
+    const devices = useDevicesStore().query.data;
+    const device = devices?.find(d => d.id === device_id);
+    return device;
+}
 export const useDevicesStore = () => {
     const devicesQuery = useQuery({
         queryKey: ["devices"],

@@ -2,13 +2,47 @@ import { useLocalFile, useLocalFileStore } from "@/app/stores/panels-store/local
 import { DockviewApi, DockviewDefaultTab, DockviewReact, IDockviewPanelProps } from "dockview-react";
 import { useDarkTheme } from "@/app/utils/hooks";
 import { SingleEditor } from "../editors/single-editor";
-import { ActionIcon, ActionIconProps } from "@mantine/core";
-import { QuestionIcon  } from "@primer/octicons-react";
-import { DeviceToolbarButtons } from "../devices-tree/device-toolbar";
-import { PanelMode, usePanelsStore } from "@/app/stores/panels-store";
+import { ActionIcon } from "@mantine/core";
+import { QuestionIcon } from "@primer/octicons-react";
+import { DeviceToolbarItem } from "../devices-tree/device-toolbar";
+import { PanelMode } from "@/app/stores/panels-store";
+import { useDevice } from "@/app/stores/devices-store";
+import { Toolbar, ToolbarItem } from "../toolbar";
 
+type TProps = {
+    device_id: string;
+    file_path: string;
+}
 
-const components = {
+export const LocalFileToolbar = (props: TProps) => {
+    const device = useDevice(props.device_id)!;
+    const file = useLocalFile(props.device_id, props.file_path);
+
+    if (!file)
+        return null;
+
+    const compiler = file.compiler;
+    //const fileType = file.type;
+
+    const getHelpIcon = () => {
+        if (compiler === "none") {
+            return <ActionIcon {...ToolbarItem.AllProps} component="a" href="https://esphome.io/" target="_blank" ><QuestionIcon /></ActionIcon>
+        } else if (compiler === "etajs") {
+            return <ActionIcon {...ToolbarItem.AllProps} component="a" href="https://eta.js.org/docs" target="_blank" ><QuestionIcon /></ActionIcon>
+        } else {
+            return null;
+        }
+    }
+
+    return <Toolbar>
+        <DeviceToolbarItem.Diff device={device} panelMode={PanelMode.Floating} />
+        <DeviceToolbarItem.ESPHomeCompile device={device} panelMode={PanelMode.Floating} />
+        <ToolbarItem.Stretch />
+        {getHelpIcon()}
+    </Toolbar>
+}
+
+const dockViewComponents = {
     source: (p: IDockviewPanelProps) => {
         const data = useLocalFileStore(p.params.device_id, p.params.file_path);
         return <SingleEditor {...data.leftEditor} />;
@@ -22,47 +56,6 @@ const components = {
         return <SingleEditor {...data.testDataEditor!} />;
     },
 };
-
-type TProps = {
-    device_id: string;
-    file_path: string;
-}
-
-
-
-
-export const LocalFileToolbar = (props: TProps) => {
-    const panelsStore = usePanelsStore();
-    const file = useLocalFile(props.device_id, props.file_path);
-
-    if (!file)
-        return null;
-
-    const compiler = file.compiler;
-    //const fileType = file.type;
-
-    const getHelpIcon = () => {
-        if (compiler === "none"){
-            return <ActionIcon {...allProps} component="a" href="https://esphome.io/" target="_blank" ><QuestionIcon  /></ActionIcon>
-        } else if (compiler === "etajs"){
-            return <ActionIcon {...allProps} component="a" href="https://eta.js.org/docs" target="_blank" ><QuestionIcon  /></ActionIcon>
-        } else {
-            return null;
-        }
-    }
-
-
-    const allProps = {
-            variant: "subtle" as ActionIconProps["variant"],
-        }
-
-    return <ActionIcon.Group>
-        <DeviceToolbarButtons.Diff onClick={(e) => panelsStore.addPanel(e, { operation: "diff", device_id: props.device_id }, PanelMode.Floating)} />
-        <DeviceToolbarButtons.ESPHomeCompile onClick={(e) => panelsStore.addPanel(e, { operation: "esphome_compile", device_id: props.device_id }, PanelMode.Floating)} />
-        <ActionIcon.GroupSection {...allProps} w='100%' />
-        {getHelpIcon()}
-    </ActionIcon.Group>
-}
 
 export const LocalFilePanel = (props: TProps) => {
     const isDarkMode = useDarkTheme();
@@ -101,7 +94,7 @@ export const LocalFilePanel = (props: TProps) => {
                 className={`absolute w-full ${isDarkMode ? "dockview-theme-dark" : "dockview-theme-light"}`}
                 onReady={(e) => onReady(e.api)}
                 defaultTabComponent={p => <DockviewDefaultTab {...p} hideClose />}
-                components={components} />
+                components={dockViewComponents} />
         </div>
         : <SingleEditor {...data.leftEditor} />
 
