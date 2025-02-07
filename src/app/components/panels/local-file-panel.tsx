@@ -4,6 +4,8 @@ import { useDarkTheme } from "@/app/utils/hooks";
 import { SingleEditor } from "../editors/single-editor";
 import { ActionIcon, ActionIconProps } from "@mantine/core";
 import { QuestionIcon  } from "@primer/octicons-react";
+import { DeviceToolbarButtons } from "../devices-tree/device-toolbar";
+import { PanelMode, usePanelsStore } from "@/app/stores/panels-store";
 
 
 const components = {
@@ -30,6 +32,7 @@ type TProps = {
 
 
 export const LocalFileToolbar = (props: TProps) => {
+    const panelsStore = usePanelsStore();
     const file = useLocalFile(props.device_id, props.file_path);
 
     if (!file)
@@ -54,6 +57,8 @@ export const LocalFileToolbar = (props: TProps) => {
         }
 
     return <ActionIcon.Group>
+        <DeviceToolbarButtons.Diff onClick={(e) => panelsStore.addPanel(e, { operation: "diff", device_id: props.device_id }, PanelMode.Floating)} />
+        <DeviceToolbarButtons.ESPHomeCompile onClick={(e) => panelsStore.addPanel(e, { operation: "esphome_compile", device_id: props.device_id }, PanelMode.Floating)} />
         <ActionIcon.GroupSection {...allProps} w='100%' />
         {getHelpIcon()}
     </ActionIcon.Group>
