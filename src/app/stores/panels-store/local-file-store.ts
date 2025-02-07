@@ -20,12 +20,16 @@ const findFile = (fods: TLocalFileOrDirectory[], file_path: string): TLocalFile 
     return null;
 }
 
-export const useLocalFileStore = (device_id: string, file_path: string) => {
-
+export const useLocalFile = (device_id: string, file_path: string) => {
     const devices = useDevicesStore().query.data;
     const device = devices?.find(d => d.id === device_id);
     const file = findFile(device?.files ?? [], file_path)!;
+    return file;
+}
 
+export const useLocalFileStore = (device_id: string, file_path: string) => {
+    const file = useLocalFile(device_id, file_path);
+    
     const hasRightFile = (file != null) && (file.compiler !== "none");
 
 
