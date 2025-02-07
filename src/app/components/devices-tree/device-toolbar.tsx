@@ -52,7 +52,6 @@ const DTB_Device = (p: TDeviceToolbarButtonProps_Device) => {
     return <ToolbarItem.Button {...p} onClick={() => p.onClick(devicesStore)} />;
 }
 
-
 export const DeviceToolbarItem = {
     LocalShow: (p: TDeviceToolbarItemProps) => <DTB_Panel tooltip="Show local yaml configuration" icon={<CodeIcon />} operation="local_device" {...p} />,
     LocalImport: (p: TDeviceToolbarItemProps) => <DTB_Device tooltip="Import yaml configuration" icon={<DownloadIcon />} onClick={(ds) => ds.localDevice_import(p.device.id)} {...p} />,
