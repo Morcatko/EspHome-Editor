@@ -79,6 +79,9 @@ type TNodeProps = {
     nodePayload: RenderTreeNodePayload;
     children: React.ReactNode;
     onClick?: React.MouseEventHandler;
+    icon?: React.ReactNode;
+    menuItems?: React.ReactNode[];
+    hideExpander?: boolean;
 }
 
 const Node = (p: TNodeProps) => {
@@ -89,21 +92,43 @@ const Node = (p: TNodeProps) => {
         {...elementProps}
         onClick={p.onClick ? p.onClick : (e) => tree.toggleExpanded(node.value)}
     >
-        <ChevronRightIcon
-            className={hasChildren ? "visible" : "invisible"}
-            size={18}
-            style={{ transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
-        />
+        {!p.hideExpander && <ChevronRightIcon
+            className={`${hasChildren ? "visible" : "invisible"} ${expanded ? "rotate-90" : "rotate-0"}`}
+            size={18} />
+        }
+        {p.icon}
         {p.children}
+        <span className="grow" />
+        {p.menuItems &&
+            <Menu width={150}>
+                <MenuTarget />
+                <Menu.Dropdown>
+                    {p.menuItems}
+                </Menu.Dropdown>
+            </Menu>
+        }
     </Group>;
 }
 
+const deviceMenuItems = (ds: ReturnType<typeof useDevicesStore>, d: TDevice) => [
+    <MenuItem key="nf" label="New File..." icon={<FileCodeIcon />} onClick={() => ds.localDevice_addFile(d, "/")} />,
+    <MenuItem key="nd" label="New Folder..." icon={<FileDirectoryIcon />} onClick={() => ds.localDevice_addDirectory(d, "/")} />
+]
+
+const fileMenuItems = (ds: ReturnType<typeof useDevicesStore>, d: TDevice, fod: TLocalFileOrDirectory) => [
+    <MenuItem key="rn" label="Rename..." icon={<PencilIcon />} onClick={() => ds.local_renameFoD(d, fod)} />,
+    <MenuItem key="dl" label="Delete..." icon={<XIcon />} onClick={() => ds.local_deleteFoD(d, fod)} />,
+];
+
+const directoryMenuItems = (ds: ReturnType<typeof useDevicesStore>, d: TDevice, fod: TLocalFileOrDirectory) => [
+    <MenuItem key="nf" label="New File..." icon={<FileCodeIcon />} onClick={() => ds.localDevice_addFile(d, fod.path)} />,
+    <MenuItem key="nd" label="New Folder..." icon={<FileDirectoryIcon />} onClick={() => ds.localDevice_addDirectory(d, fod.path)} />,
+    <Menu.Divider key="di" />,
+    ...fileMenuItems(ds, d, fod),
+]
+
 const nodeRenderer = (p: RenderTreeNodePayload) => {
-    const hasChildren = p.hasChildren;
-    const expanded = p.expanded;
-    const elementProps = p.elementProps;
     const node = p.node as TreeNodeType;
-    const tree = p.tree;
     const panels = usePanelsStore();
     const devicesStore = useDevicesStore();
     const pingQuery = useQuery({
@@ -121,34 +146,44 @@ const nodeRenderer = (p: RenderTreeNodePayload) => {
 
     switch (node.type) {
         case "add_new_device":
-            return <Node nodePayload={p} onClick={() => devicesStore.localDevice_create()}>
-                <PlusIcon />
+            return <Node
+                icon={<PlusIcon />}
+                nodePayload={p}
+                onClick={() => devicesStore.localDevice_create()}>
                 <span className="font-semibold text-(color:--foreground)">New Device</span>
             </Node>
         case "device":
-            return <Node nodePayload={p}>
-                <LightBulbIcon fill={getDeviceColor(node.device)} />
-                {node.label}
+            return <Node
+                nodePayload={p}
+                icon={<LightBulbIcon fill={getDeviceColor(node.device)} />}
+                menuItems={deviceMenuItems(devicesStore, node.device)} >
+                <span className="font-semibold">{node.label}</span>
             </Node>
         case "device_toolbar":
-            return <Node nodePayload={p}>
+            return <Node nodePayload={p} hideExpander>
                 <DeviceToolbar device={node.device} />
             </Node>;
         case "root_lib":
-            return <Node nodePayload={p}>
-                <FileDirectoryIcon />
-                {node.label}
+            return <Node
+                nodePayload={p}
+                icon={<FileDirectoryIcon />}
+                menuItems={deviceMenuItems(devicesStore, node.device)} >
+                <span className="font-semibold">{node.label}</span>
             </Node>
-        case "directory":
-            return <Node nodePayload={p}>
-                <FileTypeIcon fod={node.fod} />
+        case "directory": 
+            return <Node
+                nodePayload={p}
+                icon={<FileDirectoryIcon />}
+                menuItems={directoryMenuItems(devicesStore, node.device, node.fod)}>
                 {node.label}
-            </Node>
+            </Node>;
         case "file":
-            return <Node nodePayload={p} onClick={(e) => panels.addDevicePanel(((e as any).button === 1) ? PanelMode.NewWindow : PanelMode.Default, node.device.id, "local_file", node.fod)}>
-                <div style={{ opacity: "55%" }}>
-                    <FileTypeIcon fod={node.fod} />
-                </div>
+            return <Node
+                nodePayload={p}
+                icon={<div className="opacity-55"><FileTypeIcon fod={node.fod} /></div>}
+                onClick={(e) => panels.addDevicePanel(((e as any).button === 1) ? PanelMode.NewWindow : PanelMode.Default, node.device.id, "local_file", node.fod)}
+                menuItems={fileMenuItems(devicesStore, node.device, node.fod)}
+            >
                 {node.label}
             </Node>;
         case "directory_empty":
@@ -160,13 +195,23 @@ const nodeRenderer = (p: RenderTreeNodePayload) => {
 export const DevicesTree = () => {
     const devicesStore = useDevicesStore();
     const exp = devicesStore.expanded;
-
+    const tree = useTree({
+        initialExpandedState: exp.expanded,
+        onNodeExpand: (node) => exp.set(node, true),
+        onNodeCollapse: (node) => exp.set(node, false)
+    });
     const treeData = useTreeData();
-    console.log(treeData);
 
+    console.log("render");
     return <Tree
+        //Workaround for https://github.com/mantinedev/mantine/issues/7266
+        tree={{ ...tree, setHoveredNode: () => { } }}
         data={treeData}
         renderNode={nodeRenderer}
+        className="text-sm"
+        classNames={{
+            label: "hover:bg-gray-100 py-px",
+        }}
     />
 
    /* return (
@@ -206,9 +251,7 @@ export const DevicesTree = () => {
                         <Menu width={150}>
                             <MenuTarget />
                             <Menu.Dropdown>
-                                <MenuItem label="New File..." icon={<FileCodeIcon />} onClick={() => devicesStore.localDevice_addFile(d, "/")} />
-                                <MenuItem label="New Folder..." icon={<FileDirectoryIcon />} onClick={() => devicesStore.localDevice_addDirectory(d, "/")} />
-                            </Menu.Dropdown>
+                                 </Menu.Dropdown>
                         </Menu>
                     </TreeView.TrailingVisual>
                 </TreeView.Item>;

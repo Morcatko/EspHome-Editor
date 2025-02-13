@@ -1,6 +1,7 @@
 import { useDevicesStore } from "@/app/stores/devices-store";
 import { TDevice, TLocalDirectory, TLocalFile, TLocalFileOrDirectory } from "@/server/devices/types";
 import { TreeNodeData } from "@mantine/core";
+import { useMemo } from "react";
 
 export type TreeNodeType = TreeNodeData & ({
     type: "add_new_device"
@@ -52,14 +53,13 @@ export const useTreeData = () => {
     if (!devicesStore.query.isSuccess)
         return [];
 
-    return [{
+    const data = devicesStore.query.data;
+    return useMemo(() => [{
             type: "add_new_device",
             value: "add_new_device",
             label: "New Device"
             },
-            ...devicesStore
-                .query
-                .data
+            ...data
                 .map<TreeNodeType>((d) => {
                     const isLib = d.name == ".lib";
                     const children: TreeNodeType[] = isLib 
@@ -80,5 +80,5 @@ export const useTreeData = () => {
                         children
                     };
                 })
-        ];
+        ], data);
 }

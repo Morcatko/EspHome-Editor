@@ -4,7 +4,7 @@ import { api } from "../utils/api-client";
 import { queryClient } from ".";
 import { useQuery } from "@tanstack/react-query";
 import { useLocalStorage } from "usehooks-ts";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { openConfirmationDialog } from "../components/dialogs/confirmation-dialog";
 import { openInputTextDialog } from "../components/dialogs/input-text-dialog";
 import { notifications } from "@mantine/notifications";
@@ -16,7 +16,7 @@ const useDeviceExpandedStore = () => {
     });
 
     return {
-        get: useCallback((id: string) => value.includes(id), [value]),
+        expanded: useMemo(() => value.reduce((acc, id) => { acc[id] = true; return acc }, {} as any), [value]),
         set: useCallback((id: string, expanded: boolean) => {
             if (expanded) {
                 setValue([...value, id]);
