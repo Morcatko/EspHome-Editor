@@ -16,7 +16,7 @@ const useDeviceExpandedStore = () => {
     });
 
     return {
-        expanded: useMemo(() => value.reduce((acc, id) => { acc[id] = true; return acc }, {} as any), [value]),
+        expanded: useMemo<Record<string, boolean>>(() => value.reduce((acc, id) => { acc[id] = true; return acc }, {} as any), [value]),
         set: useCallback((id: string, expanded: boolean) => {
             if (expanded) {
                 setValue([...value, id]);
