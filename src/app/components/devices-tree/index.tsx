@@ -10,7 +10,7 @@ import { useDevicesStore } from "../../stores/devices-store";
 import { PanelMode, usePanelsStore } from "../../stores/panels-store";
 import { Group, RenderTreeNodePayload, Tree, useTree } from "@mantine/core";
 import { DeviceToolbar } from "./device-toolbar";
-import { deviceMenuItems, fodMenuItems, ThreeDotsMenu } from "./menus";
+import { ThreeDotsMenu, deviceMenuItems, fodMenuItems } from "./menus";
 import { TreeNodeType, useTreeData } from "./utils";
 import React from "react";
 
