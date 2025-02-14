@@ -4,7 +4,7 @@ import { Anchor, Loader } from "@mantine/core";
 import Image from "next/image";
 import { DevicesTree } from "./components/devices-tree";
 import { PanelsContainer } from "./components/panels-container";
-import { useDevicesStore } from "./stores/devices-store";
+import { useDevicesQuery } from "./stores/devices-store";
 import { useStatusStore } from "./stores/status-store";
 import { PanelMode, usePanelsStore } from "./stores/panels-store";
 import { openAboutDialog } from "./components/dialogs/about-dialog";
@@ -20,14 +20,12 @@ const Header = () => {
 	</div>
 }
 
-
-
 const Page = () => {
 	const statusStore = useStatusStore();
-	const devicesStore = useDevicesStore();
+	const devicesQuery = useDevicesQuery();
 
 
-	return (devicesStore.query.isLoading)
+	return (devicesQuery.isLoading)
 		? <div className="h-screen flex items-center justify-center">
 			<Loader className="content-center" />
 		</div>
