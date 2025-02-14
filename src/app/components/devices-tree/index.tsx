@@ -45,7 +45,7 @@ const Node = (p: TNodeProps) => {
         onClick={p.onClick ? p.onClick : (e) => tree.toggleExpanded(node.value)}
     >
         {!p.hideExpander && <ChevronRightIcon
-            className={`${hasChildren ? "visible" : "invisible"} ${expanded ? "rotate-90" : "rotate-0"}`}
+            className={`transition-transform ${hasChildren ? "visible" : "invisible"} ${expanded ? "rotate-90" : "rotate-0"}`}
             size={18} />
         }
         {p.icon}
@@ -137,7 +137,7 @@ export const DevicesTree = () => {
         renderNode={nodeRenderer}
         className="text-sm"
         classNames={{
-            label: "hover:bg-gray-100 py-px",
+            label: "dark:hover:bg-gray-800 hover:bg-gray-100 py-px",
         }}
     />
 };
