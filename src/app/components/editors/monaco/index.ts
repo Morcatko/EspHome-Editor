@@ -16,7 +16,6 @@ const initEspHomeLanguage = () => {
   const hoverHandler = new HoverHandler(documents);
   monaco.languages.registerHoverProvider("esphome", {
     provideHover: async function (model, position) {
-      console.log("provideHover", model.uri.toString(), position);
       documents.update(model.uri.toString(), new TextBuffer(model));
       const hover = await hoverHandler.getHover(
         model.uri.toString(),
@@ -29,7 +28,6 @@ const initEspHomeLanguage = () => {
   const completionsHandler = new CompletionsHandler(documents);
   monaco.languages.registerCompletionItemProvider("esphome", {
     provideCompletionItems: async function (model, position) {
-      console.log("provideCompletionItems", model.uri.toString(), position);
       documents.update(model.uri.toString(), new TextBuffer(model));
       const completions = await completionsHandler.getCompletions(
         model.uri.toString(),

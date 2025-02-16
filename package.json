@@ -9,6 +9,7 @@
     "lint": "next lint",
     "test": "vitest",
     "postinstall": "npx --yes next-ws-cli@latest patch -y",
+    "setup": "npx tsx ./prepare.mts",
     "tasks": "npx tsx --env-file=.env.local ./tasks.mts"
   },
   "dependencies": {
@@ -49,6 +50,7 @@
     "eslint": "^9.19.0",
     "eslint-config-next": "^15.1.6",
     "execa": "^9.5.2",
+    "monaco-editor-webpack-plugin": "^7.1.0",
     "postcss": "^8.5.1",
     "postcss-preset-mantine": "^1.17.0",
     "postcss-simple-vars": "^7.0.1",
