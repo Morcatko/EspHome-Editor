@@ -1,39 +1,49 @@
 import { log } from "@/shared/log";
 import * as YAML from "yaml";
 
-const mergeEspHomeYamls = (target: YAML.Document, yaml2: YAML.Document) => {
+const mergeEspHomeYamls = (target: YAML.Document, source: YAML.Document) => {
+    if (!source.contents) {
+        return;
+    }
+
     if (!target.contents) {
         target.contents = new YAML.YAMLMap<YAML.Scalar<string>, unknown>();
     }
-    const target_content = target.contents as YAML.YAMLMap<
+    const tgtContent = target.contents as YAML.YAMLMap<
         YAML.Scalar<string>,
         unknown
     >;
 
-    const add_content = yaml2.contents as YAML.YAMLMap<
+    const srcContent = source.contents as YAML.YAMLMap<
         YAML.Scalar<string>,
         unknown
     >;
-    const result_items = target_content.items;
+    const tgtItems = tgtContent.items;
 
-    add_content.items.forEach((item) => {
-        const key = item.key.value;
-        const result_item = result_items.find((i) => i.key.value === key);
-        if (!result_item) {
-            result_items.push(item);
+    srcContent.items.forEach((srcItem) => {
+        const key = srcItem.key.value;
+        const tgtItem = tgtItems.find((i) => i.key.value === key);
+        if (!tgtItem) {
+            tgtItems.push(srcItem);
         } else {
-            if (
-                (result_item.value instanceof YAML.YAMLSeq) &&
-                (item.value instanceof YAML.YAMLSeq)
-            ) {
-                const result_values = result_item.value as YAML.YAMLSeq;
-                const add_values = item.value as YAML.YAMLSeq;
-                add_values.items.forEach((add_value) =>
-                    result_values.items.push(add_value)
-                );
-            } else {
-                //unsupported merge
+            if (!(srcItem.value instanceof YAML.YAMLSeq)) {
+                //Unsupported merge
+                return;
             }
+            if ((tgtItem.value instanceof YAML.Scalar) && (tgtItem.value.value === null)) {
+                tgtItem.value = srcItem.value;
+                return;
+            }
+            if (!(tgtItem.value instanceof YAML.YAMLSeq)) {
+                //Unsupported merge
+                return
+            }
+
+            const tgtValues = tgtItem.value as YAML.YAMLSeq;
+            const srcValues = srcItem.value as YAML.YAMLSeq;
+            srcValues.items.forEach((srcValue) =>
+                tgtValues.items.push(srcValue)
+            );
         }
     });
 };

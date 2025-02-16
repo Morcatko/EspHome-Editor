@@ -7,13 +7,14 @@ COPY next-env.d.ts ./
 COPY next.config.ts ./
 COPY package.json ./
 COPY postcss.config.mjs ./
-COPY tailwind.config.ts ./
 COPY tsconfig.json ./
+COPY vitest.config.ts ./
 COPY yarn.lock ./
 
-RUN yarn --frozen-lockfile
+RUN --mount=type=cache,target=/root/.yarn YARN_CACHE_FOLDER=/root/.yarn yarn --frozen-lockfile
 
 COPY src ./src
+RUN yarn test run
 RUN yarn build
 
 FROM node:current-alpine AS run

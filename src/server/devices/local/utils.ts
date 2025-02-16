@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import { c } from "@/server/config";
-import { directoryExists } from "@/server/utils/dir-utils";
+import { directoryExists } from "@/server/utils/fs-utils";
 import { join } from "node:path";
 
 export const getDeviceDir = (device_id: string) =>

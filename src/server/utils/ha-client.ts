@@ -33,7 +33,7 @@ const findEspHomeAddon = async (haUrl: string, haToken: string) => {
 //     return `http://${config.host}:${config.port}`;
 // }
 
-export const getEspHomeUrl = async (haUrl: string, haToken: string) => {
+export const getEspHomeUrls = async (haUrl: string, haToken: string) => {
     log.debug("Getting ESPHome URL");
     try {
         const espHomeAddon = await findEspHomeAddon(haUrl, haToken);
@@ -41,7 +41,10 @@ export const getEspHomeUrl = async (haUrl: string, haToken: string) => {
 
         const addon = await ha_getJson(haUrl, haToken, `addons/${espHomeSlug}/info`);
         const port = addon.data.ingress_port
-        return `http://localhost:${port}`;
+        return {
+            apiUrl: `http://localhost:${port}`,
+            webUrl: `/${espHomeSlug}`
+        };
     } catch (e) {
         log.error("Error finding ESPHome addon", e);
     }

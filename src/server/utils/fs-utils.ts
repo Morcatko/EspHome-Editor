@@ -10,6 +10,8 @@ export const directoryExists = async (path: string) => {
   }
 };
 
+export const fileExists = directoryExists;
+
 export async function listDirEntries(
   path: string,
   predicate: (item: Dirent) => boolean | Promise<boolean>,

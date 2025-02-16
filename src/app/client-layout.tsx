@@ -1,10 +1,8 @@
 "use client";
 import { useEffect } from "react";
 import { loader } from "@monaco-editor/react";
-import { ThemeProvider, BaseStyles } from '@primer/react'
-import { queryClient, rootStore, RootStoreContext } from "./stores";
-import { InputTextDialog } from "./components/dialogs/input-text-dialog";
-import { ConfirmationDialog } from "./components/dialogs/confirmation-dialog";
+import { ThemeProvider } from '@primer/react'
+import { queryClient } from "./stores";
 import { QueryClientProvider } from "@tanstack/react-query";
 
 export function ClientLayout({
@@ -14,23 +12,15 @@ export function ClientLayout({
 }>) {
 
   useEffect(() => {
-    if (typeof window !== undefined) {
-      (window as any).rootStore = rootStore;
-    }
-    //Monaco editor based on https://github.com/graphql/graphiql/blob/main/examples/monaco-graphql-nextjs/next.config.js
     import('monaco-editor')
       .then((monaco) =>
         loader.config({ monaco }));
   });
 
-  return (<RootStoreContext.Provider value={rootStore}>
-    <QueryClientProvider client={queryClient}>
+  return (<QueryClientProvider client={queryClient}>
       <ThemeProvider colorMode="auto" preventSSRMismatch>
         {children}
-        <InputTextDialog />
-        <ConfirmationDialog />
       </ThemeProvider>
     </QueryClientProvider>
-  </RootStoreContext.Provider>
   );
 }

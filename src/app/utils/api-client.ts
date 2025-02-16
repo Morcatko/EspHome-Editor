@@ -1,5 +1,4 @@
 import { assertResponseAndJsonOk, assertResponseOk } from "@/shared/http-utils";
-import { log } from "@/shared/log";
 import { TGetStatus } from "../api/status/route";
 
 export namespace api {
@@ -81,13 +80,21 @@ export namespace api {
         return await callPostPut("POST", url, content, throwOnError);
     }
 
-    async function callPut(url: string, content: string): Promise<TCallResult> {
+    async function callPut(url: string, content: string | null): Promise<TCallResult> {
         return await callPostPut("PUT", url, content, true);
     }
 
     export const url_device = (device_id: string, suffix: string = "") => `/api/device/${encodeURIComponent(device_id)}/${suffix}`;
     export const url_local_path = (device_id: string, path: string, suffix: string = "") =>
         url_device(device_id, `/local/${fixPath(path)}/${suffix}`);
+
+    export async function local_createDevice(device_id: string) {
+        await callPut(url_device(device_id, "local"), null);
+    }
+
+    export async function local_importDevice(device_id: string) {
+        await callPost(url_device(device_id, "local"), null);
+    }
 
     export async function local_createDirectory(device_id: string, directory_path: string) {
         await callPut(url_local_path(device_id, directory_path), "directory");
@@ -97,21 +104,34 @@ export namespace api {
         await callPut(url_local_path(device_id, directory_path), "file");
     }
 
-    export async function local_save(device_id: string, file_path: string, content: string) {
+    export async function local_path_save(device_id: string, file_path: string, content: string) {
         await callPost(url_local_path(device_id, file_path), content, true);
     }
 
-    export async function local_rename(device_id: string, path: string, newName: string) {
+    export async function local_path_rename(device_id: string, path: string, newName: string) {
         await callPost(url_local_path(device_id, path, `rename_to/${fixPath(newName)}`), "", true);
     }
 
-    export async function local_delete(device_id: string, path: string) {
+    export async function local_path_delete(device_id: string, path: string) {
         await callDelete(url_local_path(device_id, path));
     }
 
-    export async function local_path_compile(device_id: string, path: string, test_content: string | undefined) {
-        return await callPost(url_local_path(device_id, path, "compile"), test_content ?? "", false);
+    export async function local_path_get(device_id: string, path: string) {
+        return await callGet_text(url_local_path(device_id, path));
     }
+
+    export async function local_path_compiled(device_id: string, path: string) {
+        return await callGet_text(url_local_path(device_id, path, "compiled"));
+    }
+
+    export async function local_path_testData_get(device_id:string, path: string) {
+        return await callGet_text(url_local_path(device_id, path, "test-data"));        
+    }
+
+    export async function local_path_testData_post(device_id:string, path: string, content: string) {
+        return await callPost(url_local_path(device_id, path, "test-data"), content);        
+    }
+
 
     export async function getStatus() {
         return await callGet_json<TGetStatus>("/api/status");
@@ -119,33 +139,5 @@ export namespace api {
 
     export async function getPing() {
         return await callGet_json("/api/device/ping");
-    }
-
-    export async function getStream(
-        url: string,
-        onMessage: (message: string) => void,
-    ) {
-        const finalUrl = getWsUrl(url);
-
-        const ws = new WebSocket(finalUrl);
-        ws.onmessage = (ev) => {
-            const msg = JSON.parse(ev.data);
-            switch (msg.event) {
-                case "completed":
-                    log.verbose("Stream completed");
-                    ws.close();;
-                    break;
-                case "error":
-                    log.error("Stream error", msg.data);
-                    ws.close();
-                    break;
-                case "message":
-                    onMessage(msg.data as string);
-                    break;
-                default:
-                    log.warn("Unknown event", msg);
-                    break;
-            }
-        };
     }
 }

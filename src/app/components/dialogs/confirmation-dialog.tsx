@@ -1,33 +1,29 @@
-import { Dialog } from "@primer/react"
-import { observer } from "mobx-react-lite";
-import { useStore } from "@/app/stores";
-import { TCommonModalStoreData } from "./common-dialog-store";
+import { modals } from "@mantine/modals";
 
-export type TConfirmationModalStoreData = TCommonModalStoreData & {
+type TContentProps = {
+  subtitle: string;
   text: string;
 }
 
-export const ConfirmationDialog = observer(() => {
-  const modalStore = useStore().confirmationDialog;
+const ConfirmationDialogContent = (props: TContentProps) => <>
+  <div>{props.subtitle}</div>
+  <div>{props.text}</div>
+</>;
 
-  return modalStore.isOpen &&
-    <Dialog
-      title={modalStore.storeData.title}
-      subtitle={modalStore.storeData.subtitle}
-      onClose={() => modalStore.onClose()}
-      footerButtons={[
-        {
-          buttonType: modalStore.storeData.confirmButtonType ?? 'default',
-          content: modalStore.storeData.cancelLabel ?? 'Cancel',
-          onClick: () => modalStore.onCancel(),
-        },
-        {
-          buttonType: modalStore.storeData.confirmButtonType ?? 'primary',
-          content: modalStore.storeData.confirmLabel ?? 'Confirm',
-          onClick: () => modalStore.onConfirm()
-        },
-      ]}
-    >
-      {modalStore.storeData.text}
-    </Dialog>;
-});
+type TDialogProps = {
+  title: string;
+  subtitle: string;
+  text: string;
+  danger: boolean
+}
+export const openConfirmationDialog = (props: TDialogProps) =>
+  new Promise<boolean>((res, rej) =>
+    modals.openConfirmModal({
+      title: props.title,
+      children: <ConfirmationDialogContent subtitle={props.subtitle} text={props.text} />,
+      labels: { confirm: 'Confirm', cancel: 'Cancel' },
+      confirmProps: { color: props.danger ? "red" : "default" },
+      onConfirm: () => res(true),
+      onCancel: () => res(false),
+    })
+  );
