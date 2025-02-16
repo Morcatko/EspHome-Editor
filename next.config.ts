@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: false,
   },
   //https://github.com/Chenalejandro/next.js/blob/add-monaco-editor-example/examples/monaco-editor/next.config.mjs
+  //https://github.com/microsoft/monaco-editor/blob/main/docs/integrate-esm.md
   webpack: (config, options) => {
     if (!options.isServer) {
       config.plugins.push(

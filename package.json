@@ -9,7 +9,7 @@
     "lint": "next lint",
     "test": "vitest",
     "postinstall": "npx --yes next-ws-cli@latest patch -y",
-    "setup": "npx tsx ./prepare.mts",
+    "setup": "npx tsx ./setup.mts",
     "tasks": "npx tsx --env-file=.env.local ./tasks.mts"
   },
   "dependencies": {
