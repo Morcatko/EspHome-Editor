@@ -68,7 +68,7 @@ export const useLocalFileStore = (device_id: string, file_path: string) => {
     return {
         leftEditor: <TEditorFileProps>{
             value: queryToContent(leftQuery),
-            language: "yaml",
+            language: "esphome",
             onValueChange: (v) => leftMutation.mutate(v),
         },
         rightEditor: hasRightFile

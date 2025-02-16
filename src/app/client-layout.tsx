@@ -1,21 +1,16 @@
 "use client";
 import { useEffect } from "react";
-import { loader } from "@monaco-editor/react";
 import { ThemeProvider } from '@primer/react'
 import { queryClient } from "./stores";
 import { QueryClientProvider } from "@tanstack/react-query";
+import { nextMonacoInit } from "./components/editors/monaco/next-init";
 
 export function ClientLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
-  useEffect(() => {
-    import('monaco-editor')
-      .then((monaco) =>
-        loader.config({ monaco }));
-  });
+  useEffect(() => nextMonacoInit(), []);
 
   return (<QueryClientProvider client={queryClient}>
       <ThemeProvider colorMode="auto" preventSSRMismatch>
