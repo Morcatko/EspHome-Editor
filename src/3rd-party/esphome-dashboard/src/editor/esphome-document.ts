@@ -235,7 +235,6 @@ export class ESPHomeDocuments {
   private documents: { [uri: string]: ESPHomeDocument } = {};
 
   update(uri: string, buffer: TextBuffer) {
-    console.log("update", uri);
     const doc = this.documents[uri];
     if (doc === undefined) {
       this.documents[uri] = new ESPHomeDocument(buffer);
@@ -245,7 +244,6 @@ export class ESPHomeDocuments {
   }
 
   public getDocument(uri: string): ESPHomeDocument {
-    console.log("getDocument", uri);
     return this.documents[uri];
   }
 }
