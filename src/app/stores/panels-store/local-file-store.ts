@@ -69,7 +69,7 @@ export const useLocalFileStore = (device_id: string, file_path: string) => {
     return {
         leftEditor: <TEditorFileProps>{
             value: queryToContent(leftQuery),
-            language: esphomeLanguageId,
+            language: esphomeLanguageId, //TODO - can be etajs (or anything else)
             onValueChange: (v) => leftMutation.mutate(v),
         },
         rightEditor: hasRightFile

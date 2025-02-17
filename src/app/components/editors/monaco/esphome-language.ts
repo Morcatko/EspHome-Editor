@@ -1,4 +1,4 @@
-import * as monaco from "monaco-editor/esm/vs/editor/editor.api";
+import type { languages } from "monaco-editor/esm/vs/editor/editor.api";
 
 import { ESPHomeDocuments } from "@3rd-party/esphome-dashboard/src/editor/esphome-document";
 import { HoverHandler } from "@3rd-party/esphome-dashboard/src/editor/hover-handler";
@@ -9,17 +9,30 @@ import { TextBuffer } from "@3rd-party/esphome-dashboard/src/editor/utils/text-b
 
 //Taken from https://github.com/microsoft/monaco-editor/blob/main/src/basic-languages/_.contribution.ts
 interface ILangImpl {
-    conf: monaco.languages.LanguageConfiguration;
-    language: monaco.languages.IMonarchLanguage;
+    conf: languages.LanguageConfiguration;
+    language: languages.IMonarchLanguage;
 }
 
 export const esphomeLanguageId = "esphome";
 
 //based on https://github.com/esphome/dashboard/blob/main/src/editor/monaco-provider.ts
 export const initEspHomeLanguage = async () => {
-    const documents = new ESPHomeDocuments();
+    const monaco = await import("monaco-editor/esm/vs/editor/editor.api");
 
     monaco.languages.register({ id: esphomeLanguageId });
+
+    //esphome is exact copy of YAML language so make a deep-copy of it and reuse
+    const yaml = monaco.languages.getLanguages().find((lang) => lang.id === "yaml")
+    const res = await (yaml as any).loader() as ILangImpl;
+    const esphomeLanguageConfig = structuredClone(res.conf);
+    const espHomeMonarchTokens = structuredClone(res.language);
+    delete espHomeMonarchTokens["languageId"];
+
+    monaco.languages.setLanguageConfiguration(esphomeLanguageId, esphomeLanguageConfig);
+    monaco.languages.setMonarchTokensProvider(esphomeLanguageId, espHomeMonarchTokens);
+
+    
+    const documents = new ESPHomeDocuments();
 
     const hoverHandler = new HoverHandler(documents);
     monaco.languages.registerHoverProvider(esphomeLanguageId, {
@@ -68,13 +81,5 @@ export const initEspHomeLanguage = async () => {
     });
 
 
-    //esphome is exact copy of YAML language so make a deep-copy of it and reuse
-    const yaml = monaco.languages.getLanguages().find((lang) => lang.id === "yaml")
-    const res = await (yaml as any).loader() as ILangImpl;
-    const esphomeLanguageConfig = structuredClone(res.conf);
-    const espHomeMonarchTokens = structuredClone(res.language);
-    delete espHomeMonarchTokens["languageId"];
 
-    monaco.languages.setLanguageConfiguration(esphomeLanguageId, esphomeLanguageConfig);
-    monaco.languages.setMonarchTokensProvider(esphomeLanguageId, espHomeMonarchTokens);
 }

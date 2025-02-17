@@ -55,12 +55,12 @@ export const Section = ({ step, title, children }: TSectionProps) => {
     </>;
 }
 
-export const Editor = (p: { heightPx: number, code: string, language?: string }) =>
+export const Editor = (p: { heightPx: number, code: string, language: string }) =>
     <div className="my-2">
         <div
             style={{ height: `${p.heightPx}px` }}>
             <SingleEditor
-                language={p.language ?? esphomeLanguageId}
+                language={p.language}
                 value={{
                     pending: false,
                     error: false,
