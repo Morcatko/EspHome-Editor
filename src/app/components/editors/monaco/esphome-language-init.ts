@@ -7,16 +7,16 @@ import { DefinitionHandler } from "@3rd-party/esphome-dashboard/src/editor/defin
 import { fromMonacoPosition } from "@3rd-party/esphome-dashboard/src/editor/editor-shims";
 import { TextBuffer } from "@3rd-party/esphome-dashboard/src/editor/utils/text-buffer";
 
+import { esphomeLanguageId } from "./languages";
+
 //Taken from https://github.com/microsoft/monaco-editor/blob/main/src/basic-languages/_.contribution.ts
 interface ILangImpl {
     conf: languages.LanguageConfiguration;
     language: languages.IMonarchLanguage;
 }
 
-export const esphomeLanguageId = "esphome";
-
 //based on https://github.com/esphome/dashboard/blob/main/src/editor/monaco-provider.ts
-export const initEspHomeLanguage = async () => {
+export const init = async () => {
     const monaco = await import("monaco-editor/esm/vs/editor/editor.api");
 
     monaco.languages.register({ id: esphomeLanguageId });

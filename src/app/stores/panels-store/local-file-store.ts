@@ -4,7 +4,7 @@ import { TEditorFileProps } from "./types";
 import { TLocalFile, TLocalFileOrDirectory } from "@/server/devices/types";
 import { useDevice } from "../devices-store";
 import { queryToContent } from "./utils/query-utils";
-import { esphomeLanguageId } from "@/app/components/editors/monaco/esphome-language";
+import { esphomeLanguageId } from "@/app/components/editors/monaco/languages";
 
 const findFile = (fods: TLocalFileOrDirectory[], file_path: string): TLocalFile | null => {
     for (const fod of fods) {
