@@ -4,6 +4,7 @@ import { TEditorFileProps } from "./types";
 import { TLocalFile, TLocalFileOrDirectory } from "@/server/devices/types";
 import { useDevice } from "../devices-store";
 import { queryToContent } from "./utils/query-utils";
+import { esphomeLanguageId } from "@/app/components/editors/monaco/esphome-language";
 
 const findFile = (fods: TLocalFileOrDirectory[], file_path: string): TLocalFile | null => {
     for (const fod of fods) {
@@ -68,7 +69,7 @@ export const useLocalFileStore = (device_id: string, file_path: string) => {
     return {
         leftEditor: <TEditorFileProps>{
             value: queryToContent(leftQuery),
-            language: "esphome",
+            language: esphomeLanguageId,
             onValueChange: (v) => leftMutation.mutate(v),
         },
         rightEditor: hasRightFile

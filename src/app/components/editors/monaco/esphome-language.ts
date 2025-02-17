@@ -13,14 +13,16 @@ interface ILangImpl {
     language: monaco.languages.IMonarchLanguage;
 }
 
+export const esphomeLanguageId = "esphome";
+
 //based on https://github.com/esphome/dashboard/blob/main/src/editor/monaco-provider.ts
 export const initEspHomeLanguage = async () => {
     const documents = new ESPHomeDocuments();
 
-    monaco.languages.register({ id: "esphome" });
+    monaco.languages.register({ id: esphomeLanguageId });
 
     const hoverHandler = new HoverHandler(documents);
-    monaco.languages.registerHoverProvider("esphome", {
+    monaco.languages.registerHoverProvider(esphomeLanguageId, {
         provideHover: async function (model, position) {
             documents.update(model.uri.toString(), new TextBuffer(model));
             const hover = await hoverHandler.getHover(
@@ -32,7 +34,7 @@ export const initEspHomeLanguage = async () => {
     });
 
     const completionsHandler = new CompletionsHandler(documents);
-    monaco.languages.registerCompletionItemProvider("esphome", {
+    monaco.languages.registerCompletionItemProvider(esphomeLanguageId, {
         provideCompletionItems: async function (model, position) {
             documents.update(model.uri.toString(), new TextBuffer(model));
             const completions = await completionsHandler.getCompletions(
@@ -44,7 +46,7 @@ export const initEspHomeLanguage = async () => {
     });
 
     const definitionHandler = new DefinitionHandler(documents);
-    monaco.languages.registerDefinitionProvider("esphome", {
+    monaco.languages.registerDefinitionProvider(esphomeLanguageId, {
         provideDefinition: async function (model, position) {
             documents.update(model.uri.toString(), new TextBuffer(model));
             const ret = await definitionHandler.getDefinition(
@@ -73,6 +75,6 @@ export const initEspHomeLanguage = async () => {
     const espHomeMonarchTokens = structuredClone(res.language);
     delete espHomeMonarchTokens["languageId"];
 
-    monaco.languages.setLanguageConfiguration("esphome", esphomeLanguageConfig);
-    monaco.languages.setMonarchTokensProvider("esphome", espHomeMonarchTokens);
-}
+    monaco.languages.setLanguageConfiguration(esphomeLanguageId, esphomeLanguageConfig);
+    monaco.languages.setMonarchTokensProvider(languageId, espHomeMonarchTokens);
+}esphomeLanguageId
