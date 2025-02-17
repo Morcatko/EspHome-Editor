@@ -9,7 +9,7 @@ import { useStatusStore } from "./stores/status-store";
 import { PanelMode, usePanelsStore } from "./stores/panels-store";
 import { openAboutDialog } from "./components/dialogs/about-dialog";
 import logo from "@/assets/logo.svg";
-import { useMonacoInit } from "./components/editors/monaco/next-init";
+import { useMonacoInit } from "./components/editors/monaco/monaco-init";
 
 const Header = () => {
 	const panelsStore = usePanelsStore();
