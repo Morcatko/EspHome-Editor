@@ -76,5 +76,5 @@ export const initEspHomeLanguage = async () => {
     delete espHomeMonarchTokens["languageId"];
 
     monaco.languages.setLanguageConfiguration(esphomeLanguageId, esphomeLanguageConfig);
-    monaco.languages.setMonarchTokensProvider(languageId, espHomeMonarchTokens);
-}esphomeLanguageId
+    monaco.languages.setMonarchTokensProvider(esphomeLanguageId, espHomeMonarchTokens);
+}
