@@ -1,7 +1,6 @@
 import { useLocalStorage } from "usehooks-ts";
 import { SingleEditor } from "../editors/single-editor";
 import { Anchor } from "@mantine/core";
-import { esphomeLanguageId } from "../editors/monaco/esphome-language";
 
 type TChildren = {
     children: React.ReactNode
