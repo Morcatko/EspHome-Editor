@@ -13,8 +13,8 @@ async function copyFile(source: string, destination: string): Promise<void> {
 const downloadEspHomeSchemas = async () => {
     const fileList: any[] = await (await fetch("https://api.github.com/repos/esphome/dashboard/contents/schema")).json();
 
-    await fs.rm("./public/schema", { recursive: true });
-    await fs.mkdir("./public/schema");
+    await fs.rm("./public/schema", { recursive: true, force: true });
+    await fs.mkdir("./public/schema", { recursive: true });
 
     const promises = fileList.map(async (file) => {
         const content = await (await fetch(file.download_url)).text();
