@@ -1,6 +1,7 @@
 import { useLocalStorage } from "usehooks-ts";
 import { SingleEditor } from "../editors/single-editor";
 import { Anchor } from "@mantine/core";
+import { esphomeLanguageId } from "../editors/monaco/esphome-language";
 
 type TChildren = {
     children: React.ReactNode
@@ -59,7 +60,7 @@ export const Editor = (p: { heightPx: number, code: string, language?: string })
         <div
             style={{ height: `${p.heightPx}px` }}>
             <SingleEditor
-                language={p.language ?? "yaml"}
+                language={p.language ?? esphomeLanguageId}
                 value={{
                     pending: false,
                     error: false,

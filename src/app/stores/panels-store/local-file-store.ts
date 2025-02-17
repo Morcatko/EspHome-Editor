@@ -75,7 +75,7 @@ export const useLocalFileStore = (device_id: string, file_path: string) => {
         rightEditor: hasRightFile
             ? <TEditorFileProps>{
                 value: queryToContent(rightQuery),
-                language: "yaml",
+                language: esphomeLanguageId,
             }
             : null,
         testDataEditor: hasTestData
