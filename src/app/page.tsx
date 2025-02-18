@@ -36,7 +36,7 @@ const Page = () => {
 				<Header />
 				<div style={{ gridArea: "2/1/2/1" }} className="pl-1 overflow-y-auto"><DevicesTree /></div>
 				<div style={{ gridArea: "3/1/3/1" }} className="border-t border-slate-200 dark:border-slate-800 text-center p-6">
-					<Anchor href="#" onClick={() => openAboutDialog()}>{statusStore.query.isSuccess && statusStore.query.data?.version }</Anchor>
+					<Anchor href="#" onClick={() => openAboutDialog()}>{statusStore.query.isSuccess && statusStore.query.data?.version}</Anchor>
 				</div>
 				<div style={{ gridArea: "1/2/4/2" }} className="border-l border-slate-200 dark:border-slate-800 relative"><PanelsContainer /></div>
 			</div>

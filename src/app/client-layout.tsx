@@ -8,6 +8,6 @@ export function ClientLayout({
   children: React.ReactNode;
 }>) {
   return <QueryClientProvider client={queryClient}>
-      {children}
+    {children}
   </QueryClientProvider>;
 }

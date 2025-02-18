@@ -158,7 +158,7 @@ async function local_deleteFoD(device: TDevice, file: TLocalFileOrDirectory) {
         );
 }
 
-export const useDevice = (device_id: string)=> {
+export const useDevice = (device_id: string) => {
     const devices = useDevicesStore().query.data;
     const device = devices?.find(d => d.id === device_id);
     return device;
