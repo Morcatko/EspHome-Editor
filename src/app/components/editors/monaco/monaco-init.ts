@@ -14,6 +14,5 @@ export const useMonacoInit = () => {
     useEffect(() => {
        init().then(() => setLoaded(true));
     }, []);
-
     return loaded;
 }

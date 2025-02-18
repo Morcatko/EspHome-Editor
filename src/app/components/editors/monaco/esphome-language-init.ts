@@ -8,7 +8,7 @@ import { fromMonacoPosition } from "@3rd-party/esphome-dashboard/src/editor/edit
 import { TextBuffer } from "@3rd-party/esphome-dashboard/src/editor/utils/text-buffer";
 
 import { esphomeLanguageId } from "./languages";
-
+    
 //Taken from https://github.com/microsoft/monaco-editor/blob/main/src/basic-languages/_.contribution.ts
 interface ILangImpl {
     conf: languages.LanguageConfiguration;
@@ -18,7 +18,6 @@ interface ILangImpl {
 //based on https://github.com/esphome/dashboard/blob/main/src/editor/monaco-provider.ts
 export const init = async () => {
     const monaco = await import("monaco-editor/esm/vs/editor/editor.api");
-
     monaco.languages.register({ id: esphomeLanguageId });
 
     //esphome is exact copy of YAML language so make a deep-copy of it and reuse
