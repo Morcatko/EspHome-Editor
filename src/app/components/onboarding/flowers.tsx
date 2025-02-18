@@ -1,4 +1,4 @@
-import { esphomeLanguageId } from "../editors/monaco/esphome-language";
+import { esphomeLanguageId } from "../editors/monaco/languages";
 import { Code, Editor, Heading, Ol, Section, Ul } from "./components";
 
 const demo_flower_template_eta = `# demo-flower-template.eta
