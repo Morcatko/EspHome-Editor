@@ -158,20 +158,22 @@ async function local_deleteFoD(device: TDevice, file: TLocalFileOrDirectory) {
         );
 }
 
-export const useDevice = (device_id: string)=> {
+export const useDevice = (device_id: string) => {
     const devices = useDevicesStore().query.data;
     const device = devices?.find(d => d.id === device_id);
     return device;
 }
-export const useDevicesStore = () => {
-    const devicesQuery = useQuery({
+
+export const useDevicesQuery = () =>
+    useQuery({
         queryKey: ["devices"],
         queryFn: async () => api.callGet_json<TDevice[]>("/api/device")
     });
 
+export const useDevicesStore = () => {
     return {
         expanded: useDeviceExpandedStore(),
-        query: devicesQuery,
+        query: useDevicesQuery(),
         localDevice_create,
         localDevice_addDirectory,
         localDevice_addFile,
