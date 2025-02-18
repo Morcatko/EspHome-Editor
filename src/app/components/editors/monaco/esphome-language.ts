@@ -92,7 +92,7 @@ export const init = async () => {
         // Key:Value pair
         [
           /(".*?"|'.*?'|[^#'"]*?)([ \t]*)(:)( |$)/,
-          ["type", "white", "operators", "white"],
+          ["key", "white", "operators", "white"],
         ],
 
         { include: "@flowScalars" },
