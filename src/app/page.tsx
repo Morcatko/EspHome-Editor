@@ -9,6 +9,7 @@ import { useStatusStore } from "./stores/status-store";
 import { PanelMode, usePanelsStore } from "./stores/panels-store";
 import { openAboutDialog } from "./components/dialogs/about-dialog";
 import logo from "@/assets/logo.svg";
+import { useMonacoInit } from "./components/editors/monaco/monaco-init";
 
 const Header = () => {
 	const panelsStore = usePanelsStore();
@@ -22,10 +23,11 @@ const Header = () => {
 
 const Page = () => {
 	const statusStore = useStatusStore();
+	const monacoInitialized = useMonacoInit();
 	const devicesQuery = useDevicesQuery();
 
 
-	return (devicesQuery.isLoading)
+	return (!monacoInitialized || devicesQuery.isLoading)
 		? <div className="h-screen flex items-center justify-center">
 			<Loader className="content-center" />
 		</div>
