@@ -7,6 +7,8 @@ const init = async () => {
     loader.config({ monaco });
     const espHomeLanguage = await import('./esphome-language');
     await espHomeLanguage.init();
+    const relaxedJsonLanguage = await import('./relaxed-json-language');
+    await relaxedJsonLanguage.init();
 }
 
 export const useMonacoInit = () => {

@@ -11,6 +11,6 @@ export const useLocalDeviceStore = (device_id: string) => {
     })
     return <TEditorFileProps>{
         value:  queryToContent(query),
-        language: esphomeLanguageId,
+        language: "yaml",
     }
 }
