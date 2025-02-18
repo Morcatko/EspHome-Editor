@@ -4,7 +4,7 @@ import { api } from "../utils/api-client";
 import { queryClient } from ".";
 import { useQuery } from "@tanstack/react-query";
 import { useLocalStorage } from "usehooks-ts";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { openConfirmationDialog } from "../components/dialogs/confirmation-dialog";
 import { openInputTextDialog } from "../components/dialogs/input-text-dialog";
 import { notifications } from "@mantine/notifications";
@@ -16,7 +16,7 @@ const useDeviceExpandedStore = () => {
     });
 
     return {
-        get: useCallback((id: string) => value.includes(id), [value]),
+        expanded: useMemo<Record<string, boolean>>(() => value.reduce((acc, id) => { acc[id] = true; return acc }, {} as any), [value]),
         set: useCallback((id: string, expanded: boolean) => {
             if (expanded) {
                 setValue([...value, id]);
@@ -163,15 +163,17 @@ export const useDevice = (device_id: string)=> {
     const device = devices?.find(d => d.id === device_id);
     return device;
 }
-export const useDevicesStore = () => {
-    const devicesQuery = useQuery({
+
+export const useDevicesQuery = () =>
+    useQuery({
         queryKey: ["devices"],
         queryFn: async () => api.callGet_json<TDevice[]>("/api/device")
     });
 
+export const useDevicesStore = () => {
     return {
         expanded: useDeviceExpandedStore(),
-        query: devicesQuery,
+        query: useDevicesQuery(),
         localDevice_create,
         localDevice_addDirectory,
         localDevice_addFile,
