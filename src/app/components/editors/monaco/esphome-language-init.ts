@@ -1,4 +1,5 @@
 import type { languages } from "monaco-editor/esm/vs/editor/editor.api";
+import { esphomeLanguageId } from "./languages";
     
 //Taken from https://github.com/microsoft/monaco-editor/blob/main/src/basic-languages/_.contribution.ts
 interface ILangImpl {
@@ -6,10 +7,8 @@ interface ILangImpl {
     language: languages.IMonarchLanguage;
 }
 
-export const esphomeLanguageId = "esphome";
-
 //based on https://github.com/esphome/dashboard/blob/main/src/editor/monaco-provider.ts
-export const initEspHomeLanguage = async () => {
+export const init = async () => {
     const monaco = await import("monaco-editor/esm/vs/editor/editor.api");
     monaco.languages.register({ id: esphomeLanguageId });
 
