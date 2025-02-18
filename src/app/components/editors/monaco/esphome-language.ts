@@ -1,4 +1,4 @@
-import monaco from "monaco-editor/esm/vs/editor/editor.api";
+import * as monaco from "monaco-editor/esm/vs/editor/editor.api";
 const yamlLang = require('monaco-editor/esm/vs/basic-languages/yaml/yaml.js');
 
 import { ESPHomeDocuments } from "@3rd-party/esphome-dashboard/src/editor/esphome-document";
