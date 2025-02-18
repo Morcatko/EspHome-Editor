@@ -1,6 +1,6 @@
 {
   "name": "editor-for-esphome",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -9,6 +9,7 @@
     "lint": "next lint",
     "test": "vitest",
     "postinstall": "npx --yes next-ws-cli@latest patch -y",
+    "setup": "npx tsx ./setup.mts",
     "tasks": "npx tsx --env-file=.env.local ./tasks.mts"
   },
   "dependencies": {

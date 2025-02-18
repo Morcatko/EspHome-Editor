@@ -5,7 +5,7 @@ const init = async () => {
     //Monaco editor based on https://github.com/graphql/graphiql/blob/main/examples/monaco-graphql-nextjs/next.config.js
     const monaco = await import('monaco-editor');
     loader.config({ monaco });
-    const espHomeLanguage = await import('./esphome-language-init');
+    const espHomeLanguage = await import('./esphome-language');
     await espHomeLanguage.init();
 }
 
