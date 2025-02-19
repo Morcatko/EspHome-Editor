@@ -1,11 +1,11 @@
 import { TEditorFileProps } from "@/app/stores/panels-store/types";
-import { useDarkTheme } from "@/app/utils/hooks";
 import { Editor } from "@monaco-editor/react";
+import { useMonacoTheme } from "./monaco/useMonacoTheme";
 
 type TSingleEditorProps = TEditorFileProps;
 
 export const SingleEditor = (props: TSingleEditorProps) => {
-    const isDarkMode = useDarkTheme();
+    const theme = useMonacoTheme();
 
     if (props.value.pending) {
         return <div>Loading...</div>;
@@ -18,7 +18,7 @@ export const SingleEditor = (props: TSingleEditorProps) => {
             value={props.value.content}
             onChange={(v) => props.onValueChange?.(v ?? "")}
             language={props.language}
-            theme={isDarkMode ? "vs-dark" : "vs-light"}
+            theme={theme}
             options={{
                 readOnly: !props.onValueChange,
             }}
