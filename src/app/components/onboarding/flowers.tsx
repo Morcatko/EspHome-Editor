@@ -1,3 +1,4 @@
+import { esphomeLanguageId } from "../editors/monaco/languages";
 import { Code, Editor, Heading, Ol, Section, Ul } from "./components";
 
 const demo_flower_template_eta = `# demo-flower-template.eta
@@ -80,7 +81,7 @@ export const Flowers = () => {
           </Ul>
         </li>
         <li>Add the folowing code to the file (Source panel)
-          <Editor heightPx={350} code={demo_flower_template_eta} />
+          <Editor heightPx={350} code={demo_flower_template_eta} language={esphomeLanguageId} />
         </li>
         <li>Note the placeholders in the
           <Ul>
@@ -111,7 +112,7 @@ export const Flowers = () => {
         </li>
         <li>Click <strong>"..."</strong> menu on <Code>configuration.yaml</Code> and rename it to <Code>configuration.eta</Code>.</li>
         <li>Edit <Code>configuration.eta</Code> with the following content:
-          <Editor heightPx={150} code={configuration_eta} />
+          <Editor heightPx={150} code={configuration_eta} language={esphomeLanguageId} />
         </li>
       </Ol>
     </Section>

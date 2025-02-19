@@ -3,15 +3,14 @@ import { useQuery } from "@tanstack/react-query";
 import Image from 'next/image';
 import { TreeView } from "@primer/react";
 import { TDevice, TLocalFileOrDirectory, TParent } from "@/server/devices/types";
-import { FileDirectoryIcon, LightBulbIcon, PencilIcon, FileCodeIcon, QuestionIcon, XIcon, PlusIcon } from "@primer/octicons-react";
+import { FileDirectoryIcon, LightBulbIcon, FileCodeIcon, QuestionIcon, PlusIcon } from "@primer/octicons-react";
 import { color_gray, color_offline, color_online } from "../../utils/const";
 import etajsIcon from "@/assets/etajs-logo.svg";
 import { api } from "../../utils/api-client";
 import { useDevicesStore } from "../../stores/devices-store";
 import { PanelMode, usePanelsStore } from "../../stores/panels-store";
-import { Menu } from "@mantine/core";
 import { DeviceToolbar } from "./device-toolbar";
-import { MenuItem, MenuTarget } from "./menus";
+import { ThreeDotsMenu, deviceMenuItems, fodMenuItems } from "./menus";
 
 const FileTypeIcon = ({ fod }: { fod: TLocalFileOrDirectory }) => {
     if (fod.type === "directory")
@@ -47,19 +46,7 @@ const LocalFileOrDirectory = ({ device, fod }: { device: TDevice, fod: TLocalFil
         </TreeView.LeadingVisual>
         <span className="text-(color:--foreground)">{fod.name}</span>
         <TreeView.TrailingVisual>
-            <Menu width={150}>
-                <MenuTarget />
-                <Menu.Dropdown>
-                    {(fod.type === "directory") && <>
-                        <MenuItem label="New File..." icon={<FileCodeIcon />} onClick={() => devicesStore.localDevice_addFile(device, fod.path)} />
-                        <MenuItem label="New Folder..." icon={<FileDirectoryIcon />} onClick={() => devicesStore.localDevice_addDirectory(device, fod.path)} />
-                        <Menu.Divider />
-                    </>
-                    }
-                    <MenuItem label="Rename..." icon={<PencilIcon />} onClick={() => devicesStore.local_renameFoD(device, fod)} />
-                    <MenuItem label="Delete..." icon={<XIcon />} onClick={() => devicesStore.local_deleteFoD(device, fod)} />
-                </Menu.Dropdown>
-            </Menu>
+            <ThreeDotsMenu items={fodMenuItems(devicesStore, device, fod)} />
         </TreeView.TrailingVisual>
         {fod.type === "directory"
             ? <TreeView.SubTree><LocalFiles device={device} parent={fod} /></TreeView.SubTree>
@@ -123,14 +110,8 @@ export const DevicesTree = () => {
                         {(!isLib) && <TreeView.Item className="opacity-50 hover:opacity-100" id={`toolbar_${d.id}`} ><DeviceToolbar device={d} /></TreeView.Item>}
                         <LocalFiles device={d} parent={d} />
                     </TreeView.SubTree>
-                    <TreeView.TrailingVisual >
-                        <Menu width={150}>
-                            <MenuTarget />
-                            <Menu.Dropdown>
-                                <MenuItem label="New File..." icon={<FileCodeIcon />} onClick={() => devicesStore.localDevice_addFile(d, "/")} />
-                                <MenuItem label="New Folder..." icon={<FileDirectoryIcon />} onClick={() => devicesStore.localDevice_addDirectory(d, "/")} />
-                            </Menu.Dropdown>
-                        </Menu>
+                    <TreeView.TrailingVisual>
+                        <ThreeDotsMenu items={deviceMenuItems(devicesStore, d)} />
                     </TreeView.TrailingVisual>
                 </TreeView.Item>;
             })

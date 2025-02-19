@@ -1,5 +1,6 @@
 import { log } from "@/shared/log";
 import * as YAML from "yaml";
+import { isScalar, isSeq } from "yaml";
 
 const mergeEspHomeYamls = (target: YAML.Document, source: YAML.Document) => {
     if (!source.contents) {
@@ -26,15 +27,15 @@ const mergeEspHomeYamls = (target: YAML.Document, source: YAML.Document) => {
         if (!tgtItem) {
             tgtItems.push(srcItem);
         } else {
-            if (!(srcItem.value instanceof YAML.YAMLSeq)) {
+            if (!isSeq(srcItem.value)) {
                 //Unsupported merge
                 return;
             }
-            if ((tgtItem.value instanceof YAML.Scalar) && (tgtItem.value.value === null)) {
+            if (isScalar(tgtItem.value) && (tgtItem.value.value === null)) {
                 tgtItem.value = srcItem.value;
                 return;
             }
-            if (!(tgtItem.value instanceof YAML.YAMLSeq)) {
+            if (!isSeq(tgtItem.value)) {
                 //Unsupported merge
                 return
             }
