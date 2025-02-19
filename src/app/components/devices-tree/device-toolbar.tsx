@@ -13,6 +13,7 @@ type TDeviceToolbarItemProps =
     Pick<TToolbarButtonProps, "disabled"> &
     Pick<TToolbarButtonProps, "className"> & {
         device: TDevice;
+        panelMode?: PanelMode;
         icon?: TToolbarButtonProps["icon"];
         tooltip?: TToolbarButtonProps["tooltip"];
     };
@@ -27,6 +28,7 @@ type TDeviceToolbarButtonProps_Base =
 type TDeviceToolbarButtonProps_Panel = TDeviceToolbarButtonProps_Base & {
     device: TDevice;
     operation: TPanel_Device["operation"];
+    panelMode?: PanelMode;
 };
 
 const DTB_Panel = (p: TDeviceToolbarButtonProps_Panel) => {
@@ -34,7 +36,7 @@ const DTB_Panel = (p: TDeviceToolbarButtonProps_Panel) => {
     return <ToolbarItem.Button {...p}
         onClick={(e) =>
             panelsStore.addDevicePanel(
-                (e.button === 1) ? PanelMode.NewWindow : PanelMode.Default,
+                ((e.button === 1) ? PanelMode.NewWindow : p.panelMode) ?? PanelMode.Default,
                 p.device.id,
                 p.operation)}
     />;
@@ -49,7 +51,6 @@ const DTB_Device = (p: TDeviceToolbarButtonProps_Device) => {
     const devicesStore = useDevicesStore();
     return <ToolbarItem.Button {...p} onClick={() => p.onClick(devicesStore)} />;
 }
-
 
 export const DeviceToolbarItem = {
     LocalShow: (p: TDeviceToolbarItemProps) => <DTB_Panel tooltip="Show local yaml configuration" icon={<CodeIcon />} operation="local_device" {...p} />,

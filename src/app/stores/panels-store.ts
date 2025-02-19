@@ -39,7 +39,8 @@ function getPanelId(panel: TPanel) {
 
 export enum PanelMode {
     Default,
-    NewWindow
+    NewWindow,
+    Floating
 }
 
 export const usePanelsStore = () => {
@@ -73,6 +74,8 @@ export const usePanelsStore = () => {
                 tabComponent: "default",
                 params: params,
             });
+            if (mode === PanelMode.Floating)
+                api.addFloatingGroup(dockViewPanel);
         }
     }
 
