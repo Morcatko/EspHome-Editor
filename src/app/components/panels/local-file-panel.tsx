@@ -36,6 +36,7 @@ export const LocalFileToolbar = (props: TProps) => {
 
     return <Toolbar>
         <DeviceToolbarItem.Diff device={device} panelMode={PanelMode.Floating} />
+        <DeviceToolbarItem.ESPHomeUpload device={device} panelMode={PanelMode.Floating} />
         <DeviceToolbarItem.ESPHomeCompile device={device} panelMode={PanelMode.Floating} />
         <ToolbarItem.Stretch />
         {getHelpIcon()}
