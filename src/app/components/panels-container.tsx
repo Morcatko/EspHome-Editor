@@ -45,13 +45,16 @@ const Panel = (p: TPanelProps) => {
 const dockViewComponents = {
     default: (p: IDockviewPanelProps<TPanelWithClick>) => {
         const panel = p.params;
+        console.log(p);
         switch (panel.operation) {
             case "esphome_device":
                 return <ESPHomeDevicePanel device_id={panel.device_id} />;
             case "local_file":
                 return <Panel
-                    toolbar={<LocalFileToolbar device_id={panel.device_id} file_path={panel.path} />}
-                    panel={<LocalFilePanel device_id={panel.device_id} file_path={panel.path} />}
+                    toolbar={<LocalFileToolbar 
+                        panel={p} device_id={panel.device_id} file_path={panel.path} />}
+                    panel={<LocalFilePanel 
+                        panel={p} device_id={panel.device_id} file_path={panel.path} />}
                 />;
             case "local_device":
                 return <LocalDevicePanel device_id={panel.device_id} />;

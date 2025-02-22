@@ -36,7 +36,7 @@ const DTB_Panel = (p: TDeviceToolbarButtonProps_Panel) => {
     return <ToolbarItem.Button {...p}
         onClick={(e) =>
             panelsStore.addDevicePanel(
-                ((e.button === 1) ? PanelMode.NewWindow : p.panelMode) ?? PanelMode.Default,
+                ((e.button === 1) ? "new_window" : p.panelMode) ?? "default",
                 p.device.id,
                 p.operation)}
     />;

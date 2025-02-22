@@ -37,7 +37,7 @@ const LocalFileOrDirectory = ({ device, fod }: { device: TDevice, fod: TLocalFil
         onExpandedChange={(e) => exp.set(`${device.id}/${fod.path}`, e)}
         onSelect={
             (fod.type === "file")
-                ? (e) => panels.addDevicePanel(((e as any).button === 1) ? PanelMode.NewWindow : PanelMode.Default, device.id, "local_file", fod)
+                ? (e) => panels.addDevicePanel(((e as any).button === 1) ? "new_window" : "default", device.id, "local_file", fod)
                 : undefined} >
         <TreeView.LeadingVisual>
             <div style={{ opacity: "55%" }}>

@@ -1,7 +1,7 @@
 import { atom, useAtom } from "jotai";
 import { TLocalFileOrDirectory } from "@/server/devices/types";
 import { TPanel, TPanelWithClick } from "./panels-store/types";
-import { DockviewApi } from 'dockview-react';
+import { AddPanelPositionOptions, DockviewApi } from 'dockview-react';
 
 const dockViewApiAtom = atom<DockviewApi | null>(null);
 
@@ -37,11 +37,7 @@ function getPanelId(panel: TPanel) {
     }
 }
 
-export enum PanelMode {
-    Default,
-    NewWindow,
-    Floating
-}
+export type PanelMode = "default" | "new_window" | AddPanelPositionOptions;
 
 export const usePanelsStore = () => {
     let [api, setApi] = useAtom(dockViewApiAtom);
@@ -49,7 +45,7 @@ export const usePanelsStore = () => {
     const addPanel = (
         mode: PanelMode,
         panel: TPanel) => {
-        if (mode === PanelMode.NewWindow) {
+        if (mode === "new_window") {
             const currentUrl = new URL(window.location.href);
             currentUrl.searchParams.set('panel', JSON.stringify(panel));
             window.open(currentUrl.toString(), '_blank')?.focus();
@@ -73,9 +69,8 @@ export const usePanelsStore = () => {
                 component: "default",
                 tabComponent: "default",
                 params: params,
+                position: (mode === "default" || mode === "new_window") ? undefined : mode,
             });
-            if (mode === PanelMode.Floating)
-                api.addFloatingGroup(dockViewPanel);
         }
     }
 
@@ -103,13 +98,13 @@ export const usePanelsStore = () => {
         try {
             const queryPanelString = new URLSearchParams(window.location.search).get('panel');
             const queryPanel = queryPanelString ? JSON.parse(queryPanelString) as TPanelWithClick : null;
-            if (queryPanel) addPanel(PanelMode.Default, queryPanel);
+            if (queryPanel) addPanel("default", queryPanel);
         } catch (err) { }
 
         const onboardingPanelProps: TPanel = { operation: "onboarding" };
         const id = getPanelId(onboardingPanelProps);
         if (!api.panels.find(p => p.id === id))
-            addPanel(PanelMode.Default, onboardingPanelProps);
+            addPanel("default", onboardingPanelProps);
 
         api.onDidLayoutChange(() => localStorage.setItem("e4e.dockView", JSON.stringify(api!.toJSON())));
 

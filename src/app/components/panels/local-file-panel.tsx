@@ -5,11 +5,11 @@ import { SingleEditor } from "../editors/single-editor";
 import { ActionIcon } from "@mantine/core";
 import { QuestionIcon } from "@primer/octicons-react";
 import { DeviceToolbarItem } from "../devices-tree/device-toolbar";
-import { PanelMode } from "@/app/stores/panels-store";
 import { useDevice } from "@/app/stores/devices-store";
 import { Toolbar, ToolbarItem } from "../toolbar";
 
 type TProps = {
+    panel: IDockviewPanelProps;
     device_id: string;
     file_path: string;
 }
@@ -34,10 +34,15 @@ export const LocalFileToolbar = (props: TProps) => {
         }
     }
 
+    const panelMode = {
+        direction: "below", referencePanel: props.panel.api.id
+    };
+
+
     return <Toolbar>
-        <DeviceToolbarItem.Diff device={device} panelMode={PanelMode.Floating} />
-        <DeviceToolbarItem.ESPHomeUpload device={device} panelMode={PanelMode.Floating} />
-        <DeviceToolbarItem.ESPHomeCompile device={device} panelMode={PanelMode.Floating} />
+        <DeviceToolbarItem.Diff device={device} panelMode={panelMode} />
+        <DeviceToolbarItem.ESPHomeUpload device={device} panelMode={panelMode} />
+        <DeviceToolbarItem.ESPHomeCompile device={device} panelMode={panelMode} />
         <ToolbarItem.Stretch />
         {getHelpIcon()}
     </Toolbar>
