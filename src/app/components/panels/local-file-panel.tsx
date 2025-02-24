@@ -7,9 +7,10 @@ import { QuestionIcon } from "@primer/octicons-react";
 import { DeviceToolbarItem } from "../devices-tree/device-toolbar";
 import { useDevice } from "@/app/stores/devices-store";
 import { Toolbar, ToolbarItem } from "../toolbar";
+import { useDockViewPanel } from "../panels-container";
+import { PanelMode } from "@/app/stores/panels-store";
 
 type TProps = {
-    panel: IDockviewPanelProps;
     device_id: string;
     file_path: string;
 }
@@ -34,15 +35,14 @@ export const LocalFileToolbar = (props: TProps) => {
         }
     }
 
-    const panelMode = {
-        direction: "below", referencePanel: props.panel.api.id
-    };
-
-
+    const panel = useDockViewPanel();
+    const panelMode: PanelMode = "bottom";
+    
     return <Toolbar>
         <DeviceToolbarItem.Diff device={device} panelMode={panelMode} />
         <DeviceToolbarItem.ESPHomeUpload device={device} panelMode={panelMode} />
         <DeviceToolbarItem.ESPHomeCompile device={device} panelMode={panelMode} />
+        <DeviceToolbarItem.ESPHomeLog device={device} panelMode={panelMode} />
         <ToolbarItem.Stretch />
         {getHelpIcon()}
     </Toolbar>

@@ -1,7 +1,7 @@
 import { atom, useAtom } from "jotai";
 import { TLocalFileOrDirectory } from "@/server/devices/types";
 import { TPanel, TPanelWithClick } from "./panels-store/types";
-import { AddPanelPositionOptions, DockviewApi } from 'dockview-react';
+import { AddPanelOptions, DockviewApi } from 'dockview-react';
 
 const dockViewApiAtom = atom<DockviewApi | null>(null);
 
@@ -37,12 +37,15 @@ function getPanelId(panel: TPanel) {
     }
 }
 
-export type PanelMode = "default" | "new_window" | AddPanelPositionOptions;
+export type PanelMode = "default" | "new_window" | "bottom" | {
+    target: "other_group",
+    currentGroupId: string;
+};
 
 export const usePanelsStore = () => {
     let [api, setApi] = useAtom(dockViewApiAtom);
 
-    const addPanel = (
+    const addPanel = async (
         mode: PanelMode,
         panel: TPanel) => {
         if (mode === "new_window") {
@@ -69,8 +72,17 @@ export const usePanelsStore = () => {
                 component: "default",
                 tabComponent: "default",
                 params: params,
-                position: (mode === "default" || mode === "new_window") ? undefined : mode,
             });
+
+            if (mode === "bottom") {
+                const floatingGroup = api.groups.find(g => g.api.location.type === "floating");
+
+                if (floatingGroup)
+                    dockViewPanel.api.moveTo({ group: floatingGroup });
+                else
+                    api.addFloatingGroup(dockViewPanel, {});
+
+            }
         }
     }
 

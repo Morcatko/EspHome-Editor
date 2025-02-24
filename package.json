@@ -25,6 +25,7 @@
     "@types/ws": "^8.5.13",
     "ansi-to-html": "^0.7.2",
     "consola": "^3.4.0",
+    "dockview": "^3.2.0",
     "dockview-react": "^3.0.2",
     "eta": "^3.5.0",
     "jotai": "^2.11.3",
