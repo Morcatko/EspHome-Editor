@@ -17,6 +17,7 @@ export const DiffToolbar = ({ device_id }: TProps) => {
     return <Toolbar>
         <DeviceToolbarItem.ESPHomeUpload device={device} panelTarget={panelTarget} />
         <DeviceToolbarItem.ESPHomeCompile device={device} panelTarget={panelTarget} />
+        <DeviceToolbarItem.ESPHomeInstall device={device} panelTarget={panelTarget} />
         <DeviceToolbarItem.ESPHomeLog device={device} panelTarget={panelTarget} />
     </Toolbar>
 }

@@ -7,7 +7,6 @@ import { QuestionIcon } from "@primer/octicons-react";
 import { DeviceToolbarItem } from "../devices-tree/device-toolbar";
 import { useDevice } from "@/app/stores/devices-store";
 import { Toolbar, ToolbarItem } from "../toolbar";
-import { PanelTarget } from "@/app/stores/panels-store";
 
 type TProps = {
     device_id: string;
@@ -34,12 +33,14 @@ export const LocalFileToolbar = (props: TProps) => {
         }
     }
 
-    const panelTarget: PanelTarget ="floating";
+    const panelTarget ="floating";
     
     return <Toolbar>
+        <DeviceToolbarItem.LocalShow device={device} panelTarget={panelTarget} />
         <DeviceToolbarItem.Diff device={device} panelTarget={panelTarget} />
         <DeviceToolbarItem.ESPHomeUpload device={device} panelTarget={panelTarget} />
         <DeviceToolbarItem.ESPHomeCompile device={device} panelTarget={panelTarget} />
+        <DeviceToolbarItem.ESPHomeInstall device={device} panelTarget={panelTarget} />
         <DeviceToolbarItem.ESPHomeLog device={device} panelTarget={panelTarget} />
         <ToolbarItem.Stretch />
         {getHelpIcon()}
