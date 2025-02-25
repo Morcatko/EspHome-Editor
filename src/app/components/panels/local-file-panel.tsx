@@ -8,7 +8,7 @@ import { DeviceToolbarItem } from "../devices-tree/device-toolbar";
 import { useDevice } from "@/app/stores/devices-store";
 import { Toolbar, ToolbarItem } from "../toolbar";
 import { useDockViewPanel } from "../panels-container";
-import { PanelMode } from "@/app/stores/panels-store";
+import { PanelTarget } from "@/app/stores/panels-store";
 
 type TProps = {
     device_id: string;
@@ -36,13 +36,13 @@ export const LocalFileToolbar = (props: TProps) => {
     }
 
     const panel = useDockViewPanel();
-    const panelMode: PanelMode = "bottom";
+    const panelTarget: PanelTarget = "bottom";
     
     return <Toolbar>
-        <DeviceToolbarItem.Diff device={device} panelMode={panelMode} />
-        <DeviceToolbarItem.ESPHomeUpload device={device} panelMode={panelMode} />
-        <DeviceToolbarItem.ESPHomeCompile device={device} panelMode={panelMode} />
-        <DeviceToolbarItem.ESPHomeLog device={device} panelMode={panelMode} />
+        <DeviceToolbarItem.Diff device={device} panelTarget={panelTarget} />
+        <DeviceToolbarItem.ESPHomeUpload device={device} panelTarget={panelTarget} />
+        <DeviceToolbarItem.ESPHomeCompile device={device} panelTarget={panelTarget} />
+        <DeviceToolbarItem.ESPHomeLog device={device} panelTarget={panelTarget} />
         <ToolbarItem.Stretch />
         {getHelpIcon()}
     </Toolbar>

@@ -58,7 +58,7 @@ export const Home = () => {
                 {/* Choose between creating multiple devices (e.g., humidity sensors for flowers) or a single device with multiple components (e.g., a PLC with multiple inputs). */}
             </p>
             <div className="flex justify-around mt-4">
-                <Button variant='primary' onClick={() => panelsStore.addPanel("default", { operation: "onboarding", step: "flowers" })}>Let's go</Button>
+                <Button variant='primary' onClick={() => panelsStore.addPanel({ operation: "onboarding", step: "flowers" })}>Let's go</Button>
             </div>
         </Section>
     </>);

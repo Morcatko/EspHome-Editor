@@ -8,7 +8,7 @@ import { color_gray, color_offline, color_online } from "../../utils/const";
 import etajsIcon from "@/assets/etajs-logo.svg";
 import { api } from "../../utils/api-client";
 import { useDevicesStore } from "../../stores/devices-store";
-import { PanelMode, usePanelsStore } from "../../stores/panels-store";
+import { usePanelsStore } from "../../stores/panels-store";
 import { DeviceToolbar } from "./device-toolbar";
 import { ThreeDotsMenu, deviceMenuItems, fodMenuItems } from "./menus";
 

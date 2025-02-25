@@ -12,12 +12,12 @@ type TProps = {
 export const DiffToolbar = ({ device_id }: TProps) => {
     const device = useDevice(device_id)!;
 
-    const panelMode = "bottom";
+    const panelTarget = "bottom";
 
     return <Toolbar>
-        <DeviceToolbarItem.ESPHomeUpload device={device} panelMode={panelMode} />
-        <DeviceToolbarItem.ESPHomeCompile device={device} panelMode={panelMode} />
-        <DeviceToolbarItem.ESPHomeLog device={device} panelMode={panelMode} />
+        <DeviceToolbarItem.ESPHomeUpload device={device} panelTarget={panelTarget} />
+        <DeviceToolbarItem.ESPHomeCompile device={device} panelTarget={panelTarget} />
+        <DeviceToolbarItem.ESPHomeLog device={device} panelTarget={panelTarget} />
     </Toolbar>
 }
 

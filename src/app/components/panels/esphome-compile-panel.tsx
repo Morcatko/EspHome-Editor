@@ -1,7 +1,6 @@
 import { useEspHomeCompileStore } from "@/app/stores/panels-store/esphome-compile-store";
 import { LogStream } from "../editors/log-stream";
 import { SyncIcon } from "@primer/octicons-react";
-import { PanelMode } from "@/app/stores/panels-store";
 import { DeviceToolbarItem } from "../devices-tree/device-toolbar";
 import { useDevice } from "@/app/stores/devices-store";
 import { Toolbar } from "../toolbar";
@@ -14,7 +13,7 @@ export const EspHomeCompileToolbar = ({ device_id }: TProps) => {
 
     return <Toolbar>
         <DeviceToolbarItem.ESPHomeCompile device={device} icon={<SyncIcon />} tooltip="Refresh" />
-        <DeviceToolbarItem.ESPHomeLog device={device} panelMode={"default"} />
+        <DeviceToolbarItem.ESPHomeLog device={device} panelTarget={"default"} />
     </Toolbar>;
 }
 

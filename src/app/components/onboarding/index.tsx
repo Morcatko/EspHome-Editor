@@ -14,7 +14,7 @@ export const Onboarding = ({ panel }: { panel: TPanel_Onboarding }) => {
         <Breadcrumbs m="sm" separator={<ChevronRightIcon />} aria-label="breadcrumbs">
             {isHome && <div>&nbsp;</div>}
             {!isHome &&
-                <Anchor onClick={() => panelsStore.addPanel("default", { operation: "onboarding", step: "home" })} >
+                <Anchor onClick={() => panelsStore.addPanel({ operation: "onboarding", step: "home" })} >
                     Home
                 </Anchor>}
             {isFlowers && <div>Flowers</div>}
