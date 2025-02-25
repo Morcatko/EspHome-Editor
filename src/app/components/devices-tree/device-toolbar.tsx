@@ -1,5 +1,5 @@
 import { useDevicesStore } from "@/app/stores/devices-store";
-import { PanelMode, usePanelsStore } from "@/app/stores/panels-store";
+import { usePanelsStore } from "@/app/stores/panels-store";
 import { color_esphome, color_gray, color_local } from "@/app/utils/const";
 import { useDarkTheme } from "@/app/utils/hooks";
 import { TDevice } from "@/server/devices/types";
@@ -34,7 +34,7 @@ const DTB_Panel = (p: TDeviceToolbarButtonProps_Panel) => {
     return <ToolbarItem.Button {...p}
         onClick={(e) =>
             panelsStore.addDevicePanel(
-                (e.button === 1) ? PanelMode.NewWindow : PanelMode.Default,
+                (e.button === 1) ? "new_window" : "default",
                 p.device.id,
                 p.operation)}
     />;
