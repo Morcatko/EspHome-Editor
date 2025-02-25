@@ -10,7 +10,7 @@ import { usePanelsStore } from "../stores/panels-store";
 import { DockviewDefaultTab, DockviewReact, IDockviewPanelHeaderProps, IDockviewPanelProps } from "dockview-react";
 import { useDarkTheme } from "@/app/utils/hooks";
 import { Onboarding } from "./onboarding";
-import React, { useContext } from "react";
+import React from "react";
 
 const OnClickRerender = ({ last_click, children }: { last_click?: string, children: React.ReactNode }) => {
     if (!last_click)
@@ -42,53 +42,46 @@ const Panel = (p: TPanelProps) => {
     </div>;
 }
 
-const DockviewPanelContext = React.createContext<IDockviewPanelProps | undefined>(undefined);
-export const useDockViewPanel = () => useContext(DockviewPanelContext);
-
-const getPanel = (panel: TPanelWithClick) => {
-    switch (panel.operation) {
-        case "esphome_device":
-            return <ESPHomeDevicePanel device_id={panel.device_id} />;
-        case "local_file":
-            return <Panel
-                toolbar={<LocalFileToolbar device_id={panel.device_id} file_path={panel.path} />}
-                panel={<LocalFilePanel device_id={panel.device_id} file_path={panel.path} />}
-            />;
-        case "local_device":
-            return <LocalDevicePanel device_id={panel.device_id} />;
-        case "diff":
-            return <Panel
-                toolbar={<DiffToolbar device_id={panel.device_id} />}
-                panel={<DiffPanel device_id={panel.device_id} />}
-            />;
-        case "esphome_compile":
-            return <Panel
-                last_click={panel.last_click}
-                toolbar={<EspHomeCompileToolbar device_id={panel.device_id} />}
-                panel={<EspHomeCompilePanel device_id={panel.device_id} />}
-            />;
-        case "esphome_install":
-            return <Panel
-                last_click={panel.last_click}
-                toolbar={<EspHomeInstallToolbar device_id={panel.device_id} />}
-                panel={<EspHomeInstallPanel device_id={panel.device_id} />} />;
-        case "esphome_log":
-            return <Panel
-                last_click={panel.last_click}
-                toolbar={<EspHomeLogToolbar device_id={panel.device_id} />}
-                panel={<EspHomeLogPanel device_id={panel.device_id} />} />;
-        case "onboarding":
-            return <Onboarding panel={panel} />;
-        default:
-            return <div>Noting selected</div>;
-    }
-}
-
 const dockViewComponents = {
-    default: (p: IDockviewPanelProps<TPanelWithClick>) =>
-        <DockviewPanelContext.Provider value={p}>
-            {getPanel(p.params)}
-        </DockviewPanelContext.Provider>
+    default: (p: IDockviewPanelProps<TPanelWithClick>) => {
+        const panel = p.params;
+        switch (panel.operation) {
+            case "esphome_device":
+                return <ESPHomeDevicePanel device_id={panel.device_id} />;
+            case "local_file":
+                return <Panel
+                    toolbar={<LocalFileToolbar device_id={panel.device_id} file_path={panel.path} />}
+                    panel={<LocalFilePanel device_id={panel.device_id} file_path={panel.path} />}
+                />;
+            case "local_device":
+                return <LocalDevicePanel device_id={panel.device_id} />;
+            case "diff":
+                return <Panel
+                    toolbar={<DiffToolbar device_id={panel.device_id} />}
+                    panel={<DiffPanel device_id={panel.device_id} />}
+                />;
+            case "esphome_compile":
+                return <Panel
+                    last_click={panel.last_click}
+                    toolbar={<EspHomeCompileToolbar device_id={panel.device_id} />}
+                    panel={<EspHomeCompilePanel device_id={panel.device_id} />}
+                />;
+            case "esphome_install":
+                return <Panel
+                    last_click={panel.last_click}
+                    toolbar={<EspHomeInstallToolbar device_id={panel.device_id} />}
+                    panel={<EspHomeInstallPanel device_id={panel.device_id} />} />;
+            case "esphome_log":
+                return <Panel
+                    last_click={panel.last_click}
+                    toolbar={<EspHomeLogToolbar device_id={panel.device_id} />}
+                    panel={<EspHomeLogPanel device_id={panel.device_id} />} />;
+            case "onboarding":
+                return <Onboarding panel={panel} />;
+            default:
+                return <div>Noting selected</div>;
+        }
+    }
 };
 
 const dockViewTabComponents = {

@@ -12,7 +12,7 @@ type TProps = {
 export const DiffToolbar = ({ device_id }: TProps) => {
     const device = useDevice(device_id)!;
 
-    const panelTarget = "bottom";
+    const panelTarget = "floating";
 
     return <Toolbar>
         <DeviceToolbarItem.ESPHomeUpload device={device} panelTarget={panelTarget} />

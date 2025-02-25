@@ -37,7 +37,7 @@ function getPanelId(panel: TPanel) {
     }
 }
 
-export type PanelTarget = "default" | "new_window" | "bottom"
+export type PanelTarget = "default" | "new_window" | "floating";
 
 export const usePanelsStore = () => {
     let [api, setApi] = useAtom(dockViewApiAtom);
@@ -71,7 +71,7 @@ export const usePanelsStore = () => {
                 params: params,
             });
 
-            if (target === "bottom") {
+            if (target === "floating") {
                 const floatingGroup = api.groups.find(g => g.api.location.type === "floating");
 
                 if (floatingGroup)

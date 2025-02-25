@@ -7,7 +7,6 @@ import { QuestionIcon } from "@primer/octicons-react";
 import { DeviceToolbarItem } from "../devices-tree/device-toolbar";
 import { useDevice } from "@/app/stores/devices-store";
 import { Toolbar, ToolbarItem } from "../toolbar";
-import { useDockViewPanel } from "../panels-container";
 import { PanelTarget } from "@/app/stores/panels-store";
 
 type TProps = {
@@ -35,8 +34,7 @@ export const LocalFileToolbar = (props: TProps) => {
         }
     }
 
-    const panel = useDockViewPanel();
-    const panelTarget: PanelTarget = "bottom";
+    const panelTarget: PanelTarget ="floating";
     
     return <Toolbar>
         <DeviceToolbarItem.Diff device={device} panelTarget={panelTarget} />
