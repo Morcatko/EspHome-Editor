@@ -42,7 +42,7 @@ export type PanelTarget = "default" | "new_window" | "floating";
 export const usePanelsStore = () => {
     let [api, setApi] = useAtom(dockViewApiAtom);
 
-    const addPanel = async (
+    const addPanel = (
         panel: TPanel,
         target: PanelTarget = "default") => {
         if (target === "new_window") {
@@ -114,13 +114,13 @@ export const usePanelsStore = () => {
         try {
             const queryPanelString = new URLSearchParams(window.location.search).get('panel');
             const queryPanel = queryPanelString ? JSON.parse(queryPanelString) as TPanelWithClick : null;
-            if (queryPanel) addPanel(queryPanel, "default");
+            if (queryPanel) addPanel(queryPanel);
         } catch (err) { }
 
         const onboardingPanelProps: TPanel = { operation: "onboarding" };
         const id = getPanelId(onboardingPanelProps);
         if (!api.panels.find(p => p.id === id))
-            addPanel(onboardingPanelProps, "default");
+            addPanel(onboardingPanelProps);
 
         api.onDidLayoutChange(() => localStorage.setItem("e4e.dockView", JSON.stringify(api!.toJSON())));
 
