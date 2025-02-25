@@ -77,7 +77,14 @@ export const usePanelsStore = () => {
                 if (floatingGroup)
                     dockViewPanel.api.moveTo({ group: floatingGroup });
                 else
-                    api.addFloatingGroup(dockViewPanel, {});
+                    api.addFloatingGroup(dockViewPanel, {
+                        position: {
+                            bottom: 15,
+                            right: 15,
+                        },
+                        width: window.innerWidth * 2/ 3,
+                        height: window.innerHeight / 2,
+                    });
 
             }
         }
