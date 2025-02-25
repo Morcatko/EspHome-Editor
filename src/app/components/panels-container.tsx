@@ -1,6 +1,6 @@
 import { LocalFilePanel, LocalFileToolbar } from "./panels/local-file-panel";
 import { LocalDevicePanel, LocalDeviceToolbar } from "./panels/local-device-panel";
-import { ESPHomeDevicePanel } from "./panels/esphome-device-panel";
+import { ESPHomeDevicePanel, ESPHomeDeviceToolbar } from "./panels/esphome-device-panel";
 import { DiffPanel, DiffToolbar } from "./panels/diff-panel";
 import { EspHomeLogPanel, EspHomeLogToolbar } from "./panels/esphome-log-panel";
 import { EspHomeInstallPanel, EspHomeInstallToolbar } from "./panels/esphome-install-panel";
@@ -47,7 +47,10 @@ const dockViewComponents = {
         const panel = p.params;
         switch (panel.operation) {
             case "esphome_device":
-                return <ESPHomeDevicePanel device_id={panel.device_id} />;
+                return <Panel
+                    toolbar={<ESPHomeDeviceToolbar device_id={panel.device_id} />}
+                    panel={<ESPHomeDevicePanel device_id={panel.device_id} />}
+                />;
             case "local_file":
                 return <Panel
                     toolbar={<LocalFileToolbar device_id={panel.device_id} file_path={panel.path} />}

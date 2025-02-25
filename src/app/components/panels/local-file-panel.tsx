@@ -39,6 +39,7 @@ export const LocalFileToolbar = (props: TProps) => {
         <DeviceToolbarItem.LocalShow device={device} panelTarget={panelTarget} />
         <DeviceToolbarItem.Diff device={device} panelTarget={panelTarget} />
         <DeviceToolbarItem.ESPHomeUpload device={device} panelTarget={panelTarget} />
+        <DeviceToolbarItem.ESPHomeShow device={device} panelTarget={panelTarget} />
         <DeviceToolbarItem.ESPHomeCompile device={device} panelTarget={panelTarget} />
         <DeviceToolbarItem.ESPHomeInstall device={device} panelTarget={panelTarget} />
         <DeviceToolbarItem.ESPHomeLog device={device} panelTarget={panelTarget} />
