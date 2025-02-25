@@ -37,18 +37,15 @@ function getPanelId(panel: TPanel) {
     }
 }
 
-export enum PanelMode {
-    Default,
-    NewWindow
-}
+export type PanelTarget = "default" | "new_window";
 
 export const usePanelsStore = () => {
     let [api, setApi] = useAtom(dockViewApiAtom);
 
     const addPanel = (
-        mode: PanelMode,
-        panel: TPanel) => {
-        if (mode === PanelMode.NewWindow) {
+        panel: TPanel,
+        target: PanelTarget = "default") => {
+        if (target === "new_window") {
             const currentUrl = new URL(window.location.href);
             currentUrl.searchParams.set('panel', JSON.stringify(panel));
             window.open(currentUrl.toString(), '_blank')?.focus();
@@ -77,7 +74,7 @@ export const usePanelsStore = () => {
     }
 
     const addDevicePanel = (
-        mode: PanelMode,
+        target: PanelTarget,
         device_id: string,
         operation: TPanel["operation"],
         file: TLocalFileOrDirectory | undefined = undefined) => {
@@ -86,7 +83,7 @@ export const usePanelsStore = () => {
             ? { device_id: device_id, operation, path: file!.path }
             : { device_id: device_id, operation };
 
-        addPanel(mode, panel);
+        addPanel(panel, target);
     }
 
     const initApi = (_api: DockviewApi) => {
@@ -100,13 +97,13 @@ export const usePanelsStore = () => {
         try {
             const queryPanelString = new URLSearchParams(window.location.search).get('panel');
             const queryPanel = queryPanelString ? JSON.parse(queryPanelString) as TPanelWithClick : null;
-            if (queryPanel) addPanel(PanelMode.Default, queryPanel);
+            if (queryPanel) addPanel(queryPanel);
         } catch (err) { }
 
         const onboardingPanelProps: TPanel = { operation: "onboarding" };
         const id = getPanelId(onboardingPanelProps);
         if (!api.panels.find(p => p.id === id))
-            addPanel(PanelMode.Default, onboardingPanelProps);
+            addPanel(onboardingPanelProps);
 
         api.onDidLayoutChange(() => localStorage.setItem("e4e.dockView", JSON.stringify(api!.toJSON())));
 

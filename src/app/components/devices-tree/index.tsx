@@ -8,7 +8,7 @@ import { color_gray, color_offline, color_online } from "../../utils/const";
 import etajsIcon from "@/assets/etajs-logo.svg";
 import { api } from "../../utils/api-client";
 import { useDevicesStore } from "../../stores/devices-store";
-import { PanelMode, usePanelsStore } from "../../stores/panels-store";
+import { usePanelsStore } from "../../stores/panels-store";
 import { DeviceToolbar } from "./device-toolbar";
 import { ThreeDotsMenu, deviceMenuItems, fodMenuItems } from "./menus";
 
@@ -37,7 +37,7 @@ const LocalFileOrDirectory = ({ device, fod }: { device: TDevice, fod: TLocalFil
         onExpandedChange={(e) => exp.set(`${device.id}/${fod.path}`, e)}
         onSelect={
             (fod.type === "file")
-                ? (e) => panels.addDevicePanel(((e as any).button === 1) ? PanelMode.NewWindow : PanelMode.Default, device.id, "local_file", fod)
+                ? (e) => panels.addDevicePanel(((e as any).button === 1) ? "new_window" : "default", device.id, "local_file", fod)
                 : undefined} >
         <TreeView.LeadingVisual>
             <div style={{ opacity: "55%" }}>
