@@ -1,17 +1,18 @@
 "use client";
-import { useQuery } from "@tanstack/react-query";
+import React from "react";
 import Image from 'next/image';
-import { TDevice, TLocalFileOrDirectory } from "@/server/devices/types";
+import { useQuery } from "@tanstack/react-query";
 import { FileDirectoryIcon, LightBulbIcon, FileCodeIcon, QuestionIcon, PlusIcon, ChevronRightIcon } from "@primer/octicons-react";
+import { Group, RenderTreeNodePayload, Tree, useTree } from "@mantine/core";
+import { TDevice, TLocalFileOrDirectory } from "@/server/devices/types";
 import { color_gray, color_offline, color_online } from "../../utils/const";
-import etajsIcon from "@/assets/etajs-logo.svg";
 import { api } from "../../utils/api-client";
 import { useDevicesStore } from "../../stores/devices-store";
-import { PanelMode, usePanelsStore } from "../../stores/panels-store";
+import { usePanelsStore } from "../../stores/panels-store";
 import { DeviceToolbar } from "./device-toolbar";
 import { ThreeDotsMenu, deviceMenuItems, fodMenuItems } from "./menus";
 import { TreeNodeType, useTreeData } from "./utils";
-import React from "react";
+import etajsIcon from "@/assets/etajs-logo.svg";
 
 const FileTypeIcon = ({ fod }: { fod: TLocalFileOrDirectory | undefined }) => {
     if ((fod == null) || (fod.type === "directory"))
@@ -108,7 +109,7 @@ const nodeRenderer = (p: RenderTreeNodePayload) => {
             return <Node
                 nodePayload={p}
                 icon={<div className="opacity-55"><FileTypeIcon fod={node.fod} /></div>}
-                onClick={(e) => panels.addDevicePanel(((e as any).button === 1) ? PanelMode.NewWindow : PanelMode.Default, node.device.id, "local_file", node.fod)}
+                onClick={(e) => panels.addDevicePanel(((e as any).button === 1) ? "new_window" : "default", node.device.id, "local_file", node.fod)}
                 menuItems={fodMenuItems(devicesStore, node.device, node.fod)}
             >
                 {node.label}
