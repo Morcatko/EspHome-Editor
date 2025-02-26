@@ -6,7 +6,7 @@ import { DevicesTree } from "./components/devices-tree";
 import { PanelsContainer } from "./components/panels-container";
 import { useDevicesQuery } from "./stores/devices-store";
 import { useStatusStore } from "./stores/status-store";
-import { PanelMode, usePanelsStore } from "./stores/panels-store";
+import { usePanelsStore } from "./stores/panels-store";
 import { openAboutDialog } from "./components/dialogs/about-dialog";
 import logo from "@/assets/logo.svg";
 import { useMonacoInit } from "./components/editors/monaco/monaco-init";
@@ -14,7 +14,7 @@ import { useMonacoInit } from "./components/editors/monaco/monaco-init";
 const Header = () => {
 	const panelsStore = usePanelsStore();
 	return <div style={{ gridArea: "1/1/1/1", lineHeight: '56px' }} className="border-b border-slate-200 dark:border-slate-800 text-center" >
-		<a href="#" onClick={() => panelsStore.addPanel(PanelMode.Default, { operation: "onboarding", step: "home" })}>
+		<a href="#" onClick={() => panelsStore.addPanel({ operation: "onboarding", step: "home" })}>
 			<Image className="inline mr-2 align-middle" src={logo} alt="ESPHome Editor" width="32" height="32" />
 			<h4 className="inline-block align-baseline text-slate-600 dark:text-slate-400 m-0 font-semibold" >Editor for ESPHome</h4>
 		</a>

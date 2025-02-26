@@ -1,8 +1,8 @@
 import { ActionIcon, ActionIconGroup, ActionIconProps, Divider, MantineColor, Tooltip } from "@mantine/core";
 
 const allProps = {
-        variant: "subtle" as ActionIconProps["variant"],
-    }
+    variant: "subtle" as ActionIconProps["variant"],
+}
 
 export type TToolbarButtonProps = {
     tooltip: string;
@@ -14,7 +14,7 @@ export type TToolbarButtonProps = {
 }
 
 const ToolbarButton = (p: TToolbarButtonProps) => {
-    return <Tooltip label={p.tooltip}>
+    return <Tooltip label={p.tooltip} withinPortal={false} >
         <ActionIcon
             {...allProps}
             color={p.color}

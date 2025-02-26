@@ -11,8 +11,11 @@ type TProps = {
 export const EspHomeInstallToolbar = ({ device_id }: TProps) => {
     const device = useDevice(device_id)!;
 
+    const panelTarget ="floating";
+
     return <Toolbar>
         <DeviceToolbarItem.ESPHomeInstall device={device} icon={<SyncIcon />} tooltip="Refresh" />
+        <DeviceToolbarItem.ESPHomeLog device={device} panelTarget={panelTarget} />
     </Toolbar>;
 }
 
