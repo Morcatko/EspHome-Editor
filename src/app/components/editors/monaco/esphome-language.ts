@@ -260,7 +260,6 @@ export const init = async () => {
   const completionsHandler = new CompletionsHandler(documents);
   monaco.languages.registerCompletionItemProvider(esphomeLanguageId, {
     provideCompletionItems: async function (model, position) {
-      console.log("provideCompletionItems", model.uri.toString(), position);
       documents.update(model.uri.toString(), new TextBuffer(model));
       const completions = await completionsHandler.getCompletions(
         model.uri.toString(),
