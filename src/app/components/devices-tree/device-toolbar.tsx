@@ -1,5 +1,5 @@
 import { useDevicesStore } from "@/app/stores/devices-store";
-import { usePanelsStore } from "@/app/stores/panels-store";
+import { PanelTarget, usePanelsStore } from "@/app/stores/panels-store";
 import { color_esphome, color_gray, color_local } from "@/app/utils/const";
 import { useDarkTheme } from "@/app/utils/hooks";
 import { TDevice } from "@/server/devices/types";
@@ -13,6 +13,7 @@ type TDeviceToolbarItemProps =
     Pick<TToolbarButtonProps, "disabled"> &
     Pick<TToolbarButtonProps, "className"> & {
         device: TDevice;
+        panelTarget?: PanelTarget;
         icon?: TToolbarButtonProps["icon"];
         tooltip?: TToolbarButtonProps["tooltip"];
     };
@@ -27,6 +28,7 @@ type TDeviceToolbarButtonProps_Base =
 type TDeviceToolbarButtonProps_Panel = TDeviceToolbarButtonProps_Base & {
     device: TDevice;
     operation: TPanel_Device["operation"];
+    panelTarget?: PanelTarget;
 };
 
 const DTB_Panel = (p: TDeviceToolbarButtonProps_Panel) => {
@@ -34,7 +36,7 @@ const DTB_Panel = (p: TDeviceToolbarButtonProps_Panel) => {
     return <ToolbarItem.Button {...p}
         onClick={(e) =>
             panelsStore.addDevicePanel(
-                (e.button === 1) ? "new_window" : "default",
+                ((e.button === 1) ? "new_window" : p.panelTarget) ?? "default",
                 p.device.id,
                 p.operation)}
     />;
@@ -88,7 +90,7 @@ export const DeviceToolbar = ({ device }: { device: TDevice }) => {
                 : <DeviceToolbarItem.LocalImport {...props} />
             }
             <ToolbarItem.Divider />
-            <DeviceToolbarItem.Diff {...props} device={device} />
+            <DeviceToolbarItem.Diff {...props} />
             {uploadCreates
                 ? <DeviceToolbarItem.ESPHomeCreate {...props} />
                 : <DeviceToolbarItem.ESPHomeUpload {...props} />

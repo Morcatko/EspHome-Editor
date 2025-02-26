@@ -1,10 +1,10 @@
-import { LocalFilePanel } from "./panels/local-file-panel";
-import { LocalDevicePanel } from "./panels/local-device-panel";
-import { ESPHomeDevicePanel } from "./panels/esphome-device-panel";
-import { DiffPanel } from "./panels/diff-panel";
+import { LocalFilePanel, LocalFileToolbar } from "./panels/local-file-panel";
+import { LocalDevicePanel, LocalDeviceToolbar } from "./panels/local-device-panel";
+import { ESPHomeDevicePanel, ESPHomeDeviceToolbar } from "./panels/esphome-device-panel";
+import { DiffPanel, DiffToolbar } from "./panels/diff-panel";
 import { EspHomeLogPanel, EspHomeLogToolbar } from "./panels/esphome-log-panel";
 import { EspHomeInstallPanel, EspHomeInstallToolbar } from "./panels/esphome-install-panel";
-import { EspHomeCompilePanel, EspHomeCompileToolbar, } from "./panels/esphome-compile-panel";
+import { EspHomeCompilePanel, EspHomeCompileToolbar } from "./panels/esphome-compile-panel";
 import { TPanelWithClick } from "../stores/panels-store/types";
 import { usePanelsStore } from "../stores/panels-store";
 import { DockviewDefaultTab, DockviewReact, IDockviewPanelHeaderProps, IDockviewPanelProps } from "dockview-react";
@@ -47,13 +47,25 @@ const dockViewComponents = {
         const panel = p.params;
         switch (panel.operation) {
             case "esphome_device":
-                return <ESPHomeDevicePanel device_id={panel.device_id} />;
+                return <Panel
+                    toolbar={<ESPHomeDeviceToolbar device_id={panel.device_id} />}
+                    panel={<ESPHomeDevicePanel device_id={panel.device_id} />}
+                />;
             case "local_file":
-                return <LocalFilePanel device_id={panel.device_id} file_path={panel.path} />;
+                return <Panel
+                    toolbar={<LocalFileToolbar device_id={panel.device_id} file_path={panel.path} />}
+                    panel={<LocalFilePanel device_id={panel.device_id} file_path={panel.path} />}
+                />;
             case "local_device":
-                return <LocalDevicePanel device_id={panel.device_id} />;
+                return <Panel
+                    toolbar={<LocalDeviceToolbar device_id={panel.device_id} />}
+                    panel={<LocalDevicePanel device_id={panel.device_id} />}
+                />;
             case "diff":
-                return <DiffPanel device_id={panel.device_id} />;
+                return <Panel
+                    toolbar={<DiffToolbar device_id={panel.device_id} />}
+                    panel={<DiffPanel device_id={panel.device_id} />}
+                />;
             case "esphome_compile":
                 return <Panel
                     last_click={panel.last_click}

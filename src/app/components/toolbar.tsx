@@ -14,7 +14,7 @@ export type TToolbarButtonProps = {
 }
 
 const ToolbarButton = (p: TToolbarButtonProps) => {
-    return <Tooltip label={p.tooltip}>
+    return <Tooltip label={p.tooltip} withinPortal={false} >
         <ActionIcon
             {...allProps}
             color={p.color}
