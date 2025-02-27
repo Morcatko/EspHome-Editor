@@ -1,19 +1,21 @@
 "use client";
-import { useQuery } from "@tanstack/react-query";
+import React from "react";
 import Image from 'next/image';
-import { TreeView } from "@primer/react";
-import { TDevice, TLocalFileOrDirectory, TParent } from "@/server/devices/types";
-import { FileDirectoryIcon, LightBulbIcon, FileCodeIcon, QuestionIcon, PlusIcon } from "@primer/octicons-react";
+import { useQuery } from "@tanstack/react-query";
+import { FileDirectoryIcon, LightBulbIcon, FileCodeIcon, QuestionIcon, PlusIcon, ChevronRightIcon } from "@primer/octicons-react";
+import { Group, RenderTreeNodePayload, Tree, useTree } from "@mantine/core";
+import { TDevice, TLocalFileOrDirectory } from "@/server/devices/types";
 import { color_gray, color_offline, color_online } from "../../utils/const";
-import etajsIcon from "@/assets/etajs-logo.svg";
 import { api } from "../../utils/api-client";
 import { useDevicesStore } from "../../stores/devices-store";
 import { usePanelsStore } from "../../stores/panels-store";
 import { DeviceToolbar } from "./device-toolbar";
 import { ThreeDotsMenu, deviceMenuItems, fodMenuItems } from "./menus";
+import { TreeNodeType, useTreeData } from "./utils";
+import etajsIcon from "@/assets/etajs-logo.svg";
 
-const FileTypeIcon = ({ fod }: { fod: TLocalFileOrDirectory }) => {
-    if (fod.type === "directory")
+const FileTypeIcon = ({ fod }: { fod: TLocalFileOrDirectory | undefined }) => {
+    if ((fod == null) || (fod.type === "directory"))
         return <FileDirectoryIcon />
     switch (fod.compiler) {
         case "etajs":
@@ -25,45 +27,38 @@ const FileTypeIcon = ({ fod }: { fod: TLocalFileOrDirectory }) => {
     }
 }
 
-const LocalFileOrDirectory = ({ device, fod }: { device: TDevice, fod: TLocalFileOrDirectory }) => {
-    const panels = usePanelsStore();
-    const devicesStore = useDevicesStore();
-    const exp = devicesStore.expanded;
-
-    return <TreeView.Item
-        key={fod.path}
-        id={fod.id}
-        expanded={exp.get(`${device.id}/${fod.path}`)}
-        onExpandedChange={(e) => exp.set(`${device.id}/${fod.path}`, e)}
-        onSelect={
-            (fod.type === "file")
-                ? (e) => panels.addDevicePanel(((e as any).button === 1) ? "new_window" : "default", device.id, "local_file", fod)
-                : undefined} >
-        <TreeView.LeadingVisual>
-            <div style={{ opacity: "55%" }}>
-                <FileTypeIcon fod={fod} />
-            </div>
-        </TreeView.LeadingVisual>
-        <span className="text-(color:--foreground)">{fod.name}</span>
-        <TreeView.TrailingVisual>
-            <ThreeDotsMenu items={fodMenuItems(devicesStore, device, fod)} />
-        </TreeView.TrailingVisual>
-        {fod.type === "directory"
-            ? <TreeView.SubTree><LocalFiles device={device} parent={fod} /></TreeView.SubTree>
-            : null}
-    </TreeView.Item>;
-};
-
-const LocalFiles = ({ device, parent }: { device: TDevice, parent: TParent }) => {
-    return <>
-        {parent.files?.map((fod) => <LocalFileOrDirectory key={fod.path} device={device} fod={fod} />)}
-    </>
+type TNodeProps = {
+    nodePayload: RenderTreeNodePayload;
+    children: React.ReactNode;
+    onClick?: React.MouseEventHandler;
+    icon?: React.ReactNode;
+    menuItems?: React.ReactNode[];
+    hideExpander?: boolean;
 }
 
-export const DevicesTree = () => {
-    const devicesStore = useDevicesStore();
-    const exp = devicesStore.expanded;
+const Node = (p: TNodeProps) => {
+    const { hasChildren, expanded, elementProps, tree, node } = p.nodePayload;
 
+    return <Group
+        gap={5}
+        {...elementProps}
+        onClick={p.onClick ? p.onClick : (e) => tree.toggleExpanded(node.value)}
+    >
+        {!p.hideExpander && <ChevronRightIcon
+            className={`transition-transform ${hasChildren ? "visible" : "invisible"} ${expanded ? "rotate-90" : "rotate-0"}`}
+            size={18} />
+        }
+        {p.icon}
+        {p.children}
+        <span className="grow" />
+        {p.menuItems && <ThreeDotsMenu items={p.menuItems} />}
+    </Group>;
+}
+
+const nodeRenderer = (p: RenderTreeNodePayload) => {
+    const node = p.node as TreeNodeType;
+    const panels = usePanelsStore();
+    const devicesStore = useDevicesStore();
     const pingQuery = useQuery({
         queryKey: ['ping'],
         refetchInterval: 1000,
@@ -77,44 +72,72 @@ export const DevicesTree = () => {
                 : color_offline
             : color_gray;
 
-    return (
-        <TreeView>
-            <TreeView.Item
-                key="add_device"
-                id="add_device"
-                onSelect={() => devicesStore.localDevice_create()}
-            >
+    switch (node.type) {
+        case "add_new_device":
+            return <Node
+                icon={<PlusIcon />}
+                nodePayload={p}
+                onClick={() => devicesStore.localDevice_create()}>
                 <span className="font-semibold text-(color:--foreground)">New Device</span>
-                <TreeView.LeadingVisual>
-                    <PlusIcon />
-                </TreeView.LeadingVisual>
+            </Node>
+        case "device":
+            return <Node
+                nodePayload={p}
+                icon={<LightBulbIcon fill={getDeviceColor(node.device)} />}
+                menuItems={deviceMenuItems(devicesStore, node.device)} >
+                <span className="font-semibold">{node.label}</span>
+            </Node>
+        case "device_toolbar":
+            return <Node nodePayload={p} hideExpander>
+                <DeviceToolbar device={node.device} />
+            </Node>;
+        case "root_lib":
+            return <Node
+                nodePayload={p}
+                icon={<FileDirectoryIcon />}
+                menuItems={deviceMenuItems(devicesStore, node.device)} >
+                <span className="font-semibold">{node.label}</span>
+            </Node>
+        case "directory": 
+            return <Node
+                nodePayload={p}
+                icon={<FileDirectoryIcon />}
+                menuItems={fodMenuItems(devicesStore, node.device, node.fod)}>
+                {node.label}
+            </Node>;
+        case "file":
+            return <Node
+                nodePayload={p}
+                icon={<div className="opacity-55"><FileTypeIcon fod={node.fod} /></div>}
+                onClick={(e) => panels.addDevicePanel(((e as any).button === 1) ? "new_window" : "default", node.device.id, "local_file", node.fod)}
+                menuItems={fodMenuItems(devicesStore, node.device, node.fod)}
+            >
+                {node.label}
+            </Node>;
+        case "directory_empty":
+            return null;
+        default: return <Node nodePayload={p}>Unsupported node</Node>
+    }
+}
 
-            </TreeView.Item>
-            {devicesStore.query.data?.map((d) => {
-                const isLib = d.name == ".lib";
+export const DevicesTree = () => {
+    const devicesStore = useDevicesStore();
+    
+    const tree = useTree({
+        initialExpandedState: devicesStore.expanded.expanded,
+        onNodeExpand: (node) => devicesStore.expanded.set(node, true),
+        onNodeCollapse: (node) => devicesStore.expanded.set(node, false)
+    });
+    const treeData = useTreeData();
 
-                return <TreeView.Item
-                    key={d.id}
-                    id={d.id}
-                    expanded={exp.get(d.id)}
-                    onExpandedChange={(e) => exp.set(d.id, e)}
-                >
-                    <span className="font-semibold text-(color:--foreground)">{d.name}</span>
-                    <TreeView.LeadingVisual>
-                        {(isLib)
-                            ? <FileDirectoryIcon />
-                            : <LightBulbIcon fill={getDeviceColor(d)} />
-                        }
-                    </TreeView.LeadingVisual>
-                    <TreeView.SubTree>
-                        {(!isLib) && <TreeView.Item className="opacity-50 hover:opacity-100" id={`toolbar_${d.id}`} ><DeviceToolbar device={d} /></TreeView.Item>}
-                        <LocalFiles device={d} parent={d} />
-                    </TreeView.SubTree>
-                    <TreeView.TrailingVisual>
-                        <ThreeDotsMenu items={deviceMenuItems(devicesStore, d)} />
-                    </TreeView.TrailingVisual>
-                </TreeView.Item>;
-            })
-            }
-        </TreeView>);
+    return <Tree
+        //Workaround for https://github.com/mantinedev/mantine/issues/7266
+        tree={{ ...tree, setHoveredNode: () => { } }}
+        data={treeData}
+        renderNode={nodeRenderer}
+        className="text-sm"
+        classNames={{
+            label: "dark:hover:bg-gray-800 hover:bg-gray-100 py-px",
+        }}
+    />
 };
