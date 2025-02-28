@@ -1,6 +1,6 @@
 # Editor for ESPHome
 
-ESPHome-Editor is a self-hosted, offline code editor built on top of [ESPHome](https://esphome.io/). It's designed to simplify the configuration of ESPHome devices by streamlining the process of writing and managing repetitive sections of your configuration YAML files.
+Editor for ESPHome is a self-hosted, open-source, offline code editor built on top of [ESPHome](https://esphome.io/). It's designed to simplify the configuration of ESPHome devices by streamlining the process of writing and managing repetitive sections of your configuration YAML files.
 
 This tool generates ESPHome YAML configurations through the following steps:
 
