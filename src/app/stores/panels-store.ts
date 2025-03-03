@@ -1,12 +1,15 @@
 import { atom, useAtom } from "jotai";
 import { TLocalFileOrDirectory } from "@/server/devices/types";
 import { TPanel, TPanelWithClick } from "./panels-store/types";
-import { AddPanelOptions, DockviewApi } from 'dockview-react';
+import { DockviewApi } from 'dockview-react';
+import { useEffect, useState } from "react";
 
 const dockViewApiAtom = atom<DockviewApi | null>(null);
 
 function getPanelTitle(panel: TPanel) {
     switch (panel.operation) {
+        case "devices_tree":
+            return "Devices";
         case "local_file":
             return `${panel.device_id} -  ${panel.path}`;
         case "local_device":
@@ -39,8 +42,23 @@ function getPanelId(panel: TPanel) {
 
 export type PanelTarget = "default" | "new_window" | "floating";
 
+export const usePanelsApiStore = () => {
+    const [api, setApi] = useAtom(dockViewApiAtom);
+
+    const findPanel = (panel: TPanel) => {
+        const panelId = getPanelId(panel);
+        return api?.panels.find(p => p.id === panelId);
+    }
+
+    return {
+        api,
+        setApi,
+        findPanel,
+    }
+}
+
 export const usePanelsStore = () => {
-    let [api, setApi] = useAtom(dockViewApiAtom);
+    let { api, setApi, ...others } = usePanelsApiStore();
 
     const addPanel = (
         panel: TPanel,
@@ -55,8 +73,8 @@ export const usePanelsStore = () => {
 
         //generate ID from some hash
         const id = getPanelId(panel);
-        const params: TPanelWithClick = { ...panel, last_click: new Date().toISOString() };
         const existingPanel = api?.panels.find(p => p.id === id)
+        const params: TPanelWithClick = { ...panel, last_click: new Date().toISOString() };
 
         if (existingPanel) {
             existingPanel.api.updateParameters(params)
@@ -128,8 +146,22 @@ export const usePanelsStore = () => {
     };
 
     return {
+        api,
         initApi,
         addPanel,
         addDevicePanel,
     };
+}
+
+export const useRerenderOnPanelChange = () => {
+    const papi = usePanelsApiStore();
+    const [fake, setFake] = useState(0);
+	useEffect(() => {
+		const disposable = papi.api?.onDidLayoutChange(() => {
+			setFake(fake + 1);
+		});
+		return () => disposable?.dispose();
+	}, [papi.api]);
+
+    return papi;
 }
