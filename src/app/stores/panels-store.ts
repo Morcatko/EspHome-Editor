@@ -82,8 +82,8 @@ export const usePanelsStore = () => {
                             bottom: 15,
                             right: 15,
                         },
-                        width: window.innerWidth * 2/ 3,
-                        height: window.innerHeight / 2,
+                        width: window.innerWidth * 2 / 3,
+                        height: window.innerHeight * 2 / 3,
                     });
 
             }
