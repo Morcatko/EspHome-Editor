@@ -1,6 +1,6 @@
 "use client";
 import { Suspense } from "react";
-import { Anchor, Loader } from "@mantine/core";
+import { Anchor, Button, Loader } from "@mantine/core";
 import Image from "next/image";
 import { DevicesTree } from "./components/devices-tree";
 import { PanelsContainer } from "./components/panels-container";
@@ -11,6 +11,7 @@ import { openAboutDialog } from "./components/dialogs/about-dialog";
 import logo from "@/assets/logo.svg";
 import { useMonacoInit } from "./components/editors/monaco/monaco-init";
 import { TPanel } from "./stores/panels-store/types";
+import { SidebarExpandIcon } from "@primer/octicons-react";
 
 const devicesPanel: TPanel = {
 	operation: "devices_tree"
@@ -24,6 +25,12 @@ const Header = () => {
 	</a>
 }
 
+const CollapseButton = () => {
+	const panelsStore = usePanelsStore();
+	return <Button variant="subtle" radius="md" onClick={() => panelsStore.addPanel(devicesPanel)}>
+			<SidebarExpandIcon />
+		</Button>
+}
 const Page = () => {
 	const statusStore = useStatusStore();
 	const monacoInitialized = useMonacoInit();
@@ -46,11 +53,11 @@ const Page = () => {
 						<div className="flex-grow pl-1 overflow-y-auto">
 							<DevicesTree />
 						</div>
-						<div className="flex-none border-t border-slate-200 dark:border-slate-800 text-center p-6 flex">
+						<div className="flex-none border-t border-slate-200 dark:border-slate-800 text-center p-4 flex">
 							<div className="w-14 flex-none">
-								Col
+								<CollapseButton />
 							</div>
-							<Anchor className="flex-grow" href="#" onClick={() => openAboutDialog()}>{statusStore.query.isSuccess && statusStore.query.data?.version}</Anchor>
+							<Anchor className="flex-grow" style={{lineHeight: '34px'}} href="#" onClick={() => openAboutDialog()}>{statusStore.query.isSuccess && statusStore.query.data?.version}</Anchor>
 						</div>
 					</div>
 					: null}
