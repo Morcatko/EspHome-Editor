@@ -7,7 +7,9 @@ const AboutDialogContent = () => {
     const statusStore = useStatusStore();
     return <div className="space-y-2 mt-4">
         {statusStore.query.isSuccess && <>
-            <div>Version: {statusStore.query.data?.version}</div>
+            <div>
+                Version: <Anchor href="https://github.com/Morcatko/EspHome-Editor/releases" target="_blank">{statusStore.query.data?.version} <LinkExternalIcon className="inline" /></Anchor>
+                </div>
             <div>
                 <Anchor href={statusStore.query.data?.espHomeWebUrl} target="_blank">ESPHome <LinkExternalIcon className="inline" /></Anchor>
             </div>
