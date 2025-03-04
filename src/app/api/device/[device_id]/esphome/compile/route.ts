@@ -11,6 +11,5 @@ export async function SOCKET(
     server: ws.WebSocketServer,
     params: TParams<TDeviceId>
 ) {
-    console.log(await params);
     await streamToWs(params, client, "compile");
 }

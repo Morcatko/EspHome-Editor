@@ -1,5 +1,5 @@
 "use client";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { Anchor, Loader } from "@mantine/core";
 import Image from "next/image";
 import { DevicesTree } from "./components/devices-tree";

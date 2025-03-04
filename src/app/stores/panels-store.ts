@@ -155,13 +155,13 @@ export const usePanelsStore = () => {
 
 export const useRerenderOnPanelChange = () => {
     const papi = usePanelsApiStore();
+
     const [fake, setFake] = useState(0);
-	useEffect(() => {
-		const disposable = papi.api?.onDidLayoutChange(() => {
-			setFake(fake + 1);
-		});
-		return () => disposable?.dispose();
-	}, [papi.api]);
+    useEffect(() => {
+        papi.api?.onDidLayoutChange(() =>
+            setFake(papi.api?.panels.length ?? 0)
+        );
+    }, [papi.api]);
 
     return papi;
 }
