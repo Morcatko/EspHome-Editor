@@ -147,13 +147,13 @@ export namespace local {
         const oldPath = getDevicePath(device_id, path);
         const parentDir = dirname(oldPath);
         const newPath = join(parentDir, fixPath(newName));
-        console.debug(`Renaming file '${oldPath}' to '${newName}'`);
+        log.debug(`Renaming file '${oldPath}' to '${newName}'`);
         await fs.rename(oldPath, newPath);
     };
 
     export const deletePath = async (device_id: string, path: string) => {
         const fullPath = getDevicePath(device_id, path);
-        console.debug(`Deleting file '${fullPath}'`);
+        log.debug(`Deleting file '${fullPath}'`);
         const stats = await fs.stat(fullPath);
         if (stats.isDirectory())
             await fs.rmdir(fullPath)
