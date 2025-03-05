@@ -20,7 +20,7 @@ type TPanel_DeviceLocalFile = {
 }
 
 export type TPanel_Device = {
-    operation: "local_device" | "esphome_device" | "diff" | "esphome_compile" | "esphome_install" | "esphome_log" ;
+    operation: "local_device" | "esphome_device" | "diff" | "esphome_compile" | "esphome_install" | "esphome_log";
 }
 
 type TPanel_DeviceAll = TPanel_DeviceBase & (TPanel_DeviceLocalFile | TPanel_Device);
@@ -28,7 +28,7 @@ type TPanel_DeviceAll = TPanel_DeviceBase & (TPanel_DeviceLocalFile | TPanel_Dev
 export type TPanel_Onboarding = {
     operation: "onboarding";
     step?: "home" | "flowers";
-} 
+}
 
 
 export type TPanel = (TPanel_DeviceAll | TPanel_Onboarding)

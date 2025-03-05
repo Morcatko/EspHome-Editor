@@ -55,8 +55,8 @@ export const usePanelsStore = () => {
 
         //generate ID from some hash
         const id = getPanelId(panel);
-        const params: TPanelWithClick = { ...panel, last_click: new Date().toISOString() };
         const existingPanel = api?.panels.find(p => p.id === id)
+        const params: TPanelWithClick = { ...panel, last_click: new Date().toISOString() };
 
         if (existingPanel) {
             existingPanel.api.updateParameters(params)
