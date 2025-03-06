@@ -19,7 +19,7 @@ const devicesPanel: TPanel = {
 
 const Header = () => {
 	const panelsStore = usePanelsStore();
-	return <a href="#" onClick={() => panelsStore.addPanel(devicesPanel)}>
+	return <a href="#" onClick={() => panelsStore.addPanel({ operation: "onboarding", step: "home" })}>
 		<Image className="inline mr-2 align-middle" src={logo} alt="ESPHome Editor" width="32" height="32" />
 		<h4 className="inline-block align-baseline text-slate-600 dark:text-slate-400 m-0 font-semibold" >Editor for ESPHome</h4>
 	</a>
@@ -28,8 +28,8 @@ const Header = () => {
 const CollapseButton = () => {
 	const panelsStore = usePanelsStore();
 	return <Button variant="subtle" radius="md" onClick={() => panelsStore.addPanel(devicesPanel)}>
-			<SidebarExpandIcon />
-		</Button>
+		<SidebarExpandIcon />
+	</Button>
 }
 const Page = () => {
 	const statusStore = useStatusStore();
@@ -57,7 +57,7 @@ const Page = () => {
 							<div className="w-14 flex-none">
 								<CollapseButton />
 							</div>
-							<Anchor className="flex-grow" style={{lineHeight: '34px'}} href="#" onClick={() => openAboutDialog()}>{statusStore.query.isSuccess && statusStore.query.data?.version}</Anchor>
+							<Anchor className="flex-grow" style={{ lineHeight: '34px' }} href="#" onClick={() => openAboutDialog()}>{statusStore.query.isSuccess && statusStore.query.data?.version}</Anchor>
 						</div>
 					</div>
 					: null}
