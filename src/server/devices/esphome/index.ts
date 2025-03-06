@@ -74,7 +74,7 @@ export namespace espHome {
                     ssid: "!secret wifi_ssid",
                     psk: "!secret wifi_password",
                     name: device_id,
-                    board:"esp32-s3-devkitc-1"
+                    board: "esp32-s3-devkitc-1"
                 })
             });
             device = await getDevice(device_id.toLowerCase());

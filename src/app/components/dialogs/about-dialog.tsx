@@ -9,7 +9,7 @@ const AboutDialogContent = () => {
         {statusStore.query.isSuccess && <>
             <div>
                 Version: <Anchor href="https://github.com/Morcatko/EspHome-Editor/releases" target="_blank">{statusStore.query.data?.version} <LinkExternalIcon className="inline" /></Anchor>
-                </div>
+            </div>
             <div>
                 <Anchor href={statusStore.query.data?.espHomeWebUrl} target="_blank">ESPHome <LinkExternalIcon className="inline" /></Anchor>
             </div>
