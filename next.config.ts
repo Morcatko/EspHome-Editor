@@ -2,7 +2,6 @@ import type { NextConfig } from "next";
 import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin'
 
 const nextConfig: NextConfig = {
-  reactStrictMode: false,
   output: "standalone",
   /* config options here */
   eslint: {
