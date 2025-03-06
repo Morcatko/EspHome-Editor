@@ -30,7 +30,10 @@ export type TPanel_Onboarding = {
     step?: "home" | "flowers";
 }
 
+type TPanel_Devices = {
+    operation: "devices_tree";
+}
 
-export type TPanel = (TPanel_DeviceAll | TPanel_Onboarding)
+export type TPanel = (TPanel_DeviceAll | TPanel_Onboarding | TPanel_Devices);
 
 export type TPanelWithClick = TPanel & { last_click: string };
