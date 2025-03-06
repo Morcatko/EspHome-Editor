@@ -45,8 +45,10 @@ export type PanelTarget = "default" | "new_window" | "floating";
 export const usePanelsApiStore = () => {
     const [api, setApi] = useAtom(dockViewApiAtom);
 
-    const findPanel = (panel: TPanel) => {
-        const panelId = getPanelId(panel);
+    const findPanel = (panel: TPanel | string) => {
+        const panelId = panel instanceof String 
+            ? panel 
+            : getPanelId(panel as TPanel);
         return api?.panels.find(p => p.id === panelId);
     }
 
@@ -58,7 +60,7 @@ export const usePanelsApiStore = () => {
 }
 
 export const usePanelsStore = () => {
-    let { api, setApi, ...others } = usePanelsApiStore();
+    let { api, setApi, findPanel } = usePanelsApiStore();
 
     const addPanel = (
         panel: TPanel,
@@ -72,8 +74,8 @@ export const usePanelsStore = () => {
         if (!api) return;
 
         //generate ID from some hash
-        const id = getPanelId(panel);
-        const existingPanel = api?.panels.find(p => p.id === id)
+        const panelId = getPanelId(panel);
+        const existingPanel = findPanel(panelId);
         const params: TPanelWithClick = { ...panel, last_click: new Date().toISOString() };
 
         if (existingPanel) {
@@ -82,7 +84,7 @@ export const usePanelsStore = () => {
         }
         else {
             const dockViewPanel = api.addPanel<TPanelWithClick>({
-                id: getPanelId(panel),
+                id: panelId,
                 title: getPanelTitle(panel),
                 component: "default",
                 tabComponent: "default",
@@ -146,7 +148,6 @@ export const usePanelsStore = () => {
     };
 
     return {
-        api,
         initApi,
         addPanel,
         addDevicePanel,
