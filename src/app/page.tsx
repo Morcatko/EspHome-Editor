@@ -1,19 +1,19 @@
 "use client";
-import { Suspense } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { Anchor, Button, Loader } from "@mantine/core";
 import Image from "next/image";
 import { DevicesTree } from "./components/devices-tree";
 import { PanelsContainer } from "./components/panels-container";
-import { useDevicesStore } from "./stores/devices-store";
 import { useStatusStore } from "./stores/status-store";
 import { usePanelsStore, useRerenderOnPanelChange } from "./stores/panels-store";
 import { openAboutDialog } from "./components/dialogs/about-dialog";
 import logo from "@/assets/logo.svg";
-import { useMonacoInit } from "./components/editors/monaco/monaco-init";
 import { TPanel } from "./stores/panels-store/types";
 import { SidebarExpandIcon } from "@primer/octicons-react";
-import { Orientation, SplitviewReact, SplitviewReadyEvent } from "dockview-react";
+import { Orientation, SplitviewApi, SplitviewReact, SplitviewReadyEvent } from "dockview-react";
 import { useDarkTheme } from "./utils/hooks";
+import { useMonacoInit } from "./components/editors/monaco/monaco-init";
+import { useDevicesQuery } from "./stores/devices-store";
 
 const devicesPanel: TPanel = {
 	operation: "devices_tree"
@@ -33,45 +33,57 @@ const CollapseButton = () => {
 		<SidebarExpandIcon />
 	</Button>
 }
-const Page = () => {
-	const statusStore = useStatusStore();
-	const monacoInitialized = useMonacoInit();
-	const devicesQuery = useDevicesQuery();
 
 const DevicesPanel = () => {
-	const [_, setAboutDialogVisible] = useAboutDialogVisible();
 	const statusStore = useStatusStore();
 
-	return <div style={{ gridTemplateRows: "56px 1fr auto", gridGap: "1px" }} className="h-screen grid" >
-		<Header />
-		<div className="pl-1 overflow-y-auto"><DevicesTreeView /></div>
-		<div className="border-t border-slate-200 dark:border-slate-800 text-center p-6">
-			<a className="underline text-blue-600 dark:text-blue-800 hover:text-blue-800" href="#" onClick={() => setAboutDialogVisible(true)}>{statusStore.query.isSuccess && statusStore.query.data?.version}</a>
+	return <div className="flex-none flex flex-col h-screen">
+		<div className="flex-none border-b border-slate-200 dark:border-slate-800 text-center leading-[56px]" >
+			<Header />
+		</div>
+		<div className="flex-grow pl-1 overflow-y-auto">
+			<DevicesTree />
+		</div>
+		<div className="flex-none border-t border-slate-200 dark:border-slate-800 text-center p-4 flex">
+			<div className="w-14 flex-none">
+				<CollapseButton />
+			</div>
+			<Anchor className="flex-grow" style={{ lineHeight: '34px' }} href="#" onClick={() => openAboutDialog()}>{statusStore.query.isSuccess && statusStore.query.data?.version}</Anchor>
 		</div>
 	</div>;
 }
 
 const components = {
 	"devices-panel": () => <DevicesPanel />,
-	"panels-container": () => <PanelsContainer />
+	"panels-container": () => <div >pc</div>//</div><PanelsContainer />
 };
 
-const Page = () => {
+const PageContent = () => {
+	const [api, setApi] = useState<SplitviewApi>()
 	const isDarkMode = useDarkTheme();
-
 	const onReady = (event: SplitviewReadyEvent) => {
-		event.api.addPanel({
+		console.log("onReady", event);
+		setApi(event.api);
+	};
+
+	useEffect(() => {
+		console.log("useEffect");
+		if (!api) return;
+		api.addPanel({
 			id: 'devices-panel',
 			component: 'devices-panel',
 			minimumSize: 65,
 			maximumSize: 400,
 			size: 300
 		});
-		event.api.addPanel({
+		console.log("addPanel", api.panels);
+		api.addPanel({
 			id: 'panels-container',
 			component: 'panels-container'
 		});
-	}
+	}, [api]);
+
+	console.log("PageContent");
 
 	return <SplitviewReact
 		orientation={Orientation.HORIZONTAL}
@@ -79,5 +91,16 @@ const Page = () => {
 		onReady={onReady}
 		className={`${isDarkMode ? "dockview-theme-dark" : "dockview-theme-light"}`}
 	/>
+}
+
+const Page = () => {
+	const monacoInitialized = useMonacoInit();
+	const devicesQuery = useDevicesQuery();
+
+	return (!monacoInitialized || devicesQuery.isLoading)
+		? <div className="h-screen flex items-center justify-center">
+			<Loader className="content-center" />
+		</div>
+		: <PageContent />
 };
 export default Page;
