@@ -1,11 +1,13 @@
 "use client";
 import { TDevice, TLocalFileOrDirectory } from "@/server/devices/types";
-import toast from "react-hot-toast";
 import { api } from "../utils/api-client";
-import { queryClient, rootStore } from ".";
+import { queryClient } from ".";
 import { useQuery } from "@tanstack/react-query";
 import { useLocalStorage } from "usehooks-ts";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
+import { openConfirmationDialog } from "../components/dialogs/confirmation-dialog";
+import { openInputTextDialog } from "../components/dialogs/input-text-dialog";
+import { notifications } from "@mantine/notifications";
 
 const useDeviceExpandedStore = () => {
     const [value, setValue] = useLocalStorage<string[]>('e4e.devices.expanded', [], {
@@ -14,7 +16,7 @@ const useDeviceExpandedStore = () => {
     });
 
     return {
-        get: useCallback((id: string) => value.includes(id), [value]),
+        expanded: useMemo<Record<string, boolean>>(() => value.reduce((acc, id) => { acc[id] = true; return acc }, {} as any), [value]),
         set: useCallback((id: string, expanded: boolean) => {
             if (expanded) {
                 setValue([...value, id]);
@@ -31,23 +33,20 @@ async function showToast(
     loading: string | null,
     success: string | null,
     error: string | null) {
-    await toast.promise(
-        (async () => {
-            await call();
-            for (const invalidateKey of invalidateKeys) {
-                await queryClient.invalidateQueries({ queryKey: invalidateKey });
-            }
-        })(),
-        {
-            loading: loading,
-            success: success,
-            error: error,
-        },
-    );
+    const notificationId = notifications.show({ title: loading, message: null, loading: true, autoClose: false, withCloseButton: false });
+    try {
+        await call();
+        for (const invalidateKey of invalidateKeys) {
+            await queryClient.invalidateQueries({ queryKey: invalidateKey });
+        }
+        notifications.update({ id: notificationId, title: success, message: null, loading: false, autoClose: 1500 });
+    } catch (e) {
+        notifications.update({ id: notificationId, title: error, message: e?.toString(), loading: false, color: "red", withCloseButton: true });
+    }
 }
 
 async function localDevice_create() {
-    const device_name = await rootStore.inputTextDialog.tryShowModal({
+    const device_name = await openInputTextDialog({
         title: "Add New Device",
         subtitle: "Enter Device Name",
         defaultValue: "new-device",
@@ -64,7 +63,7 @@ async function localDevice_create() {
 }
 
 async function localDevice_addDirectory(device: TDevice, parent_path: string) {
-    const directory_name = await rootStore.inputTextDialog.tryShowModal({
+    const directory_name = await openInputTextDialog({
         title: "Create New Directory",
         subtitle: `${device.name} - ${parent_path}/`,
         defaultValue: "new directory",
@@ -81,15 +80,14 @@ async function localDevice_addDirectory(device: TDevice, parent_path: string) {
 }
 
 async function localDevice_addFile(device: TDevice, parent_path: string) {
-    const file_name = await rootStore.inputTextDialog.tryShowModal({
+    const file_name = await openInputTextDialog({
         title: "Create New File",
         subtitle: `${device.name} - ${parent_path}/`,
-        defaultValue: "newfile.yaml",
+        defaultValue: "newfile.yaml"
     });
-
     if (file_name)
         await showToast(
-            () => api.local_save(device.id, parent_path + "/" + file_name, ""),
+            () => api.local_path_save(device.id, parent_path + "/" + file_name, ""),
             [["devices"],
             ["device", device.id, "local"]],
             "Creating...",
@@ -98,11 +96,11 @@ async function localDevice_addFile(device: TDevice, parent_path: string) {
         );
 }
 
-async function localDevice_import(device: TDevice) {
+async function localDevice_import(device_id: string) {
     await showToast(
-        () => api.local_importDevice(device.id),
+        () => api.local_importDevice(device_id),
         [["devices"],
-        ["device", device.id, "local"]],
+        ["device", device_id, "local"]],
         "Creating...",
         "Created!",
         "Failed to Create",
@@ -120,7 +118,7 @@ async function espHome_upload(device: TDevice) {
 }
 
 async function local_renameFoD(device: TDevice, file: TLocalFileOrDirectory) {
-    const newName = await rootStore.inputTextDialog.tryShowModal({
+    const newName = await openInputTextDialog({
         title: "Rename",
         subtitle: `${device.name} - ${file.path}`,
         defaultValue: file.name,
@@ -128,7 +126,7 @@ async function local_renameFoD(device: TDevice, file: TLocalFileOrDirectory) {
 
     if (newName)
         await showToast(
-            () => api.local_rename(device.id, file.path, newName),
+            () => api.local_path_rename(device.id, file.path, newName),
             [["devices"],
             ["device", device.id, "local"],
             ["device", device.id, "local-file", file.path],
@@ -140,15 +138,15 @@ async function local_renameFoD(device: TDevice, file: TLocalFileOrDirectory) {
 }
 
 async function local_deleteFoD(device: TDevice, file: TLocalFileOrDirectory) {
-    const del = await rootStore.confirmationDialog.tryShowModal({
+    const del = await openConfirmationDialog({
         title: "Delete",
         subtitle: `${device.name} - ${file.path}`,
         text: "Are you sure you want to delete this file or directory?",
-        confirmButtonColor: "danger",
+        danger: true
     });
     if (del)
         showToast(
-            () => api.local_delete(device.id, file.path),
+            () => api.local_path_delete(device.id, file.path),
             [["devices"],
             ["device", device.id, "local"],
             ["device", device.id, "local-file", file.path],
@@ -160,15 +158,22 @@ async function local_deleteFoD(device: TDevice, file: TLocalFileOrDirectory) {
         );
 }
 
-export const useDevicesStore = () => {
-    const devicesQuery = useQuery({
+export const useDevice = (device_id: string) => {
+    const devices = useDevicesStore().query.data;
+    const device = devices?.find(d => d.id === device_id);
+    return device;
+}
+
+export const useDevicesQuery = () =>
+    useQuery({
         queryKey: ["devices"],
         queryFn: async () => api.callGet_json<TDevice[]>("/api/device")
     });
 
+export const useDevicesStore = () => {
     return {
         expanded: useDeviceExpandedStore(),
-        query: devicesQuery,
+        query: useDevicesQuery(),
         localDevice_create,
         localDevice_addDirectory,
         localDevice_addFile,

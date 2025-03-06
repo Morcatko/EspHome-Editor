@@ -71,13 +71,13 @@ export namespace espHome {
             await fetch(`${c.espHomeApiUrl}/wizard`, {
                 method: "POST",
                 body: JSON.stringify({
-                    ssid:"!secret wifi_ssid",
+                    ssid: "!secret wifi_ssid",
                     psk: "!secret wifi_password",
                     name: device_id,
-                    board:"esp32-s3-devkitc-1"
+                    board: "esp32-s3-devkitc-1"
                 })
             });
-            device = await getDevice(device_id);
+            device = await getDevice(device_id.toLowerCase());
         }
 
         //Create device if it does not exist???
@@ -91,6 +91,9 @@ export namespace espHome {
     }
 
     export const getPing = async () => {
+        if (!c.espHomeApiUrl)
+            return null;
+
         const url = `${c.espHomeApiUrl}/ping`;
         //log.debug("Pinging ESPHome", url);
         const response = await fetch(url);

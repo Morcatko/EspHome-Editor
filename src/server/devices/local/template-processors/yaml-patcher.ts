@@ -1,5 +1,6 @@
 import { parse } from "@/server/yamlpath";
 import * as YAML from "yaml";
+import { isMap, isSeq } from "yaml";
 
 const patchYaml = (target: YAML.Document, path: string, changes: YAML.YAMLMap[]) => {
 
@@ -11,7 +12,7 @@ const patchYaml = (target: YAML.Document, path: string, changes: YAML.YAMLMap[])
         const value = (pair.value as YAML.YAMLMap).items[0];
 
         for(const nodeToChange of nodesToChange) {
-            if (nodeToChange instanceof YAML.YAMLMap) {
+            if (isMap(nodeToChange)) {
                 if (operation === "add") {
                     nodeToChange.add(value, true);
                 } else if (operation === "set") {
@@ -26,7 +27,7 @@ const patchYaml = (target: YAML.Document, path: string, changes: YAML.YAMLMap[])
         /*
         const key = change.items[0].key.toString();
         const value = change.items[0].value;
-        if (nodeToChange instanceof YAML.YAMLMap) {
+        if (isMap(nodeToChange)) {
             const pair = new YAML.Pair(new YAML.Scalar(key), value);
             nodeToChange.add(pair, true);
         } else {
@@ -40,17 +41,17 @@ export const patchEspHomeYaml = (target: YAML.Document, patches: string[]) => {
         const patch = YAML.parseDocument(patchString);
         const contents = patch.contents;
 
-        if (!(contents instanceof YAML.YAMLSeq)) {
+        if (!(isSeq(contents))) {
             throw new Error("Document root must be YAMLSeq");
         }
         else {
             for (const item of contents.items) {
-                if (!(item instanceof YAML.YAMLMap)) {
+                if (!(isMap(item))) {
                     throw new Error("Item must be YAMLMap");
                 }else {
                     const patch = item.items[0];
-                    if ((patch instanceof YAML.Pair)
-                        && (patch.value instanceof YAML.YAMLSeq))
+                    if ((YAML.isPair(patch))
+                        && (isSeq(patch.value)))
                          {
                         const path = patch.key.toString();
                         const patches = patch.value.items as YAML.YAMLMap[];

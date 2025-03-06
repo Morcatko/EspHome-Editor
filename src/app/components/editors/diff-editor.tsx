@@ -1,6 +1,6 @@
 import { TEditorFileProps } from "@/app/stores/panels-store/types";
-import { useDarkTheme } from "@/app/utils/hooks";
 import { DiffEditor as MonacoDiffEditor } from "@monaco-editor/react";
+import { useMonacoTheme } from "./monaco/useMonacoTheme";
 
 type TProps = {
     leftEditor: TEditorFileProps;
@@ -8,7 +8,7 @@ type TProps = {
 }
 
 export const DiffEditor = (props: TProps) => {
-    const isDarkMode = useDarkTheme();
+    const theme = useMonacoTheme();
 
     if (props.leftEditor.value.pending || props.rightEditor.value.pending) {
         return <div>Loading...</div>;
@@ -22,7 +22,7 @@ export const DiffEditor = (props: TProps) => {
             modified={props.rightEditor.value.content}
             originalLanguage={props.leftEditor.language}
             modifiedLanguage={props.rightEditor.language}
-            theme={isDarkMode ? "vs-dark" : "vs-light"}
+            theme={theme}
             options={{
                 readOnly: !!props.leftEditor.onValueChange,
             }}

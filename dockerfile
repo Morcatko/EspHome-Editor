@@ -7,14 +7,16 @@ COPY next-env.d.ts ./
 COPY next.config.ts ./
 COPY package.json ./
 COPY postcss.config.mjs ./
-COPY tailwind.config.ts ./
+COPY setup.mts ./
 COPY tsconfig.json ./
 COPY vitest.config.ts ./
 COPY yarn.lock ./
 
-RUN yarn --frozen-lockfile
+RUN --mount=type=cache,target=/root/.yarn YARN_CACHE_FOLDER=/root/.yarn yarn --frozen-lockfile
 
 COPY src ./src
+COPY public ./public
+RUN yarn setup
 RUN yarn test run
 RUN yarn build
 
@@ -24,8 +26,8 @@ WORKDIR /app
 COPY examples /app/work-folder/devices
 COPY --from=builder /build/.next/standalone ./
 COPY --from=builder /build/.next/static ./.next/static
+COPY --from=builder /build/public ./public
 
 EXPOSE 3000
 ENV PORT=3000
 CMD HOSTNAME="0.0.0.0" node server.js
-#ENTRYPOINT [ "node", "server.js" ]

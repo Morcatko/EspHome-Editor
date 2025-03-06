@@ -1,24 +1,42 @@
 "use client";
-import { Heading } from "@primer/react";
+import { Suspense } from "react";
+import { Anchor, Button, Loader } from "@mantine/core";
 import Image from "next/image";
-import { DevicesTreeView } from "./components/devices-tree-view";
+import { DevicesTree } from "./components/devices-tree";
 import { PanelsContainer } from "./components/panels-container";
+import { useDevicesStore } from "./stores/devices-store";
 import { useStatusStore } from "./stores/status-store";
-import { usePanelsStore } from "./stores/panels-store";
-import { useAboutDialogVisible } from "./components/dialogs/about-dialog";
+import { usePanelsStore, useRerenderOnPanelChange } from "./stores/panels-store";
+import { openAboutDialog } from "./components/dialogs/about-dialog";
 import logo from "@/assets/logo.svg";
+import { useMonacoInit } from "./components/editors/monaco/monaco-init";
+import { TPanel } from "./stores/panels-store/types";
+import { SidebarExpandIcon } from "@primer/octicons-react";
 import { Orientation, SplitviewReact, SplitviewReadyEvent } from "dockview-react";
 import { useDarkTheme } from "./utils/hooks";
 
+const devicesPanel: TPanel = {
+	operation: "devices_tree"
+};
+
 const Header = () => {
 	const panelsStore = usePanelsStore();
-	return <div style={{ gridArea: "1/1/1/1", lineHeight: '56px' }} className="border-b border-slate-200 dark:border-slate-800 text-center" >
-		<a href="#" onClick={(e) => panelsStore.addPanel(e, { operation: "onboarding" })}>
-			<Image className="inline mr-2" src={logo} alt="ESPHome Editor" width="32" height="32" />
-			<Heading className="inline-block align-baseline text-slate-600 dark:text-slate-400" variant="small" >Editor for ESPHome</Heading>
-		</a>
-	</div>
+	return <a href="#" onClick={() => panelsStore.addPanel({ operation: "onboarding", step: "home" })}>
+		<Image className="inline mr-2 align-middle" src={logo} alt="ESPHome Editor" width="32" height="32" />
+		<h4 className="inline-block align-baseline text-slate-600 dark:text-slate-400 m-0 font-semibold" >Editor for ESPHome</h4>
+	</a>
 }
+
+const CollapseButton = () => {
+	const panelsStore = usePanelsStore();
+	return <Button variant="subtle" radius="md" onClick={() => panelsStore.addPanel(devicesPanel)}>
+		<SidebarExpandIcon />
+	</Button>
+}
+const Page = () => {
+	const statusStore = useStatusStore();
+	const monacoInitialized = useMonacoInit();
+	const devicesQuery = useDevicesQuery();
 
 const DevicesPanel = () => {
 	const [_, setAboutDialogVisible] = useAboutDialogVisible();

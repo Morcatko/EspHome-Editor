@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 
 import type { TDevice, TLocalDirectory, TLocalFile, TLocalFileOrDirectory } from "../types";
 import { c } from "../../config";
-import { listDirEntries } from "../../utils/dir-utils";
+import { fileExists, listDirEntries } from "../../utils/fs-utils";
 import { compileFile as _compileFile, getFileInfo } from "./template-processors";
 import { log } from "@/shared/log";
 import { mergeEspHomeYamlFiles } from "./template-processors/yaml-merger";
@@ -20,28 +20,32 @@ const awaitArray = async <T>(arr: Promise<T>[]): Promise<T[]> =>
 const scanDirectory = async (fullPath: string, parentPath: string | null): Promise<TLocalFileOrDirectory[]> => {
     const resAsync =
         (await listDirEntries(fullPath, _ => true))
-            .map(async (d) => {
-                const path = parentPath ? `${parentPath}/${d.name}` : d.name;
-                if (d.isDirectory()) {
+            .map(async (e) => {
+                const path = parentPath ? `${parentPath}/${e.name}` : e.name;
+                if (e.isDirectory()) {
                     return <TLocalDirectory>{
-                        id: d.name,
-                        name: d.name,
+                        id: e.name,
+                        name: e.name,
                         path: path,
                         type: "directory",
-                        files: await scanDirectory(`${fullPath}/${d.name}`, path),
+                        files: await scanDirectory(`${fullPath}/${e.name}`, path),
                     };
                 } else {
+                    if (e.name.endsWith(".testdata"))
+                        return null;
+
                     return <TLocalFile>{
-                        id: d.name,
+                        id: e.name,
                         path: path,
-                        name: d.name,
-                        compiler: getFileInfo(`${fullPath}/${d.name}`).compiler,
+                        name: e.name,
+                        compiler: getFileInfo(`${fullPath}/${e.name}`).compiler,
                         type: "file",
                     };
                 }
-            })
+            });
 
     return (await awaitArray(resAsync))
+        .filter((e) => e !== null)
         .sort((a, b) => a.type.localeCompare(b.type));
 };
 
@@ -79,9 +83,13 @@ export namespace local {
 
     export const getFileContent = async (device_id: string, file_path: string) => {
         const path = getDevicePath(device_id, file_path);
-        const content = await fs.readFile(path, "utf-8");
-        return content;
+        return await fs.readFile(path, "utf-8");
     }
+
+    export const tryGetFileContent = async (device_id: string, file_path: string) => {
+        const path = getDevicePath(device_id, file_path);
+        return await fileExists(path) ? await fs.readFile(path, "utf-8") : null;
+    } 
 
     export const saveFileContent = async (device_id: string, file_path: string, content: string) => {
         await ensureDeviceDirExists(device_id);
@@ -106,7 +114,7 @@ export namespace local {
         for (const file of inputFiles.filter(i => i.info.type === "basic")) {
             const filePath = getDevicePath(device_id, file.id)
             log.debug("Compiling Configuration", filePath);
-            const output = await compileFile(device_id, file.id, null);
+            const output = await compileFile(device_id, file.id, false);
             log.success("Compiled Configuration", filePath);
             outputYamls.push(output);
         }
@@ -118,7 +126,7 @@ export namespace local {
         for (const file of inputFiles.filter(i => i.info.type === "patch")) {
             const filePath = getDevicePath(device_id, file.id)
             log.debug("Compiling patch", filePath);
-            const output = await compileFile(device_id, file.id, null);
+            const output = await compileFile(device_id, file.id, false);
             log.success("Compiled patch", filePath);
             outputPatches.push(output);
         }
@@ -139,13 +147,13 @@ export namespace local {
         const oldPath = getDevicePath(device_id, path);
         const parentDir = dirname(oldPath);
         const newPath = join(parentDir, fixPath(newName));
-        console.debug(`Renaming file '${oldPath}' to '${newName}'`);
+        log.debug(`Renaming file '${oldPath}' to '${newName}'`);
         await fs.rename(oldPath, newPath);
     };
 
     export const deletePath = async (device_id: string, path: string) => {
         const fullPath = getDevicePath(device_id, path);
-        console.debug(`Deleting file '${fullPath}'`);
+        log.debug(`Deleting file '${fullPath}'`);
         const stats = await fs.stat(fullPath);
         if (stats.isDirectory())
             await fs.rmdir(fullPath)

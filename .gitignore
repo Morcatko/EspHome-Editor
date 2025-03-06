@@ -39,3 +39,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .vs
+
+public/esphome_schemas/
+src/3rd-party/esphome-dashboard/
