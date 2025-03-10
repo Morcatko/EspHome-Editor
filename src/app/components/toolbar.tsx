@@ -2,6 +2,7 @@ import { ActionIcon, ActionIconGroup, ActionIconProps, Anchor, Divider, MantineC
 import { useDevice } from "../stores/devices-store";
 import { DeviceToolbarItem } from "./devices-tree/device-toolbar";
 import { SyncIcon } from "@primer/octicons-react";
+import { Fragment } from "react";
 
 const allProps = {
     variant: "subtle" as ActionIconProps["variant"],
@@ -62,14 +63,14 @@ export const DeviceToolbarOperations = (p: TDeviceToolbarOperationsProps) => {
                 : {};
 
             switch (op) {
-                case "LocalShow": return <><DeviceToolbarItem.LocalShow device={device} panelTarget="floating" /><ToolbarItem.Divider /></>;
-                case "Diff": return <DeviceToolbarItem.Diff device={device} panelTarget="floating" />;
-                case "ESPHomeUpload": return <><DeviceToolbarItem.ESPHomeUpload device={device} panelTarget="floating" /><ToolbarItem.Divider /></>;
-                case "ESPHomeShow": return <DeviceToolbarItem.ESPHomeShow device={device} panelTarget="floating" />
-                case "ESPHomeCompile": return <DeviceToolbarItem.ESPHomeCompile device={device} panelTarget="floating" {...extraProps} />;
-                case "ESPHomeInstall": return <DeviceToolbarItem.ESPHomeInstall device={device} panelTarget="floating" {...extraProps} />;
-                case "ESPHomeLog": return <DeviceToolbarItem.ESPHomeLog device={device} panelTarget="floating" {...extraProps} />;
-                case "ESPHome": return <>
+                case "LocalShow": return <Fragment key={op}><DeviceToolbarItem.LocalShow device={device} panelTarget="floating" /><ToolbarItem.Divider /></Fragment>;
+                case "Diff": return <DeviceToolbarItem.Diff key={op} device={device} panelTarget="floating" />;
+                case "ESPHomeUpload": return <Fragment key={op}><DeviceToolbarItem.ESPHomeUpload device={device} panelTarget="floating" /><ToolbarItem.Divider /></Fragment>;
+                case "ESPHomeShow": return <DeviceToolbarItem.ESPHomeShow key={op} device={device} panelTarget="floating" />
+                case "ESPHomeCompile": return <DeviceToolbarItem.ESPHomeCompile key={op} device={device} panelTarget="floating" {...extraProps} />;
+                case "ESPHomeInstall": return <DeviceToolbarItem.ESPHomeInstall key={op} device={device} panelTarget="floating" {...extraProps} />;
+                case "ESPHomeLog": return <DeviceToolbarItem.ESPHomeLog key={op} device={device} panelTarget="floating" {...extraProps} />;
+                case "ESPHome": return <Fragment key={op}>
                     <ToolbarItem.Divider />
                     <ToolbarTooltip label="Open ESPHome Builder" >
                         <ActionIcon
@@ -83,7 +84,7 @@ export const DeviceToolbarOperations = (p: TDeviceToolbarOperationsProps) => {
                                 className="p-1" />
                         </ActionIcon>
                     </ToolbarTooltip>
-                </>;
+                </Fragment>;
                 default: throw new Error(`Unknown operation: ${op}`);
             }
         })}
