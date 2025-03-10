@@ -10,9 +10,10 @@ export const LocalDeviceToolbar = (props: TProps) =>
     <Toolbar>
         <DeviceToolbarOperations
             device_id={props.device_id}
+            panelTarget="floating"
             operations={[
                 "Diff",
-                "ESPHomeUpload",
+                "ESPHomeCreateOrUpload",
                 "ESPHomeShow",
                 "ESPHomeCompile",
                 "ESPHomeInstall",

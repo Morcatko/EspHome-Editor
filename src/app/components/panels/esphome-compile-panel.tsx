@@ -9,6 +9,7 @@ export const EspHomeCompileToolbar = ({ device_id }: TProps) =>
     <Toolbar>
         <DeviceToolbarOperations
             device_id={device_id}
+            panelTarget="floating"
             current_tab="ESPHomeCompile"
             operations={[
                 "ESPHomeCompile",

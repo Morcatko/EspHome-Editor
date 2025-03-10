@@ -33,10 +33,11 @@ export const LocalFileToolbar = (props: TProps) => {
     return <Toolbar>
             <DeviceToolbarOperations
                 device_id={props.device_id}
+                panelTarget="floating"
                 operations={[
-                    "LocalShow",
+                    "LocalShowOrImport",
                     "Diff",
-                    "ESPHomeUpload",
+                    "ESPHomeCreateOrUpload",
                     "ESPHomeShow",
                     "ESPHomeCompile",
                     "ESPHomeInstall",

@@ -10,8 +10,9 @@ export const ESPHomeDeviceToolbar = ({ device_id }: TProps) =>
     <Toolbar>
         <DeviceToolbarOperations
             device_id={device_id}
+            panelTarget="floating"
             operations={[
-                "ESPHomeUpload", 
+                "ESPHomeCreateOrUpload", 
                 "ESPHomeShow", 
                 "ESPHomeCompile", 
                 "ESPHomeInstall", 

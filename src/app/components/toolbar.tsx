@@ -3,6 +3,7 @@ import { useDevice } from "../stores/devices-store";
 import { DeviceToolbarItem } from "./devices-tree/device-toolbar";
 import { SyncIcon } from "@primer/octicons-react";
 import { Fragment } from "react";
+import { PanelTarget } from "../stores/panels-store";
 
 const allProps = {
     variant: "subtle" as ActionIconProps["variant"],
@@ -45,31 +46,56 @@ export const ToolbarItem = {
     Button: ToolbarButton
 };
 
-type TOperation = keyof typeof DeviceToolbarItem | "ESPHome";
+type TOperation = keyof typeof DeviceToolbarItem | "LocalShowOrImport" | "ESPHomeCreateOrUpload" | "ESPHome";
 
 type TDeviceToolbarOperationsProps = {
+    className?: string;
     device_id: string;
+    panelTarget?: PanelTarget;
     current_tab?: TOperation;
     operations: TOperation[];
-
 }
 
 export const DeviceToolbarOperations = (p: TDeviceToolbarOperationsProps) => {
     const device = useDevice(p.device_id)!;
+    const hasLocalFiles = !!device.files;
+    const hasESPHomeConfig = !!device.esphome_config;
+    const uploadCreates = !hasESPHomeConfig;
+
+    const props = {
+        ...allProps,
+        device: device,
+        panelTarget: p.panelTarget,
+    }
+
     return <>
         {p.operations.map(op => {
             const extraProps = (p.current_tab === op)
-                ? { icon: <SyncIcon />, tooltip: "Refresh" }
-                : {};
+                ? { ...props, icon: <SyncIcon />, tooltip: "Refresh" }
+                : props;
 
             switch (op) {
-                case "LocalShow": return <Fragment key={op}><DeviceToolbarItem.LocalShow device={device} panelTarget="floating" /><ToolbarItem.Divider /></Fragment>;
-                case "Diff": return <DeviceToolbarItem.Diff key={op} device={device} panelTarget="floating" />;
-                case "ESPHomeUpload": return <Fragment key={op}><DeviceToolbarItem.ESPHomeUpload device={device} panelTarget="floating" /><ToolbarItem.Divider /></Fragment>;
-                case "ESPHomeShow": return <DeviceToolbarItem.ESPHomeShow key={op} device={device} panelTarget="floating" />
-                case "ESPHomeCompile": return <DeviceToolbarItem.ESPHomeCompile key={op} device={device} panelTarget="floating" {...extraProps} />;
-                case "ESPHomeInstall": return <DeviceToolbarItem.ESPHomeInstall key={op} device={device} panelTarget="floating" {...extraProps} />;
-                case "ESPHomeLog": return <DeviceToolbarItem.ESPHomeLog key={op} device={device} panelTarget="floating" {...extraProps} />;
+                case "LocalShowOrImport": return <Fragment key={op}>
+                    {hasLocalFiles
+                        ? <DeviceToolbarItem.LocalShow {...props} />
+                        : <DeviceToolbarItem.LocalImport {...props} />
+                    }
+                    <ToolbarItem.Divider />
+                </Fragment>;
+                case "Diff": return <DeviceToolbarItem.Diff key={op} {...props} />;
+                case "ESPHomeCreateOrUpload": return <Fragment key={op}>
+                    {
+                        uploadCreates
+                            ? <DeviceToolbarItem.ESPHomeCreate {...props} />
+                            : <DeviceToolbarItem.ESPHomeUpload {...props} />
+                    }
+
+                    <ToolbarItem.Divider />
+                </Fragment>;
+                case "ESPHomeShow": return <DeviceToolbarItem.ESPHomeShow key={op} {...props} />
+                case "ESPHomeCompile": return <DeviceToolbarItem.ESPHomeCompile key={op} {...extraProps} />;
+                case "ESPHomeInstall": return <DeviceToolbarItem.ESPHomeInstall key={op} {...extraProps} />;
+                case "ESPHomeLog": return <DeviceToolbarItem.ESPHomeLog key={op} {...extraProps} />;
                 case "ESPHome": return <Fragment key={op}>
                     <ToolbarItem.Divider />
                     <ToolbarTooltip label="Open ESPHome Builder" >

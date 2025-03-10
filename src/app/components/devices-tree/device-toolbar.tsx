@@ -5,7 +5,7 @@ import { useDarkTheme } from "@/app/utils/hooks";
 import { TDevice } from "@/server/devices/types";
 import { ActionIcon } from "@mantine/core";
 import { BeakerIcon, CodeIcon, DownloadIcon, GitCompareIcon, LogIcon, UploadIcon } from "@primer/octicons-react";
-import { ToolbarItem, TToolbarButtonProps } from "../toolbar";
+import { DeviceToolbarOperations, ToolbarItem, TToolbarButtonProps } from "../toolbar";
 import { TPanel_Device } from "@/app/stores/panels-store/types";
 
 type TDeviceToolbarItemProps =
@@ -73,33 +73,20 @@ export const DeviceToolbarItem = {
     ESPHomeLog: (p: TDeviceToolbarItemProps) => { const hasEspHomeConfig = !!p.device.esphome_config; return <DTB_Panel tooltip="Show ESPHome device log" icon={<LogIcon />} operation="esphome_log" disabled={!hasEspHomeConfig} color={hasEspHomeConfig ? color_esphome : "lightgrey"} {...p} />; },
 };
 
-export const TreeViewDeviceToolbar = ({ device }: { device: TDevice }) => {
-    const hasLocalFiles = !!device.files;
-    const hasESPHomeConfig = !!device.esphome_config;
-
-    const uploadCreates = !hasESPHomeConfig;
-    const props = {
-        className: "opacity-80 hover:opacity-100",
-        device: device
-    }
-
-    return <div style={{ marginLeft: '0px' }}>
+export const TreeViewDeviceToolbar = ({ device }: { device: TDevice }) =>
+    <div style={{ marginLeft: '0px' }}>
         <ActionIcon.Group>
-            {hasLocalFiles
-                ? <DeviceToolbarItem.LocalShow {...props} />
-                : <DeviceToolbarItem.LocalImport {...props} />
-            }
-            <ToolbarItem.Divider />
-            <DeviceToolbarItem.Diff {...props} />
-            {uploadCreates
-                ? <DeviceToolbarItem.ESPHomeCreate {...props} />
-                : <DeviceToolbarItem.ESPHomeUpload {...props} />
-            }
-            <ToolbarItem.Divider />
-            <DeviceToolbarItem.ESPHomeShow {...props} />
-            <DeviceToolbarItem.ESPHomeCompile {...props} />
-            <DeviceToolbarItem.ESPHomeInstall {...props} />
-            <DeviceToolbarItem.ESPHomeLog {...props} />
+            <DeviceToolbarOperations
+                className="opacity-80 hover:opacity-100"
+                device_id={device.id}
+                operations={[
+                    "LocalShowOrImport",
+                    "Diff",
+                    "ESPHomeCreateOrUpload",
+                    "ESPHomeShow",
+                    "ESPHomeCompile",
+                    "ESPHomeInstall",
+                    "ESPHomeLog"]}
+            />
         </ActionIcon.Group>
     </div>;
-};
