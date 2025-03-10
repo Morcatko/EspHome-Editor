@@ -1,27 +1,26 @@
-import { useDevice } from "@/app/stores/devices-store";
 import { SingleEditor } from "../editors/single-editor";
 import { useLocalDeviceStore } from "@/app/stores/panels-store/local-device-store";
-import { Toolbar } from "../toolbar";
-import { DeviceToolbarItem } from "../devices-tree/device-toolbar";
+import { DeviceToolbarOperations, Toolbar } from "../toolbar";
 
 type TProps = {
     device_id: string;
 }
 
-export const LocalDeviceToolbar = (props: TProps) => {
-    const device = useDevice(props.device_id)!;
-
-    const panelTarget = "floating";
-    
-    return <Toolbar>
-        <DeviceToolbarItem.Diff device={device} panelTarget={panelTarget} />
-        <DeviceToolbarItem.ESPHomeUpload device={device} panelTarget={panelTarget} />
-        <DeviceToolbarItem.ESPHomeShow device={device} panelTarget={panelTarget} />
-        <DeviceToolbarItem.ESPHomeCompile device={device} panelTarget={panelTarget} />
-        <DeviceToolbarItem.ESPHomeInstall device={device} panelTarget={panelTarget} />
-        <DeviceToolbarItem.ESPHomeLog device={device} panelTarget={panelTarget} />
+export const LocalDeviceToolbar = (props: TProps) =>
+    <Toolbar>
+        <DeviceToolbarOperations
+            device_id={props.device_id}
+            operations={[
+                "Diff",
+                "ESPHomeUpload",
+                "ESPHomeShow",
+                "ESPHomeCompile",
+                "ESPHomeInstall",
+                "ESPHomeLog",
+                "ESPHome"
+            ]}
+        />
     </Toolbar>;
-}
 
 export const LocalDevicePanel = ({device_id} : TProps) => {
     const data = useLocalDeviceStore(device_id);

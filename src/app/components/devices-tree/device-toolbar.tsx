@@ -73,7 +73,7 @@ export const DeviceToolbarItem = {
     ESPHomeLog: (p: TDeviceToolbarItemProps) => { const hasEspHomeConfig = !!p.device.esphome_config; return <DTB_Panel tooltip="Show ESPHome device log" icon={<LogIcon />} operation="esphome_log" disabled={!hasEspHomeConfig} color={hasEspHomeConfig ? color_esphome : "lightgrey"} {...p} />; },
 };
 
-export const DeviceToolbar = ({ device }: { device: TDevice }) => {
+export const TreeViewDeviceToolbar = ({ device }: { device: TDevice }) => {
     const hasLocalFiles = !!device.files;
     const hasESPHomeConfig = !!device.esphome_config;
 

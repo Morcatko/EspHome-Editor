@@ -9,7 +9,7 @@ import { color_gray, color_offline, color_online } from "../../utils/const";
 import { api } from "../../utils/api-client";
 import { useDevicesStore } from "../../stores/devices-store";
 import { usePanelsStore } from "../../stores/panels-store";
-import { DeviceToolbar } from "./device-toolbar";
+import { TreeViewDeviceToolbar } from "./device-toolbar";
 import { ThreeDotsMenu, deviceMenuItems, fodMenuItems } from "./menus";
 import { TreeNodeType, useTreeData } from "./utils";
 import etajsIcon from "@/assets/etajs-logo.svg";
@@ -89,7 +89,7 @@ const nodeRenderer = (p: RenderTreeNodePayload) => {
             </Node>
         case "device_toolbar":
             return <Node nodePayload={p} hideExpander>
-                <DeviceToolbar device={node.device} />
+                <TreeViewDeviceToolbar device={node.device} />
             </Node>;
         case "root_lib":
             return <Node
