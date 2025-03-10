@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import * as YAML from "yaml";
-import { patchYaml } from "./yaml-patcher";
+import { test_patchYaml } from "./yaml-patcher";
 
 const testDoc = YAML.parseDocument(`
   sensor: 
@@ -8,30 +8,30 @@ const testDoc = YAML.parseDocument(`
     - id: s2`);
 
 
-const patchTestDoc = (path: string, changesYaml: string) => patchYaml(testDoc, path, (YAML.parseDocument(changesYaml).contents as YAML.YAMLSeq).items as YAML.YAMLMap[]);
+const patchTestDoc = (path: string, changesYaml: string) => test_patchYaml(testDoc, path, (YAML.parseDocument(changesYaml).contents as YAML.YAMLSeq).items as YAML.YAMLMap[]);
 
 test("yamlPatch - set-map", () => {
   const changesDoc = `
 - set:
-    name: "Test Button 5"
-    x: x`;
+    name: "set by map"
+    x: by-map`;
 
   const res = patchTestDoc("$.sensor[?(@.id==\"s1\")]", changesDoc);
 
   const s1 = (res.get("sensor") as YAML.YAMLSeq).get(0) as YAML.YAMLMap;
-  expect(s1.get("name")).toEqual("Test Button 5");
-  expect(s1.get("x")).toEqual("x");
+  expect(s1.get("name")).toEqual("set by map");
+  expect(s1.get("x")).toEqual("by-map");
 });
 
 test("yamlPatch - set-seq", () => {
   const changesDoc = `
 - set:
-  - name: "Test Button 5"
-  - x: x`;
+  - name: "set by seq"
+  - x: by-seq`;
 
   const res = patchTestDoc("$.sensor[?(@.id==\"s1\")]", changesDoc);
 
   const s1 = (res.get("sensor") as YAML.YAMLSeq).get(0) as YAML.YAMLMap;
-  expect(s1.get("name")).toEqual("Test Button 5");
-  expect(s1.get("x")).toEqual("x");
+  expect(s1.get("name")).toEqual("set by seq");
+  expect(s1.get("x")).toEqual("by-seq");
 });

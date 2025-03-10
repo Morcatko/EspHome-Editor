@@ -2,8 +2,7 @@ import { parse } from "@/server/yamlpath";
 import * as YAML from "yaml";
 import { isMap, isSeq } from "yaml";
 
-export const patchYaml = (target: YAML.Document, path: string, changes: YAML.YAMLMap[]) => {
-
+const patchYaml = (target: YAML.Document, path: string, changes: YAML.YAMLMap[]) => {
     const nodesToChange = parse(target, path);
 
     for (const change of changes) {
@@ -13,7 +12,7 @@ export const patchYaml = (target: YAML.Document, path: string, changes: YAML.YAM
         const values = isSeq(pair.value)
             ? (pair.value as YAML.YAMLSeq<YAML.YAMLMap>).items.flatMap(item => (item as YAML.YAMLMap).items)
             : (pair.value as YAML.YAMLMap).items;
-            
+
         for (const nodeToChange of nodesToChange) {
             if (isMap(nodeToChange)) {
                 if (operation === "add") {
@@ -41,8 +40,12 @@ export const patchYaml = (target: YAML.Document, path: string, changes: YAML.YAM
             throw new Error("Unsupported node type");
         }*/
     }
-    return target;
 };
+
+export const test_patchYaml = (target: YAML.Document, path: string, changes: YAML.YAMLMap[]) => {
+    patchYaml(target, path, changes);
+    return target;
+}
 
 export const patchEspHomeYaml = (target: YAML.Document, patches: string[]) => {
     for (const patchString of patches) {
