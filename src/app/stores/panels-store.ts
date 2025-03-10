@@ -46,7 +46,7 @@ export const usePanelsApiStore = () => {
     const [api, setApi] = useAtom(dockViewApiAtom);
 
     const findPanel = (panel: TPanel | string) => {
-        const panelId = panel instanceof String 
+        const panelId = (typeof panel === 'string' || panel instanceof String) 
             ? panel 
             : getPanelId(panel as TPanel);
         return api?.panels.find(p => p.id === panelId);
