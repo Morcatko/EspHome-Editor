@@ -4,9 +4,7 @@ import { useDarkTheme } from "@/app/utils/hooks";
 import { SingleEditor } from "../editors/single-editor";
 import { ActionIcon } from "@mantine/core";
 import { QuestionIcon } from "@primer/octicons-react";
-import { DeviceToolbarItem } from "../devices-tree/device-toolbar";
-import { useDevice } from "@/app/stores/devices-store";
-import { Toolbar, ToolbarItem } from "../toolbar";
+import { DeviceToolbarOperations, Toolbar, ToolbarItem } from "../toolbar";
 
 type TProps = {
     device_id: string;
@@ -14,7 +12,6 @@ type TProps = {
 }
 
 export const LocalFileToolbar = (props: TProps) => {
-    const device = useDevice(props.device_id)!;
     const file = useLocalFile(props.device_id, props.file_path);
 
     if (!file)
@@ -32,17 +29,21 @@ export const LocalFileToolbar = (props: TProps) => {
             return null;
         }
     }
-
-    const panelTarget ="floating";
     
     return <Toolbar>
-        <DeviceToolbarItem.LocalShow device={device} panelTarget={panelTarget} />
-        <DeviceToolbarItem.Diff device={device} panelTarget={panelTarget} />
-        <DeviceToolbarItem.ESPHomeUpload device={device} panelTarget={panelTarget} />
-        <DeviceToolbarItem.ESPHomeShow device={device} panelTarget={panelTarget} />
-        <DeviceToolbarItem.ESPHomeCompile device={device} panelTarget={panelTarget} />
-        <DeviceToolbarItem.ESPHomeInstall device={device} panelTarget={panelTarget} />
-        <DeviceToolbarItem.ESPHomeLog device={device} panelTarget={panelTarget} />
+            <DeviceToolbarOperations
+                device_id={props.device_id}
+                operations={[
+                    "LocalShow",
+                    "Diff",
+                    "ESPHomeUpload",
+                    "ESPHomeShow",
+                    "ESPHomeCompile",
+                    "ESPHomeInstall",
+                    "ESPHomeLog",
+                    "ESPHome"
+                ]}
+            />
         <ToolbarItem.Stretch />
         {getHelpIcon()}
     </Toolbar>
