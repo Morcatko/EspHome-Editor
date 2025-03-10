@@ -2,21 +2,28 @@ import { parse } from "@/server/yamlpath";
 import * as YAML from "yaml";
 import { isMap, isSeq } from "yaml";
 
-const patchYaml = (target: YAML.Document, path: string, changes: YAML.YAMLMap[]) => {
+export const patchYaml = (target: YAML.Document, path: string, changes: YAML.YAMLMap[]) => {
 
     const nodesToChange = parse(target, path);
 
-    for(const change of changes) {
+    for (const change of changes) {
         const pair = change.items[0] as YAML.Pair<YAML.Scalar, unknown>;
         const operation = pair.key.value;
-        const value = (pair.value as YAML.YAMLMap).items[0];
 
-        for(const nodeToChange of nodesToChange) {
+        const values = isSeq(pair.value)
+            ? (pair.value as YAML.YAMLSeq<YAML.YAMLMap>).items.flatMap(item => (item as YAML.YAMLMap).items)
+            : (pair.value as YAML.YAMLMap).items;
+            
+        for (const nodeToChange of nodesToChange) {
             if (isMap(nodeToChange)) {
                 if (operation === "add") {
-                    nodeToChange.add(value, true);
+                    for (const value of values) {
+                        nodeToChange.add(value, true);
+                    }
                 } else if (operation === "set") {
-                    nodeToChange.add(value, true);
+                    for (const value of values) {
+                        nodeToChange.add(value, true);
+                    }
                 } else {
                     throw new Error("Unsupported operation");
                 }
@@ -34,6 +41,7 @@ const patchYaml = (target: YAML.Document, path: string, changes: YAML.YAMLMap[])
             throw new Error("Unsupported node type");
         }*/
     }
+    return target;
 };
 
 export const patchEspHomeYaml = (target: YAML.Document, patches: string[]) => {
@@ -48,11 +56,10 @@ export const patchEspHomeYaml = (target: YAML.Document, patches: string[]) => {
             for (const item of contents.items) {
                 if (!(isMap(item))) {
                     throw new Error("Item must be YAMLMap");
-                }else {
+                } else {
                     const patch = item.items[0];
                     if ((YAML.isPair(patch))
-                        && (isSeq(patch.value)))
-                         {
+                        && (isSeq(patch.value))) {
                         const path = patch.key.toString();
                         const patches = patch.value.items as YAML.YAMLMap[];
                         patchYaml(target, path, patches);
