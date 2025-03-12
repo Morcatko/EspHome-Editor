@@ -12,6 +12,10 @@ export const EspHomeCompileToolbar = ({ device_id }: TProps) =>
             panelTarget="floating"
             current_tab="ESPHomeCompile"
             operations={[
+                "LocalShowOrImport",
+                "Diff",
+                "ESPHomeCreateOrUpload",
+                "ESPHomeShow",
                 "ESPHomeCompile",
                 "ESPHomeInstall",
                 "ESPHomeLog",
