@@ -18,7 +18,7 @@ test3: ghi`,
         `test3: ghi`);
 })
 
-test("merge same keys", () => {
+test("merge same keys - seq", () => {
     _testMerge(`
 buttons:
     - id: b_1
@@ -36,6 +36,17 @@ buttons:
 buttons:
     - id: b_a
       name: "button a"`);
+});
+
+test("merge same keys - map", () => {
+  _testMerge(`
+substitutions:
+    name: "device 1"
+    id: device_1`,`
+substitutions:
+    name: "device 1"`, `
+substitutions:
+    id: device_1`);
 });
 
 test ("merge - empty", () => {

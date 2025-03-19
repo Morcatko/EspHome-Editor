@@ -1,7 +1,7 @@
 import { yamlParse } from "@/server/utils/yaml-utils";
 import { log } from "@/shared/log";
 import * as YAML from "yaml";
-import { isScalar, isSeq } from "yaml";
+import { isMap, isScalar, isSeq } from "yaml";
 
 const mergeEspHomeYamls = (target: YAML.Document, source: YAML.Document) => {
     if (!source.contents) {
@@ -28,17 +28,27 @@ const mergeEspHomeYamls = (target: YAML.Document, source: YAML.Document) => {
         if (!tgtItem) {
             tgtItems.push(srcItem);
         } else {
-            if (!isSeq(srcItem.value)) {
-                //Unsupported merge
+            if (isScalar(srcItem.value) && (srcItem.value as YAML.Scalar).value === null) {
                 return;
+            }
+            
+            if (isMap(tgtItem.value) && isMap(srcItem.value)) {
+                const tgtMap = tgtItem.value as YAML.YAMLMap;
+                const srcMap = srcItem.value as YAML.YAMLMap;
+                srcMap.items.forEach((srcMapItem) => tgtMap.add(srcMapItem));                
+                return;
+
             }
             if (isScalar(tgtItem.value) && (tgtItem.value.value === null)) {
                 tgtItem.value = srcItem.value;
                 return;
             }
+
+            if (!isSeq(srcItem.value)) {
+                throw new Error("Unsupported merge");
+            }           
             if (!isSeq(tgtItem.value)) {
-                //Unsupported merge
-                return
+                throw new Error("Unsupported merge");
             }
 
             const tgtValues = tgtItem.value as YAML.YAMLSeq;
