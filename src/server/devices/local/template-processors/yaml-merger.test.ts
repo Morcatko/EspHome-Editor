@@ -3,7 +3,7 @@ import * as YAML from "yaml";
 import { mergeEspHomeYamlFiles } from "./yaml-merger";
 
 const _testMerge = (expectedYaml: string, ...yamls: string[]) => {
-    const expected = YAML.parseDocument(expectedYaml);
+    const expected = YAML.parseDocument(expectedYaml, { intAsBigInt: true });
     const actual = mergeEspHomeYamlFiles(yamls);
     expect(actual.toString()).toEqual(expected.toString());
 }
@@ -71,4 +71,13 @@ buttons:
     - id: b_a
       name: "button a"`,
         `buttons:`);
+});
+
+test("bigInts (Issue #101)", () => {
+  const doc = `
+sensor:
+    - platform: dallas_temp
+      address: 0x323cc1e38143aa28`;
+
+  _testMerge(doc, doc);
 });
