@@ -54,7 +54,7 @@ export const mergeEspHomeYamlFiles = (yamls: string[]) => {
 
     for (const yaml of yamls) {
         try {
-            const yamlContent = YAML.parseDocument(yaml);
+            const yamlContent = YAML.parseDocument(yaml, { intAsBigInt: true });
             mergeEspHomeYamls(targetYaml, yamlContent);
         } catch (e) {
             log.error("Error merging yaml", yaml, e);
