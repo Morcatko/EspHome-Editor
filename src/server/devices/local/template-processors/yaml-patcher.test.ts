@@ -1,8 +1,9 @@
 import { expect, test } from "vitest";
 import * as YAML from "yaml";
 import { test_patchYaml } from "./yaml-patcher";
+import { yamlParse } from "@/server/utils/yaml-utils";
 
-const testDoc = YAML.parseDocument(`
+const testDoc = yamlParse(`
   sensor: 
     - id: s1
     - id: s2`);
@@ -11,7 +12,7 @@ const testDoc = YAML.parseDocument(`
 const patchTestDoc = (path: string, changesYaml: string) => test_patchYaml(
   testDoc, 
   path, 
-  (YAML.parseDocument(changesYaml,{ intAsBigInt: true }).contents as YAML.YAMLSeq).items as YAML.YAMLMap[]);
+  (yamlParse(changesYaml).contents as YAML.YAMLSeq).items as YAML.YAMLMap[]);
 
 test("yamlPatch - set-map", () => {
   const changesDoc = `

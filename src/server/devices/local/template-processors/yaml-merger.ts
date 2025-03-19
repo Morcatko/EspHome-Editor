@@ -1,3 +1,4 @@
+import { yamlParse } from "@/server/utils/yaml-utils";
 import { log } from "@/shared/log";
 import * as YAML from "yaml";
 import { isScalar, isSeq } from "yaml";
@@ -54,7 +55,7 @@ export const mergeEspHomeYamlFiles = (yamls: string[]) => {
 
     for (const yaml of yamls) {
         try {
-            const yamlContent = YAML.parseDocument(yaml, { intAsBigInt: true });
+            const yamlContent = yamlParse(yaml);
             mergeEspHomeYamls(targetYaml, yamlContent);
         } catch (e) {
             log.error("Error merging yaml", yaml, e);

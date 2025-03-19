@@ -1,9 +1,9 @@
 import { expect, test } from "vitest";
-import * as YAML from "yaml";
 import { mergeEspHomeYamlFiles } from "./yaml-merger";
+import { yamlParse } from "@/server/utils/yaml-utils";
 
 const _testMerge = (expectedYaml: string, ...yamls: string[]) => {
-    const expected = YAML.parseDocument(expectedYaml, { intAsBigInt: true });
+    const expected = yamlParse(expectedYaml);
     const actual = mergeEspHomeYamlFiles(yamls);
     expect(actual.toString()).toEqual(expected.toString());
 }
