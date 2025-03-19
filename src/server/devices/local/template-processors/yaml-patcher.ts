@@ -49,7 +49,7 @@ export const test_patchYaml = (target: YAML.Document, path: string, changes: YAM
 
 export const patchEspHomeYaml = (target: YAML.Document, patches: string[]) => {
     for (const patchString of patches) {
-        const patch = YAML.parseDocument(patchString);
+        const patch = YAML.parseDocument(patchString, { intAsBigInt: true });
         const contents = patch.contents;
 
         if (!(isSeq(contents))) {

@@ -8,7 +8,10 @@ const testDoc = YAML.parseDocument(`
     - id: s2`);
 
 
-const patchTestDoc = (path: string, changesYaml: string) => test_patchYaml(testDoc, path, (YAML.parseDocument(changesYaml).contents as YAML.YAMLSeq).items as YAML.YAMLMap[]);
+const patchTestDoc = (path: string, changesYaml: string) => test_patchYaml(
+  testDoc, 
+  path, 
+  (YAML.parseDocument(changesYaml,{ intAsBigInt: true }).contents as YAML.YAMLSeq).items as YAML.YAMLMap[]);
 
 test("yamlPatch - set-map", () => {
   const changesDoc = `
