@@ -1,19 +1,20 @@
 "use client";
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { ISplitviewPanelProps, Orientation, SplitviewApi, SplitviewReact, SplitviewReadyEvent } from "dockview-react";
 import { Anchor, Button, Loader } from "@mantine/core";
 import Image from "next/image";
+import { SidebarExpandIcon } from "@primer/octicons-react";
 import { DevicesTree } from "./components/devices-tree";
-import { PanelsContainer } from "./components/panels-container";
 import { useStatusStore } from "./stores/status-store";
 import { usePanelsStore, useRerenderOnPanelChange } from "./stores/panels-store";
 import { openAboutDialog } from "./components/dialogs/about-dialog";
 import logo from "@/assets/logo.svg";
 import { TPanel } from "./stores/panels-store/types";
-import { SidebarExpandIcon } from "@primer/octicons-react";
-import { Orientation, SplitviewApi, SplitviewReact, SplitviewReadyEvent } from "dockview-react";
 import { useDarkTheme } from "./utils/hooks";
 import { useMonacoInit } from "./components/editors/monaco/monaco-init";
 import { useDevicesQuery } from "./stores/devices-store";
+import { PanelsContainer } from "./components/panels-container";
+
 
 const devicesPanel: TPanel = {
 	operation: "devices_tree"
@@ -53,37 +54,43 @@ const DevicesPanel = () => {
 	</div>;
 }
 
-const components = {
+const components:Record<string, React.FunctionComponent<ISplitviewPanelProps>> = {
 	"devices-panel": () => <DevicesPanel />,
-	"panels-container": () => <div >pc</div>//</div><PanelsContainer />
+	"panels-container": () => <PanelsContainer />
 };
 
 const PageContent = () => {
 	const [api, setApi] = useState<SplitviewApi>()
+	const panelsApi = useRerenderOnPanelChange();
+	const devicePanelExists = !!panelsApi.findPanel(devicesPanel);
+
 	const isDarkMode = useDarkTheme();
-	const onReady = (event: SplitviewReadyEvent) => {
-		console.log("onReady", event);
-		setApi(event.api);
-	};
+	const onReady = (event: SplitviewReadyEvent) => setApi(event.api);
 
 	useEffect(() => {
-		console.log("useEffect");
 		if (!api) return;
-		api.addPanel({
-			id: 'devices-panel',
-			component: 'devices-panel',
-			minimumSize: 65,
-			maximumSize: 400,
-			size: 300
-		});
-		console.log("addPanel", api.panels);
-		api.addPanel({
-			id: 'panels-container',
-			component: 'panels-container'
-		});
-	}, [api]);
 
-	console.log("PageContent");
+		if (devicePanelExists)
+			api.removePanel(api.panels.find(p => p.id === "devices-panel")!);
+		else 
+			api.addPanel({
+				id: 'devices-panel',
+				component: 'devices-panel',
+				minimumSize: 65,
+				maximumSize: 400,
+				size: 300,
+				index: 0,
+				
+			});
+		
+		if (!api.panels.find(p => p.id === "panels-container")) {
+			api.addPanel({
+				id: 'panels-container',
+				component: 'panels-container',
+				index: 1,
+			});
+		}
+	}, [api, devicePanelExists]);
 
 	return <SplitviewReact
 		orientation={Orientation.HORIZONTAL}

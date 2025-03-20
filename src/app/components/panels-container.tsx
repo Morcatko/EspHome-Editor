@@ -1,3 +1,5 @@
+import React from "react";
+import { DockviewDefaultTab, DockviewReact, IDockviewPanelHeaderProps, IDockviewPanelProps, themeDark, themeLight } from "dockview-react";
 import { LocalFilePanel, LocalFileToolbar } from "./panels/local-file-panel";
 import { LocalDevicePanel, LocalDeviceToolbar } from "./panels/local-device-panel";
 import { ESPHomeDevicePanel, ESPHomeDeviceToolbar } from "./panels/esphome-device-panel";
@@ -8,10 +10,8 @@ import { EspHomeCompilePanel, EspHomeCompileToolbar } from "./panels/esphome-com
 import { DevicesPanel } from "./panels/devices-panel";
 import { TPanelWithClick } from "../stores/panels-store/types";
 import { usePanelsStore } from "../stores/panels-store";
-import { DockviewDefaultTab, DockviewReact, IDockviewPanelHeaderProps, IDockviewPanelProps } from "dockview-react";
 import { useDarkTheme } from "@/app/utils/hooks";
 import { Onboarding } from "./onboarding";
-import React from "react";
 
 const OnClickRerender = ({ last_click, children }: { last_click?: string, children: React.ReactNode }) => {
     if (!last_click)
@@ -109,10 +109,9 @@ export const PanelsContainer = () => {
     const isDarkMode = useDarkTheme();
     const panelsStore = usePanelsStore();
 
-    console.log("PanelsContainer");
-
     return <DockviewReact
-        className={`absolute h-full w-full ${isDarkMode ? "dockview-theme-dark" : "dockview-theme-light"}`}
+        theme={isDarkMode ? themeDark : themeLight}
+        className="absolute h-full w-full"
         onReady={(e) => panelsStore.initApi(e.api)}
         components={dockViewComponents}
         tabComponents={dockViewTabComponents}
