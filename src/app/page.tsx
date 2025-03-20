@@ -15,7 +15,6 @@ import { useMonacoInit } from "./components/editors/monaco/monaco-init";
 import { useDevicesQuery } from "./stores/devices-store";
 import { PanelsContainer } from "./components/panels-container";
 
-
 const devicesPanel: TPanel = {
 	operation: "devices_tree"
 };
