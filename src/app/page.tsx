@@ -54,9 +54,11 @@ const DevicesPanel = () => {
 }
 
 const components:Record<string, React.FunctionComponent<ISplitviewPanelProps>> = {
-	"devices-panel": () => <DevicesPanel />,
+	"devices-sidePanel": () => <DevicesPanel />,
 	"panels-container": () => <PanelsContainer />
 };
+
+const findDevicesSidePanel = (api: SplitviewApi) => api.getPanel("devices-sidePanel");
 
 const PageContent = () => {
 	const [api, setApi] = useState<SplitviewApi>()
@@ -69,31 +71,42 @@ const PageContent = () => {
 	useEffect(() => {
 		if (!api) return;
 
+		api.addPanel({
+			id: 'panels-container',
+			component: 'panels-container',
+			index: 1,
+		});
+
+		api.onDidLayoutChange((e) => {
+			const devicesSidePanel = findDevicesSidePanel(api);
+			if (devicesSidePanel) {
+				console.log("devicesSidePanel", devicesSidePanel.width.toString());
+				localStorage.setItem('e4e.devicesWidth', devicesSidePanel.width.toString());
+			}
+		});
+	}, [api]);
+
+	useEffect(() => {
+		if (!api) return;
+
 		if (devicePanelExists)
-			api.removePanel(api.panels.find(p => p.id === "devices-panel")!);
-		else 
+			api.removePanel(findDevicesSidePanel(api)!);
+		else  {
 			api.addPanel({
-				id: 'devices-panel',
-				component: 'devices-panel',
-				minimumSize: 65,
-				maximumSize: 400,
-				size: 300,
+				id: 'devices-sidePanel',
+				component: 'devices-sidePanel',
+				minimumSize: 75,
+				maximumSize: 450,
+				size: parseFloat(localStorage.getItem('e4e.devicesWidth') ?? "250"),
 				index: 0,
-				
-			});
-		
-		if (!api.panels.find(p => p.id === "panels-container")) {
-			api.addPanel({
-				id: 'panels-container',
-				component: 'panels-container',
-				index: 1,
 			});
 		}
 	}, [api, devicePanelExists]);
-
+	
 	return <SplitviewReact
 		orientation={Orientation.HORIZONTAL}
 		components={components}
+		disableAutoResizing
 		onReady={onReady}
 		className={`${isDarkMode ? "dockview-theme-dark" : "dockview-theme-light"}`}
 	/>
