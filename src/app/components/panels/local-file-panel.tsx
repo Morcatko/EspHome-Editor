@@ -1,5 +1,5 @@
 import { useLocalFile, useLocalFileStore } from "@/app/stores/panels-store/local-file-store";
-import { DockviewApi, DockviewDefaultTab, DockviewReact, IDockviewPanelProps } from "dockview-react";
+import { DockviewApi, DockviewDefaultTab, DockviewReact, IDockviewPanelProps, themeDark, themeLight } from "dockview-react";
 import { useDarkTheme } from "@/app/utils/hooks";
 import { SingleEditor } from "../editors/single-editor";
 import { ActionIcon } from "@mantine/core";
@@ -97,7 +97,8 @@ export const LocalFilePanel = (props: TProps) => {
     return data.rightEditor
         ? <div className="relative h-full">
             <DockviewReact
-                className={`absolute w-full ${isDarkMode ? "dockview-theme-dark" : "dockview-theme-light"}`}
+                theme={isDarkMode ? themeDark : themeLight}
+                className="absolute w-full"
                 onReady={(e) => onReady(e.api)}
                 defaultTabComponent={p => <DockviewDefaultTab {...p} hideClose />}
                 components={dockViewComponents} />

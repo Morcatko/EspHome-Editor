@@ -2,6 +2,7 @@
 import { Suspense } from "react";
 import { Anchor, Button, Loader } from "@mantine/core";
 import Image from "next/image";
+import { SidebarExpandIcon } from "@primer/octicons-react";
 import { DevicesTree } from "./components/devices-tree";
 import { PanelsContainer } from "./components/panels-container";
 import { useDevicesQuery } from "./stores/devices-store";
@@ -11,7 +12,6 @@ import { openAboutDialog } from "./components/dialogs/about-dialog";
 import logo from "@/assets/logo.svg";
 import { useMonacoInit } from "./components/editors/monaco/monaco-init";
 import { TPanel } from "./stores/panels-store/types";
-import { SidebarExpandIcon } from "@primer/octicons-react";
 
 const devicesPanel: TPanel = {
 	operation: "devices_tree"
