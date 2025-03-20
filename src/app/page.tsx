@@ -1,17 +1,19 @@
 "use client";
-import { Suspense } from "react";
+import { useEffect, useState } from "react";
+import { ISplitviewPanelProps, Orientation, SplitviewApi, SplitviewReact, SplitviewReadyEvent } from "dockview-react";
 import { Anchor, Button, Loader } from "@mantine/core";
 import Image from "next/image";
 import { SidebarExpandIcon } from "@primer/octicons-react";
 import { DevicesTree } from "./components/devices-tree";
-import { PanelsContainer } from "./components/panels-container";
-import { useDevicesQuery } from "./stores/devices-store";
 import { useStatusStore } from "./stores/status-store";
 import { usePanelsStore, useRerenderOnPanelChange } from "./stores/panels-store";
 import { openAboutDialog } from "./components/dialogs/about-dialog";
 import logo from "@/assets/logo.svg";
-import { useMonacoInit } from "./components/editors/monaco/monaco-init";
 import { TPanel } from "./stores/panels-store/types";
+import { useDarkTheme } from "./utils/hooks";
+import { useMonacoInit } from "./components/editors/monaco/monaco-init";
+import { useDevicesQuery } from "./stores/devices-store";
+import { PanelsContainer } from "./components/panels-container";
 
 const devicesPanel: TPanel = {
 	operation: "devices_tree"
@@ -31,40 +33,93 @@ const CollapseButton = () => {
 		<SidebarExpandIcon />
 	</Button>
 }
-const Page = () => {
+
+const DevicesPanel = () => {
 	const statusStore = useStatusStore();
+
+	return <div className="flex-none flex flex-col h-screen">
+		<div className="flex-none border-b border-slate-200 dark:border-slate-800 text-center leading-[56px]" >
+			<Header />
+		</div>
+		<div className="flex-grow pl-1 overflow-y-auto">
+			<DevicesTree />
+		</div>
+		<div className="flex-none border-t border-slate-200 dark:border-slate-800 text-center p-4 flex">
+			<div className="w-14 flex-none">
+				<CollapseButton />
+			</div>
+			<Anchor className="flex-grow" style={{ lineHeight: '34px' }} href="#" onClick={() => openAboutDialog()}>{statusStore.query.isSuccess && statusStore.query.data?.version}</Anchor>
+		</div>
+	</div>;
+}
+
+const components:Record<string, React.FunctionComponent<ISplitviewPanelProps>> = {
+	"devices-sidePanel": () => <DevicesPanel />,
+	"panels-container": () => <PanelsContainer />
+};
+
+const findDevicesSidePanel = (api: SplitviewApi) => api.getPanel("devices-sidePanel");
+
+const PageContent = () => {
+	const [api, setApi] = useState<SplitviewApi>()
+	const panelsApi = useRerenderOnPanelChange();
+	const devicePanelExists = !!panelsApi.findPanel(devicesPanel);
+
+	const isDarkMode = useDarkTheme();
+	const onReady = (event: SplitviewReadyEvent) => setApi(event.api);
+
+	useEffect(() => {
+		if (!api) return;
+
+		api.addPanel({
+			id: 'panels-container',
+			component: 'panels-container',
+			index: 1,
+		});
+
+		api.onDidLayoutChange((e) => {
+			const devicesSidePanel = findDevicesSidePanel(api);
+			if (devicesSidePanel) {
+				console.log("devicesSidePanel", devicesSidePanel.width.toString());
+				localStorage.setItem('e4e.devicesWidth', devicesSidePanel.width.toString());
+			}
+		});
+	}, [api]);
+
+	useEffect(() => {
+		if (!api) return;
+
+		if (devicePanelExists)
+			api.removePanel(findDevicesSidePanel(api)!);
+		else  {
+			api.addPanel({
+				id: 'devices-sidePanel',
+				component: 'devices-sidePanel',
+				minimumSize: 75,
+				maximumSize: 450,
+				size: parseFloat(localStorage.getItem('e4e.devicesWidth') ?? "250"),
+				index: 0,
+			});
+		}
+	}, [api, devicePanelExists]);
+	
+	return <SplitviewReact
+		orientation={Orientation.HORIZONTAL}
+		components={components}
+		disableAutoResizing
+		onReady={onReady}
+		className={`${isDarkMode ? "dockview-theme-dark" : "dockview-theme-light"}`}
+	/>
+}
+
+const Page = () => {
 	const monacoInitialized = useMonacoInit();
 	const devicesQuery = useDevicesQuery();
-
-	const papi = useRerenderOnPanelChange();
-	const devicePanelExists = !!papi.findPanel(devicesPanel);
 
 	return (!monacoInitialized || devicesQuery.isLoading)
 		? <div className="h-screen flex items-center justify-center">
 			<Loader className="content-center" />
 		</div>
-		: <Suspense>
-			<div className="h-screen w-screen flex" >
-				{!devicePanelExists
-					? <div className="flex-none w-2xs flex flex-col">
-						<div className="flex-none border-b border-slate-200 dark:border-slate-800 text-center leading-[56px]" >
-							<Header />
-						</div>
-						<div className="flex-grow pl-1 overflow-y-auto">
-							<DevicesTree />
-						</div>
-						<div className="flex-none border-t border-slate-200 dark:border-slate-800 text-center p-4 flex">
-							<div className="w-14 flex-none">
-								<CollapseButton />
-							</div>
-							<Anchor className="flex-grow" style={{ lineHeight: '34px' }} href="#" onClick={() => openAboutDialog()}>{statusStore.query.isSuccess && statusStore.query.data?.version}</Anchor>
-						</div>
-					</div>
-					: null}
-				<div className="flex-grow border-l border-slate-200 dark:border-slate-800 relative">
-					<PanelsContainer />
-				</div>
-			</div>
-		</Suspense>
+		: <PageContent />
 };
 export default Page;
