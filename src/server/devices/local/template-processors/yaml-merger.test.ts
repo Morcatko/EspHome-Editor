@@ -1,9 +1,9 @@
 import { expect, test } from "vitest";
-import * as YAML from "yaml";
 import { mergeEspHomeYamlFiles } from "./yaml-merger";
+import { yamlParse } from "@/server/utils/yaml-utils";
 
 const _testMerge = (expectedYaml: string, ...yamls: string[]) => {
-    const expected = YAML.parseDocument(expectedYaml);
+    const expected = yamlParse(expectedYaml);
     const actual = mergeEspHomeYamlFiles(yamls);
     expect(actual.toString()).toEqual(expected.toString());
 }
@@ -18,7 +18,7 @@ test3: ghi`,
         `test3: ghi`);
 })
 
-test("merge same keys", () => {
+test("merge same keys - seq", () => {
     _testMerge(`
 buttons:
     - id: b_1
@@ -36,6 +36,17 @@ buttons:
 buttons:
     - id: b_a
       name: "button a"`);
+});
+
+test("merge same keys - map", () => {
+  _testMerge(`
+substitutions:
+    name: "device 1"
+    id: device_1`,`
+substitutions:
+    name: "device 1"`, `
+substitutions:
+    id: device_1`);
 });
 
 test ("merge - empty", () => {
@@ -71,4 +82,13 @@ buttons:
     - id: b_a
       name: "button a"`,
         `buttons:`);
+});
+
+test("bigInts (Issue #101)", () => {
+  const doc = `
+sensor:
+    - platform: dallas_temp
+      address: 0x323cc1e38143aa28`;
+
+  _testMerge(doc, doc);
 });

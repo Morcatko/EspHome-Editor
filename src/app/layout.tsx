@@ -17,7 +17,7 @@ const theme = createTheme({
   components: {
     "Tooltip": {
       defaultProps: {
-        zIndex: 1000, //Dockview Floating Groups are 999
+        zIndex: 1002, //Dockview Floating Groups are 999
       }
     }
   }
@@ -42,7 +42,7 @@ export default function RootLayout({
           <NuqsAdapter>
             <ClientLayout>
               <Notifications position="top-center" />
-              <ModalsProvider modalProps={{centered: true}} >
+              <ModalsProvider modalProps={{ centered: true, overlayProps: { zIndex: 1000 }, zIndex: 1001 }} >
                 {children}
               </ModalsProvider>
             </ClientLayout>
