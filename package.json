@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "vitest",
-    "_postinstall": "next-ws patch --yes",
+    "postinstall": "next-ws patch --yes",
     "setup": "npx tsx ./setup.mts",
     "tasks": "npx tsx --env-file=.env.local ./tasks.mts"
   },
