@@ -46,8 +46,8 @@ export const usePanelsApiStore = () => {
     const [api, setApi] = useAtom(dockViewApiAtom);
 
     const findPanel = (panel: TPanel | string) => {
-        const panelId = (typeof panel === 'string' || panel instanceof String) 
-            ? panel 
+        const panelId = (typeof panel === 'string' || panel instanceof String)
+            ? panel
             : getPanelId(panel as TPanel);
         return api?.panels.find(p => p.id === panelId);
     }
@@ -60,7 +60,9 @@ export const usePanelsApiStore = () => {
 }
 
 export const usePanelsStore = () => {
-    let { api, setApi, findPanel } = usePanelsApiStore();
+    const panelsApi = usePanelsApiStore();
+    let { api } = panelsApi;
+    const { setApi, findPanel } = panelsApi
 
     const addPanel = (
         panel: TPanel,
@@ -129,13 +131,13 @@ export const usePanelsStore = () => {
         try {
             const layout = JSON.parse(localStorage.getItem('e4e.dockView') ?? "{}");
             api.fromJSON(layout);
-        } catch (err) { }
+        } catch (_) { }
 
         try {
             const queryPanelString = new URLSearchParams(window.location.search).get('panel');
             const queryPanel = queryPanelString ? JSON.parse(queryPanelString) as TPanelWithClick : null;
             if (queryPanel) addPanel(queryPanel);
-        } catch (err) { }
+        } catch (_) { }
 
         const onboardingPanelProps: TPanel = { operation: "onboarding" };
         const id = getPanelId(onboardingPanelProps);
@@ -157,7 +159,7 @@ export const usePanelsStore = () => {
 export const useRerenderOnPanelChange = () => {
     const papi = usePanelsApiStore();
 
-    const [fake, setFake] = useState(0);
+    const [_, setFake] = useState(0);
     useEffect(() => {
         papi.api?.onDidLayoutChange(() =>
             setFake(papi.api?.panels.length ?? 0)

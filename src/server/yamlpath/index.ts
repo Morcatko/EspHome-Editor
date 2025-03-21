@@ -12,7 +12,7 @@ import { isMap, isSeq } from "yaml";
 
 
 //import { log as logger } from "@/shared/log";
-const log = (...args: any[]) => { }/*logger.create({defaults: {
+const log = (..._args: any[]) => { }/*logger.create({defaults: {
     level: 950,
     //type: "verbose",
 }

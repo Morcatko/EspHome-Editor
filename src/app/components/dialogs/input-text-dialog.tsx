@@ -22,9 +22,9 @@ type TDialogProps = {
   defaultValue: string;
 }
 export const openInputTextDialog = (props: TDialogProps) =>
-  new Promise<string | null>((res, rej) => {
+  new Promise<string | null>((res) => {
     let value = props.defaultValue;
-    let modalId = modals.openConfirmModal({
+    const modalId = modals.openConfirmModal({
       title: props.title,
       children: <InputTextDialogContent
         subtitle={props.subtitle}

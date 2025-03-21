@@ -17,7 +17,7 @@ type TDialogProps = {
   danger: boolean
 }
 export const openConfirmationDialog = (props: TDialogProps) =>
-  new Promise<boolean>((res, rej) =>
+  new Promise<boolean>((res) =>
     modals.openConfirmModal({
       title: props.title,
       children: <ConfirmationDialogContent subtitle={props.subtitle} text={props.text} />,
