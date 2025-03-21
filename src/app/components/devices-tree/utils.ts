@@ -50,10 +50,7 @@ const mapFiles = (parentId: string, device: TDevice, files: TLocalFileOrDirector
 
 export const useTreeData = () => {
     const devicesStore = useDevicesStore();
-    if (!devicesStore.query.isSuccess)
-        return [];
-
-    const data = devicesStore.query.data;
+    const data = devicesStore.query.isSuccess ? devicesStore.query.data : []
     return useMemo(() => [{
             type: "add_new_device",
             value: "add_new_device",

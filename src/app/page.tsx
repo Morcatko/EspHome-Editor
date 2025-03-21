@@ -14,6 +14,7 @@ import { useDarkTheme } from "./utils/hooks";
 import { useMonacoInit } from "./components/editors/monaco/monaco-init";
 import { useDevicesQuery } from "./stores/devices-store";
 import { PanelsContainer } from "./components/panels-container";
+import { useWindowEvent } from "@mantine/hooks";
 
 const devicesPanel: TPanel = {
 	operation: "devices_tree"
@@ -86,6 +87,8 @@ const PageContent = () => {
 		});
 	}, [api]);
 
+	useWindowEvent("resize", () => api?.layout(window.innerWidth, window.innerHeight));
+
 	useEffect(() => {
 		if (!api) return;
 
@@ -106,7 +109,6 @@ const PageContent = () => {
 	return <SplitviewReact
 		orientation={Orientation.HORIZONTAL}
 		components={components}
-		disableAutoResizing
 		onReady={onReady}
 		className={`${isDarkMode ? "dockview-theme-dark" : "dockview-theme-light"}`}
 	/>
