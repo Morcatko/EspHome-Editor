@@ -34,7 +34,7 @@ type TPanelProps = {
 const Panel = (p: TPanelProps) => {
     return <div className="flex flex-col h-full">
         <div className="flex-none">{p.toolbar}</div>
-        <div className="flex-grow h-full">
+        <div className="flex-grow h-full relative"> {/* relative is needed because of log streams */}
             {p.last_click
                 ? <OnClickRerender last_click={p.last_click}>{p.panel}</OnClickRerender>
                 : p.panel

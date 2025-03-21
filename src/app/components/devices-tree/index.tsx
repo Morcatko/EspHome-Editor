@@ -42,7 +42,7 @@ const Node = (p: TNodeProps) => {
     return <Group
         gap={5}
         {...elementProps}
-        onClick={p.onClick ? p.onClick : (e) => tree.toggleExpanded(node.value)}
+        onClick={p.onClick ? p.onClick : () => tree.toggleExpanded(node.value)}
     >
         {!p.hideExpander && <ChevronRightIcon
             className={`transition-transform ${hasChildren ? "visible" : "invisible"} ${expanded ? "rotate-90" : "rotate-0"}`}
