@@ -1,4 +1,5 @@
 import { TWsMessage } from "@/app/api/device/[device_id]/esphome/utils";
+import { api } from "@/app/utils/api-client";
 import { log } from "@/shared/log";
 import Convert from "ansi-to-html";
 import { atomFamily } from 'jotai/utils';
@@ -14,7 +15,7 @@ type TLogStoreAtom = {
 }
 
 const createLogStreamingStore = (url: string, atom: PrimitiveAtom<TLogStoreAtom>) => {
-    const socket = new WebSocket(url)
+    const socket = new WebSocket(api.getWsUrl(url))
     log.debug("Creating socket", url);
 
     // Connection opened
