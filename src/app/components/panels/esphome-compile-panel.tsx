@@ -7,7 +7,9 @@ import { Toolbar } from "../toolbar";
 
 type TProps = {
     device_id: string;
+    lastClick: string;
 }
+
 export const EspHomeCompileToolbar = ({ device_id }: TProps) => {
     const device = useDevice(device_id)!;
 
@@ -20,7 +22,7 @@ export const EspHomeCompileToolbar = ({ device_id }: TProps) => {
     </Toolbar>;
 }
 
-export const EspHomeCompilePanel = ({ device_id }: TProps) => {
-    const data = useEspHomeCompileStore(device_id);
-    return <LogStream data={data} />;
+export const EspHomeCompilePanel = ({ device_id, lastClick }: TProps) => {
+    const logStore = useEspHomeCompileStore(device_id, lastClick);
+    return <LogStream store={logStore} />;
 }
