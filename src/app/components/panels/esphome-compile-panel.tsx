@@ -21,6 +21,6 @@ export const EspHomeCompileToolbar = ({ device_id }: TProps) => {
 }
 
 export const EspHomeCompilePanel = ({ device_id }: TProps) => {
-    const data = useEspHomeCompileStore(device_id);
-    return <LogStream data={data} />;
+    const logStore = useEspHomeCompileStore(device_id);
+    return <LogStream data={logStore.data} />;
 }
