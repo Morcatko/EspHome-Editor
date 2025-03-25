@@ -7,10 +7,12 @@ import { SyncIcon, XIcon } from "@primer/octicons-react";
 
 type TProps = {
     device_id: string;
+    lastClick: string;
 }
-export const EspHomeInstallToolbar = ({ device_id }: TProps) => {
+
+export const EspHomeInstallToolbar = ({ device_id, lastClick }: TProps) => {
     const device = useDevice(device_id)!;
-    const logStore = useEsphomeInstallStore(device_id);
+    const logStore = useEsphomeInstallStore(device_id, lastClick);
     
     const panelTarget ="floating";
 
@@ -22,7 +24,7 @@ export const EspHomeInstallToolbar = ({ device_id }: TProps) => {
     </Toolbar>;
 }
 
-export const EspHomeInstallPanel = ({ device_id }: TProps) => {
-    const logStore = useEsphomeInstallStore(device_id);
-    return <LogStream data={logStore.data} />;
+export const EspHomeInstallPanel = ({ device_id, lastClick }: TProps) => {
+    const logStore = useEsphomeInstallStore(device_id, lastClick);
+    return <LogStream store={logStore} />;
 }

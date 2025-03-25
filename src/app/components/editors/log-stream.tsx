@@ -1,28 +1,30 @@
 import { useEffect, useRef } from "react";
 import { useVirtualizer } from '@tanstack/react-virtual'
+import { useStreamingStore } from "@/app/stores/panels-store/utils/streaming-store";
+import React from "react";
 
-type props = {
-    data: string[];
+type LogsProps = {
+    store: ReturnType<typeof useStreamingStore>;
 }
 
-export const LogStream = (props: props) => {
+const Logs = (props: LogsProps) => {
     const parentRef = useRef(null)
 
     const rowVirtualizer = useVirtualizer({
-        count: props.data.length,
+        count: props.store.data.length,
         getScrollElement: () => parentRef.current,
         estimateSize: () => 19.5,
         overscan: 5,
     })
 
     useEffect(() => {
-        const lastOffset = rowVirtualizer.getOffsetForIndex(props.data.length - 1)?.[0] || 0;
+        const lastOffset = rowVirtualizer.getOffsetForIndex(props.store.data.length - 1)?.[0] || 0;
         const currentOffset = rowVirtualizer.scrollOffset ?? 0;
 
         if ((lastOffset - currentOffset) < 80) {
-            rowVirtualizer.scrollToIndex(props.data.length - 1);
+            rowVirtualizer.scrollToIndex(props.store.data.length - 1);
         }
-    }, [props.data.length, rowVirtualizer]);
+    }, [props.store.data.length, rowVirtualizer]);
 
     return <div
         ref={parentRef}
@@ -54,8 +56,19 @@ export const LogStream = (props: props) => {
                         height: `${virtualRow.size}px`,
                         transform: `translateY(${virtualRow.start}px)`,
                     }}
-                    dangerouslySetInnerHTML={{ __html: props.data[virtualRow.index] }} />
+                    dangerouslySetInnerHTML={{ __html: props.store.data[virtualRow.index] }} />
             ))}
         </div>
     </div >;
 };
+
+
+const OutdatedCheck = ({ isOutdated, children }: { isOutdated: boolean, children: React.ReactNode }) => isOutdated
+        ? <div>Click Refresh</div>
+        : children;
+
+export const LogStream = (props: LogsProps) => {
+    return <OutdatedCheck isOutdated={props.store.isOutdated}>
+        <Logs store={props.store} />
+    </OutdatedCheck>
+}

@@ -7,10 +7,12 @@ import { useDevice } from "@/app/stores/devices-store";
 
 type TProps = {
     device_id: string;
+    lastClick: string;
 }
-export const EspHomeLogToolbar = ({ device_id }: TProps) => {
+
+export const EspHomeLogToolbar = ({ device_id, lastClick }: TProps) => {
     const device = useDevice(device_id)!;
-    const logStore = useEspHomeLogStore(device_id);
+    const logStore = useEspHomeLogStore(device_id, lastClick);
     return <Toolbar>
         <DeviceToolbarItem.ESPHomeLog device={device} icon={<SyncIcon />} tooltip="Refresh" />
         <ToolbarItem.Stretch />
@@ -18,7 +20,7 @@ export const EspHomeLogToolbar = ({ device_id }: TProps) => {
     </Toolbar>;
 }
 
-export const EspHomeLogPanel = ({ device_id }: TProps) => {
-    const logStore = useEspHomeLogStore(device_id);
-    return <LogStream data={logStore.data} />;
+export const EspHomeLogPanel = ({ device_id, lastClick }: TProps) => {
+    const logStore = useEspHomeLogStore(device_id, lastClick);
+    return <LogStream store={logStore} />;
 }

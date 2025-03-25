@@ -13,32 +13,15 @@ import { usePanelsStore } from "../stores/panels-store";
 import { useDarkTheme } from "@/app/utils/hooks";
 import { Onboarding } from "./onboarding";
 
-const OnClickRerender = ({ last_click, children }: { last_click?: string, children: React.ReactNode }) => {
-    if (!last_click)
-        return <div>Click again</div>;
-    const currentTime = new Date();
-    const lastClick = new Date(last_click);
-    const diff = currentTime.getTime() - lastClick.getTime();
-
-    if (diff < 1000)
-        return <React.Fragment key={last_click}>{children}</React.Fragment>;
-
-    return <div>Click Refresh</div>;
-}
-
 type TPanelProps = {
     toolbar: React.ReactNode;
     panel: React.ReactNode;
-    last_click?: string;
 }
 const Panel = (p: TPanelProps) => {
     return <div className="flex flex-col h-full">
         <div className="flex-none">{p.toolbar}</div>
         <div className="flex-grow h-full relative"> {/* relative is needed because of log streams */}
-            {p.last_click
-                ? <OnClickRerender last_click={p.last_click}>{p.panel}</OnClickRerender>
-                : p.panel
-            }
+            {p.panel}
         </div>
     </div>;
 }
@@ -71,20 +54,17 @@ const dockViewComponents = {
                 />;
             case "esphome_compile":
                 return <Panel
-                    last_click={panel.last_click}
-                    toolbar={<EspHomeCompileToolbar device_id={panel.device_id} />}
-                    panel={<EspHomeCompilePanel device_id={panel.device_id} />}
+                    toolbar={<EspHomeCompileToolbar device_id={panel.device_id} lastClick={panel.last_click} />}
+                    panel={<EspHomeCompilePanel device_id={panel.device_id} lastClick={panel.last_click} />}
                 />;
             case "esphome_install":
                 return <Panel
-                    last_click={panel.last_click}
-                    toolbar={<EspHomeInstallToolbar device_id={panel.device_id} />}
-                    panel={<EspHomeInstallPanel device_id={panel.device_id} />} />;
+                    toolbar={<EspHomeInstallToolbar device_id={panel.device_id} lastClick={panel.last_click}/>}
+                    panel={<EspHomeInstallPanel device_id={panel.device_id} lastClick={panel.last_click}/>} />;
             case "esphome_log":
                 return <Panel
-                    last_click={panel.last_click}
-                    toolbar={<EspHomeLogToolbar device_id={panel.device_id} />}
-                    panel={<EspHomeLogPanel device_id={panel.device_id} />} />;
+                    toolbar={<EspHomeLogToolbar device_id={panel.device_id} lastClick={panel.last_click}/>}
+                    panel={<EspHomeLogPanel device_id={panel.device_id} lastClick={panel.last_click}/>} />;
             case "onboarding":
                 return <Onboarding panel={panel} />;
             default:
