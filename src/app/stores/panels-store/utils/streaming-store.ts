@@ -15,7 +15,7 @@ type TLogStoreAtom = {
 
 const createLogStreamingStore = (url: string, atom: PrimitiveAtom<TLogStoreAtom>) => {
     const socket = new WebSocket(url)
-    console.log("Opening socket", url);
+    log.debug("Creating socket", url);
 
     // Connection opened
     socket.addEventListener("open", event => {
@@ -50,8 +50,9 @@ const createLogStreamingStore = (url: string, atom: PrimitiveAtom<TLogStoreAtom>
         }
     });
     return () => {
-        console.log("Closing socket");
-        socket.close();
+        log.debug("Closing socket");
+        if (socket.readyState === WebSocket.OPEN)
+            socket.close();
     }
 }
 
@@ -79,9 +80,9 @@ const storeFamily = atomFamily((key: AtomKey) => {
     if (!isOutdated(key.lastClick)) {
         const dispose = createLogStreamingStore(key.url, data);
         data.onMount = () => {
-            console.log("onMount", key.url);
+            log.verbose("onMount", key.url);
             return () => {
-                console.log("onUnmount", key.url);
+                log.verbose("onUnmount", key.url);
                 dispose();
             }
         }

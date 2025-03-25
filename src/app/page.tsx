@@ -81,7 +81,6 @@ const PageContent = () => {
 		api.onDidLayoutChange((e) => {
 			const devicesSidePanel = findDevicesSidePanel(api);
 			if (devicesSidePanel) {
-				console.log("devicesSidePanel", devicesSidePanel.width.toString());
 				localStorage.setItem('e4e.devicesWidth', devicesSidePanel.width.toString());
 			}
 		});
