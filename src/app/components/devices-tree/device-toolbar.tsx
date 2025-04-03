@@ -9,8 +9,6 @@ import { ToolbarItem, TToolbarButtonProps } from "../toolbar";
 import { TPanel_Device } from "@/app/stores/panels-store/types";
 
 type TDeviceToolbarItemProps =
-    Pick<TToolbarButtonProps, "color"> &
-    Pick<TToolbarButtonProps, "disabled"> &
     Pick<TToolbarButtonProps, "className"> & {
         device: TDevice;
         panelTarget?: PanelTarget;
@@ -60,10 +58,11 @@ export const DeviceToolbarItem = {
         const isDarkMode = useDarkTheme();
         const hasBoth = !!p.device.files && !!p.device.esphome_config;
         return <DTB_Panel tooltip="Show local vs ESPHome diff" icon={<GitCompareIcon />} operation="diff"
+            {...p}
             disabled={!hasBoth}
             color={(hasBoth)
                 ? (isDarkMode ? "lightgrey" : color_gray)
-                : (isDarkMode ? color_gray : "lightgrey")} {...p} />;
+                : (isDarkMode ? color_gray : "lightgrey")} />;
     },
     ESPHomeUpload: (p: TDeviceToolbarItemProps) => { const d = useDarkTheme(); return <DTB_Device tooltip={"Upload local to ESPHome"} icon={<UploadIcon />} onClick={(ds) => ds.espHome_upload(p.device)} color={d ? "lightgrey" : color_gray} {...p} />; },
     ESPHomeCreate: (p: TDeviceToolbarItemProps) => { const d = useDarkTheme(); return <DTB_Device tooltip={"Create device in ESPHome"} icon={<UploadIcon />} onClick={(ds) => ds.espHome_upload(p.device)} color={d ? "lightgrey" : color_gray} {...p} />; },

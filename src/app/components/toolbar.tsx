@@ -1,27 +1,27 @@
-import { ActionIcon, ActionIconGroup, ActionIconProps, Divider, MantineColor, Tooltip } from "@mantine/core";
+import { ActionIcon, ActionIconGroup, ActionIconProps, Divider, Tooltip } from "@mantine/core";
+import React from "react";
 
-const allProps = {
-    variant: "subtle" as ActionIconProps["variant"],
+const allProps: Pick<ActionIconProps, "variant"> =
+{
+    variant: "subtle",
 }
 
-export type TToolbarButtonProps = {
+export type TToolbarButtonProps<C = "button"> = Parameters<typeof ActionIcon<C>>[0] & {
     tooltip: string;
-    className?: string;
-    color?: MantineColor;
-    disabled?: boolean;
-    onClick: (e: React.MouseEvent<HTMLElement>) => void;
     icon: React.ReactNode;
 }
 
-const ToolbarButton = (p: TToolbarButtonProps) => {
+const ToolbarButton = <C, >(p: TToolbarButtonProps<C>) => {
+    const { tooltip, icon, ...x } = p;
+
+    const restProps = x as any;
+    if (restProps.onClick)
+        restProps.onAuxClick = restProps.onClick;
+
     return <Tooltip label={p.tooltip} withinPortal={false} >
-        <ActionIcon
+        <ActionIcon<C>
             {...allProps}
-            color={p.color}
-            disabled={p.disabled}
-            className={p.className}
-            onClick={p.onClick}
-            onAuxClick={p.onClick} >
+            {...restProps} >
             {p.icon}
         </ActionIcon>
     </Tooltip>;
@@ -29,9 +29,12 @@ const ToolbarButton = (p: TToolbarButtonProps) => {
 
 export const Toolbar = ActionIconGroup;
 
+type HrefButtonProps = Pick<TToolbarButtonProps<"a">, "href" | "tooltip" | "icon">;
+
 export const ToolbarItem = {
     AllProps: allProps,
     Stretch: () => <ActionIcon.GroupSection {...allProps} w='100%' />,
     Divider: () => <ActionIcon.GroupSection {...allProps} ><Divider orientation="vertical" /></ActionIcon.GroupSection>,
-    Button: ToolbarButton
+    Button: <C = "button",>(p: TToolbarButtonProps<C>) => <ToolbarButton<C> {...p as any} />,  //Arrow functiuon needed because otherwise "component" prop is somehow lost
+    HrefButton: (p: HrefButtonProps) => <ToolbarButton {...p} target="_blank" component="a" />,
 };
