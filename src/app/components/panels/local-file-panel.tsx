@@ -2,7 +2,6 @@ import { useLocalFile, useLocalFileStore } from "@/app/stores/panels-store/local
 import { DockviewApi, DockviewDefaultTab, DockviewReact, IDockviewPanelProps, themeDark, themeLight } from "dockview-react";
 import { useDarkTheme } from "@/app/utils/hooks";
 import { SingleEditor } from "../editors/single-editor";
-import { ActionIcon } from "@mantine/core";
 import { QuestionIcon } from "@primer/octicons-react";
 import { DeviceToolbarItem } from "../devices-tree/device-toolbar";
 import { useDevice } from "@/app/stores/devices-store";
@@ -25,16 +24,22 @@ export const LocalFileToolbar = (props: TProps) => {
 
     const getHelpIcon = () => {
         if (compiler === "none") {
-            return <ActionIcon {...ToolbarItem.AllProps} component="a" href="https://esphome.io/" target="_blank" ><QuestionIcon /></ActionIcon>
+            return <ToolbarItem.HrefButton
+                tooltip="https://esphome.io/components/"
+                href="https://esphome.io/components/"
+                icon={<QuestionIcon />} />;
         } else if (compiler === "etajs") {
-            return <ActionIcon {...ToolbarItem.AllProps} component="a" href="https://eta.js.org/docs" target="_blank" ><QuestionIcon /></ActionIcon>
+            return <ToolbarItem.HrefButton
+                tooltip="https://eta.js.org/docs"
+                href="https://eta.js.org/docs"
+                icon={<QuestionIcon />} />;
         } else {
             return null;
         }
     }
 
-    const panelTarget ="floating";
-    
+    const panelTarget = "floating";
+
     return <Toolbar>
         <DeviceToolbarItem.LocalShow device={device} panelTarget={panelTarget} />
         <DeviceToolbarItem.Diff device={device} panelTarget={panelTarget} />
