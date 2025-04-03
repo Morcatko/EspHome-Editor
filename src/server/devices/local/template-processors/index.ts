@@ -2,12 +2,13 @@ import { readFile } from "node:fs/promises";
 import { processTemplate_eta } from "./eta";
 import { fixPath, getDevicePath } from "../utils";
 import { fileExists } from "@/server/utils/fs-utils";
+import { marked } from "marked";
 
 
-export type TCompiler = "none" | "etajs" | "unknown";
+export type TCompiler = "none" | "etajs" | "markdown" | "unknown";
 
 type FileInfo = {
-    type: "basic" | "patch" |"unknown",
+    type: "none" | "basic" | "patch" | "unknown",
     compiler: TCompiler
 };
 
@@ -29,13 +30,18 @@ export const getFileInfo = (file_path: string): FileInfo => {
             type: "patch",
             compiler: "etajs"
         };
-    }
-    else if (lower.endsWith(".eta")) {
+    } else if (lower.endsWith(".eta")) {
         return {
             type: "basic",
             compiler: "etajs"
         };
-    } else {
+    } else if (lower.endsWith(".md")) {
+        return {
+            type: "none",
+            compiler: "markdown"
+        }
+    }
+    else {
         return {
             type: "unknown",
             compiler: "unknown"
@@ -54,6 +60,10 @@ export const compileFile = async (device_id: string, file_path: string, useTestD
                 ? await readFile(testDataPath, 'utf-8')
                 : null;
             return processTemplate_eta(device_id + "/" + fixedFilePath, testData);
+        case "markdown":
+            const sourceData = await readFile(fullFilePath, 'utf-8');
+            const html = marked.parse(sourceData.replace(/^[\u200B\u200C\u200D\u200E\u200F\uFEFF]/,""));
+            return html;
         case "none":
             return readFile(fullFilePath, 'utf-8');
         default:

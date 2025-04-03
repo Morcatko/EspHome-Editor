@@ -6,6 +6,7 @@ import { QuestionIcon } from "@primer/octicons-react";
 import { DeviceToolbarItem } from "../devices-tree/device-toolbar";
 import { useDevice } from "@/app/stores/devices-store";
 import { Toolbar, ToolbarItem } from "../toolbar";
+import { HtmlPreview } from "../editors/html-preview";
 
 type TProps = {
     device_id: string;
@@ -62,6 +63,10 @@ const dockViewComponents = {
         const data = useLocalFileStore(p.params.device_id, p.params.file_path);
         return <SingleEditor {...data.rightEditor!} />;
     },
+    htmlPreview: (p: IDockviewPanelProps) => {
+        const data = useLocalFileStore(p.params.device_id, p.params.file_path);
+        return <HtmlPreview {...data.rightEditor!} />;
+    },
     testdata: (p: IDockviewPanelProps) => {
         const data = useLocalFileStore(p.params.device_id, p.params.file_path);
         return <SingleEditor {...data.testDataEditor!} />;
@@ -70,6 +75,7 @@ const dockViewComponents = {
 
 export const LocalFilePanel = (props: TProps) => {
     const isDarkMode = useDarkTheme();
+    const localFile = useLocalFile(props.device_id, props.file_path);
     const data = useLocalFileStore(props.device_id, props.file_path);
 
     const onReady = (api: DockviewApi) => {
@@ -79,13 +85,23 @@ export const LocalFilePanel = (props: TProps) => {
             component: "source",
             params: props
         });
-        api.addPanel<TProps>({
-            id: "right",
-            title: "Compiled",
-            component: "compiled",
-            params: props,
-            position: { referencePanel: panelLeft, direction: 'right' },
-        });
+        if (localFile.compiler === "markdown") {
+            api.addPanel<TProps>({
+                id: "right",
+                title: "Preview",
+                component: "htmlPreview",
+                params: props,
+                position: { referencePanel: panelLeft, direction: 'right' },
+            });
+        } else {
+            api.addPanel<TProps>({
+                id: "right",
+                title: "Compiled",
+                component: "compiled",
+                params: props,
+                position: { referencePanel: panelLeft, direction: 'right' },
+            });
+        }
         if (data.testDataEditor) {
             api.addPanel<TProps>({
                 id: "testdata",

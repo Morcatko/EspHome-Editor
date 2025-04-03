@@ -27,6 +27,23 @@ export const useLocalFile = (device_id: string, file_path: string) => {
     return file;
 }
 
+const compilerToSourceMonacoLanguage = (compiler: TLocalFile["compiler"]) => {
+    switch (compiler) {
+        case "markdown":
+            return "markdown";
+        default:
+            return esphomeLanguageId;
+    }
+}
+const compilerToTargetMonacoLanguage = (compiler: TLocalFile["compiler"]) => {
+    switch (compiler) {
+        case "markdown":
+            return "html";
+        default:
+            return esphomeLanguageId;
+    }
+}
+
 export const useLocalFileStore = (device_id: string, file_path: string) => {
     const file = useLocalFile(device_id, file_path);
     
@@ -69,13 +86,13 @@ export const useLocalFileStore = (device_id: string, file_path: string) => {
     return {
         leftEditor: <TEditorFileProps>{
             value: queryToContent(leftQuery),
-            language: esphomeLanguageId, //TODO - can be etajs (or anything else)
+            language: compilerToSourceMonacoLanguage(file.compiler),
             onValueChange: (v) => leftMutation.mutate(v),
         },
         rightEditor: hasRightFile
             ? <TEditorFileProps>{
                 value: queryToContent(rightQuery),
-                language: esphomeLanguageId,
+                language: compilerToTargetMonacoLanguage(file.compiler),
             }
             : null,
         testDataEditor: hasTestData
