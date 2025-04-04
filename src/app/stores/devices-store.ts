@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useLocalStorage } from "usehooks-ts";
 import { useCallback, useMemo } from "react";
 import { openConfirmationDialog } from "../components/dialogs/confirmation-dialog";
-import { openInputTextDialog } from "../components/dialogs/input-text-dialog";
+import { openCreateFileDialog, openInputTextDialog } from "../components/dialogs/input-text-dialog";
 import { notifications } from "@mantine/notifications";
 
 const useDeviceExpandedStore = () => {
@@ -80,10 +80,11 @@ async function localDevice_addDirectory(device: TDevice, parent_path: string) {
 }
 
 async function localDevice_addFile(device: TDevice, parent_path: string) {
-    const file_name = await openInputTextDialog({
+    const file_name = await openCreateFileDialog({
         title: "Create New File",
         subtitle: `${device.name} - ${parent_path}/`,
-        defaultValue: "newfile.yaml"
+        defaultValue: "newfile",
+        defaultExtension: ".yaml",
     });
     if (file_name)
         await showToast(

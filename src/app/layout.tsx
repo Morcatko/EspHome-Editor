@@ -15,9 +15,15 @@ export const metadata: Metadata = {
 
 const theme = createTheme({
   components: {
+     //Dockview Floating Groups are 999
     "Tooltip": {
       defaultProps: {
-        zIndex: 1002, //Dockview Floating Groups are 999
+        zIndex: 1002, 
+      }
+    },
+    "Popover": {
+      defaultProps: {
+        zIndex: 1002,
       }
     }
   }
