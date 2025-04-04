@@ -5,7 +5,7 @@ import { fileExists } from "@/server/utils/fs-utils";
 import { marked } from "marked";
 
 
-export type TLanguge = "plaintext" | "esphome" | "patch" | "etajs";
+export type TLanguge = "plaintext" | "esphome" | "patch" | "etajs" | "markdown";
 
 type FileInfo = {
     type: "basic" | "patch" |"none",
@@ -40,6 +40,11 @@ export const getFileInfo = (file_path: string): FileInfo => {
             type: "none",
             language: "plaintext"
         }
+    } else if (lower.endsWith(".md")) {
+        return {
+            type: "none",
+            language: "markdown"
+        }
     } else {
         return {
             type: "none",
@@ -63,6 +68,9 @@ export const compileFile = async (device_id: string, file_path: string, useTestD
         case "esphome":
         case "plaintext":
             return readFile(fullFilePath, 'utf-8');
+        case "markdown":
+            const md = await readFile(fullFilePath, 'utf-8');
+            return marked.parse(md);
         default:
             throw new Error(`Unsupported language:${fileInfo.language}`);
     }

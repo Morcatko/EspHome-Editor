@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { FileCodeIcon, FileDirectoryIcon, QuestionIcon, FileIcon as OFileIcon, FileAddedIcon } from "@primer/octicons-react";
+import { FileCodeIcon, FileDirectoryIcon, QuestionIcon, FileIcon as OFileIcon, FileAddedIcon, MarkdownIcon } from "@primer/octicons-react";
 import etajsIcon from "@/assets/etajs-logo.svg";
 import { TLocalFile, TLocalFileOrDirectory } from "@/server/devices/types";
 import { esphomeLanguageId } from '../components/editors/monaco/languages';
@@ -17,6 +17,8 @@ export const FileIcon = (props: { fod: TLocalFileOrDirectory }) => {
             return <FileAddedIcon />;
         case "plaintext":
             return <OFileIcon />
+        case "markdown":
+            return <MarkdownIcon />;
         default:
             return <QuestionIcon />
     }
@@ -32,8 +34,10 @@ export const getSourceMonacoLanguge = (file: TLocalFile) => {
             return "yaml";
         case "etajs":
             return esphomeLanguageId;
+        case "markdown":
+            return "markdown";
         default:
-            throw new Error(`Unknown language ${file.language}`);
+            throw new Error(`Unknown source language ${file.language}`);
     }
 }
 
@@ -45,7 +49,9 @@ export const getTargetMonacoLanguage = (file: TLocalFile) => {
             return esphomeLanguageId;
         case "etajs":
             return esphomeLanguageId;
+        case "markdown":
+            return "html";
         default:
-            throw new Error(`Unknown language ${file.language}`);
+            throw new Error(`Unknown target language ${file.language}`);
     }
 }

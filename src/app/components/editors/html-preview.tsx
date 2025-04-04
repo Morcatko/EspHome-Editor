@@ -11,6 +11,7 @@ export const HtmlPreview = (props: THtmlPreviewProps) => {
     }
     else {
         return <div
+                className="px-8"
                 dangerouslySetInnerHTML={{__html: props.value.content}}
         />
     }

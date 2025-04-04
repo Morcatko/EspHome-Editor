@@ -85,7 +85,7 @@ export const LocalFilePanel = (props: TProps) => {
             component: "source",
             params: props
         });
-        if (localFile.compiler === "markdown") {
+        if (localFile.language === "markdown") {
             api.addPanel<TProps>({
                 id: "right",
                 title: "Preview",
