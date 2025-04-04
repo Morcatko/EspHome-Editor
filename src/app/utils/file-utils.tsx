@@ -6,7 +6,6 @@ import { esphomeLanguageId } from '../components/editors/monaco/languages';
 
 export const FileIcon = (props: { fod: TLocalFileOrDirectory }) => {
     const { fod } = props;
-    
     if ((fod == null) || (fod.type === "directory"))
         return <FileDirectoryIcon />
     switch (fod.language) {
