@@ -1,5 +1,5 @@
 "use client";
-import { TDevice, TLocalFileOrDirectory } from "@/server/devices/types";
+import { TDevice, TLocalFile, TLocalFileOrDirectory } from "@/server/devices/types";
 import { api } from "../utils/api-client";
 import { queryClient } from ".";
 import { useQuery } from "@tanstack/react-query";
@@ -144,6 +144,26 @@ async function local_renameFoD(panelsStore: TPanelsStore, device: TDevice, file:
         );
 }
 
+async function local_enableDisableFile(panelsStore: TPanelsStore, device: TDevice, file: TLocalFile) {
+    const enable = file.name.startsWith(".");
+    const newName = enable
+        ? file.name.substring(1) 
+        : "." + file.name;
+        await showToast(
+            () => api.local_path_rename(device.id, file.path, newName),
+            [["devices"],
+            ["device", device.id, "local"],
+            ["device", device.id, "local-file", file.path],
+            ["device", device.id, "local-file", file.path, "compiled"]],
+            enable ? "Enabling..." : "Disabling...",
+            enable ? "Enabled!" : "Disabled!",
+            enable ? "Failed to Enable" : "Failed to Disable",
+            () => panelsStore.replacePanel(
+                    { operation: "local_file", device_id: device.id, path: file.path },
+                    { operation: "local_file", device_id: device.id, path: newName }),
+        );
+}
+
 async function local_deleteFoD(panelsStore: TPanelsStore, device: TDevice, file: TLocalFileOrDirectory) {
     const del = await openConfirmationDialog({
         title: "Delete",
@@ -190,5 +210,6 @@ export const useDevicesStore = () => {
         espHome_upload,
         local_renameFoD: (device: TDevice, file: TLocalFileOrDirectory) => local_renameFoD(panelStore, device, file),
         local_deleteFoD: (device: TDevice, file: TLocalFileOrDirectory) => local_deleteFoD(panelStore, device, file),
+        local_enableDisableFile: (device: TDevice, file: TLocalFile) => local_enableDisableFile(panelStore, device, file),
     }
 };

@@ -1,7 +1,7 @@
 import { useDevicesStore } from "@/app/stores/devices-store";
 import { TDevice, TLocalFileOrDirectory } from "@/server/devices/types";
 import { ActionIcon, Menu } from "@mantine/core";
-import { FileCodeIcon, FileDirectoryIcon, KebabHorizontalIcon, PencilIcon, XIcon } from "@primer/octicons-react";
+import { CircleSlashIcon, FileCodeIcon, FileDirectoryIcon, KebabHorizontalIcon, PencilIcon, XIcon } from "@primer/octicons-react";
 
 export const ThreeDotsMenu = ({ items }: { items: React.ReactNode[] }) =>
     <Menu width={150} position="bottom-start">
@@ -42,7 +42,13 @@ export const fodMenuItems = (ds: ReturnType<typeof useDevicesStore>, d: TDevice,
         ? [
             <MenuItem key="nf" label="New File..." icon={<FileCodeIcon />} onClick={() => ds.localDevice_addFile(d, fod.path)} />,
             <MenuItem key="nd" label="New Folder..." icon={<FileDirectoryIcon />} onClick={() => ds.localDevice_addDirectory(d, fod.path)} />,
-            <Menu.Divider key="di" />
+            <Menu.Divider key="did" />
+        ]
+        : []),
+    ...(((fod.type === "file") && (!fod.path.includes("/")))
+        ? [
+            <MenuItem key="en" label="Enable/Disable..." icon={<CircleSlashIcon />} onClick={() => ds.local_enableDisableFile(d, fod)} />,
+            <Menu.Divider key="dif" />
         ]
         : []),
     <MenuItem key="rn" label="Rename..." icon={<PencilIcon />} onClick={() => ds.local_renameFoD(d, fod)} />,
