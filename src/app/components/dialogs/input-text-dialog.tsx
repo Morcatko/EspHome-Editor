@@ -48,7 +48,7 @@ export const openCreateFileDialog = (props: TCreateFileDialogProps) =>
             className='w-32 flex-none'
             defaultValue={props.defaultExtension}
             placeholder='Select file type'
-            data={[".yaml", ".eta", ".patch.yaml", ".patch.eta"]}
+            data={[".yaml", ".eta", ".patch.yaml", ".patch.eta", ".txt"]}
             onChange={(v) => extension = v!} />
         </div>
       </>,

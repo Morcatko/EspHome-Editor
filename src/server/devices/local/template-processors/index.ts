@@ -7,7 +7,7 @@ import { fileExists } from "@/server/utils/fs-utils";
 export type TLanguge = "plaintext" | "esphome" | "patch" | "etajs";
 
 type FileInfo = {
-    type: "basic" | "patch" |"unknown",
+    type: "basic" | "patch" |"none",
     language: TLanguge;
 };
 
@@ -35,9 +35,14 @@ export const getFileInfo = (file_path: string): FileInfo => {
             type: "basic",
             language: "etajs"
         };
+    } else if (lower.endsWith(".txt")) {
+        return {
+            type: "none",
+            language: "plaintext"
+        }
     } else {
         return {
-            type: "unknown",
+            type: "none",
             language: "plaintext"
         }
     }
