@@ -1,4 +1,4 @@
-import { type TCompiler,} from "./local/template-processors";
+import { type TLanguge,} from "./local/template-processors";
 
 export type TNode = {
     id: string;
@@ -17,7 +17,7 @@ export type TLocalDirectory = TParent & {
 
 export type TLocalFile = TNode & {
     type: "file";
-    compiler: TCompiler;
+    language: TLanguge;
 }
 
 export type TLocalFileOrDirectory = TLocalDirectory | TLocalFile;

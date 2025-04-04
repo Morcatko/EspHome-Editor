@@ -9,10 +9,10 @@ export const FileIcon = (props: { fod: TLocalFileOrDirectory }) => {
     
     if ((fod == null) || (fod.type === "directory"))
         return <FileDirectoryIcon />
-    switch (fod.compiler) {
+    switch (fod.language) {
         case "etajs":
-            return <Image src={etajsIcon} width={16} alt="etajs template" />
-        case "none":
+            return <Image src={etajsIcon} width={16} alt="etajs template" />;
+        case "esphome":
             return <FileCodeIcon />;
         default:
             return <QuestionIcon />
@@ -20,23 +20,29 @@ export const FileIcon = (props: { fod: TLocalFileOrDirectory }) => {
 }
 
 export const getSourceMonacoLanguge = (file: TLocalFile) => {
-    switch (file.compiler) {
-            case "none":
-                return "text";
-            case "markdown":
-                return "markdown";
-            default:
-                return esphomeLanguageId;
+    switch (file.language) {
+        case "plaintext":
+            return "text";
+        case "esphome":
+            return esphomeLanguageId;
+        case "patch":
+            return "yaml";
+        case "etajs":
+            return esphomeLanguageId;
+        default:
+            throw new Error(`Unknown language ${file.language}`);
     }
 }
 
 export const getTargetMonacoLanguage = (file: TLocalFile) => {
-    switch (file.compiler) {
-        case "none":
+    switch (file.language) {
+        case "plaintext":
             return "text";
-        case "markdown":
-            return "html";
-        default:
+        case "esphome":
             return esphomeLanguageId;
+        case "etajs":
+            return esphomeLanguageId;   
+        default:
+            throw new Error(`Unknown language ${file.language}`);
     }
 }
