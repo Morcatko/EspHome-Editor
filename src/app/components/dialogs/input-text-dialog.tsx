@@ -1,6 +1,5 @@
 import { modals } from '@mantine/modals';
 import { Flex, Select, TextInput } from '@mantine/core';
-import { Combobox } from '../combobox';
 
 type TDialogProps = {
   title: string;
@@ -46,10 +45,10 @@ export const openCreateFileDialog = (props: TCreateFileDialogProps) =>
             onChange={(e) => fileName = e.target.value}
             onKeyDown={(e) => { if (e.key === 'Enter') { modals.close(modalId); onConfirm(); } }} />
           <Select
-            className='w-24 flex-none'
+            className='w-32 flex-none'
             defaultValue={props.defaultExtension}
             placeholder='Select file type'
-            data={[".yaml", ".eta", ".md", ".txt", ".patch.yaml", ".patch.eta"]}
+            data={[".yaml", ".eta", ".patch.yaml", ".patch.eta"]}
             onChange={(v) => extension = v!} />
         </div>
       </>,
