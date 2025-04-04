@@ -1,20 +1,6 @@
 import { modals } from '@mantine/modals';
-import { TextInput } from '@mantine/core';
-
-type TContentProps = {
-  subtitle: string;
-  defaultValue: string;
-  onChange: (value: string) => void;
-  onConfirm: () => void;
-}
-
-const InputTextDialogContent = (props: TContentProps) => <>
-  <div>{props.subtitle}</div>
-  <TextInput
-    defaultValue={props.defaultValue}
-    onChange={(e) => props.onChange(e.target.value)}
-    onKeyDown={(e) => e.key === 'Enter' && props.onConfirm()} />
-</>;
+import { Flex, Select, TextInput } from '@mantine/core';
+import { Combobox } from '../combobox';
 
 type TDialogProps = {
   title: string;
@@ -26,13 +12,49 @@ export const openInputTextDialog = (props: TDialogProps) =>
     let value = props.defaultValue;
     const modalId = modals.openConfirmModal({
       title: props.title,
-      children: <InputTextDialogContent
-        subtitle={props.subtitle}
-        defaultValue={props.defaultValue}
-        onChange={(v) => value = v}
-        onConfirm={() => { modals.close(modalId); res(value); }} />,
+      children: <>
+        <div>{props.subtitle}</div>
+        <TextInput
+          defaultValue={props.defaultValue}
+          onChange={(e) => value = e.target.value}
+          onKeyDown={(e) => { if (e.key === 'Enter') { modals.close(modalId); res(value); } }} />
+      </>,
       labels: { confirm: 'Confirm', cancel: 'Cancel' },
       onConfirm: () => res(value),
+      onCancel: () => res(null),
+    });
+  });
+
+
+type TCreateFileDialogProps = TDialogProps & {
+  defaultExtension: string;
+};
+
+export const openCreateFileDialog = (props: TCreateFileDialogProps) =>
+  new Promise<string | null>((res) => {
+    let fileName = props.defaultValue;
+    let extension = props.defaultExtension;
+    const onConfirm = () => res(`${fileName}${extension}`);
+    const modalId = modals.openConfirmModal({
+      title: props.title,
+      children: <>
+        <div>{props.subtitle}</div>
+        <div className='flex'>
+          <TextInput
+            className='flex-1'
+            defaultValue={props.defaultValue}
+            onChange={(e) => fileName = e.target.value}
+            onKeyDown={(e) => { if (e.key === 'Enter') { modals.close(modalId); onConfirm(); } }} />
+          <Select
+            className='w-24 flex-none'
+            defaultValue={props.defaultExtension}
+            placeholder='Select file type'
+            data={[".yaml", ".eta", ".md", ".txt", ".patch.yaml", ".patch.eta"]}
+            onChange={(v) => extension = v!} />
+        </div>
+      </>,
+      labels: { confirm: 'Create', cancel: 'Cancel' },
+      onConfirm: onConfirm,
       onCancel: () => res(null),
     });
   });

@@ -40,8 +40,12 @@ export const getFileInfo = (file_path: string): FileInfo => {
             type: "none",
             compiler: "markdown"
         }
-    }
-    else {
+    } else if (lower.endsWith(".txt")) {
+        return {
+            type: "none",
+            compiler: "none"
+        }
+    } else {
         return {
             type: "unknown",
             compiler: "unknown"
