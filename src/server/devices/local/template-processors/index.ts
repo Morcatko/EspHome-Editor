@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import { processTemplate_eta } from "./eta";
 import { fixPath, getDevicePath } from "../utils";
 import { fileExists } from "@/server/utils/fs-utils";
+import { marked } from "marked";
 
 
 export type TLanguge = "plaintext" | "esphome" | "patch" | "etajs";
@@ -29,12 +30,21 @@ export const getFileInfo = (file_path: string): FileInfo => {
             type: "patch",
             language: "etajs"
         };
-    }
-    else if (lower.endsWith(".eta")) {
+    } else if (lower.endsWith(".eta")) {
         return {
             type: "basic",
             language: "etajs"
         };
+    } else if (lower.endsWith(".md")) {
+        return {
+            type: "none",
+            compiler: "markdown"
+        }
+    } else if (lower.endsWith(".txt")) {
+        return {
+            type: "none",
+            compiler: "none"
+        }
     } else {
         return {
             type: "unknown",

@@ -29,6 +29,7 @@
     "eta": "^3.5.0",
     "jotai": "^2.11.3",
     "jsonpathly": "^2.0.2",
+    "marked": "^15.0.7",
     "monaco-editor": "^0.52.2",
     "next": "^15.1.6",
     "next-ws": "^2.0.1",
