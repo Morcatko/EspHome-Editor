@@ -19,16 +19,16 @@ export const LocalFileToolbar = (props: TProps) => {
     if (!file)
         return null;
 
-    const compiler = file.compiler;
+    const language = file.language;
     //const fileType = file.type;
 
     const getHelpIcon = () => {
-        if (compiler === "none") {
+        if (language === "esphome") {
             return <ToolbarItem.HrefButton
                 tooltip="https://esphome.io/components/"
                 href="https://esphome.io/components/"
                 icon={<QuestionIcon />} />;
-        } else if (compiler === "etajs") {
+        } else if (language === "etajs") {
             return <ToolbarItem.HrefButton
                 tooltip="https://eta.js.org/docs"
                 href="https://eta.js.org/docs"

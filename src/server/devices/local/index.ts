@@ -38,7 +38,7 @@ const scanDirectory = async (fullPath: string, parentPath: string | null): Promi
                         id: e.name,
                         path: path,
                         name: e.name,
-                        compiler: getFileInfo(`${fullPath}/${e.name}`).compiler,
+                        language: getFileInfo(`${fullPath}/${e.name}`).language,
                         type: "file",
                     };
                 }

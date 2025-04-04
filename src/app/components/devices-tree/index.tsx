@@ -1,10 +1,9 @@
 "use client";
 import React from "react";
-import Image from 'next/image';
 import { useQuery } from "@tanstack/react-query";
-import { FileDirectoryIcon, LightBulbIcon, FileCodeIcon, QuestionIcon, PlusIcon, ChevronRightIcon } from "@primer/octicons-react";
+import { FileDirectoryIcon, LightBulbIcon, PlusIcon, ChevronRightIcon } from "@primer/octicons-react";
 import { Group, RenderTreeNodePayload, Tree, useTree } from "@mantine/core";
-import { TDevice, TLocalFileOrDirectory } from "@/server/devices/types";
+import { TDevice } from "@/server/devices/types";
 import { color_gray, color_offline, color_online } from "../../utils/const";
 import { api } from "../../utils/api-client";
 import { useDevicesStore } from "../../stores/devices-store";
@@ -12,20 +11,7 @@ import { usePanelsStore } from "../../stores/panels-store";
 import { DeviceToolbar } from "./device-toolbar";
 import { ThreeDotsMenu, deviceMenuItems, fodMenuItems } from "./menus";
 import { TreeNodeType, useTreeData } from "./utils";
-import etajsIcon from "@/assets/etajs-logo.svg";
-
-const FileTypeIcon = ({ fod }: { fod: TLocalFileOrDirectory | undefined }) => {
-    if ((fod == null) || (fod.type === "directory"))
-        return <FileDirectoryIcon />
-    switch (fod.compiler) {
-        case "etajs":
-            return <Image src={etajsIcon} width={16} alt="etajs template" />
-        case "none":
-            return <FileCodeIcon />;
-        default:
-            return <QuestionIcon />
-    }
-}
+import { FileIcon } from "@/app/utils/file-utils";
 
 type TNodeProps = {
     nodePayload: RenderTreeNodePayload;
@@ -108,7 +94,7 @@ const nodeRenderer = (p: RenderTreeNodePayload) => {
         case "file":
             return <Node
                 nodePayload={p}
-                icon={<div className="opacity-55"><FileTypeIcon fod={node.fod} /></div>}
+                icon={<div className="opacity-55"><FileIcon fod={node.fod} /></div>}
                 onClick={(e) => panels.addDevicePanel(((e as any).button === 1) ? "new_window" : "default", node.device.id, "local_file", node.fod)}
                 menuItems={fodMenuItems(devicesStore, node.device, node.fod)}
             >
