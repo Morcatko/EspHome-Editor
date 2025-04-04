@@ -8,7 +8,7 @@ import { marked } from "marked";
 export type TLanguge = "plaintext" | "esphome" | "patch" | "etajs";
 
 type FileInfo = {
-    type: "basic" | "patch" |"unknown",
+    type: "basic" | "patch" |"none",
     language: TLanguge;
 };
 
@@ -35,19 +35,14 @@ export const getFileInfo = (file_path: string): FileInfo => {
             type: "basic",
             language: "etajs"
         };
-    } else if (lower.endsWith(".md")) {
-        return {
-            type: "none",
-            compiler: "markdown"
-        }
     } else if (lower.endsWith(".txt")) {
         return {
             type: "none",
-            compiler: "none"
+            language: "plaintext"
         }
     } else {
         return {
-            type: "unknown",
+            type: "none",
             language: "plaintext"
         }
     }
