@@ -45,10 +45,10 @@ const mergeEspHomeYamls = (target: YAML.Document, source: YAML.Document) => {
             }
 
             if (!isSeq(srcItem.value)) {
-                throw new Error("Unsupported merge");
+                throw new Error(`Unsupported merge - '${srcItem.value}'`);
             }           
             if (!isSeq(tgtItem.value)) {
-                throw new Error("Unsupported merge");
+                throw new Error(`Unsupported merge - '${srcItem.value}'`);
             }
 
             const tgtValues = tgtItem.value as YAML.YAMLSeq;

@@ -4,11 +4,11 @@ import { fixPath, getDevicePath } from "../utils";
 import { fileExists } from "@/server/utils/fs-utils";
 
 
-export type TCompiler = "none" | "etajs" | "unknown";
+export type TLanguge = "plaintext" | "esphome" | "patch" | "etajs";
 
 type FileInfo = {
     type: "basic" | "patch" |"unknown",
-    compiler: TCompiler
+    language: TLanguge;
 };
 
 
@@ -17,28 +17,28 @@ export const getFileInfo = (file_path: string): FileInfo => {
     if (lower.endsWith(".patch.yaml")) {
         return {
             type: "patch",
-            compiler: "none"
+            language: "patch"
         };
     } else if (lower.endsWith(".yaml")) {
         return {
             type: "basic",
-            compiler: "none"
+            language: "esphome"
         };
     } else if (lower.endsWith(".patch.eta")) {
         return {
             type: "patch",
-            compiler: "etajs"
+            language: "etajs"
         };
     }
     else if (lower.endsWith(".eta")) {
         return {
             type: "basic",
-            compiler: "etajs"
+            language: "etajs"
         };
     } else {
         return {
             type: "unknown",
-            compiler: "unknown"
+            language: "plaintext"
         }
     }
 }
@@ -47,16 +47,18 @@ export const compileFile = async (device_id: string, file_path: string, useTestD
     const fullFilePath = getDevicePath(device_id, file_path);
     const fixedFilePath = fixPath(file_path);
     const fileInfo = getFileInfo(file_path);
-    switch (fileInfo.compiler) {
+    switch (fileInfo.language) {
         case "etajs":
             const testDataPath = getDevicePath(device_id, file_path + ".testdata");
             const testData = useTestData && await fileExists(testDataPath)
                 ? await readFile(testDataPath, 'utf-8')
                 : null;
             return processTemplate_eta(device_id + "/" + fixedFilePath, testData);
-        case "none":
+        case "patch":
+        case "esphome":
+        case "plaintext":
             return readFile(fullFilePath, 'utf-8');
         default:
-            throw new Error(`Unsupported file type:${fileInfo.compiler}`);
+            throw new Error(`Unsupported language:${fileInfo.language}`);
     }
 };

@@ -23,6 +23,5 @@ export const SingleEditor = (props: TSingleEditorProps) => {
                 readOnly: !props.onValueChange,
             }}
         />
-
     }
 };
