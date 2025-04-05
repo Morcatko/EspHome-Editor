@@ -23,6 +23,7 @@ export const FileIcon = (props: { fod: TLocalFileOrDirectory }) => {
 }
 
 export const getSourceMonacoLanguge = (file: TLocalFile) => {
+    if (!file) return "text";
     switch (file.language) {
         case "plaintext":
             return "text";
@@ -38,6 +39,7 @@ export const getSourceMonacoLanguge = (file: TLocalFile) => {
 }
 
 export const getTargetMonacoLanguage = (file: TLocalFile) => {
+    if (!file) return "text";
     switch (file.language) {
         case "plaintext":
             return "text";
