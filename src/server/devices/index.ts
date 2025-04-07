@@ -34,3 +34,8 @@ export const importEspHomeToLocalDevice = async (device_id: string) => {
     const configuration = await espHome.getConfiguration(device_id);
     await local.saveFileContent(device_id, "configuration.yaml", configuration);
 }
+
+export const deleteDevice = async (device_id: string) => {
+    await local.deleteDevice(device_id);
+    await espHome.deleteDevice(device_id);
+}

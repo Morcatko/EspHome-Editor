@@ -159,6 +159,23 @@ async function local_deleteFoD(device: TDevice, file: TLocalFileOrDirectory) {
         );
 }
 
+async function device_delete(device: TDevice) {
+    const del = await openConfirmationDialog({
+        title: `Delete ${device.name}`,
+        subtitle: "Are you sure you want to delete this device?",
+        text: "This will remove the device also from ESPHome Builder.",
+        danger: true
+    });
+    if (del)
+        showToast(
+            () => api.device_delete(device.id),
+            [["devices"]],
+            "Deleting...",
+            "Deleted!",
+            "Failed to Delete",
+        );
+}
+
 export const useDevice = (device_id: string) => {
     const devices = useDevicesStore().query.data;
     const device = devices?.find(d => d.id === device_id);
@@ -181,6 +198,7 @@ export const useDevicesStore = () => {
         localDevice_import,
         espHome_upload,
         local_renameFoD,
-        local_deleteFoD
+        local_deleteFoD,
+        device_delete,
     }
 };

@@ -132,6 +132,9 @@ export namespace api {
         return await callPost(url_local_path(device_id, path, "test-data"), content);        
     }
 
+    export async function device_delete(device_id: string) {
+        await callDelete(url_device(device_id));
+    }
 
     export async function getStatus() {
         return await callGet_json<TGetStatus>("/api/status");
