@@ -1,10 +1,9 @@
 import { useEspHomeLogStore } from "@/app/stores/panels-store/esphome-log-store";
 import { LogStream } from "../editors/log-stream";
-import { SearchIcon, SyncIcon, XIcon } from "@primer/octicons-react";
+import { SyncIcon, XIcon } from "@primer/octicons-react";
 import { Toolbar, ToolbarItem } from "../toolbar";
 import { DeviceToolbarItem } from "../devices-tree/device-toolbar";
 import { useDevice } from "@/app/stores/devices-store";
-import { ActionIcon, TextInput } from "@mantine/core";
 
 type TProps = {
     device_id: string;
