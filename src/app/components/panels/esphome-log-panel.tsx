@@ -1,10 +1,10 @@
 import { useEspHomeLogStore } from "@/app/stores/panels-store/esphome-log-store";
 import { LogStream } from "../editors/log-stream";
-import { SyncIcon, XIcon } from "@primer/octicons-react";
+import { SearchIcon, SyncIcon, XIcon } from "@primer/octicons-react";
 import { Toolbar, ToolbarItem } from "../toolbar";
 import { DeviceToolbarItem } from "../devices-tree/device-toolbar";
 import { useDevice } from "@/app/stores/devices-store";
-import { TextInput } from "@mantine/core";
+import { ActionIcon, TextInput } from "@mantine/core";
 
 type TProps = {
     device_id: string;
@@ -21,13 +21,16 @@ export const EspHomeLogToolbar = ({ device_id, lastClick }: TProps) => {
         <ToolbarItem.Stretch />
         <span>
             {logStore.filter
-                ? `Showing ${logStore.filteredData.length} of ${logStore.allData.length}`
+                ? `${logStore.filteredData.length} of ${logStore.allData.length}`
                 : `${logStore.allData.length}`}
         </span>
         <TextInput
             value={logStore.filter}
             onChange={(e) => logStore.setFilter(e.currentTarget.value)}
             placeholder="Filter"
+            leftSection={<SearchIcon />}
+            leftSectionPointerEvents="none"
+            rightSection={<ActionIcon variant="subtle" onClick={() => logStore.setFilter("")} ><XIcon /></ActionIcon>}
             style={{ width: 200 }} />
     </Toolbar>;
 }
