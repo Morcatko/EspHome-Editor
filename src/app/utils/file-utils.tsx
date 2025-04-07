@@ -34,7 +34,7 @@ export const getSourceMonacoLanguge = (file: TLocalFile) => {
         case "etajs":
             return esphomeLanguageId;
         default:
-            throw new Error(`Unknown language ${file.language}`);
+            throw new Error(`Unknown source language ${file.language}`);
     }
 }
 
@@ -48,6 +48,6 @@ export const getTargetMonacoLanguage = (file: TLocalFile) => {
         case "etajs":
             return esphomeLanguageId;
         default:
-            throw new Error(`Unknown language ${file.language}`);
+            throw new Error(`Unknown target language ${file.language}`);
     }
 }
