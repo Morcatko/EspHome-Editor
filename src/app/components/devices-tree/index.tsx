@@ -25,11 +25,11 @@ type TNodeProps = {
 
 const Node = (p: TNodeProps) => {
     const { hasChildren, expanded, elementProps, tree, node } = p.nodePayload;
+    elementProps.className += p.gray ? " opacity-50" : "";
 
     return <Group
         gap={5}
         {...elementProps}
-        className={p.gray ? "opacity-50" : ""}
         onClick={p.onClick ? p.onClick : () => tree.toggleExpanded(node.value)}
     >
         {!p.hideExpander && <ChevronRightIcon
