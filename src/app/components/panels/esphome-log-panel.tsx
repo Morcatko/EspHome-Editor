@@ -17,6 +17,8 @@ export const EspHomeLogToolbar = ({ device_id, lastClick }: TProps) => {
         <DeviceToolbarItem.ESPHomeLog device={device} icon={<SyncIcon />} tooltip="Refresh" />
         <ToolbarItem.Divider />
         <ToolbarItem.Button tooltip="Clear" icon={<XIcon />} onClick={() => logStore.clear()} />
+        <ToolbarItem.Stretch />
+        <ToolbarItem.Filter logStore={logStore} />
     </Toolbar>;
 }
 

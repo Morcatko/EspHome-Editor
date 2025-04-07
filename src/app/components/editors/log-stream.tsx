@@ -11,20 +11,20 @@ const Logs = (props: LogsProps) => {
     const parentRef = useRef(null)
 
     const rowVirtualizer = useVirtualizer({
-        count: props.store.data.length,
+        count: props.store.filteredData.length,
         getScrollElement: () => parentRef.current,
         estimateSize: () => 19.5,
         overscan: 5,
     })
 
     useEffect(() => {
-        const lastOffset = rowVirtualizer.getOffsetForIndex(props.store.data.length - 1)?.[0] || 0;
+        const lastOffset = rowVirtualizer.getOffsetForIndex(props.store.filteredData.length - 1)?.[0] || 0;
         const currentOffset = rowVirtualizer.scrollOffset ?? 0;
 
         if ((lastOffset - currentOffset) < 80) {
-            rowVirtualizer.scrollToIndex(props.store.data.length - 1);
+            rowVirtualizer.scrollToIndex(props.store.filteredData.length - 1);
         }
-    }, [props.store.data.length, rowVirtualizer]);
+    }, [props.store.filteredData.length, rowVirtualizer]);
 
     return <div
         ref={parentRef}
@@ -56,7 +56,7 @@ const Logs = (props: LogsProps) => {
                         height: `${virtualRow.size}px`,
                         transform: `translateY(${virtualRow.start}px)`,
                     }}
-                    dangerouslySetInnerHTML={{ __html: props.store.data[virtualRow.index] }} />
+                    dangerouslySetInnerHTML={{ __html: props.store.filteredData[virtualRow.index] }} />
             ))}
         </div>
     </div >;
