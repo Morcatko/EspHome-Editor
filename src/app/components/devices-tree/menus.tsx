@@ -34,7 +34,9 @@ const MenuItem = (p: {
 
 export const deviceMenuItems = (ds: ReturnType<typeof useDevicesStore>, d: TDevice) => [
     <MenuItem key="nf" label="New File..." icon={<FileCodeIcon />} onClick={() => ds.localDevice_addFile(d, "/")} />,
-    <MenuItem key="nd" label="New Folder..." icon={<FileDirectoryIcon />} onClick={() => ds.localDevice_addDirectory(d, "/")} />
+    <MenuItem key="nd" label="New Folder..." icon={<FileDirectoryIcon />} onClick={() => ds.localDevice_addDirectory(d, "/")} />,
+    <Menu.Divider key="did" />,
+    <MenuItem key="en" label="Delete..." icon={<XIcon />} onClick={() => ds.device_delete(d)} />,
 ]
 
 export const fodMenuItems = (ds: ReturnType<typeof useDevicesStore>, d: TDevice, fod: TLocalFileOrDirectory) => [

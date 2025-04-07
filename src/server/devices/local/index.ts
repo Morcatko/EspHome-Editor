@@ -180,4 +180,11 @@ export namespace local {
         else
             await fs.unlink(fullPath);
     }
+
+    export const deleteDevice = async (device_id: string) => {
+        const fullPath = await getDevicePath(device_id, "");
+        log.debug(`Deleting device '${fullPath}'`);
+        await fs.rmdir(fullPath, { recursive: true });
+    }
+
 }

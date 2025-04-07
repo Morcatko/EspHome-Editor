@@ -90,6 +90,22 @@ export namespace espHome {
         assertResponseOk(response);
     }
 
+    export const deleteDevice = async (device_id: string) => {
+        let device = await tryGetDevice(device_id);
+
+        if ((!device || !device.esphome_config)) {
+            log.warn("Device not found in ESPHome, cannot delete", device_id);
+            return;
+        }
+
+        const url = `${c.espHomeApiUrl}/delete?configuration=${device.esphome_config}`
+        log.debug("Deleting ESPHome device", url);
+        const response = await fetch(url, {
+            method: "POST",
+        });
+        assertResponseOk(response);
+    }
+
     export const getPing = async () => {
         if (!c.espHomeApiUrl)
             return null;
