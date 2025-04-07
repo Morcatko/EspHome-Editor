@@ -4,6 +4,7 @@ import { SyncIcon, XIcon } from "@primer/octicons-react";
 import { Toolbar, ToolbarItem } from "../toolbar";
 import { DeviceToolbarItem } from "../devices-tree/device-toolbar";
 import { useDevice } from "@/app/stores/devices-store";
+import { TextInput } from "@mantine/core";
 
 type TProps = {
     device_id: string;
@@ -17,6 +18,17 @@ export const EspHomeLogToolbar = ({ device_id, lastClick }: TProps) => {
         <DeviceToolbarItem.ESPHomeLog device={device} icon={<SyncIcon />} tooltip="Refresh" />
         <ToolbarItem.Divider />
         <ToolbarItem.Button tooltip="Clear" icon={<XIcon />} onClick={() => logStore.clear()} />
+        <ToolbarItem.Stretch />
+        <span>
+            {logStore.filter
+                ? `Showing ${logStore.filteredData.length} of ${logStore.allData.length}`
+                : `${logStore.allData.length}`}
+        </span>
+        <TextInput
+            value={logStore.filter}
+            onChange={(e) => logStore.setFilter(e.currentTarget.value)}
+            placeholder="Filter"
+            style={{ width: 200 }} />
     </Toolbar>;
 }
 
