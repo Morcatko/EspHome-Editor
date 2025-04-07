@@ -145,22 +145,16 @@ async function local_renameFoD(panelsStore: TPanelsStore, device: TDevice, file:
 }
 
 async function local_enableDisableFile(panelsStore: TPanelsStore, device: TDevice, file: TLocalFile) {
-    const enable = file.name.startsWith(".");
-    const newName = enable
-        ? file.name.substring(1) 
-        : "." + file.name;
+    const enabled = file.enabled
         await showToast(
-            () => api.local_path_rename(device.id, file.path, newName),
+            () => api.local_path_toggleEnabled(device.id, file.path),
             [["devices"],
             ["device", device.id, "local"],
             ["device", device.id, "local-file", file.path],
             ["device", device.id, "local-file", file.path, "compiled"]],
-            enable ? "Enabling..." : "Disabling...",
-            enable ? "Enabled!" : "Disabled!",
-            enable ? "Failed to Enable" : "Failed to Disable",
-            () => panelsStore.replacePanel(
-                    { operation: "local_file", device_id: device.id, path: file.path },
-                    { operation: "local_file", device_id: device.id, path: newName }),
+            enabled ? "Disabling..." : "Enabling...",
+            enabled ? "Disabled!" : "Enabled!",
+            enabled ? "Failed to Disable": "Failed to Enable",
         );
 }
 

@@ -20,6 +20,7 @@ type TNodeProps = {
     icon?: React.ReactNode;
     menuItems?: React.ReactNode[];
     hideExpander?: boolean;
+    gray?: boolean;
 }
 
 const Node = (p: TNodeProps) => {
@@ -28,6 +29,7 @@ const Node = (p: TNodeProps) => {
     return <Group
         gap={5}
         {...elementProps}
+        className={p.gray ? "opacity-50" : ""}
         onClick={p.onClick ? p.onClick : () => tree.toggleExpanded(node.value)}
     >
         {!p.hideExpander && <ChevronRightIcon
@@ -94,6 +96,7 @@ const nodeRenderer = (p: RenderTreeNodePayload) => {
         case "file":
             return <Node
                 nodePayload={p}
+                gray={!node.fod.enabled}
                 icon={<div className="opacity-55"><FileIcon fod={node.fod} /></div>}
                 onClick={(e) => panels.addDevicePanel(((e as any).button === 1) ? "new_window" : "default", node.device.id, "local_file", node.fod)}
                 menuItems={fodMenuItems(devicesStore, node.device, node.fod)}

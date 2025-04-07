@@ -8,45 +8,56 @@ import { marked } from "marked";
 export type TLanguge = "plaintext" | "esphome" | "patch" | "etajs" | "markdown";
 
 type FileInfo = {
+    enabled: boolean;
     type: "basic" | "patch" |"none",
     language: TLanguge;
 };
 
 
+
 export const getFileInfo = (file_path: string): FileInfo => {
-    const lower = file_path.toLowerCase();
+    const enabled = !file_path.endsWith(".");
+    const lower = (enabled ? file_path : file_path.slice(0, -1))
+        .toLowerCase();
     if (lower.endsWith(".patch.yaml")) {
         return {
+            enabled,
             type: "patch",
             language: "patch"
         };
     } else if (lower.endsWith(".yaml")) {
         return {
+            enabled,
             type: "basic",
             language: "esphome"
         };
     } else if (lower.endsWith(".patch.eta")) {
         return {
+            enabled,
             type: "patch",
             language: "etajs"
         };
     } else if (lower.endsWith(".eta")) {
         return {
+            enabled,
             type: "basic",
             language: "etajs"
         };
     } else if (lower.endsWith(".txt")) {
         return {
+            enabled,
             type: "none",
             language: "plaintext"
         }
     } else if (lower.endsWith(".md")) {
         return {
+            enabled,
             type: "none",
             language: "markdown"
         }
     } else {
         return {
+            enabled,
             type: "none",
             language: "plaintext"
         }
@@ -54,12 +65,12 @@ export const getFileInfo = (file_path: string): FileInfo => {
 }
 
 export const compileFile = async (device_id: string, file_path: string, useTestData: boolean) => {
-    const fullFilePath = getDevicePath(device_id, file_path);
+    const fullFilePath = await getDevicePath(device_id, file_path);
     const fixedFilePath = fixPath(file_path);
     const fileInfo = getFileInfo(file_path);
     switch (fileInfo.language) {
         case "etajs":
-            const testDataPath = getDevicePath(device_id, file_path + ".testdata");
+            const testDataPath = await getDevicePath(device_id, file_path + ".testdata");
             const testData = useTestData && await fileExists(testDataPath)
                 ? await readFile(testDataPath, 'utf-8')
                 : null;

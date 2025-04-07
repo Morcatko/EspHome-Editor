@@ -112,6 +112,10 @@ export namespace api {
         await callPost(url_local_path(device_id, path, `rename_to/${fixPath(newName)}`), "", true);
     }
 
+    export async function local_path_toggleEnabled(device_id: string, path: string) {
+        await callPost(url_local_path(device_id, path, "toggle_enabled"), "", true);
+    }
+
     export async function local_path_delete(device_id: string, path: string) {
         await callDelete(url_local_path(device_id, path));
     }

@@ -34,11 +34,22 @@ const scanDirectory = async (fullPath: string, parentPath: string | null): Promi
                     if (e.name.endsWith(".testdata"))
                         return null;
 
+                    const fileInfo = getFileInfo(e.name);
+
+                    const fName = fileInfo.enabled
+                        ? e.name
+                        : e.name.slice(0, -1)
+
+                    const fPath = fileInfo.enabled
+                        ? path
+                        : path.slice(0, -1)
+
                     return <TLocalFile>{
-                        id: e.name,
-                        path: path,
-                        name: e.name,
-                        language: getFileInfo(`${fullPath}/${e.name}`).language,
+                        id: fName,
+                        path: fPath,
+                        name: fName,
+                        enabled: fileInfo.enabled,
+                        language: fileInfo.language,
                         type: "file",
                     };
                 }
@@ -73,7 +84,7 @@ export namespace local {
 
     export const createDirectory = async (device_id: string, path: string) => {
         await ensureDeviceDirExists(device_id);
-        const fullPath = getDevicePath(device_id, path);
+        const fullPath = await getDevicePath(device_id, path);
         await fs.mkdir(fullPath);
     }
 
@@ -82,18 +93,18 @@ export namespace local {
     }
 
     export const getFileContent = async (device_id: string, file_path: string) => {
-        const path = getDevicePath(device_id, file_path);
+        const path = await getDevicePath(device_id, file_path);
         return await fs.readFile(path, "utf-8");
     }
 
     export const tryGetFileContent = async (device_id: string, file_path: string) => {
-        const path = getDevicePath(device_id, file_path);
+        const path = await getDevicePath(device_id, file_path);
         return await fileExists(path) ? await fs.readFile(path, "utf-8") : null;
-    } 
+    }
 
     export const saveFileContent = async (device_id: string, file_path: string, content: string) => {
         await ensureDeviceDirExists(device_id);
-        const path = getDevicePath(device_id, file_path);
+        const path = await getDevicePath(device_id, file_path);
         await fs.writeFile(path, content, "utf-8");
     }
 
@@ -109,7 +120,8 @@ export namespace local {
             .map(f => ({
                 id: f.name,
                 info: getFileInfo(f.name)
-            }));
+            }))
+            .filter(f => f.info.enabled);
 
         for (const file of inputFiles.filter(i => i.info.type === "basic")) {
             const filePath = getDevicePath(device_id, file.id)
@@ -130,21 +142,29 @@ export namespace local {
             log.success("Compiled patch", filePath);
             outputPatches.push(output);
         }
-    
+
         log.debug("Patching configuration", device_id);
         const patchedYaml = patchEspHomeYaml(mergedYaml, outputPatches);
         log.success("Patched configuration", device_id);
-    
+
         return patchedYaml.toString();
-}
+    }
 
     export const compileFile = _compileFile;
 
     export const createDevice = async (device_id: string) =>
         await fs.mkdir(getDeviceDir(device_id));
 
+    export const toggleEnabled = async (device_id: string, path: string) => {
+        const oldPath = await getDevicePath(device_id, path);
+        const newPath = oldPath.endsWith(".")
+            ? oldPath.slice(0, -1)
+            : `${oldPath}.`;
+        await fs.rename(oldPath, newPath);
+    }
+
     export const renameFile = async (device_id: string, path: string, newName: string) => {
-        const oldPath = getDevicePath(device_id, path);
+        const oldPath = await getDevicePath(device_id, path);
         const parentDir = dirname(oldPath);
         const newPath = join(parentDir, fixPath(newName));
         log.debug(`Renaming file '${oldPath}' to '${newName}'`);
@@ -152,7 +172,7 @@ export namespace local {
     };
 
     export const deletePath = async (device_id: string, path: string) => {
-        const fullPath = getDevicePath(device_id, path);
+        const fullPath = await getDevicePath(device_id, path);
         log.debug(`Deleting file '${fullPath}'`);
         const stats = await fs.stat(fullPath);
         if (stats.isDirectory())

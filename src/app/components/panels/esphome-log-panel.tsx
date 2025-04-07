@@ -19,19 +19,20 @@ export const EspHomeLogToolbar = ({ device_id, lastClick }: TProps) => {
         <ToolbarItem.Divider />
         <ToolbarItem.Button tooltip="Clear" icon={<XIcon />} onClick={() => logStore.clear()} />
         <ToolbarItem.Stretch />
-        <span>
+        <div className="w-32 text-right pr-1">
             {logStore.filter
                 ? `${logStore.filteredData.length} of ${logStore.allData.length}`
                 : `${logStore.allData.length}`}
-        </span>
+        </div>
         <TextInput
+            className="px-2 w-64"
+            size="xs"
             value={logStore.filter}
             onChange={(e) => logStore.setFilter(e.currentTarget.value)}
             placeholder="Filter"
             leftSection={<SearchIcon />}
             leftSectionPointerEvents="none"
-            rightSection={<ActionIcon variant="subtle" onClick={() => logStore.setFilter("")} ><XIcon /></ActionIcon>}
-            style={{ width: 200 }} />
+            rightSection={<ActionIcon variant="subtle" onClick={() => logStore.setFilter("")} ><XIcon /></ActionIcon>} />
     </Toolbar>;
 }
 
