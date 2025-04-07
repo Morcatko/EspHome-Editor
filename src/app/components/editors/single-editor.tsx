@@ -1,20 +1,15 @@
 import { TEditorFileProps } from "@/app/stores/panels-store/types";
 import { Editor } from "@monaco-editor/react";
 import { useMonacoTheme } from "./monaco/useMonacoTheme";
+import { ContentLoadingWrapper } from "./loading-wrappers";
 
 type TSingleEditorProps = TEditorFileProps;
 
 export const SingleEditor = (props: TSingleEditorProps) => {
     const theme = useMonacoTheme();
 
-    if (props.value.pending) {
-        return <div>Loading...</div>;
-    }
-    else if (props.value.error) {
-        return <div>{props.value.content || "Something went wrong"}</div>;
-    }
-    else {
-        return <Editor
+    return <ContentLoadingWrapper value={props.value} >
+        <Editor
             value={props.value.content}
             onChange={(v) => props.onValueChange?.(v ?? "")}
             language={props.language}
@@ -23,5 +18,5 @@ export const SingleEditor = (props: TSingleEditorProps) => {
                 readOnly: !props.onValueChange,
             }}
         />
-    }
+    </ContentLoadingWrapper>;
 };
