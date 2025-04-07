@@ -124,7 +124,7 @@ export namespace local {
             .filter(f => f.info.enabled);
 
         for (const file of inputFiles.filter(i => i.info.type === "basic")) {
-            const filePath = getDevicePath(device_id, file.id)
+            const filePath = await getDevicePath(device_id, file.id)
             log.debug("Compiling Configuration", filePath);
             const output = await compileFile(device_id, file.id, false);
             log.success("Compiled Configuration", filePath);
@@ -136,7 +136,7 @@ export namespace local {
         log.success("Merged compiled configurations", device_id);
 
         for (const file of inputFiles.filter(i => i.info.type === "patch")) {
-            const filePath = getDevicePath(device_id, file.id)
+            const filePath = await getDevicePath(device_id, file.id)
             log.debug("Compiling patch", filePath);
             const output = await compileFile(device_id, file.id, false);
             log.success("Compiled patch", filePath);
