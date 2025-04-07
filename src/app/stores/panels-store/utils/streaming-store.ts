@@ -4,6 +4,7 @@ import { log } from "@/shared/log";
 import Convert from "ansi-to-html";
 import { atomFamily } from 'jotai/utils';
 import { atom,  getDefaultStore,  PrimitiveAtom, useAtom } from "jotai";
+import { useMemo, useState } from "react";
 
 const convert = new Convert({
     stream: true,
@@ -11,6 +12,7 @@ const convert = new Convert({
 
 type TLogStoreAtom = {
     data: string[];
+    filter: string;
     isOutdated: boolean;
 }
 
@@ -74,13 +76,14 @@ type AtomKey = {
     lastClick: string;
 }
 const storeFamily = atomFamily((key: AtomKey) => {
-    const data = atom<TLogStoreAtom>({
+    const store = atom<TLogStoreAtom>({
         data: [],
+        filter: "",
         isOutdated: isOutdated(key.lastClick),
     });
     if (!isOutdated(key.lastClick)) {
-        const dispose = createLogStreamingStore(key.url, data);
-        data.onMount = () => {
+        const dispose = createLogStreamingStore(key.url, store);
+        store.onMount = () => {
             log.verbose("onMount", key.url);
             return () => {
                 log.verbose("onUnmount", key.url);
@@ -88,17 +91,27 @@ const storeFamily = atomFamily((key: AtomKey) => {
             }
         }
     }
-    return data;
+    return store;
 }, (a, b) => a.url === b.url && a.lastClick === b.lastClick);
 
 
 export const useStreamingStore = (url: string, lastClick: string) => {
     const [store, setStore] = useAtom(storeFamily({ url, lastClick }));
 
+    const filteredData = useMemo(() => 
+        store.filter 
+            ? store.data.filter((item) => item.toLowerCase().includes(store.filter.toLowerCase())) 
+            : store.data, 
+        [store.filter, store.data]
+    );
+    
     return {
-        data: store.data,
+        allData: store.data,
+        filter: store.filter,
+        filteredData,
+        setFilter: (filter: string) => setStore({ ...store, filter }),
         isOutdated: store.isOutdated,
-        clear: () => setStore({...store, data: []})
+        clear: () => setStore({...store, data: [`${(new Date()).toLocaleTimeString()} - Stream cleared`] }),
     }
 }
 

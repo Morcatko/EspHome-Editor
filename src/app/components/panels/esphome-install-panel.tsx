@@ -19,8 +19,10 @@ export const EspHomeInstallToolbar = ({ device_id, lastClick }: TProps) => {
     return <Toolbar>
         <DeviceToolbarItem.ESPHomeInstall device={device} icon={<SyncIcon />} tooltip="Refresh" />
         <DeviceToolbarItem.ESPHomeLog device={device} panelTarget={panelTarget} />
-        <ToolbarItem.Stretch />
+        <ToolbarItem.Divider />
         <ToolbarItem.Button tooltip="Clear" icon={<XIcon />} onClick={() => logStore.clear()} />
+        <ToolbarItem.Stretch />
+        <ToolbarItem.Filter logStore={logStore} />
     </Toolbar>;
 }
 
