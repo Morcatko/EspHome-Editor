@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 
 import type { TDevice, TLocalDirectory, TLocalFile, TLocalFileOrDirectory } from "../types";
 import { c } from "../../config";
-import { fileExists, listDirEntries } from "../../utils/fs-utils";
+import { directoryExists, fileExists, listDirEntries } from "../../utils/fs-utils";
 import { compileFile as _compileFile, getFileInfo } from "./template-processors";
 import { log } from "@/shared/log";
 import { mergeEspHomeYamlFiles } from "./template-processors/yaml-merger";
@@ -159,5 +159,13 @@ export namespace local {
             await fs.rmdir(fullPath)
         else
             await fs.unlink(fullPath);
+    }
+
+    export const deleteDevice = async (device_id: string) => {
+        const fullPath = getDevicePath(device_id, "");
+        if (await directoryExists(fullPath)) {
+            log.debug(`Deleting device '${fullPath}'`);
+            await fs.rmdir(fullPath, { recursive: true });
+        }
     }
 }
