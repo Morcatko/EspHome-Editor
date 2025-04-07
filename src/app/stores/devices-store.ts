@@ -180,6 +180,7 @@ async function local_deleteFoD(panelsStore: TPanelsStore, device: TDevice, file:
         );
 }
 
+
 async function device_delete(device: TDevice) {
     const del = await openConfirmationDialog({
         title: `Delete ${device.name}`,
@@ -196,7 +197,6 @@ async function device_delete(device: TDevice) {
             "Failed to Delete",
         );
 }
-
 
 export const useDevice = (device_id: string) => {
     const devices = useDevicesStore().query.data;

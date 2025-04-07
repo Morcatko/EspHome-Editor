@@ -188,5 +188,4 @@ export namespace local {
             await fs.rmdir(fullPath, { recursive: true });
         }
     }
-
 }

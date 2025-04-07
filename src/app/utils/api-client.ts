@@ -140,7 +140,6 @@ export namespace api {
         await callDelete(url_device(device_id));
     }
 
-
     export async function getStatus() {
         return await callGet_json<TGetStatus>("/api/status");
     }
