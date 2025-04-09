@@ -6,7 +6,7 @@ import { TDevice } from "@/server/devices/types";
 import { ActionIcon } from "@mantine/core";
 import { BeakerIcon, CodeIcon, DownloadIcon, GitCompareIcon, LogIcon, UploadIcon } from "@primer/octicons-react";
 import { ToolbarItem, TToolbarButtonProps } from "../toolbar";
-import { TPanel_Device } from "@/app/stores/panels-store/types";
+import { TPanel_DeviceOperation } from "@/app/stores/panels-store/types";
 
 type TDeviceToolbarItemProps =
     Pick<TToolbarButtonProps, "className"> & {
@@ -25,7 +25,7 @@ type TDeviceToolbarButtonProps_Base =
 
 type TDeviceToolbarButtonProps_Panel = TDeviceToolbarButtonProps_Base & {
     device: TDevice;
-    operation: TPanel_Device["operation"];
+    operation: TPanel_DeviceOperation["operation"];
     panelTarget?: PanelTarget;
 };
 
