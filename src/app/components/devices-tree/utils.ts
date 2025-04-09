@@ -77,5 +77,5 @@ export const useTreeData = () => {
                         children
                     };
                 })
-        ], data);
+        ], [data]);
 }

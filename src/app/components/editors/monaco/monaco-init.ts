@@ -7,6 +7,10 @@ const init = async () => {
     loader.config({ monaco });
     const espHomeLanguage = await import('./esphome-language');
     await espHomeLanguage.init();
+    monaco.editor.addKeybindingRule({
+        keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyP,
+        command: 'editor.action.quickCommand',
+    });
 }
 
 export const useMonacoInit = () => {

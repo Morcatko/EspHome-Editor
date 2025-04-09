@@ -18,6 +18,7 @@ export type TLocalDirectory = TParent & {
 export type TLocalFile = TNode & {
     type: "file";
     language: TLanguge;
+    enabled: boolean;
 }
 
 export type TLocalFileOrDirectory = TLocalDirectory | TLocalFile;

@@ -125,6 +125,18 @@ export const usePanelsStore = () => {
         addPanel(panel, target);
     }
 
+    const replacePanel = (oldPanel: TPanel, newPanel?: TPanel) => {
+        if (!api) return;
+        const existingPanel = findPanel(oldPanel);
+        if (existingPanel) {
+            if (newPanel) {
+                addPanel(newPanel, "default");
+            }
+            api.removePanel(existingPanel);
+        }
+    }
+
+
     const initApi = (_api: DockviewApi) => {
         api = _api!;
 
@@ -153,6 +165,7 @@ export const usePanelsStore = () => {
         initApi,
         addPanel,
         addDevicePanel,
+        replacePanel,
     };
 }
 
