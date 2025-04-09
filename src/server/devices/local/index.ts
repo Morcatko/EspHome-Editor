@@ -165,7 +165,7 @@ export namespace local {
         const fullPath = getDevicePath(device_id, "");
         if (await directoryExists(fullPath)) {
             log.debug(`Deleting device '${fullPath}'`);
-            await fs.rmdir(fullPath, { recursive: true });
+            await fs.rm(fullPath, { recursive: true });
         }
     }
 }
