@@ -54,15 +54,15 @@ export const LocalFileToolbar = (props: TProps) => {
 }
 
 const dockViewComponents = {
-    source: (p: IDockviewPanelProps) => {
+    source: (p: IDockviewPanelProps<TProps>) => {
         const data = useLocalFileStore(p.params.device_id, p.params.file_path);
         return <SingleEditor {...data.leftEditor} />;
     },
-    compiled: (p: IDockviewPanelProps) => {
+    compiled: (p: IDockviewPanelProps<TProps>) => {
         const data = useLocalFileStore(p.params.device_id, p.params.file_path);
         return <SingleEditor {...data.rightEditor!} />;
     },
-    testdata: (p: IDockviewPanelProps) => {
+    testdata: (p: IDockviewPanelProps<TProps>) => {
         const data = useLocalFileStore(p.params.device_id, p.params.file_path);
         return <SingleEditor {...data.testDataEditor!} />;
     },
