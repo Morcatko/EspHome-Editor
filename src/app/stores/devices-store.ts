@@ -41,7 +41,7 @@ async function showToast(
         for (const invalidateKey of invalidateKeys) {
             await queryClient.invalidateQueries({ queryKey: invalidateKey });
         }
-        notifications.update({ id: notificationId, title: success, message: null, loading: false, autoClose: 1500 });
+        notifications.update({ id: notificationId, title: success, message: null, loading: false, autoClose: 1000, withCloseButton: true });
         onSuccess?.();
     } catch (e) {
         notifications.update({ id: notificationId, title: error, message: e?.toString(), loading: false, color: "red", withCloseButton: true });

@@ -55,21 +55,21 @@ export const LocalFileToolbar = (props: TProps) => {
 }
 
 const dockViewComponents = {
-    source: (p: IDockviewPanelProps) => {
+    source: (p: IDockviewPanelProps<TProps>) => {
         const data = useLocalFileStore(p.params.device_id, p.params.file_path);
-        return <SingleEditor {...data.leftEditor} />;
+        return <SingleEditor {...data.leftEditor} device_id={p.params.device_id} />;
     },
-    compiled: (p: IDockviewPanelProps) => {
+    compiled: (p: IDockviewPanelProps<TProps>) => {
         const data = useLocalFileStore(p.params.device_id, p.params.file_path);
-        return <SingleEditor {...data.rightEditor!} />;
+        return <SingleEditor {...data.rightEditor!} device_id={p.params.device_id}/>;
     },
-    htmlPreview: (p: IDockviewPanelProps) => {
+    htmlPreview: (p: IDockviewPanelProps<TProps>) => {
         const data = useLocalFileStore(p.params.device_id, p.params.file_path);
         return <HtmlPreview {...data.rightEditor!} />;
     },
-    testdata: (p: IDockviewPanelProps) => {
+    testdata: (p: IDockviewPanelProps<TProps>) => {
         const data = useLocalFileStore(p.params.device_id, p.params.file_path);
-        return <SingleEditor {...data.testDataEditor!} />;
+        return <SingleEditor {...data.testDataEditor!} device_id={p.params.device_id}/>;
     },
 };
 
@@ -124,6 +124,6 @@ export const LocalFilePanel = (props: TProps) => {
                 defaultTabComponent={p => <DockviewDefaultTab {...p} hideClose />}
                 components={dockViewComponents} />
         </div>
-        : <SingleEditor {...data.leftEditor} />
+        : <SingleEditor {...data.leftEditor} device_id={props.device_id} />
 
 };
