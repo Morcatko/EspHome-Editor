@@ -1,6 +1,7 @@
 import { WebSocket } from "ws";
 import { espHome } from "@/server/devices/esphome";
 import { TDeviceId, TParams } from "@/app/api/api-types";
+import { log } from "@/shared/log";
 
 export type TWsMessage = {
   event: "message" | "completed" | "error";
@@ -19,15 +20,23 @@ export async function streamToWs(
     client.send(JSON.stringify(<TWsMessage>{ event, data: data.trim() }));
   }
 
-  await espHome
-    .stream(
-      device_id!, 
-      path, 
-      spawnParams,
-      (e) => send("message", e.data)
-    )
-    .then(() => {send("completed", ""); client.close();})
+  return new Promise(async (res, rej) => {
+    const socket = await espHome
+      .stream(
+        device_id!,
+        path,
+        spawnParams,
+        (e) => send("message", e.data),
+        (c) => res(c),
+        (e) => rej(e)
+      );
+    client.on("close", () => {
+      log.debug("Client closed connection");
+      socket.close();
+    });
+  })
+    .then(() => { send("completed", ""); client.close(); })
     .catch((e) => { send("error", e.toString()); client.close(); });
 }
-  
+
 

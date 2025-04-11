@@ -121,8 +121,15 @@ export namespace espHome {
         path: string,
         spawnParams: Record<string, any> | null,
         onEvent: (event: StreamEvent) => void,
+        onClose: (code: number) => void,
+        onError: (data: any) => void,
     ) => {
         const device = await getDevice(device_id);
-        await esphome_stream(path, { ...spawnParams, configuration: device.esphome_config }, onEvent);
+        return esphome_stream(
+            path, 
+            { ...spawnParams, configuration: device.esphome_config }, 
+            onEvent,
+            onClose,
+            onError);
     }
 }
