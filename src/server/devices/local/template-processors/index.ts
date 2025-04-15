@@ -1,13 +1,14 @@
 import { readFile } from "node:fs/promises";
+import { marked } from "marked";
 import { processTemplate_eta } from "./eta";
 import { fixPath, getDevicePath } from "../utils";
 import { fileExists } from "@/server/utils/fs-utils";
 
 
-export type TLanguge = "plaintext" | "esphome" | "patch" | "etajs";
+export type TLanguge = "plaintext" | "esphome" | "patch" | "etajs" | "markdown";
 
 type FileInfo = {
-    type: "basic" | "patch" |"none",
+    type: "basic" | "patch" | "none",
     language: TLanguge;
 };
 
@@ -29,8 +30,7 @@ export const getFileInfo = (file_path: string): FileInfo => {
             type: "patch",
             language: "etajs"
         };
-    }
-    else if (lower.endsWith(".eta")) {
+    } else if (lower.endsWith(".eta")) {
         return {
             type: "basic",
             language: "etajs"
@@ -39,6 +39,11 @@ export const getFileInfo = (file_path: string): FileInfo => {
         return {
             type: "none",
             language: "plaintext"
+        }
+    } else if (lower.endsWith(".md")) {
+        return {
+            type: "none",
+            language: "markdown"
         }
     } else {
         return {
@@ -63,6 +68,9 @@ export const compileFile = async (device_id: string, file_path: string, useTestD
         case "esphome":
         case "plaintext":
             return readFile(fullFilePath, 'utf-8');
+        case "markdown":
+            const md = await readFile(fullFilePath, 'utf-8');
+            return marked.parse(md);
         default:
             throw new Error(`Unsupported language:${fileInfo.language}`);
     }

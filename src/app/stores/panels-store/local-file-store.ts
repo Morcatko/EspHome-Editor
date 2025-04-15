@@ -30,7 +30,7 @@ export const useLocalFile = (device_id: string, file_path: string) => {
 export const useLocalFileStore = (device_id: string, file_path: string) => {
     const file = useLocalFile(device_id, file_path);
     
-    const hasRightFile = (file != null) && (file.language === "etajs");
+    const hasRightFile = (file?.language === "etajs") || (file?.language === "markdown");
 
     const leftQuery = useQuery({
         queryKey: ["device", device_id, "local-file", file_path],
