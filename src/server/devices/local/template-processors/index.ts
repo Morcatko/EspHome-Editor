@@ -1,4 +1,5 @@
 import { readFile } from "node:fs/promises";
+import { marked } from "marked";
 import { processTemplate_eta } from "./eta";
 import { fixPath, getDevicePath } from "../utils";
 import { fileExists } from "@/server/utils/fs-utils";
@@ -9,7 +10,7 @@ export type TLanguge = "plaintext" | "esphome" | "patch" | "etajs" | "markdown";
 
 type FileInfo = {
     enabled: boolean;
-    type: "basic" | "patch" |"none",
+    type: "basic" | "patch" | "none",
     language: TLanguge;
 };
 

@@ -16,7 +16,7 @@ export const FileIcon = (props: { fod: TLocalFileOrDirectory }) => {
         case "patch":
             return <FileAddedIcon />;
         case "plaintext":
-            return <OFileIcon />
+            return <OFileIcon />;
         case "markdown":
             return <MarkdownIcon />;
         default:
