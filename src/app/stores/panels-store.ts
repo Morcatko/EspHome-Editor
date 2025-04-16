@@ -1,10 +1,38 @@
-import { atom, useAtom } from "jotai";
-import { TLocalFileOrDirectory } from "@/server/devices/types";
-import { TPanel, TPanelWithClick } from "./panels-store/types";
+import { atom, getDefaultStore, useAtom } from "jotai";
+import type { TPanel, TPanel_Device, TPanelWithClick } from "./panels-store/types";
 import { type DockviewApi } from 'dockview-react';
 import { useEffect, useState } from "react";
+import { events } from "./events";
+import type { TLocalFileOrDirectory } from "@/server/devices/types";
 
 const dockViewApiAtom = atom<DockviewApi | null>(null);
+const getApi = () => getDefaultStore().get(dockViewApiAtom);
+
+dockViewApiAtom.onMount = (set) => {
+    const fc = events.on("File_Created", (device_id: string, path: string) => addDevicePanel("default", device_id, "local_file", path));
+    const fd = events.on("FoD_Deleted", (device_id: string, fod: TLocalFileOrDirectory) => removePanel({ device_id, operation: "local_file", path: fod.path }));
+    const fr = events.on("FoD_Renamed", (device_id: string, fod: TLocalFileOrDirectory, new_path: string) =>
+        replacePanel(
+            { device_id, operation: "local_file", path: fod.path },
+            { device_id, operation: "local_file", path: new_path })
+    );
+    const dd = events.on("Device_Deleted", (device_id: string) => {
+        const api = getApi();
+        getApi()?.panels
+            .filter(pan => {
+                const p = pan.params as TPanel_Device;
+                return p.device_id === device_id
+            })
+            .forEach(p => api!.removePanel(p));
+    });
+
+    return () => {
+        fc();
+        fd();
+        fr();
+        dd();
+    };
+}
 
 function getPanelTitle(panel: TPanel) {
     switch (panel.operation) {
@@ -36,21 +64,106 @@ function getPanelId(panel: TPanel) {
         case "onboarding":
             return "onboarding";
         default:
+            if (panel.operation === "local_file")
+                panel.path = panel.path.replace(/^\/+|\/+$/g, '')   //trim leading and trailing slashes
+            //TODO: generate ID from some hash
             return JSON.stringify(panel, Object.keys(panel).sort());
     }
 }
 
+const findPanel = (panel: TPanel | string) => {
+    const panelId = (typeof panel === 'string' || panel instanceof String)
+        ? panel
+        : getPanelId(panel as TPanel);
+    return getApi()?.panels.find(p => p.id === panelId);
+}
+
+
 export type PanelTarget = "default" | "new_window" | "floating";
+
+const addPanel = (
+    panel: TPanel,
+    target: PanelTarget = "default") => {
+    if (target === "new_window") {
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('panel', JSON.stringify(panel));
+        window.open(currentUrl.toString(), '_blank')?.focus();
+    }
+
+    const api = getApi();
+    if (!api) return;
+
+    //generate ID from some hash
+    const panelId = getPanelId(panel);
+    const existingPanel = findPanel(panelId);
+    const params: TPanelWithClick = { ...panel, last_click: new Date().toISOString() };
+
+    if (existingPanel) {
+        existingPanel.api.updateParameters(params)
+        existingPanel.focus();
+    }
+    else {
+        const dockViewPanel = api.addPanel<TPanelWithClick>({
+            id: panelId,
+            title: getPanelTitle(panel),
+            component: "default",
+            tabComponent: "default",
+            params: params,
+        });
+
+        if (target === "floating") {
+            const floatingGroup = api.groups.find(g => g.api.location.type === "floating");
+
+            if (floatingGroup)
+                dockViewPanel.api.moveTo({ group: floatingGroup });
+            else
+                api.addFloatingGroup(dockViewPanel, {
+                    position: {
+                        bottom: 15,
+                        right: 15,
+                    },
+                    width: window.innerWidth * 2 / 3,
+                    height: window.innerHeight * 2 / 3,
+                });
+
+        }
+    }
+}
+
+const addDevicePanel = (
+    target: PanelTarget,
+    device_id: string,
+    operation: TPanel["operation"],
+    file_path: string | undefined = undefined) => {
+
+    const panel: TPanel = (operation === "local_file")
+        ? { device_id: device_id, operation, path: file_path! }
+        : { device_id: device_id, operation };
+
+    addPanel(panel, target);
+}
+
+const removePanel = (panel: TPanel) => {
+    const existingPanel = findPanel(panel);
+    if (existingPanel) {
+        const api = getApi();
+        api!.removePanel(existingPanel);
+    }
+}
+
+const replacePanel = (oldPanel: TPanel, newPanel?: TPanel) => {
+    const api = getApi()!;
+    const existingPanel = findPanel(oldPanel);
+    if (existingPanel) {
+        if (newPanel) {
+            addPanel(newPanel, "default");
+        }
+        api.removePanel(existingPanel);
+    }
+}
 
 export const usePanelsApiStore = () => {
     const [api, setApi] = useAtom(dockViewApiAtom);
-
-    const findPanel = (panel: TPanel | string) => {
-        const panelId = (typeof panel === 'string' || panel instanceof String)
-            ? panel
-            : getPanelId(panel as TPanel);
-        return api?.panels.find(p => p.id === panelId);
-    }
 
     return {
         api,
@@ -64,69 +177,9 @@ export const usePanelsStore = () => {
     let { api } = panelsApi;
     const { setApi, findPanel } = panelsApi
 
-    const addPanel = (
-        panel: TPanel,
-        target: PanelTarget = "default") => {
-        if (target === "new_window") {
-            const currentUrl = new URL(window.location.href);
-            currentUrl.searchParams.set('panel', JSON.stringify(panel));
-            window.open(currentUrl.toString(), '_blank')?.focus();
-        }
-
-        if (!api) return;
-
-        //generate ID from some hash
-        const panelId = getPanelId(panel);
-        const existingPanel = findPanel(panelId);
-        const params: TPanelWithClick = { ...panel, last_click: new Date().toISOString() };
-
-        if (existingPanel) {
-            existingPanel.api.updateParameters(params)
-            existingPanel.focus();
-        }
-        else {
-            const dockViewPanel = api.addPanel<TPanelWithClick>({
-                id: panelId,
-                title: getPanelTitle(panel),
-                component: "default",
-                tabComponent: "default",
-                params: params,
-            });
-
-            if (target === "floating") {
-                const floatingGroup = api.groups.find(g => g.api.location.type === "floating");
-
-                if (floatingGroup)
-                    dockViewPanel.api.moveTo({ group: floatingGroup });
-                else
-                    api.addFloatingGroup(dockViewPanel, {
-                        position: {
-                            bottom: 15,
-                            right: 15,
-                        },
-                        width: window.innerWidth * 2 / 3,
-                        height: window.innerHeight * 2 / 3,
-                    });
-
-            }
-        }
-    }
-
-    const addDevicePanel = (
-        target: PanelTarget,
-        device_id: string,
-        operation: TPanel["operation"],
-        file: TLocalFileOrDirectory | undefined = undefined) => {
-
-        const panel: TPanel = (operation === "local_file")
-            ? { device_id: device_id, operation, path: file!.path }
-            : { device_id: device_id, operation };
-
-        addPanel(panel, target);
-    }
-
     const initApi = (_api: DockviewApi) => {
         api = _api!;
+        setApi(api);
 
         try {
             const layout = JSON.parse(localStorage.getItem('e4e.dockView') ?? "{}");
@@ -145,14 +198,12 @@ export const usePanelsStore = () => {
             addPanel(onboardingPanelProps);
 
         api.onDidLayoutChange(() => localStorage.setItem("e4e.dockView", JSON.stringify(api!.toJSON())));
-
-        setApi(api);
     };
 
     return {
         initApi,
         addPanel,
-        addDevicePanel,
+        addDevicePanel
     };
 }
 

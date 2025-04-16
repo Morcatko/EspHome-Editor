@@ -35,7 +35,7 @@ export const getSourceMonacoLanguge = (file: TLocalFile) => {
             return "yaml";
         case "etajs":
             return esphomeLanguageId;
-        case 'markdown':
+        case "markdown":
             return "markdown";
         default:
             throw new Error(`Unknown source language ${file.language}`);
