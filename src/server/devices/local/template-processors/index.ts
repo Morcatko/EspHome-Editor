@@ -3,7 +3,6 @@ import { marked } from "marked";
 import { processTemplate_eta } from "./eta";
 import { fixPath, getDevicePath } from "../utils";
 import { fileExists } from "@/server/utils/fs-utils";
-import { marked } from "marked";
 
 
 export type TLanguge = "plaintext" | "esphome" | "patch" | "etajs" | "markdown";

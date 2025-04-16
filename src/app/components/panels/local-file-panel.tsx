@@ -67,10 +67,6 @@ const dockViewComponents = {
         const data = useLocalFileStore(p.params.device_id, p.params.file_path);
         return <HtmlPreview {...data.rightEditor!} />;
     },
-    htmlPreview: (p: IDockviewPanelProps<TProps>) => {
-        const data = useLocalFileStore(p.params.device_id, p.params.file_path);
-        return <HtmlPreview {...data.rightEditor!} />;
-    },
     testdata: (p: IDockviewPanelProps<TProps>) => {
         const data = useLocalFileStore(p.params.device_id, p.params.file_path);
         return <SingleEditor {...data.testDataEditor!} device_id={p.params.device_id}/>;
