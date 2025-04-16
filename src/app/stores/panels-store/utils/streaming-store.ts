@@ -4,7 +4,7 @@ import { log } from "@/shared/log";
 import Convert from "ansi-to-html";
 import { atomFamily } from 'jotai/utils';
 import { atom,  getDefaultStore,  PrimitiveAtom, useAtom } from "jotai";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 const convert = new Convert({
     stream: true,

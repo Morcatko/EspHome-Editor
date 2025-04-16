@@ -31,6 +31,7 @@
     "jsonpathly": "^2.0.2",
     "marked": "^15.0.7",
     "monaco-editor": "^0.52.2",
+    "nanoevents": "^9.1.0",
     "next": "^15.1.6",
     "next-ws": "^2.0.1",
     "nuqs": "^2.3.2",
