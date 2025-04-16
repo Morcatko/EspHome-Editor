@@ -1,5 +1,5 @@
 "use client";
-import { TDevice, TLocalDirectory, TLocalFile, TLocalFileOrDirectory } from "@/server/devices/types";
+import { TDevice, TLocalFileOrDirectory } from "@/server/devices/types";
 import { api } from "../utils/api-client";
 import { queryClient } from ".";
 import { useQuery } from "@tanstack/react-query";

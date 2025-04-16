@@ -203,7 +203,7 @@ export const usePanelsStore = () => {
     return {
         initApi,
         addPanel,
-        addDevicePanel
+        addDevicePanel,
     };
 }
 
