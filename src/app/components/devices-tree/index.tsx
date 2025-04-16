@@ -98,7 +98,7 @@ const nodeRenderer = (p: RenderTreeNodePayload) => {
                 nodePayload={p}
                 gray={!node.fod.enabled}
                 icon={<div className="opacity-55"><FileIcon fod={node.fod} /></div>}
-                onClick={(e) => panels.addDevicePanel(((e as any).button === 1) ? "new_window" : "default", node.device.id, "local_file", node.fod)}
+                onClick={(e) => panels.addDevicePanel(((e as any).button === 1) ? "new_window" : "default", node.device.id, "local_file", node.fod.path)}
                 menuItems={fodMenuItems(devicesStore, node.device, node.fod)}
             >
                 {node.label}

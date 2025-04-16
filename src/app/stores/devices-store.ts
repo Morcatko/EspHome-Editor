@@ -8,7 +8,7 @@ import { useCallback, useMemo } from "react";
 import { openConfirmationDialog } from "../components/dialogs/confirmation-dialog";
 import { openCreateFileDialog, openInputTextDialog } from "../components/dialogs/input-text-dialog";
 import { notifications } from "@mantine/notifications";
-import { usePanelsStore } from "./panels-store";
+import { events } from "./events";
 
 const useDeviceExpandedStore = () => {
     const [value, setValue] = useLocalStorage<string[]>('e4e.devices.expanded', [], {
@@ -89,15 +89,18 @@ async function localDevice_addFile(device: TDevice, parent_path: string) {
         defaultValue: "newfile",
         defaultExtension: ".yaml",
     });
-    if (file_name)
+    if (file_name) {
+        const file_path = parent_path + "/" + file_name;
         await showToast(
-            () => api.local_path_save(device.id, parent_path + "/" + file_name, ""),
+            () => api.local_path_save(device.id, file_path, ""),
             [["devices"],
             ["device", device.id, "local"]],
             "Creating...",
             "Created!",
             "Failed to Create",
+            () => events.emit("File_Created", device.id, file_path),
         );
+    }
 }
 
 async function localDevice_import(device_id: string) {
@@ -120,16 +123,19 @@ async function espHome_upload(device: TDevice) {
         "Failed to Upload",
     );
 }
-type TPanelsStore = ReturnType<typeof usePanelsStore>;
-async function local_renameFoD(panelsStore: TPanelsStore, device: TDevice, file: TLocalFileOrDirectory) {
+
+async function local_renameFoD(device: TDevice, file: TLocalFileOrDirectory) {
     const newName = await openInputTextDialog({
         title: "Rename",
         subtitle: `${device.name} - ${file.path}`,
         defaultValue: file.name,
     });
 
-    if (newName)
-        await showToast(
+    if (newName) {
+        const parts = file.path.split("/");
+        parts[parts.length - 1] = newName;
+        
+         await showToast(
             () => api.local_path_rename(device.id, file.path, newName),
             [["devices"],
             ["device", device.id, "local"],
@@ -138,27 +144,26 @@ async function local_renameFoD(panelsStore: TPanelsStore, device: TDevice, file:
             "Renaming...",
             "Renamed!",
             "Failed to Rename",
-            () => panelsStore.replacePanel(
-                    { operation: "local_file", device_id: device.id, path: file.path },
-                    { operation: "local_file", device_id: device.id, path: newName }),
+            () => events.emit("File_Renamed", device.id, file.path, parts.join("/")),
         );
+    }
 }
 
-async function local_enableDisableFile(panelsStore: TPanelsStore, device: TDevice, file: TLocalFile) {
+async function local_enableDisableFile(device: TDevice, file: TLocalFile) {
     const enabled = file.enabled
-        await showToast(
-            () => api.local_path_toggleEnabled(device.id, file.path),
-            [["devices"],
-            ["device", device.id, "local"],
-            ["device", device.id, "local-file", file.path],
-            ["device", device.id, "local-file", file.path, "compiled"]],
-            enabled ? "Disabling..." : "Enabling...",
-            enabled ? "Disabled!" : "Enabled!",
-            enabled ? "Failed to Disable": "Failed to Enable",
-        );
+    await showToast(
+        () => api.local_path_toggleEnabled(device.id, file.path),
+        [["devices"],
+        ["device", device.id, "local"],
+        ["device", device.id, "local-file", file.path],
+        ["device", device.id, "local-file", file.path, "compiled"]],
+        enabled ? "Disabling..." : "Enabling...",
+        enabled ? "Disabled!" : "Enabled!",
+        enabled ? "Failed to Disable" : "Failed to Enable",
+    );
 }
 
-async function local_deleteFoD(panelsStore: TPanelsStore, device: TDevice, file: TLocalFileOrDirectory) {
+async function local_deleteFoD(device: TDevice, file: TLocalFileOrDirectory) {
     const del = await openConfirmationDialog({
         title: "Delete",
         subtitle: `${device.name} - ${file.path}`,
@@ -176,7 +181,7 @@ async function local_deleteFoD(panelsStore: TPanelsStore, device: TDevice, file:
             "Deleting...",
             "Deleted!",
             "Failed to Delete",
-            () => panelsStore.replacePanel({ operation: "local_file", device_id: device.id, path: file.path }),
+            () => events.emit("File_Deleted", device.id, file.path),
         );
 }
 
@@ -211,7 +216,6 @@ export const useDevicesQuery = () =>
     });
 
 export const useDevicesStore = () => {
-    const panelStore = usePanelsStore();
     return {
         expanded: useDeviceExpandedStore(),
         query: useDevicesQuery(),
@@ -220,9 +224,9 @@ export const useDevicesStore = () => {
         localDevice_addFile,
         localDevice_import,
         espHome_upload,
-        local_renameFoD: (device: TDevice, file: TLocalFileOrDirectory) => local_renameFoD(panelStore, device, file),
-        local_deleteFoD: (device: TDevice, file: TLocalFileOrDirectory) => local_deleteFoD(panelStore, device, file),
-        local_enableDisableFile: (device: TDevice, file: TLocalFile) => local_enableDisableFile(panelStore, device, file),
+        local_renameFoD,
+        local_deleteFoD,
+        local_enableDisableFile,
         device_delete
     }
 };
