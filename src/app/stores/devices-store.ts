@@ -34,7 +34,7 @@ async function showToast(
     loading: string | null,
     success: string | null,
     error: string | null,
-    onSuccess?: () => void) {
+    onSuccess?: () => void,) {
     const notificationId = notifications.show({ title: loading, message: null, loading: true, autoClose: false, withCloseButton: false });
     try {
         await call();
@@ -124,27 +124,27 @@ async function espHome_upload(device: TDevice) {
     );
 }
 
-async function local_renameFoD(device: TDevice, file: TLocalFileOrDirectory) {
+async function local_renameFoD(device: TDevice, fod: TLocalFileOrDirectory) {
     const newName = await openInputTextDialog({
         title: "Rename",
-        subtitle: `${device.name} - ${file.path}`,
-        defaultValue: file.name,
+        subtitle: `${device.name} - ${fod.path}`,
+        defaultValue: fod.name,
     });
 
     if (newName) {
-        const parts = file.path.split("/");
+        const parts = fod.path.split("/");
         parts[parts.length - 1] = newName;
-        
-         await showToast(
-            () => api.local_path_rename(device.id, file.path, newName),
+
+        await showToast(
+            () => api.local_path_rename(device.id, fod.path, newName),
             [["devices"],
             ["device", device.id, "local"],
-            ["device", device.id, "local-file", file.path],
-            ["device", device.id, "local-file", file.path, "compiled"]],
+            ["device", device.id, "local-file", fod.path],
+            ["device", device.id, "local-file", fod.path, "compiled"]],
             "Renaming...",
             "Renamed!",
             "Failed to Rename",
-            () => events.emit("File_Renamed", device.id, file.path, parts.join("/")),
+            () => events.emit("FoD_Renamed", device.id, fod, parts.join("/")),
         );
     }
 }
@@ -163,28 +163,27 @@ async function local_enableDisableFile(device: TDevice, file: TLocalFile) {
     );
 }
 
-async function local_deleteFoD(device: TDevice, file: TLocalFileOrDirectory) {
+async function local_deleteFoD(device: TDevice, fod: TLocalFileOrDirectory) {
     const del = await openConfirmationDialog({
         title: "Delete",
-        subtitle: `${device.name} - ${file.path}`,
+        subtitle: `${device.name} - ${fod.path}`,
         text: "Are you sure you want to delete this file or directory?",
         danger: true
     });
     if (del)
         showToast(
-            () => api.local_path_delete(device.id, file.path),
+            () => api.local_path_delete(device.id, fod.path),
             [["devices"],
             ["device", device.id, "local"],
-            ["device", device.id, "local-file", file.path],
-            ["device", device.id, "local-file", file.path, "compiled"]
+            ["device", device.id, "local-file", fod.path],
+            ["device", device.id, "local-file", fod.path, "compiled"]
             ],
             "Deleting...",
             "Deleted!",
             "Failed to Delete",
-            () => events.emit("File_Deleted", device.id, file.path),
+            () => events.emit("FoD_Deleted", device.id, fod),
         );
 }
-
 
 async function device_delete(device: TDevice) {
     const del = await openConfirmationDialog({
@@ -200,6 +199,7 @@ async function device_delete(device: TDevice) {
             "Deleting...",
             "Deleted!",
             "Failed to Delete",
+            () => events.emit("Device_Deleted", device.id),
         );
 }
 
