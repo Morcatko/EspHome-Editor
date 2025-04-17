@@ -1,5 +1,5 @@
 "use client";
-import { TDevice, TLocalFileOrDirectory } from "@/server/devices/types";
+import { TDevice, TLocalFile, TLocalFileOrDirectory } from "@/server/devices/types";
 import { api } from "../utils/api-client";
 import { queryClient } from ".";
 import { useQuery } from "@tanstack/react-query";
@@ -149,6 +149,20 @@ async function local_renameFoD(device: TDevice, fod: TLocalFileOrDirectory) {
     }
 }
 
+async function local_enableDisableFile(device: TDevice, file: TLocalFile) {
+    const enabled = file.enabled
+    await showToast(
+        () => api.local_path_toggleEnabled(device.id, file.path),
+        [["devices"],
+        ["device", device.id, "local"],
+        ["device", device.id, "local-file", file.path],
+        ["device", device.id, "local-file", file.path, "compiled"]],
+        enabled ? "Disabling..." : "Enabling...",
+        enabled ? "Disabled!" : "Enabled!",
+        enabled ? "Failed to Disable" : "Failed to Enable",
+    );
+}
+
 async function local_deleteFoD(device: TDevice, fod: TLocalFileOrDirectory) {
     const del = await openConfirmationDialog({
         title: "Delete",
@@ -212,6 +226,7 @@ export const useDevicesStore = () => {
         espHome_upload,
         local_renameFoD,
         local_deleteFoD,
-        device_delete,
+        local_enableDisableFile,
+        device_delete
     }
 };
