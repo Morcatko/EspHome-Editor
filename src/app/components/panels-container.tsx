@@ -85,41 +85,42 @@ function stringToHash(str: string) {
 
 const useDeviceColor = (device_id: string | undefined) => {
     const theme = useMantineTheme();
+    const isDark = useDarkTheme();
     return useMemo(() => {
         if (!device_id) return undefined;
 
+        const index = (typeof theme.primaryShade === "object")
+            ? isDark ? theme.primaryShade.dark : theme.primaryShade.light
+            : theme.primaryShade as number;
+
         //Tune colors - https://v5.mantine.dev/theming/colors/
         const colors = [
-            theme.colors?.blue?.[5],
-            theme.colors?.red?.[5],
-            theme.colors?.green?.[5],
-            theme.colors?.yellow?.[5],
-            theme.colors?.cyan?.[5],
-            theme.colors?.pink?.[5],
-            theme.colors?.violet?.[5],
-            theme.colors?.grape?.[5],
-            theme.colors?.orange?.[5],
-            theme.colors?.teal?.[5],
-            theme.colors?.indigo?.[5],
-            theme.colors?.dark?.[5],
+            theme.colors.blue[index],
+            theme.colors.red[index],
+            theme.colors.green[index],
+            theme.colors.yellow[index],
+            theme.colors.cyan[index],
+            theme.colors.pink[index],
+            theme.colors.violet[index],
+            theme.colors.grape[index],
+            theme.colors.orange[index],
+            theme.colors.teal[index],
+            theme.colors.indigo[index],
+            theme.colors.dark[index],
         ];
 
         const hash = stringToHash(device_id);
         const colorIndex = ((hash % colors.length) + colors.length) % colors.length;
 
         return colors[colorIndex];
-    }, [device_id]);
+    }, [device_id, isDark]);
 }
 
 const ColoredDockviewTab = (p: IDockviewPanelHeaderProps<TPanelWithClick>) => {
     const device_id = (p.params as TPanel_Device).device_id;
     const color = useDeviceColor(device_id);
-    console.log("ColoredDockviewTab", device_id, color);
-    return (
-        <span style={{ color: color }}>
-            <DockviewDefaultTab {...p} />
-        </span>
-    );
+    
+    return <span style={{ color: color }}><DockviewDefaultTab {...p} /></span>;
 }
 
 const dockViewTabComponents = {
