@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { DockviewDefaultTab, DockviewReact, IDockviewPanelHeaderProps, IDockviewPanelProps, themeDark, themeLight } from "dockview-react";
 import { LocalFilePanel, LocalFileToolbar } from "./panels/local-file-panel";
 import { LocalDevicePanel, LocalDeviceToolbar } from "./panels/local-device-panel";
@@ -8,10 +8,11 @@ import { EspHomeLogPanel, EspHomeLogToolbar } from "./panels/esphome-log-panel";
 import { EspHomeInstallPanel, EspHomeInstallToolbar } from "./panels/esphome-install-panel";
 import { EspHomeCompilePanel, EspHomeCompileToolbar } from "./panels/esphome-compile-panel";
 import { DevicesPanel } from "./panels/devices-panel";
-import { TPanelWithClick } from "../stores/panels-store/types";
+import { TPanel_Device, TPanelWithClick } from "../stores/panels-store/types";
 import { usePanelsStore } from "../stores/panels-store";
 import { useDarkTheme } from "@/app/utils/hooks";
 import { Onboarding } from "./onboarding";
+import { useMantineTheme } from "@mantine/core";
 
 type TPanelProps = {
     toolbar: React.ReactNode;
@@ -59,12 +60,12 @@ const dockViewComponents = {
                 />;
             case "esphome_install":
                 return <Panel
-                    toolbar={<EspHomeInstallToolbar device_id={panel.device_id} lastClick={panel.last_click}/>}
-                    panel={<EspHomeInstallPanel device_id={panel.device_id} lastClick={panel.last_click}/>} />;
+                    toolbar={<EspHomeInstallToolbar device_id={panel.device_id} lastClick={panel.last_click} />}
+                    panel={<EspHomeInstallPanel device_id={panel.device_id} lastClick={panel.last_click} />} />;
             case "esphome_log":
                 return <Panel
-                    toolbar={<EspHomeLogToolbar device_id={panel.device_id} lastClick={panel.last_click}/>}
-                    panel={<EspHomeLogPanel device_id={panel.device_id} lastClick={panel.last_click}/>} />;
+                    toolbar={<EspHomeLogToolbar device_id={panel.device_id} lastClick={panel.last_click} />}
+                    panel={<EspHomeLogPanel device_id={panel.device_id} lastClick={panel.last_click} />} />;
             case "onboarding":
                 return <Onboarding panel={panel} />;
             default:
@@ -73,6 +74,54 @@ const dockViewComponents = {
     }
 };
 
+function stringToHash(str: string) {
+    let hash = 0;
+    for (var i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        hash = hash & hash;
+    }
+    return hash;
+}
+
+const useDeviceColor = (device_id: string | undefined) => {
+    const theme = useMantineTheme();
+    return useMemo(() => {
+        if (!device_id) return undefined;
+
+        //Tune colors - https://v5.mantine.dev/theming/colors/
+        const colors = [
+            theme.colors?.blue?.[5],
+            theme.colors?.red?.[5],
+            theme.colors?.green?.[5],
+            theme.colors?.yellow?.[5],
+            theme.colors?.cyan?.[5],
+            theme.colors?.pink?.[5],
+            theme.colors?.violet?.[5],
+            theme.colors?.grape?.[5],
+            theme.colors?.orange?.[5],
+            theme.colors?.teal?.[5],
+            theme.colors?.indigo?.[5],
+            theme.colors?.dark?.[5],
+        ];
+
+        const hash = stringToHash(device_id);
+        const colorIndex = ((hash % colors.length) + colors.length) % colors.length;
+
+        return colors[colorIndex];
+    }, [device_id]);
+}
+
+const ColoredDockviewTab = (p: IDockviewPanelHeaderProps<TPanelWithClick>) => {
+    const device_id = (p.params as TPanel_Device).device_id;
+    const color = useDeviceColor(device_id);
+    console.log("ColoredDockviewTab", device_id, color);
+    return (
+        <span style={{ color: color }}>
+            <DockviewDefaultTab {...p} />
+        </span>
+    );
+}
+
 const dockViewTabComponents = {
     default: (p: IDockviewPanelHeaderProps<TPanelWithClick>) => {
         const panel = p.params;
@@ -80,7 +129,7 @@ const dockViewTabComponents = {
             case "onboarding":
                 return <DockviewDefaultTab {...p} hideClose />;
             default:
-                return <DockviewDefaultTab {...p} />;
+                return <ColoredDockviewTab {...p} />;
         }
     }
 };
