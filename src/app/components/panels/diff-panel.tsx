@@ -8,7 +8,6 @@ type TProps = {
     device_id: string;
 }
 
-
 export const DiffToolbar = ({ device_id }: TProps) => {
     const device = useDevice(device_id)!;
 
@@ -26,5 +25,5 @@ export const DiffToolbar = ({ device_id }: TProps) => {
 export const DiffPanel = ({ device_id }: TProps) => {
     const data = useDeviceDiffStoreQuery(device_id);
 
-    return <DiffEditor {...data} />;
+    return <DiffEditor {...data} device_id={device_id} />;
 }

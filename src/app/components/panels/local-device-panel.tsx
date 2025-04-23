@@ -26,5 +26,5 @@ export const LocalDeviceToolbar = (props: TProps) => {
 export const LocalDevicePanel = ({device_id} : TProps) => {
     const data = useLocalDeviceStore(device_id);
 
-    return <SingleEditor {...data} />;
+    return <SingleEditor {...data} device_id={device_id} />;
 }
