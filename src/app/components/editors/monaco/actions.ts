@@ -34,7 +34,7 @@ export const registerDeviceActions = (
     });
 };
 
-export const useMonacoActions = (device_id: string) => {
+export const useMonacoActions = (device_id?: string) => {
     const appStores = useAppStores();
     const device = useDevice(device_id);
 
