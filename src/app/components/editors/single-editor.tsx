@@ -1,26 +1,17 @@
 import { TEditorFileProps } from "@/app/stores/panels-store/types";
-import { Editor, Monaco } from "@monaco-editor/react";
+import { Editor } from "@monaco-editor/react";
 import { useMonacoTheme } from "./monaco/useMonacoTheme";
 import { ContentLoadingWrapper } from "./loading-wrappers";
-import { editor } from "monaco-editor";
-import { useDevice } from "@/app/stores/devices-store";
-import { registerDeviceActions } from "./monaco/actions";
-import { useAppStores } from "@/app/stores";
+import { useMonacoActions } from "./monaco/actions";
 
 type TSingleEditorProps = TEditorFileProps & {
-    device_id: string;
+    device_id?: string;
 };
 
 export const SingleEditor = (props: TSingleEditorProps) => {
     const theme = useMonacoTheme();
 
-    const appStores = useAppStores();
-    const device = useDevice(props.device_id);
-
-    const onMount = (editor: editor.IStandaloneCodeEditor, monaco: Monaco) => {
-        if (!device) return;
-        registerDeviceActions(editor, monaco, appStores, device!);
-    }
+    const { onMount } = useMonacoActions(props.device_id);
 
     return <ContentLoadingWrapper value={props.value} >
         <Editor
