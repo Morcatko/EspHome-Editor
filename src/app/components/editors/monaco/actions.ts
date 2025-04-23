@@ -7,7 +7,7 @@ import { editor } from "monaco-editor";
 type TEditor = editor.IStandaloneDiffEditor | editor.IStandaloneCodeEditor
 
 export const registerDeviceActions = (
-    editor: TEditor,
+    editor: editor.IStandaloneCodeEditor,
     monaco: Monaco,
     appStores: ReturnType<typeof useAppStores>,
     device: TDevice) => {
@@ -34,13 +34,21 @@ export const registerDeviceActions = (
     });
 };
 
-export const useMonacoActions = (device_id?: string) => {
+export const useMonacoActions = (device_id: string) => {
     const appStores = useAppStores();
     const device = useDevice(device_id);
 
     const onMount = (editor: TEditor, monaco: Monaco) => {
         if (!device) return;
-        registerDeviceActions(editor, monaco, appStores, device!);
+
+        const originalEditor = (editor as editor.IStandaloneDiffEditor).getOriginalEditor?.();
+        const modifiedEditor = (editor as editor.IStandaloneDiffEditor).getModifiedEditor?.();
+        if (originalEditor && modifiedEditor) {
+            registerDeviceActions(originalEditor, monaco, appStores, device!);
+            registerDeviceActions(modifiedEditor, monaco, appStores, device!);
+        }
+        else
+            registerDeviceActions(editor as editor.IStandaloneCodeEditor, monaco, appStores, device!);
     }
 
     return {
