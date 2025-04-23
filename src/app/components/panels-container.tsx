@@ -59,12 +59,12 @@ const dockViewComponents = {
                 />;
             case "esphome_install":
                 return <Panel
-                    toolbar={<EspHomeInstallToolbar device_id={panel.device_id} lastClick={panel.last_click}/>}
-                    panel={<EspHomeInstallPanel device_id={panel.device_id} lastClick={panel.last_click}/>} />;
+                    toolbar={<EspHomeInstallToolbar device_id={panel.device_id} lastClick={panel.last_click} />}
+                    panel={<EspHomeInstallPanel device_id={panel.device_id} lastClick={panel.last_click} />} />;
             case "esphome_log":
                 return <Panel
-                    toolbar={<EspHomeLogToolbar device_id={panel.device_id} lastClick={panel.last_click}/>}
-                    panel={<EspHomeLogPanel device_id={panel.device_id} lastClick={panel.last_click}/>} />;
+                    toolbar={<EspHomeLogToolbar device_id={panel.device_id} lastClick={panel.last_click} />}
+                    panel={<EspHomeLogPanel device_id={panel.device_id} lastClick={panel.last_click} />} />;
             case "onboarding":
                 return <Onboarding panel={panel} />;
             default:

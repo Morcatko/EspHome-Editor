@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "ts": "tsc --noEmit --incremental",
+    "tsc": "tsc --noEmit --incremental",
     "test": "vitest",
     "postinstall": "next-ws patch --yes",
     "setup": "npx tsx ./setup.mts",

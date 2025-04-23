@@ -24,5 +24,5 @@ export const ESPHomeDeviceToolbar = ({ device_id }: TProps) => {
 export const ESPHomeDevicePanel = ({device_id} : TProps) => {
     const data = useESPHomeDeviceStore(device_id);
 
-    return <SingleEditor {...data} />;
+    return <SingleEditor {...data} device_id={device_id} />;
 }
