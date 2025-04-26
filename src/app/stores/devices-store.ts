@@ -154,9 +154,7 @@ async function local_enableDisableFile(device: TDevice, file: TLocalFile) {
     await showToast(
         () => api.local_path_toggleEnabled(device.id, file.path),
         [["devices"],
-        ["device", device.id, "local"],
-        ["device", device.id, "local-file", file.path],
-        ["device", device.id, "local-file", file.path, "compiled"]],
+        ["device", device.id, "local"]],
         enabled ? "Disabling..." : "Enabling...",
         enabled ? "Disabled!" : "Enabled!",
         enabled ? "Failed to Disable" : "Failed to Enable",

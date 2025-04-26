@@ -9,6 +9,7 @@ import { mergeEspHomeYamlFiles } from "./template-processors/yaml-merger";
 import { patchEspHomeYaml } from "./template-processors/yaml-patcher";
 import { ensureDeviceDirExists, fixPath, getDeviceDir, getDevicePath } from "./utils";
 import { dirname, join } from "node:path";
+import { ManifestUtils } from "./manifest";
 
 const awaitArray = async <T>(arr: Promise<T>[]): Promise<T[]> =>
     (await Promise
@@ -17,7 +18,7 @@ const awaitArray = async <T>(arr: Promise<T>[]): Promise<T[]> =>
         .filter((r) => r !== null)
         .map((r) => r as T);
 
-const scanDirectory = async (fullPath: string, parentPath: string | null): Promise<TLocalFileOrDirectory[]> => {
+const scanDirectory = async (device_id: string, fullPath: string, parentPath: string | null): Promise<TLocalFileOrDirectory[]> => {
     const resAsync =
         (await listDirEntries(fullPath, _ => true))
             .map(async (e) => {
@@ -28,20 +29,18 @@ const scanDirectory = async (fullPath: string, parentPath: string | null): Promi
                         name: e.name,
                         path: path,
                         type: "directory",
-                        files: await scanDirectory(`${fullPath}/${e.name}`, path),
+                        files: await scanDirectory(device_id, `${fullPath}/${e.name}`, path),
                     };
                 } else {
-                    if (e.name.endsWith(".testdata"))
+                    if (e.name.endsWith(".testdata") || (e.name == ManifestUtils.manifestFileName))
                         return null;
-
-                    const fileInfo = getFileInfo(e.name);
 
                     return <TLocalFile>{
                         id: e.name,
                         path: path,
                         name: e.name,
-                        enabled: fileInfo.enabled,
-                        language: fileInfo.language,
+                        enabled: await ManifestUtils.isFileEnabled(device_id, path),
+                        language: getFileInfo(e.name).language,
                         type: "file",
                     };
                 }
@@ -67,7 +66,7 @@ export namespace local {
                     path: "",
                     name: d.name,
                     type: "device",
-                    files: await scanDirectory(`${c.devicesDir}/${d.name}`, null),
+                    files: await scanDirectory(d.name, `${c.devicesDir}/${d.name}`, null),
                 } as TDevice;
             });
 
@@ -112,10 +111,14 @@ export namespace local {
             .map(f => ({
                 id: f.name,
                 info: getFileInfo(f.name)
-            }))
-            .filter(f => f.info.enabled);
+            }));
 
         for (const file of inputFiles.filter(i => i.info.type === "basic")) {
+            const isFileEnabled = await ManifestUtils.isFileEnabled(device_id, file.id);
+            if (!isFileEnabled) {
+                log.debug("Skipping disabled file", file.id);
+                continue;
+            }
             const filePath = getDevicePath(device_id, file.id)
             log.debug("Compiling Configuration", filePath);
             const output = await compileFile(device_id, file.id, false);
@@ -128,6 +131,11 @@ export namespace local {
         log.success("Merged compiled configurations", device_id);
 
         for (const file of inputFiles.filter(i => i.info.type === "patch")) {
+            const isFileEnabled = await ManifestUtils.isFileEnabled(device_id, file.id);
+            if (!isFileEnabled) {
+                log.debug("Skipping disabled file", file.id);
+                continue;
+            }
             const filePath = getDevicePath(device_id, file.id)
             log.debug("Compiling patch", filePath);
             const output = await compileFile(device_id, file.id, false);
@@ -148,11 +156,7 @@ export namespace local {
         await fs.mkdir(getDeviceDir(device_id));
 
     export const toggleEnabled = async (device_id: string, path: string) => {
-        const oldPath = getDevicePath(device_id, path);
-        const newPath = oldPath.endsWith(".")
-            ? oldPath.slice(0, -1)
-            : `${oldPath}.`;
-        await fs.rename(oldPath, newPath);
+        await ManifestUtils.toggleFileEnabled(device_id, path);
     }
 
     export const renameFile = async (device_id: string, path: string, newName: string) => {
@@ -161,6 +165,7 @@ export namespace local {
         const newPath = join(parentDir, fixPath(newName));
         log.debug(`Renaming file '${oldPath}' to '${newName}'`);
         await fs.rename(oldPath, newPath);
+        await ManifestUtils.renameFile(device_id, path, newName);
     };
 
     export const deletePath = async (device_id: string, path: string) => {
@@ -169,8 +174,10 @@ export namespace local {
         const stats = await fs.stat(fullPath);
         if (stats.isDirectory())
             await fs.rmdir(fullPath)
-        else
+        else {
             await fs.unlink(fullPath);
+            await ManifestUtils.deleteFile(device_id, path);
+        }
     }
 
     export const deleteDevice = async (device_id: string) => {
