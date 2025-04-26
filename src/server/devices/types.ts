@@ -13,6 +13,7 @@ export type TParent = TNode &{
 
 export type TLocalDirectory = TParent & {
     type: "directory";
+    enabled: boolean;
 }
 
 export type TLocalFile = TNode & {
