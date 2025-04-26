@@ -1,5 +1,5 @@
 import fs from "node:fs/promises";
-import { getDevicePath } from "./utils";
+import { fixPath, getDevicePath } from "./utils";
 import { fileExists } from "@/server/utils/fs-utils";
 
 type TManifestFileInfo = {
@@ -12,7 +12,7 @@ type TManifest = {
 
 const manifestFileName = "manifest.json";
 
-
+//Do not load for each file, load once and use the loaded manifest
 async function loadManifest(device_id: string): Promise<TManifest> {
     const manifestPath = getDevicePath(device_id, manifestFileName); 
     if (await fileExists(manifestPath))
@@ -27,6 +27,8 @@ async function saveManifest(device_id: string, manifest: TManifest) {
 
 async function renameFile(device_id: string, old_path: string, new_path: string) {
     const manifest = await loadManifest(device_id);
+    old_path = fixPath(old_path);
+    new_path = fixPath(new_path);
     if (manifest.files[old_path]) {
         manifest.files[new_path] = manifest.files[old_path];
         delete manifest.files[old_path];
@@ -36,6 +38,7 @@ async function renameFile(device_id: string, old_path: string, new_path: string)
 
 async function deleteFile(device_id: string, path: string) {
     const manifest = await loadManifest(device_id);
+    path = fixPath(path);
     if (manifest.files[path]) {
         delete manifest.files[path];
     }
@@ -44,6 +47,7 @@ async function deleteFile(device_id: string, path: string) {
 
 async function togglePathEnabled(device_id: string, path: string) {
     const manifest = await loadManifest(device_id);
+    path = fixPath(path);
     if (!manifest.files[path]) 
         manifest.files[path] = { };
 
@@ -54,6 +58,7 @@ async function togglePathEnabled(device_id: string, path: string) {
 
 async function isPathEnabled(device_id: string, path: string) {
     const manifest = await loadManifest(device_id);
+    path = fixPath(path);
     return !manifest.files[path]?.disabled;
 }
 
