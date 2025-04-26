@@ -56,7 +56,7 @@ export const getFileInfo = (file_path: string): FileInfo => {
 export const compileFile = async (device_id: string, file_path: string, useTestData: boolean) => {
     const fullFilePath = getDevicePath(device_id, file_path);
     const fixedFilePath = fixPath(file_path);
-    const fileInfo = getFileInfo( file_path);
+    const fileInfo = getFileInfo(file_path);
     switch (fileInfo.language) {
         case "etajs":
             const testDataPath = getDevicePath(device_id, file_path + ".testdata");
