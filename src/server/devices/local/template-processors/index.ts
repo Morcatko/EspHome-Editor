@@ -14,7 +14,6 @@ type FileInfo = {
 };
 
 
-
 export const getFileInfo = (file_path: string): FileInfo => {
     const enabled = true;
     const lower = file_path.toLowerCase();

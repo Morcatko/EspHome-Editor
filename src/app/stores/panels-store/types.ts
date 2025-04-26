@@ -14,7 +14,7 @@ type TPanel_DeviceBase = {
 }
 
 
-export type TPanel_DeviceLocalFile = {
+type TPanel_DeviceLocalFile = {
     operation: "local_file";
     path: string;
 }
