@@ -149,10 +149,10 @@ async function local_renameFoD(device: TDevice, fod: TLocalFileOrDirectory) {
     }
 }
 
-async function local_enableDisableFile(device: TDevice, file: TLocalFile) {
-    const enabled = file.enabled
+async function local_toggleEnabled(device: TDevice, fod: TLocalFileOrDirectory) {
+    const enabled = fod.enabled
     await showToast(
-        () => api.local_path_toggleEnabled(device.id, file.path),
+        () => api.local_path_toggleEnabled(device.id, fod.path),
         [["devices"],
         ["device", device.id, "local"]],
         enabled ? "Disabling..." : "Enabling...",
@@ -224,7 +224,7 @@ export const useDevicesStore = () => {
         espHome_upload,
         local_renameFoD,
         local_deleteFoD,
-        local_enableDisableFile,
+        local_toggleEnabled,
         device_delete
     }
 };

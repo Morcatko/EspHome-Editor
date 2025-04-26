@@ -20,12 +20,12 @@ type TNodeProps = {
     icon?: React.ReactNode;
     menuItems?: React.ReactNode[];
     hideExpander?: boolean;
-    gray?: boolean;
+    disabled?: boolean;
 }
 
 const Node = (p: TNodeProps) => {
     const { hasChildren, expanded, elementProps, tree, node } = p.nodePayload;
-    elementProps.className += p.gray ? " opacity-50" : "";
+    elementProps.className += p.disabled ? " opacity-50" : "";
 
     return <Group
         gap={5}
@@ -89,6 +89,7 @@ const nodeRenderer = (p: RenderTreeNodePayload) => {
         case "directory": 
             return <Node
                 nodePayload={p}
+                disabled={!node.fod.enabled}
                 icon={<FileDirectoryIcon />}
                 menuItems={fodMenuItems(devicesStore, node.device, node.fod)}>
                 {node.label}
@@ -96,7 +97,7 @@ const nodeRenderer = (p: RenderTreeNodePayload) => {
         case "file":
             return <Node
                 nodePayload={p}
-                gray={!node.fod.enabled}
+                disabled={!node.fod.enabled}
                 icon={<div className="opacity-55"><FileIcon fod={node.fod} /></div>}
                 onClick={(e) => panels.addDevicePanel(((e as any).button === 1) ? "new_window" : "default", node.device.id, "local_file", node.fod.path)}
                 menuItems={fodMenuItems(devicesStore, node.device, node.fod)}

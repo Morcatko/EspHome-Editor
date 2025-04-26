@@ -47,12 +47,8 @@ export const fodMenuItems = (ds: ReturnType<typeof useDevicesStore>, d: TDevice,
             <Menu.Divider key="did" />
         ]
         : []),
-    ...(((fod.type === "file") && (!fod.path.includes("/"))) //& IsDevice(not Lib)
-        ? [
-            <MenuItem key="en" label="Enable/Disable..." icon={<CircleSlashIcon />} onClick={() => ds.local_enableDisableFile(d, fod)} />,
-            <Menu.Divider key="dif" />
-        ]
-        : []),
+    <MenuItem key="en" label="Enable/Disable..." icon={<CircleSlashIcon />} onClick={() => ds.local_toggleEnabled(d, fod)} />,
+    <Menu.Divider key="dif" />,
     <MenuItem key="rn" label="Rename..." icon={<PencilIcon />} onClick={() => ds.local_renameFoD(d, fod)} />,
     <MenuItem key="dl" label="Delete..." icon={<XIcon />} onClick={() => ds.local_deleteFoD(d, fod)} />,
 ];

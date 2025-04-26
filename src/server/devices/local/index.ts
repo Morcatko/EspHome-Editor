@@ -9,7 +9,7 @@ import { mergeEspHomeYamlFiles } from "./template-processors/yaml-merger";
 import { patchEspHomeYaml } from "./template-processors/yaml-patcher";
 import { ensureDeviceDirExists, fixPath, getDeviceDir, getDevicePath } from "./utils";
 import { dirname, join } from "node:path";
-import { ManifestUtils } from "./manifest";
+import { ManifestUtils } from "./manifest-utils";
 
 const awaitArray = async <T>(arr: Promise<T>[]): Promise<T[]> =>
     (await Promise
@@ -18,18 +18,20 @@ const awaitArray = async <T>(arr: Promise<T>[]): Promise<T[]> =>
         .filter((r) => r !== null)
         .map((r) => r as T);
 
-const scanDirectory = async (device_id: string, fullPath: string, parentPath: string | null): Promise<TLocalFileOrDirectory[]> => {
+const scanDirectory = async (device_id: string, fullPath: string, parentPath: string | null, parentEnabled: boolean): Promise<TLocalFileOrDirectory[]> => {
     const resAsync =
         (await listDirEntries(fullPath, _ => true))
             .map(async (e) => {
                 const path = parentPath ? `${parentPath}/${e.name}` : e.name;
                 if (e.isDirectory()) {
+                    const enabled = parentEnabled && await ManifestUtils.isPathEnabled(device_id, path);
                     return <TLocalDirectory>{
                         id: e.name,
                         name: e.name,
                         path: path,
+                        enabled:  enabled,
                         type: "directory",
-                        files: await scanDirectory(device_id, `${fullPath}/${e.name}`, path),
+                        files: await scanDirectory(device_id, `${fullPath}/${e.name}`, path, enabled),
                     };
                 } else {
                     if (e.name.endsWith(".testdata") || (e.name == ManifestUtils.manifestFileName))
@@ -37,9 +39,9 @@ const scanDirectory = async (device_id: string, fullPath: string, parentPath: st
 
                     return <TLocalFile>{
                         id: e.name,
-                        path: path,
                         name: e.name,
-                        enabled: await ManifestUtils.isFileEnabled(device_id, path),
+                        path: path,
+                        enabled: parentEnabled && await ManifestUtils.isPathEnabled(device_id, path),
                         language: getFileInfo(e.name).language,
                         type: "file",
                     };
@@ -66,7 +68,7 @@ export namespace local {
                     path: "",
                     name: d.name,
                     type: "device",
-                    files: await scanDirectory(d.name, `${c.devicesDir}/${d.name}`, null),
+                    files: await scanDirectory(d.name, `${c.devicesDir}/${d.name}`, null, true),
                 } as TDevice;
             });
 
@@ -99,64 +101,13 @@ export namespace local {
         await fs.writeFile(path, content, "utf-8");
     }
 
-    export const compileDevice = async (device_id: string) => {
-        log.debug("Compiling device", device_id);
-        const deviceDirectory = getDeviceDir(device_id);
-
-        const outputYamls: string[] = [];
-        const outputPatches: string[] = [];
-
-        const fileEntries = await listDirEntries(deviceDirectory, (e) => e.isFile());
-        const inputFiles = fileEntries
-            .map(f => ({
-                id: f.name,
-                info: getFileInfo(f.name)
-            }));
-
-        for (const file of inputFiles.filter(i => i.info.type === "basic")) {
-            const isFileEnabled = await ManifestUtils.isFileEnabled(device_id, file.id);
-            if (!isFileEnabled) {
-                log.debug("Skipping disabled file", file.id);
-                continue;
-            }
-            const filePath = getDevicePath(device_id, file.id)
-            log.debug("Compiling Configuration", filePath);
-            const output = await compileFile(device_id, file.id, false);
-            log.success("Compiled Configuration", filePath);
-            outputYamls.push(output);
-        }
-
-        log.debug("Merging compiled configurations", device_id);
-        const mergedYaml = mergeEspHomeYamlFiles(outputYamls);
-        log.success("Merged compiled configurations", device_id);
-
-        for (const file of inputFiles.filter(i => i.info.type === "patch")) {
-            const isFileEnabled = await ManifestUtils.isFileEnabled(device_id, file.id);
-            if (!isFileEnabled) {
-                log.debug("Skipping disabled file", file.id);
-                continue;
-            }
-            const filePath = getDevicePath(device_id, file.id)
-            log.debug("Compiling patch", filePath);
-            const output = await compileFile(device_id, file.id, false);
-            log.success("Compiled patch", filePath);
-            outputPatches.push(output);
-        }
-
-        log.debug("Patching configuration", device_id);
-        const patchedYaml = patchEspHomeYaml(mergedYaml, outputPatches);
-        log.success("Patched configuration", device_id);
-
-        return patchedYaml.toString();
-    }
-
     export const compileFile = _compileFile;
 
     export const createDevice = async (device_id: string) =>
         await fs.mkdir(getDeviceDir(device_id));
 
     export const toggleEnabled = async (device_id: string, path: string) => {
-        await ManifestUtils.toggleFileEnabled(device_id, path);
+        await ManifestUtils.togglePathEnabled(device_id, path);
     }
 
     export const renameFile = async (device_id: string, path: string, newName: string) => {
@@ -186,5 +137,73 @@ export namespace local {
             log.debug(`Deleting device '${fullPath}'`);
             await fs.rm(fullPath, { recursive: true });
         }
+    }
+
+    const flattenTree = (tree: TLocalFileOrDirectory[]): TLocalFileOrDirectory[] => {
+        const res: TLocalFileOrDirectory[] = [];
+
+        for (const entry of tree.filter(e => e.enabled)) {
+            res.push(entry);
+            if (entry.type === "directory") {
+                const subEntries = flattenTree(entry.files ?? []);
+                res.push(...subEntries);
+            }
+        }
+
+        return res;
+    }
+
+
+    export const compileDevice = async (device_id: string) => {
+        log.debug("Compiling device", device_id);
+        const deviceDirectory = getDeviceDir(device_id);
+
+        const outputYamls: string[] = [];
+        const outputPatches: string[] = [];
+
+        const file_tree = await scanDirectory(device_id, deviceDirectory, null, true);
+        const flat_list = flattenTree(file_tree);
+
+        const fileEntries = flat_list.filter(e => e.type === "file");//  await listDirEntries(deviceDirectory, (e) => e.isFile());
+        const inputFiles = fileEntries
+            .map(f => ({
+                path: f.path,
+                enabled: f.enabled,
+                info: getFileInfo(f.name)
+            }));
+
+        for (const file of inputFiles.filter(i => i.info.type === "basic")) {
+            if (!file.enabled) {
+                log.debug("Skipping disabled file", file.path);
+                continue;
+            }
+            const filePath = getDevicePath(device_id, file.path)
+            log.debug("Compiling Configuration", filePath);
+            const output = await compileFile(device_id, file.path, false);
+            log.success("Compiled Configuration", filePath);
+            outputYamls.push(output);
+        }
+
+        log.debug("Merging compiled configurations", device_id);
+        const mergedYaml = mergeEspHomeYamlFiles(outputYamls);
+        log.success("Merged compiled configurations", device_id);
+
+        for (const file of inputFiles.filter(i => i.info.type === "patch")) {
+            if (!file.enabled) {
+                log.debug("Skipping disabled file", file.path);
+                continue;
+            }
+            const filePath = getDevicePath(device_id, file.path)
+            log.debug("Compiling patch", filePath);
+            const output = await compileFile(device_id, file.path, false);
+            log.success("Compiled patch", filePath);
+            outputPatches.push(output);
+        }
+
+        log.debug("Patching configuration", device_id);
+        const patchedYaml = patchEspHomeYaml(mergedYaml, outputPatches);
+        log.success("Patched configuration", device_id);
+
+        return patchedYaml.toString();
     }
 }

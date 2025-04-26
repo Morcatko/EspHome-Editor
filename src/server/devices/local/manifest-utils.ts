@@ -42,7 +42,7 @@ async function deleteFile(device_id: string, path: string) {
     await saveManifest(device_id, manifest);    
 }
 
-async function toggleFileEnabled(device_id: string, path: string) {
+async function togglePathEnabled(device_id: string, path: string) {
     const manifest = await loadManifest(device_id);
     if (!manifest.files[path]) 
         manifest.files[path] = { };
@@ -52,7 +52,7 @@ async function toggleFileEnabled(device_id: string, path: string) {
     await saveManifest(device_id, manifest);
 }
 
-async function isFileEnabled(device_id: string, path: string) {
+async function isPathEnabled(device_id: string, path: string) {
     const manifest = await loadManifest(device_id);
     return !manifest.files[path]?.disabled;
 }
@@ -61,6 +61,6 @@ export const ManifestUtils = {
     manifestFileName,
     renameFile,
     deleteFile,
-    toggleFileEnabled,
-    isFileEnabled
+    togglePathEnabled,
+    isPathEnabled
 }
