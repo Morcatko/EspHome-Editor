@@ -61,7 +61,7 @@ const mergeEspHomeYamls = (target: YAML.Document, source: YAML.Document) => {
     });
 };
 
-export const mergeEspHomeYamlFiles = (yamls: string[]) => {
+export const mergeEspHomeYamlFiles = (yamls: TJob[]) => {
     const result: TOperationResult<YAML.Document<YAML.Node, true>> = {
         success: false,
         value: new YAML.Document(),
@@ -70,17 +70,21 @@ export const mergeEspHomeYamlFiles = (yamls: string[]) => {
 
     for (const yaml of yamls) {
         try {
-            const yamlContent = yamlParse(yaml);
+            const yamlContent = yamlParse(yaml.value);
             mergeEspHomeYamls(result.value, yamlContent);
+            result.logs.push({
+                type: "info",
+                message: `Merged Yaml`, 
+                path: yaml.path,
+            });
         } catch (e) {
             result.logs.push({
                 type: "error",
                 message: `Error merging yaml`,
-                path: "unknown",
-                data: yaml?.toString(),
+                path: yaml.path,
+                data: yaml.value,
                 exception: e?.toString(),
             });
-            log.error("Error merging yaml", e, yaml);
             return result;
         }
     }

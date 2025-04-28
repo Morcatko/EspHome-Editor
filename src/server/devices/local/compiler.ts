@@ -24,11 +24,14 @@ export const compileDevice = async (device_id: string) => {
             info: getFileInfo(f.name)
         }));
 
-    const outputYamls: string[] = [];
+    const compiledYamls: TJob[] = [];
     for (const file of inputFiles.filter(i => i.info.type === "basic")) {
         try {
-            const output = await compileFile(device_id, file.path, false);
-            outputYamls.push(output);
+            compiledYamls.push({
+                path: file.path,
+                value: await compileFile(device_id, file.path, false),
+            });
+
             result.logs.push({
                 type: "info",
                 path: file.path,
@@ -46,18 +49,20 @@ export const compileDevice = async (device_id: string) => {
     }
     
     log.debug("Merging compiled configurations", device_id);
-    const mergeResult = mergeEspHomeYamlFiles(outputYamls);
+    const mergeResult = mergeEspHomeYamlFiles(compiledYamls);
     result.logs.push(...mergeResult.logs);
     if (!mergeResult.success)
         return result;
     log.success("Merged compiled configurations", device_id);
     
-    const outputPatches: string[] = [];
+    const compiledPatches: TJob[] = [];
     for (const file of inputFiles.filter(i => i.info.type === "patch")) {
-
         try {
-            const output = await compileFile(device_id, file.path, false);
-            outputPatches.push(output);
+            compiledPatches.push({
+                path: file.path,
+                value: await compileFile(device_id, file.path, false),
+            });
+
             result.logs.push({
                 type: "info",
                 path: file.path,
@@ -76,7 +81,7 @@ export const compileDevice = async (device_id: string) => {
     }
 
     log.debug("Patching configuration", device_id);
-    const patchedYaml = patchEspHomeYaml(mergeResult.value, outputPatches);
+    const patchedYaml = patchEspHomeYaml(mergeResult.value, compiledPatches);
     log.success("Patched configuration", device_id);
 
     result.value = patchedYaml.toString();
