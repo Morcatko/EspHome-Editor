@@ -9,8 +9,8 @@ export const useLocalDeviceStore = (device_id: string) => {
         queryKey: ["device", device_id, "local"],
         queryFn: async () => api.callGet_text(api.url_device(device_id, "local"))
     })
-    return <TEditorFileProps>{
-        value:  queryToContent(query),
+    return {
+        ...queryToContent(query),
         language: esphomeLanguageId,
-    }
+    } satisfies TEditorFileProps;
 }

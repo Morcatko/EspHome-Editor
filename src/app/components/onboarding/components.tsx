@@ -60,10 +60,6 @@ export const Editor = (p: { heightPx: number, code: string, language: string }) 
             style={{ height: `${p.heightPx}px` }}>
             <SingleEditor
                 language={p.language}
-                value={{
-                    pending: false,
-                    error: false,
-                    content: p.code
-                }} />
+                value={p.code} />
         </div>
     </div>

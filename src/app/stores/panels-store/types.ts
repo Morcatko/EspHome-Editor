@@ -1,9 +1,9 @@
 export type TEditorFileProps = {
-    value: {
+    query?: {
         pending: boolean;
         error: boolean;
-        content: string;
-    },
+    }
+    value: string;
     language: string;
     onValueChange?: (v: string) => void;
 }
