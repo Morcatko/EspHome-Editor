@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { TEditorFileProps } from "./types";
 import { TLocalFile, TLocalFileOrDirectory } from "@/server/devices/types";
 import { useDevice } from "../devices-store";
-import { queryToContent } from "./utils/query-utils";
+import { callResultToEditorFileProps } from "./utils/query-utils";
 import { getSourceMonacoLanguge, getTargetMonacoLanguage } from "@/app/utils/file-utils";
 
 const findFile = (fods: TLocalFileOrDirectory[], file_path: string): TLocalFile | null => {
@@ -67,19 +67,19 @@ export const useLocalFileStore = (device_id: string, file_path: string) => {
 
     return {
         leftEditor: {
-            ...queryToContent(leftQuery),
+            ...callResultToEditorFileProps(leftQuery),
             language: getSourceMonacoLanguge(file),
             onValueChange: (v) => leftMutation.mutate(v),
         } satisfies TEditorFileProps,
         rightEditor: hasRightFile
             ? {
-                ...queryToContent(rightQuery),
+                ...callResultToEditorFileProps(rightQuery),
                 language: getTargetMonacoLanguage(file),
             } satisfies TEditorFileProps
             : null,
         testDataEditor: hasTestData
             ? {
-                ...queryToContent(testDataQuery),
+                ...callResultToEditorFileProps(testDataQuery),
                 language: "json",
                 onValueChange: (v) => testDataMutation.mutate(v),
             } satisfies TEditorFileProps

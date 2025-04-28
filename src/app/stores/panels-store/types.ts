@@ -1,7 +1,8 @@
 export type TEditorFileProps = {
     query?: {
         pending: boolean;
-        error: boolean;
+        success: boolean;
+        logs: string[];
     }
     value: string;
     language: string;

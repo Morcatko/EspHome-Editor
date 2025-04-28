@@ -31,11 +31,11 @@ const mergeEspHomeYamls = (target: YAML.Document, source: YAML.Document) => {
             if (isScalar(srcItem.value) && (srcItem.value as YAML.Scalar).value === null) {
                 return;
             }
-            
+
             if (isMap(tgtItem.value) && isMap(srcItem.value)) {
                 const tgtMap = tgtItem.value as YAML.YAMLMap;
                 const srcMap = srcItem.value as YAML.YAMLMap;
-                srcMap.items.forEach((srcMapItem) => tgtMap.add(srcMapItem));                
+                srcMap.items.forEach((srcMapItem) => tgtMap.add(srcMapItem));
                 return;
 
             }
@@ -46,7 +46,7 @@ const mergeEspHomeYamls = (target: YAML.Document, source: YAML.Document) => {
 
             if (!isSeq(srcItem.value)) {
                 throw new Error(`Unsupported merge - '${srcItem.value}'`);
-            }           
+            }
             if (!isSeq(tgtItem.value)) {
                 throw new Error(`Unsupported merge - '${srcItem.value}'`);
             }

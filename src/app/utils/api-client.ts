@@ -96,6 +96,10 @@ export namespace api {
         await callPost(url_device(device_id, "local"), null);
     }
 
+    export async function local_device(device_id: string) {
+        return await callGet_text(url_device(device_id, "local"));
+    }
+
     export async function local_createDirectory(device_id: string, directory_path: string) {
         await callPut(url_local_path(device_id, directory_path), "directory");
     }
@@ -124,12 +128,16 @@ export namespace api {
         return await callGet_text(url_local_path(device_id, path, "compiled"));
     }
 
-    export async function local_path_testData_get(device_id:string, path: string) {
-        return await callGet_text(url_local_path(device_id, path, "test-data"));        
+    export async function local_path_testData_get(device_id: string, path: string) {
+        return await callGet_text(url_local_path(device_id, path, "test-data"));
     }
 
-    export async function local_path_testData_post(device_id:string, path: string, content: string) {
-        return await callPost(url_local_path(device_id, path, "test-data"), content);        
+    export async function local_path_testData_post(device_id: string, path: string, content: string) {
+        return await callPost(url_local_path(device_id, path, "test-data"), content);
+    }
+
+    export async function esphome_device(device_id: string) {
+        return await callGet_text(url_device(device_id, "esphome"));
     }
 
     export async function device_delete(device_id: string) {

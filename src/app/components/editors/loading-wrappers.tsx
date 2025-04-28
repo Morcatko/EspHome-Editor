@@ -8,8 +8,10 @@ type TProps = {
 export const ContentLoadingWrapper = (props: TProps) => {
     if (props.query?.pending || props.query2?.pending)
         return <div>Loading...</div>;
-    else if (props.query?.error || props.query2?.error)
-        return <div>{props.query?.error || props.query2?.error || "Something went wrong"}</div>;
+    else if (!(props.query?.success ?? true) || !(props.query2?.success ?? true))
+        return props.query?.logs?.map((log, i) => <div key={i}>{log}</div>)
+            ?? props.query2?.logs?.map((log, i) => <div key={i}>{log}</div>)
+            ?? <div>Something went wrong</div>;
     else
         return props.children;
 }
