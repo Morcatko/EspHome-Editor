@@ -10,7 +10,7 @@ export async function GET(
     const { device_id } = await params;
     try {
         return new Response(
-            JSON.stringify(await local.tryCompileDevice(device_id)),
+            JSON.stringify(await local.compileDevice(device_id)),
             {
                 status: 200,
                 headers: {
