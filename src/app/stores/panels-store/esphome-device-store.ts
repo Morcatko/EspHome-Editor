@@ -9,8 +9,8 @@ export const useESPHomeDeviceStore = (device_id: string) => {
         queryKey: ["device", device_id, "esphome"],
         queryFn: async () => api.callGet_text(api.url_device(device_id, "esphome"))
     })
-    return <TEditorFileProps>{
-        value:  queryToContent(query),
+    return {
+        ...queryToContent(query),
         language: esphomeLanguageId,
-    }
+    } satisfies TEditorFileProps;
 }
