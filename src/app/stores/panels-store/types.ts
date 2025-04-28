@@ -1,9 +1,5 @@
 import type { TOperationResult } from "@/server/devices/types";
 
-export type TEditor = {
-    onValueChange?: (v: string) => void;
-}
-
 export type TEditorFileProps = {
     query?: {
         pending: boolean;

@@ -32,13 +32,13 @@ export const tryCompileDevice = async (device_id: string) => {
             result.logs.push({
                 type: "info",
                 path: file.path,
-                message: `Compiled file ${file.path}`,
+                message: "Compiling file",
             });
         } catch (e) {
             result.logs.push({
                 type: "error",
                 path: file.path,
-                message: `Error compiling file ${file.path}`,
+                message: "Compiling file",
                 exception: e?.toString(),
             });
             return result;
@@ -62,14 +62,14 @@ export const tryCompileDevice = async (device_id: string) => {
             result.logs.push({
                 type: "info",
                 path: file.path,
-                message: `Compiled patch file ${file.path}`,
+                message: "Compiling patch file",
             });
         }
         catch (e) {
             result.logs.push({
                 type: "error",
                 path: file.path,
-                message: `Error compiling patch file ${file.path}`,
+                message: "Compiling patch file",
                 exception: e?.toString(),
             });
             return result;

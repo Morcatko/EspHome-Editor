@@ -3,7 +3,6 @@ import { TGetStatus } from "../api/status/route";
 import { TOperationResult } from "@/server/devices/types";
 
 export namespace api {
-
     export type TCallResult = {
         status: number;
         content: string;
