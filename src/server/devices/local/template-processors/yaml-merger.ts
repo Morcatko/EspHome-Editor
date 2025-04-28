@@ -2,7 +2,7 @@ import { yamlParse } from "@/server/utils/yaml-utils";
 import { log } from "@/shared/log";
 import * as YAML from "yaml";
 import { isMap, isScalar, isSeq } from "yaml";
-import { TResult } from "../result-types";
+import { TOperationResult } from "../../types";
 
 const mergeEspHomeYamls = (target: YAML.Document, source: YAML.Document) => {
     if (!source.contents) {
@@ -32,11 +32,11 @@ const mergeEspHomeYamls = (target: YAML.Document, source: YAML.Document) => {
             if (isScalar(srcItem.value) && (srcItem.value as YAML.Scalar).value === null) {
                 return;
             }
-            
+
             if (isMap(tgtItem.value) && isMap(srcItem.value)) {
                 const tgtMap = tgtItem.value as YAML.YAMLMap;
                 const srcMap = srcItem.value as YAML.YAMLMap;
-                srcMap.items.forEach((srcMapItem) => tgtMap.add(srcMapItem));                
+                srcMap.items.forEach((srcMapItem) => tgtMap.add(srcMapItem));
                 return;
 
             }
@@ -47,7 +47,7 @@ const mergeEspHomeYamls = (target: YAML.Document, source: YAML.Document) => {
 
             if (!isSeq(srcItem.value)) {
                 throw new Error(`Unsupported merge - '${srcItem.value}'`);
-            }           
+            }
             if (!isSeq(tgtItem.value)) {
                 throw new Error(`Unsupported merge - '${srcItem.value}'`);
             }
@@ -62,7 +62,7 @@ const mergeEspHomeYamls = (target: YAML.Document, source: YAML.Document) => {
 };
 
 export const mergeEspHomeYamlFiles = (yamls: string[]) => {
-    const result: TResult< YAML.Document<YAML.Node, true>> = {
+    const result: TOperationResult<YAML.Document<YAML.Node, true>> = {
         success: false,
         value: new YAML.Document(),
         logs: [],

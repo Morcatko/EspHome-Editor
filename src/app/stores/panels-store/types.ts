@@ -1,4 +1,4 @@
-import type { TLog } from "@/server/devices/local/result-types";
+import type { TOperationResult } from "@/server/devices/types";
 
 export type TEditor = {
     onValueChange?: (v: string) => void;
@@ -8,7 +8,7 @@ export type TEditorFileProps = {
     query?: {
         pending: boolean;
         success: boolean;
-        logs: TLog[]
+        logs: TOperationResult["logs"]
     }
     value: string;
     language: string;

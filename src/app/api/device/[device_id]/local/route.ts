@@ -3,8 +3,6 @@ import { importEspHomeToLocalDevice } from "@/server/devices";
 import { local } from "@/server/devices/local";
 import { NextRequest } from "next/server";
 
-export type TLocalDevice_GetResult = Awaited<ReturnType<typeof local.tryCompileDevice>>;
-
 export async function GET(
     request: NextRequest,
     { params }: TParams<TDeviceId>,

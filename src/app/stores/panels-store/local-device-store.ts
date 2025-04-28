@@ -1,7 +1,7 @@
 import { api } from "@/app/utils/api-client";
 import { useQuery } from "@tanstack/react-query";
 import { TEditorFileProps } from "./types";
-import { queryToEditorFileProps } from "./utils/query-utils";
+import { resultToEditorFileProps } from "./utils/query-utils";
 import { esphomeLanguageId } from "@/app/components/editors/monaco/languages";
 
 export const useLocalDeviceStore = (device_id: string) => {
@@ -10,7 +10,7 @@ export const useLocalDeviceStore = (device_id: string) => {
         queryFn: async () => api.local_device(device_id)
     })
     return {
-        ...queryToContent(query),
+        ...resultToEditorFileProps(query),
         language: esphomeLanguageId,
     } satisfies TEditorFileProps;
 }

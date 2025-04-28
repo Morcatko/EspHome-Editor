@@ -4,12 +4,12 @@ import { compileFile, getFileInfo } from "./template-processors";
 import { listDirEntries } from "@/server/utils/fs-utils";
 import { mergeEspHomeYamlFiles } from "./template-processors/yaml-merger";
 import { patchEspHomeYaml } from "./template-processors/yaml-patcher";
-import { TResult } from "./result-types";
+import { TOperationResult } from "../types";
 
 export const tryCompileDevice = async (device_id: string) => {
     log.debug("Compiling device", device_id);
 
-    const result: TResult<string> = {
+    const result: TOperationResult<string> = {
         success: false,
         value: "",
         logs: [],
