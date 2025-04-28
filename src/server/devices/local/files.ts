@@ -1,12 +1,10 @@
 import fs from "node:fs/promises";
-
-import type { TDevice, TLocalFileOrDirectory } from "../types";
-import { c } from "../../config";
-import { directoryExists, fileExists, listDirEntries } from "../../utils/fs-utils";
-import { log } from "@/shared/log";
-import { ensureDeviceDirExists, fixPath, getDeviceDir, getDevicePath } from "./utils";
 import { dirname, join } from "node:path";
-import { awaitArray, scanDirectory } from "./file-utils";
+import { log } from "@/shared/log";
+import { c } from "@/server/config";
+import { directoryExists, fileExists, listDirEntries } from "@/server/utils/fs-utils";
+import type { TDevice } from "../types";
+import { awaitArray, ensureDeviceDirExists, fixPath, getDeviceDir, getDevicePath, scanDirectory } from "./utils";
 
 export const getDevices = async (): Promise<TDevice[]> => {
     log.debug("Getting Local devices");
@@ -22,7 +20,7 @@ export const getDevices = async (): Promise<TDevice[]> => {
                 path: "",
                 name: d.name,
                 type: "device",
-                files: await scanDirectory(d.name, `${c.devicesDir}/${d.name}`, null, true),
+                files: await scanDirectory(`${c.devicesDir}/${d.name}`, null),
             } as TDevice;
         });
 
@@ -55,7 +53,6 @@ export const saveFileContent = async (device_id: string, file_path: string, cont
     await fs.writeFile(path, content, "utf-8");
 }
 
-
 export const createDevice = async (device_id: string) =>
     await fs.mkdir(getDeviceDir(device_id));
 
@@ -74,10 +71,8 @@ export const deletePath = async (device_id: string, path: string) => {
     const stats = await fs.stat(fullPath);
     if (stats.isDirectory())
         await fs.rmdir(fullPath)
-    else {
+    else
         await fs.unlink(fullPath);
-        await ManifestUtils.deleteFile(device_id, path);
-    }
 }
 
 export const deleteDevice = async (device_id: string) => {

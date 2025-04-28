@@ -1,6 +1,6 @@
-import { tryCompileDevice } from "./compiler";
-import { createDevice, createDirectory, createFile, deleteDevice, deletePath, getDevices, getFileContent, renameFile, saveFileContent, tryGetFileContent } from "./files";
+import { compileDevice } from "./compiler";
 import { compileFile } from "./template-processors";
+import { createDevice, createDirectory, createFile, deleteDevice, deletePath, getDevices, getFileContent, renameFile, saveFileContent, tryGetFileContent } from "./files";
 
 export const local = {
     getDevices,
@@ -9,10 +9,10 @@ export const local = {
     getFileContent,
     tryGetFileContent,
     saveFileContent,
-    compileFile,
     createDevice,
     renameFile,
     deletePath,
     deleteDevice,
     tryCompileDevice
+    compileFile,
 }

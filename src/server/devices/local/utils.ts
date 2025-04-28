@@ -1,7 +1,9 @@
 import fs from "node:fs/promises";
-import { c } from "@/server/config";
-import { directoryExists } from "@/server/utils/fs-utils";
 import { join } from "node:path";
+import { c } from "@/server/config";
+import { directoryExists, listDirEntries } from "@/server/utils/fs-utils";
+import type { TLocalDirectory, TLocalFile, TLocalFileOrDirectory } from "../types";
+import { getFileInfo } from "./template-processors";
 
 export const getDeviceDir = (device_id: string) =>
     join(c.devicesDir, device_id);
@@ -17,3 +19,42 @@ export const ensureDeviceDirExists = async (device_id: string) => {
     if (!(await directoryExists(path)))
         await fs.mkdir(path);
 }
+
+export const awaitArray = async <T>(arr: Promise<T>[]): Promise<T[]> =>
+    (await Promise
+        .allSettled(arr))
+        .map((r) => r.status === "fulfilled" ? r.value : null)
+        .filter((r) => r !== null)
+        .map((r) => r as T);
+
+export const scanDirectory = async (fullPath: string, parentPath: string | null): Promise<TLocalFileOrDirectory[]> => {
+    const resAsync =
+        (await listDirEntries(fullPath, _ => true))
+            .map(async (e) => {
+                const path = parentPath ? `${parentPath}/${e.name}` : e.name;
+                if (e.isDirectory()) {
+                    return <TLocalDirectory>{
+                        id: e.name,
+                        name: e.name,
+                        path: path,
+                        type: "directory",
+                        files: await scanDirectory(`${fullPath}/${e.name}`, path),
+                    };
+                } else {
+                    if (e.name.endsWith(".testdata"))
+                        return null;
+
+                    return <TLocalFile>{
+                        id: e.name,
+                        path: path,
+                        name: e.name,
+                        language: getFileInfo(`${fullPath}/${e.name}`).language,
+                        type: "file",
+                    };
+                }
+            });
+
+    return (await awaitArray(resAsync))
+        .filter((e) => e !== null)
+        .sort((a, b) => a.type.localeCompare(b.type));
+};

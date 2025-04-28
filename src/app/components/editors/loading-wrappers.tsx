@@ -1,7 +1,7 @@
 import { type TEditorFileProps } from "@/app/stores/panels-store/types";
 
 type TProps = {
-    query: TEditorFileProps["query"];
+    query?: TEditorFileProps["query"];
     query2?: TEditorFileProps["query"];
     children: React.ReactNode;
 }

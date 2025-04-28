@@ -4,6 +4,13 @@ import { TEditorFileProps } from "../types";
 import { TLocalDevice_GetResult } from "@/app/api/device/[device_id]/local/route";
 
 export const queryToContent = (query: UseQueryResult<api.TCallResult>) => 
+    <TEditorFileProps>{
+        query: {
+            pending: query.isLoading,
+            error: query.isFetched ? (query.data?.status !== 200) : false,
+        },
+        value: query.data?.content,
+    };
     <Pick<TEditorFileProps, "query" | "value">>{
         query: {
             pending: query.isLoading,
