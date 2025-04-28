@@ -1,12 +1,10 @@
 import { log } from "@/shared/log";
-import { getDeviceDir, getDevicePath } from "./utils";
-import { TLog } from "./result-types";
 import { getDeviceDir } from "./utils";
-import { flattenTree, scanDirectory } from "./file-utils";
 import { compileFile, getFileInfo } from "./template-processors";
 import { listDirEntries } from "@/server/utils/fs-utils";
 import { mergeEspHomeYamlFiles } from "./template-processors/yaml-merger";
 import { patchEspHomeYaml } from "./template-processors/yaml-patcher";
+import { TLog } from "./result-types";
 
 type TCompileDeviceResult = {
     success: boolean;
@@ -25,30 +23,18 @@ export const tryCompileDevice = async (device_id: string) => {
 
     const deviceDirectory = getDeviceDir(device_id);
 
-    const file_tree = await scanDirectory(device_id, deviceDirectory, null, true);
-    const flat_list = flattenTree(file_tree);
-
-    const fileEntries = flat_list.filter(e => e.type === "file");//  await listDirEntries(deviceDirectory, (e) => e.isFile());
+    const fileEntries = await listDirEntries(deviceDirectory, (e) => e.isFile());
     const inputFiles = fileEntries
         .map(f => ({
-            path: f.path,
-            enabled: f.enabled,
+            path: f.name,
             info: getFileInfo(f.name)
         }));
 
     const outputYamls: string[] = [];
     for (const file of inputFiles.filter(i => i.info.type === "basic")) {
-        if (!file.enabled) {
-            result.logs.push({
-                type: "info",
-                message: `Skipping disabled file ${file.path}`,
-            });
-            log.debug("Skipping disabled file", file.path);
-            continue;
-        }
         try {
             const output = await compileFile(device_id, file.path, false);
-        outputYamls.push(output);
+            outputYamls.push(output);
             result.logs.push({
                 type: "info",
                 message: `Compiled file ${file.path}`,
@@ -70,16 +56,13 @@ export const tryCompileDevice = async (device_id: string) => {
         return result;
     log.success("Merged compiled configurations", device_id);
 
-    
+
     const outputPatches: string[] = [];
     for (const file of inputFiles.filter(i => i.info.type === "patch")) {
-        if (!file.enabled) {
-            log.debug("Skipping disabled file", file.path);
-            continue;
-        }
+
         try {
             const output = await compileFile(device_id, file.path, false);
-        outputPatches.push(output);
+            outputPatches.push(output);
             result.logs.push({
                 type: "info",
                 message: `Compiled patch file ${file.path}`,
