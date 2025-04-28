@@ -2,13 +2,7 @@ import { yamlParse } from "@/server/utils/yaml-utils";
 import { log } from "@/shared/log";
 import * as YAML from "yaml";
 import { isMap, isScalar, isSeq } from "yaml";
-import { TLog } from "../result-types";
-
-type TYamlMergeResult = {
-    success: boolean;
-    value: YAML.Document<YAML.Node, true>;
-    logs: TLog[];
-}
+import { TResult } from "../result-types";
 
 const mergeEspHomeYamls = (target: YAML.Document, source: YAML.Document) => {
     if (!source.contents) {
@@ -68,7 +62,7 @@ const mergeEspHomeYamls = (target: YAML.Document, source: YAML.Document) => {
 };
 
 export const mergeEspHomeYamlFiles = (yamls: string[]) => {
-    const result = <TYamlMergeResult>{
+    const result: TResult< YAML.Document<YAML.Node, true>> = {
         success: false,
         value: new YAML.Document(),
         logs: [],
@@ -82,6 +76,7 @@ export const mergeEspHomeYamlFiles = (yamls: string[]) => {
             result.logs.push({
                 type: "error",
                 message: `Error merging yaml`,
+                path: "unknown",
                 data: yaml?.toString(),
                 exception: e?.toString(),
             });

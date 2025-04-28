@@ -4,18 +4,12 @@ import { compileFile, getFileInfo } from "./template-processors";
 import { listDirEntries } from "@/server/utils/fs-utils";
 import { mergeEspHomeYamlFiles } from "./template-processors/yaml-merger";
 import { patchEspHomeYaml } from "./template-processors/yaml-patcher";
-import { TLog } from "./result-types";
-
-type TCompileDeviceResult = {
-    success: boolean;
-    value: string;
-    logs: TLog[];
-}
+import { TResult } from "./result-types";
 
 export const tryCompileDevice = async (device_id: string) => {
     log.debug("Compiling device", device_id);
 
-    const result = <TCompileDeviceResult>{
+    const result: TResult<string> = {
         success: false,
         value: "",
         logs: [],
@@ -37,11 +31,13 @@ export const tryCompileDevice = async (device_id: string) => {
             outputYamls.push(output);
             result.logs.push({
                 type: "info",
+                path: file.path,
                 message: `Compiled file ${file.path}`,
             });
         } catch (e) {
             result.logs.push({
                 type: "error",
+                path: file.path,
                 message: `Error compiling file ${file.path}`,
                 exception: e?.toString(),
             });
@@ -65,12 +61,14 @@ export const tryCompileDevice = async (device_id: string) => {
             outputPatches.push(output);
             result.logs.push({
                 type: "info",
+                path: file.path,
                 message: `Compiled patch file ${file.path}`,
             });
         }
         catch (e) {
             result.logs.push({
                 type: "error",
+                path: file.path,
                 message: `Error compiling patch file ${file.path}`,
                 exception: e?.toString(),
             });

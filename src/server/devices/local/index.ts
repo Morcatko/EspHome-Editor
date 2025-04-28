@@ -13,6 +13,6 @@ export const local = {
     renameFile,
     deletePath,
     deleteDevice,
-    tryCompileDevice,
     compileFile,
+    tryCompileDevice,
 }
