@@ -5,7 +5,7 @@ export type TEditor = {
 }
 
 export type TEditorFileProps = {
-    query: {
+    query?: {
         pending: boolean;
         success: boolean;
         logs: TLog[]
