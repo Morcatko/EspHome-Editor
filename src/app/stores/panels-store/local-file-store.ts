@@ -22,14 +22,14 @@ const findFile = (fods: TLocalFileOrDirectory[], file_path: string): TLocalFile 
 }
 
 export const useLocalFile = (device_id: string, file_path: string) => {
-   const device = useDevice(device_id);
+    const device = useDevice(device_id);
     const file = findFile(device?.files ?? [], file_path)!;
     return file;
 }
 
 export const useLocalFileStore = (device_id: string, file_path: string) => {
     const file = useLocalFile(device_id, file_path);
-    
+
     const hasRightFile = (file?.language === "etajs") || (file?.language === "markdown");
 
     const leftQuery = useQuery({
@@ -66,23 +66,23 @@ export const useLocalFileStore = (device_id: string, file_path: string) => {
     });
 
     return {
-        leftEditor: <TEditorFileProps>{
-            value: queryToContent(leftQuery),
+        leftEditor: {
+            ...queryToContent(leftQuery),
             language: getSourceMonacoLanguge(file),
             onValueChange: (v) => leftMutation.mutate(v),
-        },
+        } satisfies TEditorFileProps,
         rightEditor: hasRightFile
-            ? <TEditorFileProps>{
-                value: queryToContent(rightQuery),
+            ? {
+                ...queryToContent(rightQuery),
                 language: getTargetMonacoLanguage(file),
-            }
+            } satisfies TEditorFileProps
             : null,
         testDataEditor: hasTestData
-            ? <TEditorFileProps>{
-                value: queryToContent(testDataQuery),
+            ? {
+                ...queryToContent(testDataQuery),
                 language: "json",
                 onValueChange: (v) => testDataMutation.mutate(v),
-            }
+            } satisfies TEditorFileProps
             : null,
     }
 };

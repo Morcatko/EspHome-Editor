@@ -1,5 +1,6 @@
 import { assertResponseAndJsonOk, assertResponseOk } from "@/shared/http-utils";
 import { TGetStatus } from "../api/status/route";
+import type { TLocalDevice_GetResult } from "../api/device/[device_id]/local/route";
 
 export namespace api {
     export type TCallResult = {
@@ -90,6 +91,10 @@ export namespace api {
 
     export async function local_createDevice(device_id: string) {
         await callPut(url_device(device_id, "local"), null);
+    }
+
+    export async function local_device(device_id: string) {
+        return await callGet_json<TLocalDevice_GetResult>(url_device(device_id, "local"));
     }
 
     export async function local_importDevice(device_id: string) {

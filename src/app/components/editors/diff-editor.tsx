@@ -15,10 +15,10 @@ export const DiffEditor = (props: TProps) => {
 
     const { onMount } = useMonacoActions(props.device_id);
 
-    return <ContentLoadingWrapper value={props.leftEditor.value} >
+    return <ContentLoadingWrapper query={props.leftEditor.query} query2={props.rightEditor.query} >
         <MonacoDiffEditor
-            original={props.leftEditor.value.content}
-            modified={props.rightEditor.value.content}
+            original={props.leftEditor.value}
+            modified={props.rightEditor.value}
             originalLanguage={props.leftEditor.language}
             modifiedLanguage={props.rightEditor.language}
             theme={theme}

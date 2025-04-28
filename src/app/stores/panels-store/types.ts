@@ -1,9 +1,16 @@
+import type { TLog } from "@/server/devices/local/result-types";
+
+export type TEditor = {
+    onValueChange?: (v: string) => void;
+}
+
 export type TEditorFileProps = {
-    value: {
+    query: {
         pending: boolean;
-        error: boolean;
-        content: string;
-    },
+        success: boolean;
+        logs: TLog[]
+    }
+    value: string;
     language: string;
     onValueChange?: (v: string) => void;
 }

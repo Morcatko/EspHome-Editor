@@ -3,26 +3,20 @@ import { importEspHomeToLocalDevice } from "@/server/devices";
 import { local } from "@/server/devices/local";
 import { NextRequest } from "next/server";
 
+export type TLocalDevice_GetResult = Awaited<ReturnType<typeof local.tryCompileDevice>>;
+
 export async function GET(
     request: NextRequest,
     { params }: TParams<TDeviceId>,
 ) {
     const { device_id } = await params;
-    let content: string;
-    let status = 200;
-    try {
-        content = await local.compileDevice(device_id);
-    } catch (e) {
-        content = (e as Error).message;
-        status = 400;
-    }
-
+    const content = await local.tryCompileDevice(device_id);
     return new Response(
-        content,
+        JSON.stringify(content),
         {
-            status: status,
+            status: 200,
             headers: {
-                "content-type": "text/plain",
+                "content-type": "application/json",
             },
         },
     );
