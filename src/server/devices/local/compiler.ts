@@ -24,7 +24,7 @@ export const compileDevice = async (device_id: string) => {
             info: getFileInfo(f.name)
         }));
 
-    const compiledYamls: TJob[] = [];
+    const compiledYamls: TFileContent[] = [];
     for (const file of inputFiles.filter(i => i.info.type === "basic")) {
         try {
             compiledYamls.push({
@@ -55,7 +55,7 @@ export const compileDevice = async (device_id: string) => {
         return result;
     log.success("Merged compiled configurations", device_id);
     
-    const compiledPatches: TJob[] = [];
+    const compiledPatches: TFileContent[] = [];
     for (const file of inputFiles.filter(i => i.info.type === "patch")) {
         try {
             compiledPatches.push({

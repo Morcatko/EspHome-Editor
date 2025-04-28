@@ -1,5 +1,4 @@
 import { yamlParse } from "@/server/utils/yaml-utils";
-import { log } from "@/shared/log";
 import * as YAML from "yaml";
 import { isMap, isScalar, isSeq } from "yaml";
 import { TOperationResult } from "../../types";
@@ -61,7 +60,7 @@ const mergeEspHomeYamls = (target: YAML.Document, source: YAML.Document) => {
     });
 };
 
-export const mergeEspHomeYamlFiles = (yamls: TJob[]) => {
+export const mergeEspHomeYamlFiles = (yamls: TFileContent[]) => {
     const result: TOperationResult<YAML.Document<YAML.Node, true>> = {
         success: false,
         value: new YAML.Document(),
