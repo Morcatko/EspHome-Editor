@@ -8,16 +8,27 @@ export async function GET(
     { params }: TParams<TDeviceId>,
 ) {
     const { device_id } = await params;
-    const content = await local.tryCompileDevice(device_id);
-    return new Response(
-        JSON.stringify(content),
-        {
-            status: 200,
-            headers: {
-                "content-type": "application/json",
+    try {
+        return new Response(
+            JSON.stringify(await local.tryCompileDevice(device_id)),
+            {
+                status: 200,
+                headers: {
+                    "content-type": "application/json",
+                },
             },
-        },
-    );
+        );
+    } catch (e: any) {
+        return new Response(
+            JSON.stringify({ error: e.message }),
+            {
+                status: 500,
+                headers: {
+                    "content-type": "text/plain",
+                },
+            },
+        );
+    }
 }
 
 export async function PUT(request: Request, { params }: TParams<TDeviceId>) {

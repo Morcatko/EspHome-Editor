@@ -23,7 +23,7 @@ export const resultToEditorFileProps = (query: UseQueryResult<TOperationResult<s
 ({
     query: {
         pending: query.isLoading,
-        success: query.data?.success ?? false,
+        success: query.isFetched && query.isSuccess && query.data?.success,
         logs: query.data?.logs ?? [],
     },
     value: query.data?.value!,

@@ -93,16 +93,12 @@ export namespace api {
         await callPut(url_device(device_id, "local"), null);
     }
 
-    export async function local_device(device_id: string) {
-        return await callGet_json<TOperationResult<string>>(url_device(device_id, "local"));
-    }
-
     export async function local_importDevice(device_id: string) {
         await callPost(url_device(device_id, "local"), null);
     }
 
     export async function local_device(device_id: string) {
-        return await callGet_text(url_device(device_id, "local"));
+        return await callGet_json<TOperationResult<string>>(url_device(device_id, "local"));
     }
 
     export async function local_createDirectory(device_id: string, directory_path: string) {
