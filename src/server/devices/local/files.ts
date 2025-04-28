@@ -62,7 +62,6 @@ export const renameFile = async (device_id: string, path: string, newName: strin
     const newPath = join(parentDir, fixPath(newName));
     log.debug(`Renaming file '${oldPath}' to '${newName}'`);
     await fs.rename(oldPath, newPath);
-    await ManifestUtils.renameFile(device_id, path, newName);
 };
 
 export const deletePath = async (device_id: string, path: string) => {
