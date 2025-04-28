@@ -13,13 +13,11 @@ export type TParent = TNode &{
 
 export type TLocalDirectory = TParent & {
     type: "directory";
-    enabled: boolean;
 }
 
 export type TLocalFile = TNode & {
     type: "file";
     language: TLanguge;
-    enabled: boolean;
 }
 
 export type TLocalFileOrDirectory = TLocalDirectory | TLocalFile;
