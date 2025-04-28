@@ -6,7 +6,6 @@ import { directoryExists, fileExists, listDirEntries } from "../../utils/fs-util
 import { log } from "@/shared/log";
 import { ensureDeviceDirExists, fixPath, getDeviceDir, getDevicePath } from "./utils";
 import { dirname, join } from "node:path";
-import { ManifestUtils } from "./manifest-utils";
 import { awaitArray, scanDirectory } from "./file-utils";
 
 export const getDevices = async (): Promise<TDevice[]> => {
@@ -59,10 +58,6 @@ export const saveFileContent = async (device_id: string, file_path: string, cont
 
 export const createDevice = async (device_id: string) =>
     await fs.mkdir(getDeviceDir(device_id));
-
-export const toggleEnabled = async (device_id: string, path: string) => {
-    await ManifestUtils.togglePathEnabled(device_id, path);
-}
 
 export const renameFile = async (device_id: string, path: string, newName: string) => {
     const oldPath = getDevicePath(device_id, path);
