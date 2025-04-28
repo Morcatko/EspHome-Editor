@@ -1,5 +1,5 @@
 import type { TDeviceIdAndPath, TParams } from "@/app/api/api-types";
-import { local } from "@/server/devices/local/files";
+import { local } from "@/server/devices/local";
 
 type TPath = TDeviceIdAndPath & {
     new_name: string;

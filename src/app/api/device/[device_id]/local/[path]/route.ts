@@ -1,5 +1,5 @@
 import type { TDeviceIdAndPath, TParams } from "@/app/api/api-types";
-import { local } from "@/server/devices/local/files";
+import { local } from "@/server/devices/local";
 
 export async function GET(request: Request, { params }: TParams<TDeviceIdAndPath>) {
     const { device_id, path } = await params;
