@@ -44,15 +44,14 @@ export const tryCompileDevice = async (device_id: string) => {
             return result;
         }
     }
-
+    
     log.debug("Merging compiled configurations", device_id);
     const mergeResult = mergeEspHomeYamlFiles(outputYamls);
     result.logs.push(...mergeResult.logs);
     if (!mergeResult.success)
         return result;
     log.success("Merged compiled configurations", device_id);
-
-
+    
     const outputPatches: string[] = [];
     for (const file of inputFiles.filter(i => i.info.type === "patch")) {
 
