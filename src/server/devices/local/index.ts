@@ -1,4 +1,4 @@
-import { tryCompileDevice } from "./compiler";
+import { compileDevice } from "./compiler";
 import { compileFile } from "./template-processors";
 import { createDevice, createDirectory, createFile, deleteDevice, deletePath, getDevices, getFileContent, renameFile, saveFileContent, tryGetFileContent } from "./files";
 
@@ -14,5 +14,5 @@ export const local = {
     deletePath,
     deleteDevice,
     compileFile,
-    tryCompileDevice,
+    compileDevice,
 }

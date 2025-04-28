@@ -25,9 +25,9 @@ export async function POST(
 ) {
     const { device_id } = await params;
 
-    const content = await local.tryCompileDevice(device_id);
+    const content = await local.compileDevice(device_id);
 
-    await espHome.saveConfiguration(device_id, content.value);
+    await espHome.saveConfiguration(device_id, content);
 
     return new Response(
         "OK",

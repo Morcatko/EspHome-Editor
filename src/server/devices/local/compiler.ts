@@ -6,7 +6,7 @@ import { mergeEspHomeYamlFiles } from "./template-processors/yaml-merger";
 import { patchEspHomeYaml } from "./template-processors/yaml-patcher";
 import { TOperationResult } from "../types";
 
-export const tryCompileDevice = async (device_id: string) => {
+export const compileDevice = async (device_id: string) => {
     log.debug("Compiling device", device_id);
 
     const result: TOperationResult<string> = {
