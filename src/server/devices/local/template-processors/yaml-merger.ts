@@ -60,12 +60,12 @@ const mergeEspHomeYamls = (target: YAML.Document, source: YAML.Document) => {
     });
 };
 
-export const mergeEspHomeYamlFiles = (yamls: string[]) => {
+export const mergeEspHomeYamlFiles = (yamls: TFileContent[]) => {
     const targetYaml = new YAML.Document();
 
     for (const yaml of yamls) {
         try {
-            const yamlContent = yamlParse(yaml);
+            const yamlContent = yamlParse(yaml.value);
             mergeEspHomeYamls(targetYaml, yamlContent);
         } catch (e) {
             log.error("Error merging yaml", e, yaml);
