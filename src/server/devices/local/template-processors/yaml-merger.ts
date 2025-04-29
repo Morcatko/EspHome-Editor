@@ -1,7 +1,7 @@
 import { yamlParse } from "@/server/utils/yaml-utils";
-import { log } from "@/shared/log";
 import * as YAML from "yaml";
 import { isMap, isScalar, isSeq } from "yaml";
+import { TOperationResult } from "../../types";
 
 const mergeEspHomeYamls = (target: YAML.Document, source: YAML.Document) => {
     if (!source.contents) {
@@ -60,18 +60,32 @@ const mergeEspHomeYamls = (target: YAML.Document, source: YAML.Document) => {
     });
 };
 
-export const mergeEspHomeYamlFiles = (yamls: string[]) => {
-    const targetYaml = new YAML.Document();
+export const mergeEspHomeYamlFiles = (yamls: TFileContent[]) => {
+    const result: TOperationResult<YAML.Document<YAML.Node, true>> = {
+        success: false,
+        value: new YAML.Document(),
+        logs: [],
+    };
 
     for (const yaml of yamls) {
         try {
-            const yamlContent = yamlParse(yaml);
-            mergeEspHomeYamls(targetYaml, yamlContent);
+            const yamlContent = yamlParse(yaml.value);
+            mergeEspHomeYamls(result.value, yamlContent);
+            result.logs.push({
+                type: "info",
+                message: `Merging file`, 
+                path: yaml.path,
+            });
         } catch (e) {
-            log.error("Error merging yaml", e, yaml);
-            throw e;
+            result.logs.push({
+                type: "error",
+                message: `Error merging file - ${e?.toString() ?? "no more info"}`,
+                path: yaml.path
+            });
+            return result;
         }
     }
 
-    return targetYaml;
+    result.success = true;
+    return result;
 };

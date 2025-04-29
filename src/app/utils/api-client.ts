@@ -1,5 +1,6 @@
 import { assertResponseAndJsonOk, assertResponseOk } from "@/shared/http-utils";
 import { TGetStatus } from "../api/status/route";
+import { TOperationResult } from "@/server/devices/types";
 
 export namespace api {
     export type TCallResult = {
@@ -97,7 +98,7 @@ export namespace api {
     }
 
     export async function local_device(device_id: string) {
-        return await callGet_text(url_device(device_id, "local"));
+        return await callGet_json<TOperationResult<string>>(url_device(device_id, "local"));
     }
 
     export async function local_createDirectory(device_id: string, directory_path: string) {
