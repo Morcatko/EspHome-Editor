@@ -26,8 +26,19 @@ export async function POST(
     const { device_id } = await params;
 
     const content = await local.compileDevice(device_id);
-
-    await espHome.saveConfiguration(device_id, content);
+    if (!content.success) {
+        return new Response(
+            "Failed to compile device",
+            {
+                status: 500,
+                headers: {
+                    "content-type": "text/plain",
+                },
+            },
+        );
+    }
+    
+    await espHome.saveConfiguration(device_id, content.value);
 
     return new Response(
         "OK",
