@@ -41,8 +41,7 @@ export const compileDevice = async (device_id: string) => {
             result.logs.push({
                 type: "error",
                 path: file.path,
-                message: "Compiling file",
-                exception: e?.toString(),
+                message: `Error compiling file - ${e?.toString() ?? "no more info"}`,
             });
             return result;
         }
@@ -73,8 +72,7 @@ export const compileDevice = async (device_id: string) => {
             result.logs.push({
                 type: "error",
                 path: file.path,
-                message: "Compiling patch file",
-                exception: e?.toString(),
+                message: `Error compiling patch file - ${e?.toString() ?? "no more info"}`
             });
             return result;
         }
