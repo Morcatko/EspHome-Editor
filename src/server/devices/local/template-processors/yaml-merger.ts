@@ -79,9 +79,8 @@ export const mergeEspHomeYamlFiles = (yamls: TFileContent[]) => {
         } catch (e) {
             result.logs.push({
                 type: "error",
-                message: `Error merging file`,
-                path: yaml.path,
-                exception: e?.toString()
+                message: `Error merging file - ${e?.toString() ?? "no more info"}`,
+                path: yaml.path
             });
             return result;
         }

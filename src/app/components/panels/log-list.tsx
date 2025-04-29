@@ -23,18 +23,16 @@ export const LogList = (props: TProps) => {
                 <Table.Th style={{width: '28px'}}></Table.Th>
                 <Table.Th>Message</Table.Th>
                 <Table.Th>Path</Table.Th>
-                <Table.Th>Exception</Table.Th>
             </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
             {props.logs?.length === 0
-                ? <Table.Tr><Table.Td colSpan={5}>No logs</Table.Td></Table.Tr>
+                ? <Table.Tr><Table.Td colSpan={4}>No logs</Table.Td></Table.Tr>
                 : props.logs?.map((l, i) =>
                     <Table.Tr key={i}>
                         <Table.Td><LogIcon type={l.type} /></Table.Td>
                         <Table.Td>{l.message}</Table.Td>
                         <Table.Td>{l.path}</Table.Td>
-                        <Table.Td>{l.type === "error" ? l.exception : null}</Table.Td>
                     </Table.Tr>)
             }
         </Table.Tbody>

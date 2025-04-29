@@ -28,21 +28,11 @@ export type TDevice = TParent & {
     esphome_config: string;
 }
 
-
-type TLog_Info = {
-    type: "info",
+type TLog = {
+    type: "info" | "error",
     message: string,
     path: string,
-}
-
-type TLog_Error = {
-    type: "error",
-    message: string,
-    path: string,
-    exception?: string,
-}
-
-type TLog = TLog_Info | TLog_Error;
+};
 
 export type TOperationResult<TValue = any> = {
     success: boolean;
