@@ -1,8 +1,10 @@
+import type { TOperationResult } from "@/server/devices/types";
+
 export type TEditorFileProps = {
     query?: {
         pending: boolean;
         success: boolean;
-        logs: string[];
+        logs: TOperationResult["logs"]
     }
     value: string;
     language: string;
