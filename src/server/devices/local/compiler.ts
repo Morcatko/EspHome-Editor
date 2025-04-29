@@ -54,7 +54,7 @@ export const compileDevice = async (device_id: string) => {
     if (!mergeResult.success)
         return result;
     log.success("Merged compiled configurations", device_id);
-    
+
     const compiledPatches: TFileContent[] = [];
     for (const file of inputFiles.filter(i => i.info.type === "patch")) {
         try {
