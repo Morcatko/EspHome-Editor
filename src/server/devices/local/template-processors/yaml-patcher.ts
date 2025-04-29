@@ -47,9 +47,9 @@ export const test_patchYaml = (target: YAML.Document, path: string, changes: YAM
     return target;
 }
 
-export const patchEspHomeYaml = (target: YAML.Document, patches: string[]) => {
-    for (const patchString of patches) {
-        const patch = YAML.parseDocument(patchString, { intAsBigInt: true });
+export const patchEspHomeYaml = (target: YAML.Document, patches: TFileContent[]) => {
+    for (const patchJob of patches) {
+        const patch = YAML.parseDocument(patchJob.value, { intAsBigInt: true });
         const contents = patch.contents;
 
         if (!(isSeq(contents))) {

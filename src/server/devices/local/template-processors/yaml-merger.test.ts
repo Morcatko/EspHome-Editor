@@ -4,7 +4,7 @@ import { yamlParse } from "@/server/utils/yaml-utils";
 
 const _testMerge = (expectedYaml: string, ...yamls: string[]) => {
     const expected = yamlParse(expectedYaml);
-    const actual = mergeEspHomeYamlFiles(yamls);
+    const actual = mergeEspHomeYamlFiles(yamls.map(y => ({path: "x", value: y})));
     expect(actual.toString()).toEqual(expected.toString());
 }
 
