@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { TEditorFileProps } from "./types";
 import { TLocalFile, TLocalFileOrDirectory } from "@/server/devices/types";
 import { useDevice } from "../devices-store";
-import { queryToContent } from "./utils/query-utils";
+import { callResultToEditorFileProps } from "./utils/query-utils";
 import { getSourceMonacoLanguge, getTargetMonacoLanguage } from "@/app/utils/file-utils";
 
 const findFile = (fods: TLocalFileOrDirectory[], file_path: string): TLocalFile | null => {
@@ -22,14 +22,14 @@ const findFile = (fods: TLocalFileOrDirectory[], file_path: string): TLocalFile 
 }
 
 export const useLocalFile = (device_id: string, file_path: string) => {
-   const device = useDevice(device_id);
+    const device = useDevice(device_id);
     const file = findFile(device?.files ?? [], file_path)!;
     return file;
 }
 
 export const useLocalFileStore = (device_id: string, file_path: string) => {
     const file = useLocalFile(device_id, file_path);
-    
+
     const hasRightFile = (file?.language === "etajs") || (file?.language === "markdown");
 
     const leftQuery = useQuery({
@@ -66,23 +66,23 @@ export const useLocalFileStore = (device_id: string, file_path: string) => {
     });
 
     return {
-        leftEditor: <TEditorFileProps>{
-            value: queryToContent(leftQuery),
+        leftEditor: {
+            ...callResultToEditorFileProps(leftQuery),
             language: getSourceMonacoLanguge(file),
             onValueChange: (v) => leftMutation.mutate(v),
-        },
+        } satisfies TEditorFileProps,
         rightEditor: hasRightFile
-            ? <TEditorFileProps>{
-                value: queryToContent(rightQuery),
+            ? {
+                ...callResultToEditorFileProps(rightQuery),
                 language: getTargetMonacoLanguage(file),
-            }
+            } satisfies TEditorFileProps
             : null,
         testDataEditor: hasTestData
-            ? <TEditorFileProps>{
-                value: queryToContent(testDataQuery),
+            ? {
+                ...callResultToEditorFileProps(testDataQuery),
                 language: "json",
                 onValueChange: (v) => testDataMutation.mutate(v),
-            }
+            } satisfies TEditorFileProps
             : null,
     }
 };

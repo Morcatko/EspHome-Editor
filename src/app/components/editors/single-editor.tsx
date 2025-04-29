@@ -13,9 +13,9 @@ export const SingleEditor = (props: TSingleEditorProps) => {
 
     const { onMount } = useMonacoActions(props.device_id);
 
-    return <ContentLoadingWrapper value={props.value} >
+    return <ContentLoadingWrapper query={props.query} >
         <Editor
-            value={props.value.content}
+            value={props.value}
             onChange={(v) => props.onValueChange?.(v ?? "")}
             language={props.language}
             theme={theme}
