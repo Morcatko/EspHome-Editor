@@ -39,7 +39,6 @@ type TLog_Error = {
     type: "error",
     message: string,
     path: string,
-    data?: string,
     exception?: string,
 }
 

@@ -1,7 +1,7 @@
 import { TEditorFileProps } from "@/app/stores/panels-store/types";
 import { DiffEditor as MonacoDiffEditor } from "@monaco-editor/react";
 import { useMonacoTheme } from "./monaco/useMonacoTheme";
-import { ContentLoadingWrapper } from "./loading-wrappers";
+import { QueryWrapper } from "../panels/query-wrapper";
 import { useMonacoActions } from "./monaco/actions";
 
 type TProps = {
@@ -15,7 +15,7 @@ export const DiffEditor = (props: TProps) => {
 
     const { onMount } = useMonacoActions(props.device_id);
 
-    return <ContentLoadingWrapper query={props.leftEditor.query} query2={props.rightEditor.query} >
+    return <QueryWrapper query={props.leftEditor.query} query2={props.rightEditor.query} >
         <MonacoDiffEditor
             original={props.leftEditor.value}
             modified={props.rightEditor.value}
@@ -27,5 +27,5 @@ export const DiffEditor = (props: TProps) => {
                 readOnly: !!props.leftEditor.onValueChange,
             }}
         />
-    </ContentLoadingWrapper>;
+    </QueryWrapper>;
 };

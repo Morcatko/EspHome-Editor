@@ -81,8 +81,7 @@ export const mergeEspHomeYamlFiles = (yamls: TFileContent[]) => {
                 type: "error",
                 message: `Error merging yaml`,
                 path: yaml.path,
-                data: yaml.value,
-                exception: e?.toString(),
+                exception: e?.toString()
             });
             return result;
         }
