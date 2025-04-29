@@ -1,7 +1,7 @@
 import { TEditorFileProps } from "@/app/stores/panels-store/types";
 import { Editor } from "@monaco-editor/react";
 import { useMonacoTheme } from "./monaco/useMonacoTheme";
-import { ContentLoadingWrapper } from "./loading-wrappers";
+import { QueryWrapper } from "../panels/query-wrapper";
 import { useMonacoActions } from "./monaco/actions";
 
 type TSingleEditorProps = TEditorFileProps & {
@@ -13,7 +13,7 @@ export const SingleEditor = (props: TSingleEditorProps) => {
 
     const { onMount } = useMonacoActions(props.device_id);
 
-    return <ContentLoadingWrapper query={props.query} >
+    return <QueryWrapper query={props.query} >
         <Editor
             value={props.value}
             onChange={(v) => props.onValueChange?.(v ?? "")}
@@ -24,5 +24,5 @@ export const SingleEditor = (props: TSingleEditorProps) => {
                 readOnly: !props.onValueChange,
             }}
         />
-    </ContentLoadingWrapper>;
+    </QueryWrapper>;
 };
