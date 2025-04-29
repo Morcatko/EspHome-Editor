@@ -27,7 +27,7 @@ export const LogList = (props: TProps) => {
         </Table.Thead>
         <Table.Tbody>
             {props.logs?.length === 0
-                ? <Table.Tr><Table.Td colSpan={4}>No logs</Table.Td></Table.Tr>
+                ? <Table.Tr><Table.Td colSpan={4}>Something went wrong - No logs</Table.Td></Table.Tr>
                 : props.logs?.map((l, i) =>
                     <Table.Tr key={i}>
                         <Table.Td><LogIcon type={l.type} /></Table.Td>
