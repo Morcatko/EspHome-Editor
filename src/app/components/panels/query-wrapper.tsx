@@ -5,7 +5,7 @@ type TProps = {
     query2?: TEditorFileProps["query"];
     children: React.ReactNode;
 }
-export const ContentLoadingWrapper = (props: TProps) => {
+export const QueryWrapper = (props: TProps) => {
     if (props.query?.pending || props.query2?.pending)
         return <div>Loading...</div>;
     else if (!(props.query?.success ?? true) || !(props.query2?.success ?? true))
