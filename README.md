@@ -53,9 +53,8 @@ docker compose up -d
 
 Since this project is in an early stage, it has limited functionality and specific requirements:
 
-- The ESPHome instance must be accessible without authentication (i.e., Home Assistant add-on is not supported).
-- The Web UI does not support local file management.
-- ESPHome devices cannot be created directly from the Editor.
+- The ESPHome instance must be accessible without authentication.
+- The Web UI does support only basic local file management.
 
 See [Documentation](docs/index.md) for more info
 
