@@ -14,10 +14,10 @@
     "tasks": "npx tsx --env-file=.env.local ./tasks.mts"
   },
   "dependencies": {
-    "@mantine/core": "^7.16.2",
-    "@mantine/hooks": "^7.16.2",
-    "@mantine/modals": "^7.16.2",
-    "@mantine/notifications": "^7.16.2",
+    "@mantine/core": "^8.0.1",
+    "@mantine/hooks": "^8.0.1",
+    "@mantine/modals": "^8.0.1",
+    "@mantine/notifications": "^8.0.1",
     "@monaco-editor/react": "^4.6.0",
     "@primer/octicons-react": "^19.15.0",
     "@tanstack/react-query": "^5.62.16",
