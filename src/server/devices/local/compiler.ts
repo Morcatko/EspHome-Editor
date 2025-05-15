@@ -5,6 +5,7 @@ import { listDirEntries } from "@/server/utils/fs-utils";
 import { mergeEspHomeYamlFiles } from "./template-processors/yaml-merger";
 import { patchEspHomeYaml } from "./template-processors/yaml-patcher";
 import { TOperationResult } from "../types";
+import { ManifestUtils } from "./manifest-utils";
 
 export const compileDevice = async (device_id: string) => {
     log.debug("Compiling device", device_id);
@@ -26,6 +27,12 @@ export const compileDevice = async (device_id: string) => {
 
     const compiledYamls: TFileContent[] = [];
     for (const file of inputFiles.filter(i => i.info.type === "basic")) {
+        const isFileDisabled = await ManifestUtils.isPathDisabled(device_id, file.path);
+        if (isFileDisabled) {
+            log.debug("Skipping disabled file", file.path);
+            continue;
+        }
+
         try {
             compiledYamls.push({
                 path: file.path,
@@ -46,7 +53,7 @@ export const compileDevice = async (device_id: string) => {
             return result;
         }
     }
-    
+
     log.debug("Merging compiled configurations", device_id);
     const mergeResult = mergeEspHomeYamlFiles(compiledYamls);
     result.logs.push(...mergeResult.logs);
@@ -56,6 +63,12 @@ export const compileDevice = async (device_id: string) => {
 
     const compiledPatches: TFileContent[] = [];
     for (const file of inputFiles.filter(i => i.info.type === "patch")) {
+        const isFileDisabled = await ManifestUtils.isPathDisabled(device_id, file.path);
+        if (isFileDisabled) {
+            log.debug("Skipping disabled file", file.path);
+            continue;
+        }
+
         try {
             compiledPatches.push({
                 path: file.path,

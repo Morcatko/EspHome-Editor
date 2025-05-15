@@ -5,6 +5,7 @@ import { c } from "@/server/config";
 import { directoryExists, fileExists, listDirEntries } from "@/server/utils/fs-utils";
 import type { TDevice } from "../types";
 import { awaitArray, ensureDeviceDirExists, fixPath, getDeviceDir, getDevicePath, scanDirectory } from "./utils";
+import { ManifestUtils } from "./manifest-utils";
 
 export const getDevices = async (): Promise<TDevice[]> => {
     log.debug("Getting Local devices");
@@ -20,7 +21,7 @@ export const getDevices = async (): Promise<TDevice[]> => {
                 path: "",
                 name: d.name,
                 type: "device",
-                files: await scanDirectory(`${c.devicesDir}/${d.name}`, null),
+                files: await scanDirectory(d.name, `${c.devicesDir}/${d.name}`, null),
             } as TDevice;
         });
 
@@ -62,6 +63,7 @@ export const renameFile = async (device_id: string, path: string, newName: strin
     const newPath = join(parentDir, fixPath(newName));
     log.debug(`Renaming file '${oldPath}' to '${newName}'`);
     await fs.rename(oldPath, newPath);
+    await ManifestUtils.renameFile(device_id, path, newName);
 };
 
 export const deletePath = async (device_id: string, path: string) => {
@@ -70,8 +72,10 @@ export const deletePath = async (device_id: string, path: string) => {
     const stats = await fs.stat(fullPath);
     if (stats.isDirectory())
         await fs.rmdir(fullPath)
-    else
+    else {
         await fs.unlink(fullPath);
+        await ManifestUtils.deleteFile(device_id, path);
+    }
 }
 
 export const deleteDevice = async (device_id: string) => {
