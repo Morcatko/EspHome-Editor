@@ -1,6 +1,7 @@
 import { parse } from "@/server/yamlpath";
 import * as YAML from "yaml";
 import { isMap, isSeq } from "yaml";
+import { TOperationResult } from "../../types";
 
 const patchYaml = (target: YAML.Document, path: string, changes: YAML.YAMLMap[]) => {
     const nodesToChange = parse(target, path);
@@ -47,32 +48,63 @@ export const test_patchYaml = (target: YAML.Document, path: string, changes: YAM
     return target;
 }
 
-export const patchEspHomeYaml = (target: YAML.Document, patches: TFileContent[]) => {
-    for (const patchJob of patches) {
-        const patch = YAML.parseDocument(patchJob.value, { intAsBigInt: true });
-        const contents = patch.contents;
+export const tryPatchEspHomeYaml = (target: YAML.Document, patches: TFileContent[]) => {
+    const result: TOperationResult<YAML.Document<YAML.Node, true>> = {
+        success: false,
+        value: target,
+        logs: [],
+    };
 
-        if (!(isSeq(contents))) {
-            throw new Error("Document root must be YAMLSeq");
-        }
-        else {
-            for (const item of contents.items) {
-                if (!(isMap(item))) {
-                    throw new Error("Item must be YAMLMap");
+    try {
+        for (const patchJob of patches) {
+            try {
+                const patch = YAML.parseDocument(patchJob.value, { intAsBigInt: true });
+                const contents = patch.contents;
+
+                if (!(isSeq(contents))) {
+                    throw new Error("Document root must be YAMLSeq");
                 } else {
-                    const patch = item.items[0];
-                    if ((YAML.isPair(patch))
-                        && (isSeq(patch.value))) {
-                        const path = patch.key.toString();
-                        const patches = patch.value.items as YAML.YAMLMap[];
-                        patchYaml(target, path, patches);
-                    }
-                    else {
-                        throw new Error("Invalid patch format");
+                    for (const item of contents.items) {
+                        if (!(isMap(item))) {
+                            throw new Error("Item must be YAMLMap");
+                        } else {
+                            const patch = item.items[0];
+                            if ((YAML.isPair(patch))
+                                && (isSeq(patch.value))) {
+                                const path = patch.key.toString();
+                                const patches = patch.value.items as YAML.YAMLMap[];
+                                patchYaml(target, path, patches);
+                            }
+                            else {
+                                throw new Error("Invalid patch format");
+                            }
+                        }
                     }
                 }
+
+                result.logs.push({
+                    type: "info",
+                    message: `Patch applied successfully`,
+                    path: patchJob.path
+                });
+            } catch (e) {
+                result.logs.push({
+                    type: "error",
+                    message: `Error applying patch - ${e?.toString() ?? "no more info"}`,
+                    path: patchJob.path
+                });
+                return result;
             }
         }
+    } catch (e) {
+        result.logs.push({
+            type: "error",
+            message: `Error patching YAML - ${e?.toString() ?? "no more info"}`,
+            path: "",
+        });
+        return result;
     }
-    return target;
+
+    result.success = true;
+    return result;
 };

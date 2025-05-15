@@ -150,14 +150,14 @@ async function local_renameFoD(device: TDevice, fod: TLocalFileOrDirectory) {
 }
 
 async function local_toggleEnabled(device: TDevice, fod: TLocalFileOrDirectory) {
-    const enabled = fod.enabled
+    const disabled = fod.disabled
     await showToast(
         () => api.local_path_toggleEnabled(device.id, fod.path),
         [["devices"],
         ["device", device.id, "local"]],
-        enabled ? "Disabling..." : "Enabling...",
-        enabled ? "Disabled!" : "Enabled!",
-        enabled ? "Failed to Disable" : "Failed to Enable",
+        disabled ? "Enabling..." : "Disabling...",
+        disabled ? "Enabled!" : "Disabled!",
+        disabled ? "Failed to Enable" : "Failed to Disable"
     );
 }
 

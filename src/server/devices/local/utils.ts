@@ -4,6 +4,7 @@ import { c } from "@/server/config";
 import { directoryExists, listDirEntries } from "@/server/utils/fs-utils";
 import type { TLocalDirectory, TLocalFile, TLocalFileOrDirectory } from "../types";
 import { getFileInfo } from "./template-processors";
+import { ManifestUtils } from "./manifest-utils";
 
 export const getDeviceDir = (device_id: string) =>
     join(c.devicesDir, device_id);
@@ -27,7 +28,7 @@ export const awaitArray = async <T>(arr: Promise<T>[]): Promise<T[]> =>
         .filter((r) => r !== null)
         .map((r) => r as T);
 
-export const scanDirectory = async (fullPath: string, parentPath: string | null): Promise<TLocalFileOrDirectory[]> => {
+export const scanDirectory = async (device_id: string, fullPath: string, parentPath: string | null): Promise<TLocalFileOrDirectory[]> => {
     const resAsync =
         (await listDirEntries(fullPath, _ => true))
             .map(async (e) => {
@@ -38,16 +39,17 @@ export const scanDirectory = async (fullPath: string, parentPath: string | null)
                         name: e.name,
                         path: path,
                         type: "directory",
-                        files: await scanDirectory(`${fullPath}/${e.name}`, path),
+                        files: await scanDirectory(device_id, `${fullPath}/${e.name}`, path),
                     };
                 } else {
-                    if (e.name.endsWith(".testdata"))
+                    if (e.name.endsWith(".testdata") || (e.name == ManifestUtils.manifestFileName))
                         return null;
 
                     return <TLocalFile>{
                         id: e.name,
                         path: path,
                         name: e.name,
+                        disabled: await ManifestUtils.isPathDisabled(device_id, path),
                         language: getFileInfo(`${fullPath}/${e.name}`).language,
                         type: "file",
                     };

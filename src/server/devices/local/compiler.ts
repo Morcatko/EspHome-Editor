@@ -2,9 +2,10 @@ import { log } from "@/shared/log";
 import { getDeviceDir } from "./utils";
 import { compileFile, getFileInfo } from "./template-processors";
 import { listDirEntries } from "@/server/utils/fs-utils";
-import { mergeEspHomeYamlFiles } from "./template-processors/yaml-merger";
-import { patchEspHomeYaml } from "./template-processors/yaml-patcher";
+import { tryMergeEspHomeYamlFiles } from "./template-processors/yaml-merger";
+import { tryPatchEspHomeYaml } from "./template-processors/yaml-patcher";
 import { TOperationResult } from "../types";
+import { ManifestUtils } from "./manifest-utils";
 
 export const compileDevice = async (device_id: string) => {
     log.debug("Compiling device", device_id);
@@ -26,6 +27,12 @@ export const compileDevice = async (device_id: string) => {
 
     const compiledYamls: TFileContent[] = [];
     for (const file of inputFiles.filter(i => i.info.type === "basic")) {
+        const isFileDisabled = await ManifestUtils.isPathDisabled(device_id, file.path);
+        if (isFileDisabled) {
+            log.debug("Skipping disabled file", file.path);
+            continue;
+        }
+
         try {
             compiledYamls.push({
                 path: file.path,
@@ -46,9 +53,9 @@ export const compileDevice = async (device_id: string) => {
             return result;
         }
     }
-    
+
     log.debug("Merging compiled configurations", device_id);
-    const mergeResult = mergeEspHomeYamlFiles(compiledYamls);
+    const mergeResult = tryMergeEspHomeYamlFiles(compiledYamls);
     result.logs.push(...mergeResult.logs);
     if (!mergeResult.success)
         return result;
@@ -56,6 +63,12 @@ export const compileDevice = async (device_id: string) => {
 
     const compiledPatches: TFileContent[] = [];
     for (const file of inputFiles.filter(i => i.info.type === "patch")) {
+        const isFileDisabled = await ManifestUtils.isPathDisabled(device_id, file.path);
+        if (isFileDisabled) {
+            log.debug("Skipping disabled file", file.path);
+            continue;
+        }
+
         try {
             compiledPatches.push({
                 path: file.path,
@@ -79,10 +92,13 @@ export const compileDevice = async (device_id: string) => {
     }
 
     log.debug("Patching configuration", device_id);
-    const patchedYaml = patchEspHomeYaml(mergeResult.value, compiledPatches);
+    const patchResult = tryPatchEspHomeYaml(mergeResult.value, compiledPatches);
+    result.logs.push(...patchResult.logs);
+    if (!patchResult.success)
+        return result;
     log.success("Patched configuration", device_id);
-
-    result.value = patchedYaml.toString();
+    
+    result.value = patchResult.value.toString();
     result.success = true;
     return result;
 }

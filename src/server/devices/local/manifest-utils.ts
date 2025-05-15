@@ -56,10 +56,10 @@ async function togglePathEnabled(device_id: string, path: string) {
     await saveManifest(device_id, manifest);
 }
 
-async function isPathEnabled(device_id: string, path: string) {
+async function isPathDisabled(device_id: string, path: string) {
     const manifest = await loadManifest(device_id);
     path = fixPath(path);
-    return !manifest.files[path]?.disabled;
+    return !!(manifest.files[path]?.disabled);
 }
 
 export const ManifestUtils = {
@@ -67,5 +67,5 @@ export const ManifestUtils = {
     renameFile,
     deleteFile,
     togglePathEnabled,
-    isPathEnabled
+    isPathDisabled
 }
