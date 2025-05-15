@@ -60,30 +60,39 @@ const mergeEspHomeYamls = (target: YAML.Document, source: YAML.Document) => {
     });
 };
 
-export const mergeEspHomeYamlFiles = (yamls: TFileContent[]) => {
+export const tryMergeEspHomeYamlFiles = (yamls: TFileContent[]) => {
     const result: TOperationResult<YAML.Document<YAML.Node, true>> = {
         success: false,
         value: new YAML.Document(),
         logs: [],
     };
 
-    for (const yaml of yamls) {
-        try {
-            const yamlContent = yamlParse(yaml.value);
-            mergeEspHomeYamls(result.value, yamlContent);
-            result.logs.push({
-                type: "info",
-                message: `Merging file`, 
-                path: yaml.path,
-            });
-        } catch (e) {
-            result.logs.push({
-                type: "error",
-                message: `Error merging file - ${e?.toString() ?? "no more info"}`,
-                path: yaml.path
-            });
-            return result;
+    try {
+        for (const yaml of yamls) {
+            try {
+                const yamlContent = yamlParse(yaml.value);
+                mergeEspHomeYamls(result.value, yamlContent);
+                result.logs.push({
+                    type: "info",
+                    message: `Merging file`,
+                    path: yaml.path,
+                });
+            } catch (e) {
+                result.logs.push({
+                    type: "error",
+                    message: `Error merging file - ${e?.toString() ?? "no more info"}`,
+                    path: yaml.path
+                });
+                return result;
+            }
         }
+    } catch (e) {
+        result.logs.push({
+            type: "error",
+            message: `Error merging files - ${e?.toString() ?? "no more info"}`,
+            path: "",
+        });
+        return result;
     }
 
     result.success = true;
