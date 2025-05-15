@@ -81,6 +81,12 @@ export const tryPatchEspHomeYaml = (target: YAML.Document, patches: TFileContent
                         }
                     }
                 }
+
+                result.logs.push({
+                    type: "info",
+                    message: `Patch applied successfully`,
+                    path: patchJob.path
+                });
             } catch (e) {
                 result.logs.push({
                     type: "error",
