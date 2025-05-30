@@ -5,7 +5,7 @@ Editor for ESPHome is a self-hosted, open-source, offline code editor built on t
 See [Documentation](https://editor-4-esphome.github.io/) for more info and how to install
 
 <p align="center">
-<img title="Editor for ESPHome" src="./docs/docs/02-getting-started/screenshot.png" width="700px"></img>
+<img title="Editor for ESPHome" src="./docs/static/img/screenshot.png" width="700px"></img>
 </p>
 
 ## Roadmap (unordered)
