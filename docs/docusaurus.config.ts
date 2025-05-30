@@ -60,8 +60,11 @@ const config: Config = {
   ],
 
   themeConfig: {
-    // Replace with your project's social card
-    image: 'img/docusaurus-social-card.jpg',
+    colorMode: {
+      defaultMode: 'light',
+      disableSwitch: true,
+      respectPrefersColorScheme: true, // Respect user's color scheme preference
+    },
     navbar: {
       title: 'Editor for ESPHome',
       logo: {
