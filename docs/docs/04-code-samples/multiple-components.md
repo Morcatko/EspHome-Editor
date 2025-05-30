@@ -1,57 +1,8 @@
-# Code Samples
+# Multiple Components
 
-### Many Similar Devices
+PLC-like device with many identical inputs/outputs.
 
-You might have multiple devices with identical configurations, differing only by name (e.g., thermometers spread across your home).
-
-1. Create an `.eta` template shared by all devices.
-
-```yaml
-# .lib/my-device.eta
-esphome:
-  name: <%= it.name %>
-
-sensor:
-  - platform: dht
-    pin: D2
-    temperature:
-      name: "Temperature"
-    humidity:
-      name: "Humidity"
-    update_interval: <%= it.update_interval %>
-```
-
-2. Create a file for each device:
-
-```yaml
-# Living Room/index.eta
-<%~ include('../.lib/my-device', 
-{ 
-    name: 'Living Room', 
-    update_interval: '60s'
-}) %>
-
-# Kitchen/index.eta
-<%~ include('../.lib/my-device', 
-{ 
-    name: 'Kitchen', 
-    update_interval: '30s'
-}) %>
-
-# Bathroom/index.eta
-<%~ include('../.lib/my-device', 
-{ 
-    name: 'Bathroom', 
-    update_interval: '30s'
-}) %>
-```
-
-### Single Device with Many Similar Sensors
-
-You might have a PLC-like device with many identical inputs/outputs.
-
-```yaml
-# PLC/.lib/plc.eta
+```yaml title="PLC/.lib/plc.eta"
 <%- 
   const toHex = (number, digits) => number?.toString(16)?.padStart(digits, '0');
   const inputStartAddress = 0x00C0;
@@ -97,12 +48,9 @@ switch:
 <%_ } _%>
 ```
 
-```yaml
-# PLC/plc.eta
+```yaml title="PLC/plc.eta"
 <%~ include('./.lib/plc', { 
   outputs: 32,
   inputs: 32
 }) %>
 ```
-
-See the [examples](/examples) folder for more details. You can mount the `examples` folder in your `docker-compose.yaml` for testing and experimentation.
