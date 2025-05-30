@@ -1,2 +1,0 @@
-- [Code Samples](./code-samples.md)
-- [Development](./development.md)

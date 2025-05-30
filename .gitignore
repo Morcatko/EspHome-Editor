@@ -20,6 +20,9 @@ node_modules
 # production
 /build
 
+/docs/build
+/docs/.docusaurus
+
 # misc
 .DS_Store
 *.pem

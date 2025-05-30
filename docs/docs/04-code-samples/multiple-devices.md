@@ -1,6 +1,4 @@
-# Code Samples
-
-### Many Similar Devices
+# Multiple Devices
 
 You might have multiple devices with identical configurations, differing only by name (e.g., thermometers spread across your home).
 
@@ -30,14 +28,16 @@ sensor:
     name: 'Living Room', 
     update_interval: '60s'
 }) %>
-
+```
+```yaml
 # Kitchen/index.eta
 <%~ include('../.lib/my-device', 
 { 
     name: 'Kitchen', 
     update_interval: '30s'
 }) %>
-
+```
+```yaml
 # Bathroom/index.eta
 <%~ include('../.lib/my-device', 
 { 
@@ -104,5 +104,3 @@ switch:
   inputs: 32
 }) %>
 ```
-
-See the [examples](/examples) folder for more details. You can mount the `examples` folder in your `docker-compose.yaml` for testing and experimentation.
