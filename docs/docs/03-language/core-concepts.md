@@ -1,5 +1,5 @@
 ---
-sidebar_position: 1
+sidebar_position: 10
 ---
 # Core Concepts
 
@@ -64,4 +64,4 @@ flowchart LR
 ```
 ---
 
-Next up: Let’s look at how various features work.
+Next up: Let’s look at how to structure a project.
