@@ -8,7 +8,6 @@ slug: /
 import { BeakerIcon, CodeIcon, DownloadIcon, GitCompareIcon, LogIcon, UploadIcon } from "@primer/octicons-react";
 import { color_local, color_gray, color_esphome, color_online, color_offline } from "@site/../src/app/utils/const";
 
-**Editor for ESPHome** is a self-hosted, open-source, and fully offline code editor built specifically for working with [ESPHome](https://esphome.io) projects.
 
 **Editor for ESPHome** is a self-hosted, open-source, and fully offline code editor built specifically for working with  projects.
 
