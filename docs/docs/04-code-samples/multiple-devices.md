@@ -1,6 +1,6 @@
 # Multiple Devices
 
-You might have multiple devices with identical configurations, differing only by name (e.g., thermometers spread across your home).
+Multiple devices with identical configurations, differing only by name (e.g., thermometers spread across your home).
 
 1. Create an `.eta` template shared by all devices.
 

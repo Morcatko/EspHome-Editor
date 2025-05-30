@@ -84,7 +84,14 @@ const config: Config = {
       style: 'dark',
       links: [
         {
-          title: 'Docs',
+          items: [
+            {
+              label: 'Changelog',
+              href: 'https://github.com/Morcatko/EspHome-Editor/releases',
+            }
+          ],
+        },
+        {
           items: [
              {
               label: 'Docs GitHub',
@@ -93,17 +100,12 @@ const config: Config = {
           ],
         },
         {
-          title: 'Links',
-          items: [           
-            {
-              label: 'Editor 4 ESPHome',
-              href: 'https://github.com/Morcatko/EspHome-Editor',
-            },
+          items: [
             {
               label: 'HA Addon',
               href: 'https://github.com/Morcatko/ha-addons',
-            },
-          ],
+            }
+          ]
         },
       ],
       copyright: `Copyright © ${new Date().getFullYear()}. Built with Docusaurus.`,

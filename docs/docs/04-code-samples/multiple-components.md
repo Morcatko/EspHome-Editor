@@ -1,6 +1,6 @@
 # Multiple Components
 
-You might have a PLC-like device with many identical inputs/outputs.
+PLC-like device with many identical inputs/outputs.
 
 ```yaml title="PLC/.lib/plc.eta"
 <%- 
