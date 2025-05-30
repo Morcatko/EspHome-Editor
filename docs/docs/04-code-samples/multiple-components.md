@@ -2,8 +2,7 @@
 
 You might have a PLC-like device with many identical inputs/outputs.
 
-```yaml
-# PLC/.lib/plc.eta
+```yaml title="PLC/.lib/plc.eta"
 <%- 
   const toHex = (number, digits) => number?.toString(16)?.padStart(digits, '0');
   const inputStartAddress = 0x00C0;
@@ -49,8 +48,7 @@ switch:
 <%_ } _%>
 ```
 
-```yaml
-# PLC/plc.eta
+```yaml title="PLC/plc.eta"
 <%~ include('./.lib/plc', { 
   outputs: 32,
   inputs: 32

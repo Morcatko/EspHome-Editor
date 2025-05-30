@@ -15,26 +15,23 @@ const config: Config = {
     experimental_faster: true,
   },
 
-  // Set the production url of your site here
   url: 'https://editor-4-esphome.github.io',
-  // Set the /<baseUrl>/ pathname under which your site is served
-  // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
 
-  // GitHub pages deployment config.
-  // If you aren't using GitHub pages, you don't need these.
   githubHost: 'github-private',
-  organizationName: 'editor-4-esphome', // Usually your GitHub org/user name.
-  projectName: 'editor-4-esphome.github.io', // Usually your repo name.
-  deploymentBranch: 'main', // The branch that GitHub pages will deploy from.
-  trailingSlash: true, // Set to true if you want to add a trailing slash to all URLs.
+  organizationName: 'editor-4-esphome',
+  projectName: 'editor-4-esphome.github.io',
+  deploymentBranch: 'main',
+  trailingSlash: true,
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
 
-  // Even if you don't use internationalization, you can use this field to set
-  // useful metadata like html lang. For example, if your site is Chinese, you
-  // may want to replace "en" with "zh-Hans".
+  markdown: {
+    mermaid: true, // Enable Mermaid diagrams in markdown
+  },
+  themes: ['@docusaurus/theme-mermaid'],
+  
   i18n: {
     defaultLocale: 'en',
     locales: ['en'],
@@ -46,10 +43,8 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          routeBasePath: '/', // Set to '/' to have the docs at the root of the site
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          // editUrl: 'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+          routeBasePath: '/',
+          editUrl: 'https://github.com/Morcatko/EspHome-Editor/tree/main/docs/',
         },
         blog: false,
         theme: {

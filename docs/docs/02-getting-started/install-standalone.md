@@ -22,7 +22,7 @@ Create a folder to store editor device configurations (e.g. `/home/esphome-edito
 
 Create a docker-compose.yml file with the following content:
 
-```yaml
+```yaml title="docker-compose.yaml"
 name: editor-for-esphome
 services:
   editor-for-esphome:
