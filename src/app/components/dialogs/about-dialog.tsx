@@ -21,6 +21,6 @@ const AboutDialogContent = () => {
 }
 export const openAboutDialog = () =>
     modals.open({
-        title: "Editor for ESPHome",
+        title: <Anchor href="https://editor-4-esphome.github.io/" target="_blank">Editor for ESPHome</Anchor>,
         children: <AboutDialogContent />
     })
