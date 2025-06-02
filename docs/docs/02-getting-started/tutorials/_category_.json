@@ -1,0 +1,8 @@
+{
+  "label": "First Project",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "Let's try building your first configuration. This will help you understand how to create and manage devices in the Editor for ESPHome."
+  }
+}
