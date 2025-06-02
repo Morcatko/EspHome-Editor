@@ -1,5 +1,5 @@
 import React from "react";
-import { DockviewDefaultTab, DockviewReact, IDockviewPanelHeaderProps, IDockviewPanelProps, themeDark, themeLight } from "dockview-react";
+import { DockviewDefaultTab, DockviewReact, IDockviewHeaderActionsProps, IDockviewPanelHeaderProps, IDockviewPanelProps, themeDark, themeLight } from "dockview-react";
 import { LocalFilePanel, LocalFileToolbar } from "./panels/local-file-panel";
 import { LocalDevicePanel, LocalDeviceToolbar } from "./panels/local-device-panel";
 import { ESPHomeDevicePanel, ESPHomeDeviceToolbar } from "./panels/esphome-device-panel";
@@ -12,6 +12,8 @@ import { TPanelWithClick } from "../stores/panels-store/types";
 import { usePanelsStore } from "../stores/panels-store";
 import { useDarkTheme } from "@/app/utils/hooks";
 import { Onboarding } from "./onboarding";
+import { QuestionIcon } from "@primer/octicons-react";
+import { ActionIcon } from "@mantine/core";
 
 type TPanelProps = {
     toolbar: React.ReactNode;
@@ -85,6 +87,13 @@ const dockViewTabComponents = {
     }
 };
 
+const RightHeaderActions = (prop: IDockviewHeaderActionsProps) => {
+    return (<ActionIcon
+        renderRoot={(p) => <a {...p} style={{ ...p.style, height: "100%" }}href="https://editor-4-esphome.github.io/" target="_blank" />}
+        variant="subtle" >
+        <QuestionIcon /></ActionIcon>);
+};
+
 export const PanelsContainer = () => {
     const isDarkMode = useDarkTheme();
     const panelsStore = usePanelsStore();
@@ -95,5 +104,6 @@ export const PanelsContainer = () => {
         onReady={(e) => panelsStore.initApi(e.api)}
         components={dockViewComponents}
         tabComponents={dockViewTabComponents}
+        rightHeaderActionsComponent={RightHeaderActions}
     />;
 };
