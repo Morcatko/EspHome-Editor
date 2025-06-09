@@ -9,12 +9,12 @@ This modular approach makes it easy to manage, reuse, and tweak parts of your de
 
 ---
 
-## How Compilation Works
+### How Compilation Works
 
 Editor for ESPHome does **not** compile or flash firmware itself. Instead, it:
 
 1. **Assembles** your configuration files into a single YAML file
-2. **Connects** to your existing **ESPHome Dashboard**
+2. **Connects** to your existing **ESPHome Builder**
 3. **Uploads** the generated YAML file to ESPHome
 
 ESPHome then handles the actual compilation and firmware flashing, as usual.
@@ -36,7 +36,7 @@ ESPHome then handles the actual compilation and firmware flashing, as usual.
    The editor scans for any patch files, processes them, and applies them to the merged YAML to produce the final ESPHome-compatible configuration.
 
 5. **Upload to ESPHome**  
-   The final YAML is uploaded to your ESPHome Dashboard for compilation or flashing.
+   The final YAML is uploaded to your ESPHome Builder for compilation or flashing.
 
 :::tip
 You can enable or disable individual source/patch files in the UI to quickly test different configurations or features.
