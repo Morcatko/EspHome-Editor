@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Installation – Standalone Docker
 
-You can also run **Editor for ESPHome** as a standalone, self-hosted Docker app. It connects to your existing ESPHome dashboard and stores editor-specific device configurations separately.
+You can also run **Editor for ESPHome** as a standalone, self-hosted Docker app. It connects to your existing ESPHome Builder and stores editor-specific device configurations separately.
 
 ### Quick Demo
 
@@ -29,7 +29,7 @@ services:
     image: morcatko/esphome-editor:latest
     container_name: editor-for-esphome
     environment:
-      - ESPHOME_URL=http://192.168.0.99:6052         # Replace with your ESPHome dashboard URL
+      - ESPHOME_URL=http://192.168.0.99:6052         # Replace with your ESPHome Builder URL
     ports:
       - 8080:3000                                    # Change 8080 to any external port you prefer
     volumes:
