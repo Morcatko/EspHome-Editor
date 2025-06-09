@@ -21,7 +21,7 @@ const modifyFile = async (file: string, callback: (content: string) => string) =
 }
 
 const downloadEspHomeSchemas = async () => {
-    const fileList: any[] = await (await fetch("https://api.github.com/repos/esphome/dashboard/contents/schema")).json();
+    const fileList: any[] = await (await fetch("https://api.github.com/repos/esphome/esphome-schema/contents/schema?ref=release")).json();
 
     const targetRoot = "./public/esphome_schemas";
     await prepareDir(targetRoot);

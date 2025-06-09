@@ -1,6 +1,6 @@
 {
   "name": "editor-for-esphome",
-  "version": "0.18.0",
+  "version": "0.20.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -14,10 +14,10 @@
     "tasks": "npx tsx --env-file=.env.local ./tasks.mts"
   },
   "dependencies": {
-    "@mantine/core": "^7.16.2",
-    "@mantine/hooks": "^7.16.2",
-    "@mantine/modals": "^7.16.2",
-    "@mantine/notifications": "^7.16.2",
+    "@mantine/core": "^8.0.1",
+    "@mantine/hooks": "^8.0.1",
+    "@mantine/modals": "^8.0.1",
+    "@mantine/notifications": "^8.0.1",
     "@monaco-editor/react": "^4.6.0",
     "@primer/octicons-react": "^19.15.0",
     "@tanstack/react-query": "^5.62.16",
@@ -57,6 +57,5 @@
     "tailwindcss": "^4.0.0",
     "typescript": "^5",
     "vitest": "^3.0.1"
-  },
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+  }
 }

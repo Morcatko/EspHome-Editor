@@ -1,10 +1,10 @@
 import { expect, test } from "vitest";
-import { mergeEspHomeYamlFiles } from "./yaml-merger";
+import { tryMergeEspHomeYamlFiles } from "./yaml-merger";
 import { yamlParse } from "@/server/utils/yaml-utils";
 
 const _testMerge = (expectedYaml: string, ...yamls: string[]) => {
     const expected = yamlParse(expectedYaml);
-    const result = mergeEspHomeYamlFiles(yamls.map(y => ({path: "x", value: y})));
+    const result = tryMergeEspHomeYamlFiles(yamls.map(y => ({path: "x", value: y})));
     expect(result.success).toBeTruthy();
     expect(result.value.toString()).toEqual(expected.toString());
 }
