@@ -1,0 +1,259 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Shift Registers
+
+You can build a **PLC-like device** with many inputs and outputs using `74HC165` and `74HC595` shift registers. This is ideal for scenarios where you need dozens of GPIO pins for switches, sensors, or actuators, but have limited physical pins on your microcontroller.
+
+---
+
+## Goal
+
+We'll create a reusable **library file** using an `.eta` template to generate a customizable number of inputs and outputs.
+
+- The number of inputs and outputs will be the same for simplicity.
+- Binary sensors and switches will have auto-generated IDs using the pattern:  
+  `input_{chip_index}_{pin_index}` and `output_{chip_index}_{pin_index}`  
+  (e.g. `input_00_0`, `output_03_7`, etc.)
+- Some inputs will have customized names and automations
+---
+
+## Shift Registers Library
+
+Here's what the library file might look like:
+```yaml title="PLC/.lib/shift.eta" showLineNumbers
+<%-
+  const toDec = (number) => number?.toString(10)?.padStart(2, '0');
+  const pinToId = (chip, pin) => `${toDec(chip)}_${pin%8}`;
+-%>
+
+sn74hc165:
+  - id: sn74hc165_hub
+    data_pin: 9 
+    clock_pin: 11
+    load_pin: 10
+    sr_count: <%= it.count*2 %>
+
+binary_sensor:
+<%- for (var i_chip = 0; i_chip < it.count; i_chip++) { %>
+<%- for (var i_pin = 0; i_pin < 8; i_pin++) { %>
+  - platform: gpio
+    id: input_<%= pinToId(i_chip, i_pin) %>
+    pin:
+      sn74hc165: sn74hc165_hub
+      number: <%= i_chip*8 + i_pin %>
+      inverted: true
+<%- } %>
+<%- } %>
+
+sn74hc595:
+  - id: sn74hc595_hub
+    data_pin: 12
+    clock_pin: 13
+    latch_pin: 14
+    sr_count: <%= it.count %>
+
+switch:
+<%- for (var i_chip = 0; i_chip < it.count; i_chip++) { %>
+<%- for (var i_pin = 0; i_pin < 8; i_pin++) { %>
+  - platform: gpio
+    id: output_<%= pinToId(i_chip, i_pin) %>
+    pin:
+      sn74hc595: sn74hc595_hub
+      number: <%= i_chip*8 + i_pin %>
+<%- } %>
+<%- } %>
+```
+
+## Device Inputs/Outputs
+<Tabs>
+  <TabItem value="src" label="Source Code" defaults>
+  ```yaml title="PLC/IOs.eta"
+  <%~ include('./.lib/shift', { count: 8 }) %>
+  ```
+  </TabItem>
+  <TabItem value="tgt" label="Compiled Code">
+  ```yaml title="PLC"
+ 
+sn74hc165:
+  - id: sn74hc165_hub
+    data_pin: 9 
+    clock_pin: 11
+    load_pin: 10
+    sr_count: 2
+
+binary_sensor:
+  - platform: gpio
+    id: input_00_0
+    pin:
+      sn74hc165: sn74hc165_hub
+      number: 0
+      inverted: true
+  - platform: gpio
+    id: input_00_1
+    pin:
+      sn74hc165: sn74hc165_hub
+      number: 1
+      inverted: true
+  - platform: gpio
+    id: input_00_2
+    pin:
+      sn74hc165: sn74hc165_hub
+      number: 2
+      inverted: true
+  - platform: gpio
+    id: input_00_3
+    pin:
+      sn74hc165: sn74hc165_hub
+      number: 3
+      inverted: true
+  - platform: gpio
+    id: input_00_4
+    pin:
+      sn74hc165: sn74hc165_hub
+      number: 4
+      inverted: true
+  - platform: gpio
+    id: input_00_5
+    pin:
+      sn74hc165: sn74hc165_hub
+      number: 5
+      inverted: true
+  - platform: gpio
+    id: input_00_6
+    pin:
+      sn74hc165: sn74hc165_hub
+      number: 6
+      inverted: true
+  - platform: gpio
+    id: input_00_7
+    pin:
+      sn74hc165: sn74hc165_hub
+      number: 7
+      inverted: true
+
+sn74hc595:
+  - id: sn74hc595_hub
+    data_pin: 12
+    clock_pin: 13
+    latch_pin: 14
+    sr_count: 1
+
+switch:
+  - platform: gpio
+    id: output_00_0
+    pin:
+      sn74hc595: sn74hc595_hub
+      number: 0
+  - platform: gpio
+    id: output_00_1
+    pin:
+      sn74hc595: sn74hc595_hub
+      number: 1
+  - platform: gpio
+    id: output_00_2
+    pin:
+      sn74hc595: sn74hc595_hub
+      number: 2
+  - platform: gpio
+    id: output_00_3
+    pin:
+      sn74hc595: sn74hc595_hub
+      number: 3
+  - platform: gpio
+    id: output_00_4
+    pin:
+      sn74hc595: sn74hc595_hub
+      number: 4
+  - platform: gpio
+    id: output_00_5
+    pin:
+      sn74hc595: sn74hc595_hub
+      number: 5
+  - platform: gpio
+    id: output_00_6
+    pin:
+      sn74hc595: sn74hc595_hub
+      number: 6
+  - platform: gpio
+    id: output_00_7
+    pin:
+      sn74hc595: sn74hc595_hub
+      number: 7
+  ```
+  </TabItem>
+</Tabs>
+
+With just a few lines of templated code, we’ve generated 80 binary sensors and 80 switches. This dramatically reduces boilerplate and makes your configuration scalable and maintainable.
+
+## YAML Patch
+:::warning
+This feature is experimental and may change in future versions.
+:::
+
+When you use templates to generate components (like a large batch of sensors or switches), the result is fast — but not always flexible. For example, you can't easily change individual names, add automations, or customize behavior per input/output.
+
+That’s where **YAML Patch** comes in.
+
+
+YAML Patch lets you **modify specific parts of the generated YAML** before it's uploaded to ESPHome. It acts as a post-processing step — targeting nodes by their IDs and applying changes to them.
+
+You can patch:
+
+- The `name` or ay other property of a component
+- Add `on_press`, `on_click`, or other automation triggers
+- Override default options
+- Add device-specific settings
+
+
+Let’s say you want to change the name of the binary sensor with ID `input_03_2`. You can patch that — and multiple other components — in the same file:
+
+<Tabs>
+  <TabItem value="src" label="Source Code" defaults>
+```yaml PLC/names.patch.yaml showLineNumbers
+- $.switch[?(@.id=="output_01_2")]:
+    - set:
+        name: "Ceiling light"
+- $.binary_sensor[?(@.id=="input_05_1")]:
+    - set:
+        name: "Wall button"
+    - set:
+        on_state:
+            then:
+                - switch.toggle: output_01_2
+```
+  </TabItem>
+  <TabItem value="tgt" label="Compiled Code">
+
+```yaml
+...
+  - platform: gpio
+    id: output_01_2
+    pin:
+      sn74hc595: sn74hc595_hub
+      number: 10
+    // highlight-next-line
+    name: "Ceiling light"
+...
+  - platform: gpio
+    id: input_05_1
+    pin:
+      sn74hc165: sn74hc165_hub
+      number: 41
+      inverted: true
+    // highlight-start
+    name: "Wall button"
+    on_state:
+      then:
+        - switch.toggle: output_01_2
+    // highlight-end
+...
+```
+</TabItem>
+</Tabs>
+
+How It Works
+1. All YAMLs are generated as usual.
+1. Editor 4 ESPHome scans the device directory for `.patch` files.
+1. Each patch file is applied to the device YAML config.
+1. The final YAML is assembled.
