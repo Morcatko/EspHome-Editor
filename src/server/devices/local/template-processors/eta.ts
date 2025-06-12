@@ -8,6 +8,7 @@ export const processTemplate_eta = (filePath: string, testData: string | null) =
         cache: true, 
         debug: false, 
         rmWhitespace: false, 
+        autoEscape: false,
         autoTrim: false })
     
     const output = eta.render(
