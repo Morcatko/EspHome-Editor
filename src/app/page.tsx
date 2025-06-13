@@ -21,11 +21,10 @@ const devicesPanel: TPanel = {
 };
 
 const Header = () => {
-	const panelsStore = usePanelsStore();
-	return <a href="#" onClick={() => panelsStore.addPanel({ operation: "onboarding", step: "home" })}>
+	return <>
 		<Image className="inline mr-2 align-middle" src={logo} alt="ESPHome Editor" width="32" height="32" />
 		<h4 className="inline-block align-baseline text-slate-600 dark:text-slate-400 m-0 font-semibold" >Editor for ESPHome</h4>
-	</a>
+	</>
 }
 
 const CollapseButton = () => {

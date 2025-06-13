@@ -11,9 +11,9 @@ import { DevicesPanel } from "./panels/devices-panel";
 import { TPanelWithClick } from "../stores/panels-store/types";
 import { usePanelsStore } from "../stores/panels-store";
 import { useDarkTheme } from "@/app/utils/hooks";
-import { Onboarding } from "./onboarding";
 import { QuestionIcon } from "@primer/octicons-react";
 import { ActionIcon } from "@mantine/core";
+import { Watermark } from "./watermark";
 
 type TPanelProps = {
     toolbar: React.ReactNode;
@@ -67,8 +67,6 @@ const dockViewComponents = {
                 return <Panel
                     toolbar={<EspHomeLogToolbar device_id={panel.device_id} lastClick={panel.last_click} />}
                     panel={<EspHomeLogPanel device_id={panel.device_id} lastClick={panel.last_click} />} />;
-            case "onboarding":
-                return <Onboarding panel={panel} />;
             default:
                 return <div>Noting selected</div>;
         }
@@ -79,8 +77,6 @@ const dockViewTabComponents = {
     default: (p: IDockviewPanelHeaderProps<TPanelWithClick>) => {
         const panel = p.params;
         switch (panel.operation) {
-            case "onboarding":
-                return <DockviewDefaultTab {...p} hideClose />;
             default:
                 return <DockviewDefaultTab {...p} />;
         }
@@ -100,9 +96,10 @@ export const PanelsContainer = () => {
 
     return <DockviewReact
         theme={isDarkMode ? themeDark : themeLight}
-        className="absolute h-full w-full"
+        className="h-full w-full"
         onReady={(e) => panelsStore.initApi(e.api)}
         components={dockViewComponents}
+        watermarkComponent={Watermark}
         tabComponents={dockViewTabComponents}
         rightHeaderActionsComponent={RightHeaderActions}
     />;
