@@ -39,18 +39,20 @@ export const deviceMenuItems = (ds: ReturnType<typeof useDevicesStore>, d: TDevi
     <MenuItem key="en" label="Delete..." icon={<XIcon />} onClick={() => ds.device_delete(d)} />,
 ]
 
-export const fodMenuItems = (ds: ReturnType<typeof useDevicesStore>, d: TDevice, fod: TLocalFileOrDirectory) => [
+export const fodMenuItems = (ds: ReturnType<typeof useDevicesStore>, d: TDevice, fod: TLocalFileOrDirectory, parentDisabled: boolean) => [
     ...(fod.type === "directory"
         ? [
             <MenuItem key="nf" label="New File..." icon={<FileCodeIcon />} onClick={() => ds.localDevice_addFile(d, fod.path)} />,
             <MenuItem key="nd" label="New Folder..." icon={<FileDirectoryIcon />} onClick={() => ds.localDevice_addDirectory(d, fod.path)} />,
+            <Menu.Divider key="did" />
         ]
         : []),
-    ...(fod.type === "file"
-        ? [
-            <MenuItem key="en" label="Enable/Disable..." icon={<CircleSlashIcon />} onClick={() => ds.local_toggleEnabled(d, fod)} />,
-        ]: []),
-    <Menu.Divider key="di" />,
+    ...parentDisabled
+        ? []
+        : [
+            <MenuItem key="en" label={fod.disabled ? "Enable..." : "Disable..."} icon={<CircleSlashIcon />} onClick={() => ds.local_toggleEnabled(d, fod)} />,
+            <Menu.Divider key="di" />,
+        ],
     <MenuItem key="rn" label="Rename..." icon={<PencilIcon />} onClick={() => ds.local_renameFoD(d, fod)} />,
     <MenuItem key="dl" label="Delete..." icon={<XIcon />} onClick={() => ds.local_deleteFoD(d, fod)} />,
 ];
