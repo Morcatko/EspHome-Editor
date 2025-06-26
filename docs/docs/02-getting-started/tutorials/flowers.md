@@ -16,6 +16,7 @@ In this step we will write a shared configuration template for all the plants. T
     - Add the folowing code to the file (Source panel)
 ```yaml showLineNumbers .lib/demo-flowe-template.eta
 esphome:
+// highlight-next-line
   name: <%= it.name %>
 
 esp32:
@@ -46,9 +47,11 @@ sensor:
         - 0 -> 0.0
         - 1.5 -> 100.0
     on_value_range:
+    // highlight-next-line
       - below: <%= it.moisture_limit %>
         then:
           - switch.turn_on: relay
+          // highlight-next-line
       - above: <%= it.moisture_limit %>
         then:
           - switch.turn_off: relay
