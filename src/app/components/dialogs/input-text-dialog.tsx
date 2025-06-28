@@ -5,6 +5,7 @@ type TDialogProps = {
   title: string;
   subtitle: string;
   defaultValue: string;
+  placeholder?: string;
 }
 export const openInputTextDialog = (props: TDialogProps) =>
   new Promise<string | null>((res) => {
@@ -16,6 +17,7 @@ export const openInputTextDialog = (props: TDialogProps) =>
         <TextInput
           data-autofocus
           defaultValue={props.defaultValue}
+          placeholder={props.placeholder}
           onChange={(e) => value = e.target.value}
           onKeyDown={(e) => { if (e.key === 'Enter') { modals.close(modalId); res(value); } }} />
       </>,
@@ -43,6 +45,7 @@ export const openCreateFileDialog = (props: TCreateFileDialogProps) =>
           <TextInput
             data-autofocus
             className='flex-1'
+            placeholder={props.placeholder ?? "Enter file name"}
             defaultValue={props.defaultValue}
             onChange={(e) => fileName = e.target.value}
             onKeyDown={(e) => { if (e.key === 'Enter') { modals.close(modalId); onConfirm(); } }} />
