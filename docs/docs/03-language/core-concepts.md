@@ -39,7 +39,7 @@ ESPHome then handles the actual compilation and firmware flashing, as usual.
    The final YAML is uploaded to your ESPHome Builder for compilation or flashing.
 
 :::tip
-You can enable or disable individual source/patch files in the UI to quickly test different configurations or features.
+You can [enable or disable individual files](./alternates.md) to quickly test different configurations or features.
 :::
 
 ---

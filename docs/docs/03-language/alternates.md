@@ -12,6 +12,10 @@ This is useful for:
 - Toggling optional features (e.g., presence sensor vs. no sensor)
 - Quickly testing new functionality without changing core templates
 
+:::warning
+This feature is currently in development and might change slightly in final version
+:::
+
 ---
 
 ## How It Works
