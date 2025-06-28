@@ -86,10 +86,10 @@ const nodeRenderer = (p: RenderTreeNodePayload) => {
                 menuItems={deviceMenuItems(devicesStore, node.device)} >
                 <span className="font-semibold">{node.label}</span>
             </Node>
-        case "directory": 
-        return <Node
+        case "directory":
+            return <Node
                 nodePayload={p}
-                disabled={node.parentDisabled ||node.fod.disabled}
+                disabled={node.parentDisabled || node.fod.disabled}
                 icon={<FileDirectoryIcon />}
                 menuItems={fodMenuItems(devicesStore, node.device, node.fod, node.parentDisabled)}>
                 {node.label}
@@ -112,7 +112,7 @@ const nodeRenderer = (p: RenderTreeNodePayload) => {
 
 export const DevicesTree = () => {
     const devicesStore = useDevicesStore();
-    
+
     const tree = useTree({
         initialExpandedState: devicesStore.expanded.expanded,
         onNodeExpand: (node) => devicesStore.expanded.set(node, true),
