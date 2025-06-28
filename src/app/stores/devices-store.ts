@@ -69,7 +69,7 @@ async function localDevice_addDirectory(device: TDevice, parent_path: string) {
     const directory_name = await openInputTextDialog({
         title: "Create New Directory",
         subtitle: `${device.name} - ${parent_path}/`,
-        defaultValue: "new directory",
+        defaultValue: "",
     });
 
     if (directory_name)

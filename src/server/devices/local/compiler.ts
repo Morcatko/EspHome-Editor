@@ -1,11 +1,38 @@
 import { log } from "@/shared/log";
-import { getDeviceDir } from "./utils";
+import {  getDevicePath } from "./utils";
 import { compileFile, getFileInfo } from "./template-processors";
 import { listDirEntries } from "@/server/utils/fs-utils";
 import { tryMergeEspHomeYamlFiles } from "./template-processors/yaml-merger";
 import { tryPatchEspHomeYaml } from "./template-processors/yaml-patcher";
 import { TOperationResult } from "../types";
 import { ManifestUtils } from "./manifest-utils";
+import { join } from "path";
+
+async function listRecursiveFiles(device_id: string, relative_path: string): Promise<string[]> {
+    const result: string[] = [];
+    const entries = await listDirEntries(
+        getDevicePath(device_id, relative_path),
+        relative_path
+            ? undefined
+            : (p) => (p.isDirectory() && p.name !== ".lib")
+            || (p.isFile() && p.name !== ManifestUtils.manifestFileName)
+        );
+
+    for (const entry of entries) {
+        const path = join(relative_path, entry.name);
+
+        if (!await ManifestUtils.isPathDisabled(device_id, path)) {
+            if (entry.isDirectory()) {
+                const subFiles = await listRecursiveFiles(device_id, path);
+                result.push(...subFiles);
+            } else if (entry.isFile()) {
+                result.push(path);
+            }
+        }
+    }
+
+    return result;
+}
 
 export const compileDevice = async (device_id: string) => {
     log.debug("Compiling device", device_id);
@@ -16,14 +43,13 @@ export const compileDevice = async (device_id: string) => {
         logs: [],
     };
 
-    const deviceDirectory = getDeviceDir(device_id);
+    const files = await listRecursiveFiles(device_id, '');
+    const inputFiles = files.map(f => ({
+        path: f,
+        info: getFileInfo(f)
+    }));
 
-    const fileEntries = await listDirEntries(deviceDirectory, (e) => e.isFile());
-    const inputFiles = fileEntries
-        .map(f => ({
-            path: f.name,
-            info: getFileInfo(f.name)
-        }));
+    console.log("Input files", inputFiles);
 
     const compiledYamls: TFileContent[] = [];
     for (const file of inputFiles.filter(i => i.info.type === "basic")) {
@@ -97,7 +123,7 @@ export const compileDevice = async (device_id: string) => {
     if (!patchResult.success)
         return result;
     log.success("Patched configuration", device_id);
-    
+
     result.value = patchResult.value.toString();
     result.success = true;
     return result;
