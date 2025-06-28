@@ -86,7 +86,7 @@ async function localDevice_addFile(device: TDevice, parent_path: string) {
     const file_name = await openCreateFileDialog({
         title: "Create New File",
         subtitle: `${device.name} - ${parent_path}/`,
-        defaultValue: "newfile",
+        defaultValue: "",
         defaultExtension: ".yaml",
     });
     if (file_name) {
