@@ -52,7 +52,8 @@ async function localDevice_create() {
     const device_name = await openInputTextDialog({
         title: "Add New Device",
         subtitle: "Enter Device Name",
-        defaultValue: "new-device",
+        placeholder: "Enter device name",
+        defaultValue: "",
     });
 
     if (device_name)
@@ -69,7 +70,8 @@ async function localDevice_addDirectory(device: TDevice, parent_path: string) {
     const directory_name = await openInputTextDialog({
         title: "Create New Directory",
         subtitle: `${device.name} - ${parent_path}/`,
-        defaultValue: "new directory",
+        defaultValue: "",
+        placeholder: "Enter directory name",
     });
 
     if (directory_name)
@@ -86,7 +88,7 @@ async function localDevice_addFile(device: TDevice, parent_path: string) {
     const file_name = await openCreateFileDialog({
         title: "Create New File",
         subtitle: `${device.name} - ${parent_path}/`,
-        defaultValue: "newfile",
+        defaultValue: "",
         defaultExtension: ".yaml",
     });
     if (file_name) {
@@ -128,7 +130,8 @@ async function local_renameFoD(device: TDevice, fod: TLocalFileOrDirectory) {
     const newName = await openInputTextDialog({
         title: "Rename",
         subtitle: `${device.name} - ${fod.path}`,
-        defaultValue: fod.name,
+        defaultValue: '',
+        placeholder: "Enter new name",
     });
 
     if (newName) {
