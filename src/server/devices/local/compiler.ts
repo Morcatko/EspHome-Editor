@@ -97,7 +97,7 @@ export const compileDevice = async (device_id: string) => {
     if (!patchResult.success)
         return result;
     log.success("Patched configuration", device_id);
-    
+
     result.value = patchResult.value.toString();
     result.success = true;
     return result;
