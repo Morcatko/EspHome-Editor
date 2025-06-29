@@ -14,8 +14,8 @@ export const fileExists = directoryExists;
 
 export async function listDirEntries(
   path: string,
-  predicate: (item: Dirent) => boolean | Promise<boolean>,
+  predicate?: (item: Dirent) => boolean | Promise<boolean>,
 ) {
   const dirs = await fs.readdir(path, { withFileTypes: true });
-  return dirs.filter(predicate);
+  return predicate ? dirs.filter(predicate) : dirs;
 }
