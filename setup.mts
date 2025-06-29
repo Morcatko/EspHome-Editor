@@ -21,6 +21,7 @@ const modifyFile = async (file: string, callback: (content: string) => string) =
 }
 
 const downloadEspHomeSchemas = async () => {
+    console.log("Downloading EspHome schema files...");
     const fileList: any[] = await (await fetch("https://api.github.com/repos/esphome/esphome-schema/contents/schema?ref=release")).json();
 
     const targetRoot = "./public/esphome_schemas";
@@ -29,10 +30,11 @@ const downloadEspHomeSchemas = async () => {
     const promises = fileList.map((file) => downloadFile(file.download_url, `${targetRoot}/${file.name}`));
 
     await Promise.all(promises)
-    console.log(`Downloaded ${promises.length} EspHome schema files`);
+    console.log(` Done. ${promises.length} files`);
 }
 
 const downloadEspHomeMonacoFiles = async () => {
+    console.log("Downloading EspHome Monaco-Editor files...");
     const downloadSrcEditor = async (fileName: string) =>
         downloadFile(`https://raw.githubusercontent.com/esphome/dashboard/main/src/editor/${fileName}`, `${targetRoot}/${fileName}`);
     
@@ -53,7 +55,7 @@ const downloadEspHomeMonacoFiles = async () => {
         .map((file) => downloadSrcEditor(file));
         
     await Promise.all(promises)
-       console.log(`Downloaded ${promises.length} EspHome Monaco-Editor files`);
+       console.log(` Done. ${promises.length} files`);
 
     await modifyFile(`${targetRoot}/editor-shims.ts`, (content) =>
             content.replace("static/schema/${name}.json", "./esphome_schemas/${name}.json")
