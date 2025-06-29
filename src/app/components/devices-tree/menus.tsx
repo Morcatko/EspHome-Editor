@@ -44,11 +44,13 @@ export const fodMenuItems = (ds: ReturnType<typeof useDevicesStore>, d: TDevice,
         ? [
             <MenuItem key="nf" label="New File..." icon={<FileCodeIcon />} onClick={() => ds.localDevice_addFile(d, fod.path)} />,
             <MenuItem key="nd" label="New Folder..." icon={<FileDirectoryIcon />} onClick={() => ds.localDevice_addDirectory(d, fod.path)} />,
-            <Menu.Divider key="did" />
         ]
         : []),
-    <MenuItem key="en" label="Enable/Disable..." icon={<CircleSlashIcon />} onClick={() => ds.local_toggleEnabled(d, fod)} />,
-    <Menu.Divider key="dif" />,
+    ...(fod.type === "file"
+        ? [
+            <MenuItem key="en" label="Enable/Disable..." icon={<CircleSlashIcon />} onClick={() => ds.local_toggleEnabled(d, fod)} />,
+        ]: []),
+    <Menu.Divider key="di" />,
     <MenuItem key="rn" label="Rename..." icon={<PencilIcon />} onClick={() => ds.local_renameFoD(d, fod)} />,
     <MenuItem key="dl" label="Delete..." icon={<XIcon />} onClick={() => ds.local_deleteFoD(d, fod)} />,
 ];

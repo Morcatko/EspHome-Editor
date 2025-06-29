@@ -89,7 +89,6 @@ const nodeRenderer = (p: RenderTreeNodePayload) => {
         case "directory": 
             return <Node
                 nodePayload={p}
-                disabled={node.fod.disabled}
                 icon={<FileDirectoryIcon />}
                 menuItems={fodMenuItems(devicesStore, node.device, node.fod)}>
                 {node.label}
