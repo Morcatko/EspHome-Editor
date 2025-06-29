@@ -47,11 +47,11 @@ export const scanDirectory = async (device_id: string, fullPath: string, parentP
 
                     return <TLocalFile>{
                         id: e.name,
-                        path: path,
                         name: e.name,
+                        path: path,
+                        type: "file",
                         disabled: await ManifestUtils.isPathDisabled(device_id, path),
                         language: getFileInfo(`${fullPath}/${e.name}`).language,
-                        type: "file",
                     };
                 }
             });
