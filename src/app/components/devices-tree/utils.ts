@@ -18,15 +18,17 @@ export type TreeNodeType = TreeNodeData & ({
     type: "directory"
     device: TDevice;
     fod: TLocalDirectory
+    parentDisabled: boolean;
 } | {
     type: "directory_empty"
 } | {
     type: "file"
     device: TDevice;
     fod: TLocalFile;
+    parentDisabled: boolean;
 });
 
-const mapFiles = (parentId: string, device: TDevice, files: TLocalFileOrDirectory[] | null): TreeNodeType[] => {
+const mapFiles = (parentId: string, device: TDevice, files: TLocalFileOrDirectory[] | null, parentDisabled: boolean): TreeNodeType[] => {
     if (!files || files.length === 0)
         return [{
         type: "directory_empty",
@@ -43,7 +45,8 @@ const mapFiles = (parentId: string, device: TDevice, files: TLocalFileOrDirector
             label: f.name,
             device: device,
             fod: isDir ? (f as TLocalDirectory) : (f as TLocalFile),
-            children: isDir ? mapFiles(id, device, f.files) : []
+            parentDisabled: parentDisabled,
+            children: isDir ? mapFiles(id, device, f.files, parentDisabled || f.disabled) : []
         };
     });
 }
@@ -67,7 +70,7 @@ export const useTreeData = () => {
                             value: `${d.id}/__toolbar__`,
                             label: "Toolbar"
                         }]
-                    children.push(...mapFiles(d.id, d, d.files));
+                    children.push(...mapFiles(d.id, d, d.files, false));
 
                     return {
                         value: d.id,

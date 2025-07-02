@@ -86,20 +86,21 @@ const nodeRenderer = (p: RenderTreeNodePayload) => {
                 menuItems={deviceMenuItems(devicesStore, node.device)} >
                 <span className="font-semibold">{node.label}</span>
             </Node>
-        case "directory": 
+        case "directory":
             return <Node
                 nodePayload={p}
+                disabled={node.parentDisabled || node.fod.disabled}
                 icon={<FileDirectoryIcon />}
-                menuItems={fodMenuItems(devicesStore, node.device, node.fod)}>
+                menuItems={fodMenuItems(devicesStore, node.device, node.fod, node.parentDisabled)}>
                 {node.label}
             </Node>;
         case "file":
             return <Node
                 nodePayload={p}
-                disabled={node.fod.disabled}
+                disabled={node.parentDisabled || node.fod.disabled}
                 icon={<div className="opacity-55"><FileIcon fod={node.fod} /></div>}
                 onClick={(e) => panels.addDevicePanel(((e as any).button === 1) ? "new_window" : "default", node.device.id, "local_file", node.fod.path)}
-                menuItems={fodMenuItems(devicesStore, node.device, node.fod)}
+                menuItems={fodMenuItems(devicesStore, node.device, node.fod, node.parentDisabled)}
             >
                 {node.label}
             </Node>;
@@ -111,7 +112,7 @@ const nodeRenderer = (p: RenderTreeNodePayload) => {
 
 export const DevicesTree = () => {
     const devicesStore = useDevicesStore();
-    
+
     const tree = useTree({
         initialExpandedState: devicesStore.expanded.expanded,
         onNodeExpand: (node) => devicesStore.expanded.set(node, true),
