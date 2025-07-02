@@ -1,10 +1,10 @@
 ---
-sidebar_position: 50
+sidebar_position: 30
 ---
 
-# Alternates
+# Disable Source File/Folder
 
-The **Alternates** feature lets you define and switch between different versions (or _variants_) of a device configuration — without duplicating your entire ESPHome YAML setup.
+This feature lets you define and switch between different versions (or _variants_) of a device configuration — without duplicating your entire ESPHome YAML setup.
 
 This is useful for:
 
@@ -20,7 +20,7 @@ This feature is currently in development and might change slightly in final vers
 
 ## How It Works
 
-Alternates are implemented by enabling or disabling specific **files** or **folders** in the configuration. Only enabled files are included in the final YAML output.
+Disabling a file/fodler will remove it from compilation pipeline. Only enabled files are included in the final YAML output.
 
 - You can organize variants in subfolders like `v1`, `v2`, `with_sensor`, `no_sensor`, etc.
 - The editor UI lets you toggle these alternates on or off with a few clicks.
@@ -38,7 +38,7 @@ In this setup:
 
 ---
 
-### Using Alternates in the UI
+### Disabling a File/Folder in the UI
 
 In the device editor:
 
@@ -52,17 +52,16 @@ In the device editor:
 ### Best Practices
 
 - Use clear folder names like `v1`, `with_lights`, `test_mode`, etc.
-- Keep alternates modular — isolate them by feature or condition.
+- Keep folders modular — isolate them by feature or condition.
 - Avoid overlapping IDs between alternate files unless intentionally overridden.
-- Combine alternates with [YAML Patch](./yaml-patch.md) to fine-tune variations.
 
 ---
 
 ### Limitations
 
-- Alternates work at the file/folder level — you can’t selectively enable just part of a file.
+- This feature works at the file/folder level — you can’t selectively enable just part of a file.
 - Only one version of a file with the same ID should be active at once to avoid conflicts.
 
 ---
 
-Alternates are a simple but powerful way to manage multiple configurations without copy-pasting entire YAMLs.
+This is a simple but powerful way to manage multiple configurations without copy-pasting entire YAMLs.
