@@ -9,7 +9,7 @@ import { BeakerIcon, CodeIcon, DownloadIcon, GitCompareIcon, LogIcon, UploadIcon
 import { color_local, color_gray, color_esphome, color_online, color_offline } from "@site/../src/app/utils/const";
 
 
-**Editor for ESPHome** is a self-hosted, open-source, and fully offline code editor built specifically for working with  projects.
+**Editor for ESPHome** is a self-hosted, open-source, and fully offline code editor built specifically for working with complex projects.
 
 It simplifies the process of configuring ESPHome devices by providing an intuitive interface for writing, editing, and managing YAML configuration files — especially those with repetitive or complex sections.
 
