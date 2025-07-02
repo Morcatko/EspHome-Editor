@@ -42,6 +42,7 @@
     "yaml": "^2.7.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.0.6",
     "@inquirer/prompts": "^7.2.3",
     "@tailwindcss/postcss": "^4.0.0",
     "@types/node": "^24.0.7",
