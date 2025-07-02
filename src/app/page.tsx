@@ -49,7 +49,7 @@ const DevicesPanel = () => {
 			<div className="m-2 w-14 flex-none">
 				<CollapseButton />
 			</div>
-			<Anchor className="flex-grow" href="#" onClick={() => openAboutDialog()}>
+			<Anchor className="flex-grow" href="#" onClick={() => openAboutDialog()} underline="never">
 				<div>❤️ Support future development</div>
 				<div>{statusStore.query.isSuccess && statusStore.query.data?.version}</div>
 			</Anchor>

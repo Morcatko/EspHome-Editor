@@ -12,14 +12,14 @@ const AboutDialogContent = () => {
     return <div className='mb-3'>
         <div className="flex flex-col">
             <span>Version: {statusStore.query.isSuccess && <ExtLink href="https://github.com/Morcatko/EspHome-Editor/releases">{statusStore.query.data?.version}</ExtLink>}</span>
-            <ExtLink href="https://editor-4-esphome.github.io/">Documentation</ExtLink>
-            {statusStore.query.isSuccess && <ExtLink href={statusStore.query.data?.espHomeWebUrl}>ESPHome</ExtLink>}
+            <span><ExtLink href="https://editor-4-esphome.github.io/">Documentation</ExtLink></span>
+            <span>{statusStore.query.isSuccess && <ExtLink href={statusStore.query.data?.espHomeWebUrl}>ESPHome</ExtLink>}</span>
         </div>
         <h3>Support Future Development </h3>
         <div>
             <div>Spread the word</div>
             <ul>
-                <li>Star us on <ExtLink href="https://github.com/Morcatko/EspHome-Editor">GitHub</ExtLink></li>
+                <li>Star <ExtLink href="https://github.com/Morcatko/EspHome-Editor">GitHub Repository</ExtLink></li>
                 <li>Post on <ExtLink href="https://www.reddit.com/r/Esphome/submit">r/Esphome</ExtLink> or <ExtLink href="https://www.reddit.com/r/homeassistant/submit">r/homeassistant</ExtLink> reddit</li>
             </ul>
         </div>
