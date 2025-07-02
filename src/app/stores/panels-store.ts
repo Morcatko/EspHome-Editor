@@ -179,6 +179,9 @@ export const usePanelsStore = () => {
 
         try {
             const layout = JSON.parse(localStorage.getItem('e4e.dockView') ?? "{}");
+            if (layout?.panels?.onboarding) {
+                delete layout.panels.onboarding;
+            }
             api.fromJSON(layout);
         } catch (_) { }
 

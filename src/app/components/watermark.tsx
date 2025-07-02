@@ -1,4 +1,4 @@
-import { Anchor } from "@mantine/core";
+import { ExtLink } from "./ext-link";
 
 export const Watermark = () => 
         <div className="text-center h-full flex flex-col items-center justify-center space-y-4">
@@ -9,6 +9,6 @@ export const Watermark = () =>
             Easily build and manage devices by writing or generating YAML files.
         </p>
         <p>
-            Check <Anchor href="https://editor-4-esphome.github.io/" target="_blank">the documentation</Anchor> for quick start and more information.
+            Check <ExtLink href="https://editor-4-esphome.github.io/">the documentation</ExtLink> for quick start and more information.
         </p>
     </div>;
