@@ -8,9 +8,9 @@ import { EspHomeLogPanel, EspHomeLogToolbar } from "./panels/esphome-log-panel";
 import { EspHomeInstallPanel, EspHomeInstallToolbar } from "./panels/esphome-install-panel";
 import { EspHomeCompilePanel, EspHomeCompileToolbar } from "./panels/esphome-compile-panel";
 import { DevicesPanel } from "./panels/devices-panel";
-import { TPanelWithClick } from "../stores/panels-store/types";
+import { TPanel_Device, TPanelWithClick } from "../stores/panels-store/types";
 import { usePanelsStore } from "../stores/panels-store";
-import { useDarkTheme } from "@/app/utils/hooks";
+import { useDarkTheme, useDeviceColor } from "@/app/utils/hooks";
 import { QuestionIcon } from "@primer/octicons-react";
 import { ActionIcon } from "@mantine/core";
 import { Watermark } from "./watermark";
@@ -73,12 +73,19 @@ const dockViewComponents = {
     }
 };
 
+const ColoredDockviewTab = (p: IDockviewPanelHeaderProps<TPanelWithClick>) => {
+    const device_id = (p.params as TPanel_Device).device_id;
+    const color = useDeviceColor(device_id);
+
+    return <span style={{ color: color }}><DockviewDefaultTab {...p} /></span>;
+}
+
 const dockViewTabComponents = {
     default: (p: IDockviewPanelHeaderProps<TPanelWithClick>) => {
         const panel = p.params;
         switch (panel.operation) {
             default:
-                return <DockviewDefaultTab {...p} />;
+                return <ColoredDockviewTab {...p} />;
         }
     }
 };
