@@ -52,8 +52,6 @@ function getPanelTitle(panel: TPanel) {
             return `${panel.device_id} (Install)`;
         case "esphome_log":
             return `${panel.device_id} (Log)`;
-        case "onboarding":
-            return "Welcome";
         default:
             return `Unknown`;
     }
@@ -61,8 +59,6 @@ function getPanelTitle(panel: TPanel) {
 
 function getPanelId(panel: TPanel) {
     switch (panel.operation) {
-        case "onboarding":
-            return "onboarding";
         default:
             if (panel.operation === "local_file")
                 panel.path = panel.path.replace(/^\/+|\/+$/g, '')   //trim leading and trailing slashes
@@ -183,6 +179,9 @@ export const usePanelsStore = () => {
 
         try {
             const layout = JSON.parse(localStorage.getItem('e4e.dockView') ?? "{}");
+            if (layout?.panels?.onboarding) {
+                delete layout.panels.onboarding;
+            }
             api.fromJSON(layout);
         } catch (_) { }
 
@@ -191,11 +190,6 @@ export const usePanelsStore = () => {
             const queryPanel = queryPanelString ? JSON.parse(queryPanelString) as TPanelWithClick : null;
             if (queryPanel) addPanel(queryPanel);
         } catch (_) { }
-
-        const onboardingPanelProps: TPanel = { operation: "onboarding" };
-        const id = getPanelId(onboardingPanelProps);
-        if (!api.panels.find(p => p.id === id))
-            addPanel(onboardingPanelProps);
 
         api.onDidLayoutChange(() => localStorage.setItem("e4e.dockView", JSON.stringify(api!.toJSON())));
     };

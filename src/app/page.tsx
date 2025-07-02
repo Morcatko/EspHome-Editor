@@ -21,11 +21,10 @@ const devicesPanel: TPanel = {
 };
 
 const Header = () => {
-	const panelsStore = usePanelsStore();
-	return <a href="#" onClick={() => panelsStore.addPanel({ operation: "onboarding", step: "home" })}>
+	return <>
 		<Image className="inline mr-2 align-middle" src={logo} alt="ESPHome Editor" width="32" height="32" />
 		<h4 className="inline-block align-baseline text-slate-600 dark:text-slate-400 m-0 font-semibold" >Editor for ESPHome</h4>
-	</a>
+	</>
 }
 
 const CollapseButton = () => {
@@ -45,16 +44,19 @@ const DevicesPanel = () => {
 		<div className="flex-grow pl-1 overflow-y-auto">
 			<DevicesTree />
 		</div>
-		<div className="flex-none border-t border-slate-200 dark:border-slate-800 text-center p-4 flex">
-			<div className="w-14 flex-none">
+		<div className="flex-none border-t border-slate-200 dark:border-slate-800 text-center p-2 flex">
+			<div className="m-2 w-14 flex-none">
 				<CollapseButton />
 			</div>
-			<Anchor className="flex-grow" style={{ lineHeight: '34px' }} href="#" onClick={() => openAboutDialog()}>{statusStore.query.isSuccess && statusStore.query.data?.version}</Anchor>
+			<Anchor className="flex-grow" href="#" onClick={() => openAboutDialog()} underline="never">
+				<div>❤️ Support future development</div>
+				<div>{statusStore.query.isSuccess && statusStore.query.data?.version}</div>
+			</Anchor>
 		</div>
 	</div>;
 }
 
-const components:Record<string, React.FunctionComponent<ISplitviewPanelProps>> = {
+const components: Record<string, React.FunctionComponent<ISplitviewPanelProps>> = {
 	"devices-sidePanel": () => <DevicesPanel />,
 	"panels-container": () => <PanelsContainer />
 };
@@ -93,7 +95,7 @@ const PageContent = () => {
 
 		if (devicePanelExists)
 			api.removePanel(findDevicesSidePanel(api)!);
-		else  {
+		else {
 			api.addPanel({
 				id: 'devices-sidePanel',
 				component: 'devices-sidePanel',
@@ -104,7 +106,7 @@ const PageContent = () => {
 			});
 		}
 	}, [api, devicePanelExists]);
-	
+
 	return <SplitviewReact
 		orientation={Orientation.HORIZONTAL}
 		components={components}
