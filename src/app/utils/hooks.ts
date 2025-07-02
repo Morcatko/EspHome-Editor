@@ -1,5 +1,6 @@
 'use client';
-import { useEffect, useState } from "react";
+import { useMantineTheme } from "@mantine/core";
+import { useEffect, useMemo, useState } from "react";
 
 export const useDarkTheme = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -16,4 +17,47 @@ export const useDarkTheme = () => {
   }, []);
 
   return isDarkMode;
+}
+
+
+function stringToHash(str: string) {
+    let hash = 0;
+    for (var i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        hash = hash & hash;
+    }
+    return hash;
+}
+
+export const useDeviceColor = (device_id: string | undefined) => {
+    const theme = useMantineTheme();
+    const isDark = useDarkTheme();
+    return useMemo(() => {
+        if (!device_id) return undefined;
+
+        const index = (typeof theme.primaryShade === "object")
+            ? isDark ? theme.primaryShade.dark : theme.primaryShade.light
+            : theme.primaryShade as number;
+
+        //Tune colors - https://v5.mantine.dev/theming/colors/
+        const colors = [
+            theme.colors.blue[index],
+            theme.colors.red[index],
+            theme.colors.green[index],
+            theme.colors.yellow[index],
+            theme.colors.cyan[index],
+            theme.colors.pink[index],
+            theme.colors.violet[index],
+            theme.colors.grape[index],
+            theme.colors.orange[index],
+            theme.colors.teal[index],
+            theme.colors.indigo[index],
+            theme.colors.dark[index],
+        ];
+
+        const hash = stringToHash(device_id);
+        const colorIndex = ((hash % colors.length) + colors.length) % colors.length;
+
+        return colors[colorIndex];
+    }, [device_id, isDark]);
 }
