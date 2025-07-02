@@ -39,6 +39,7 @@ export const scanDirectory = async (device_id: string, fullPath: string, parentP
                         name: e.name,
                         path: path,
                         type: "directory",
+                        disabled: await ManifestUtils.isPathDisabled(device_id, path),
                         files: await scanDirectory(device_id, `${fullPath}/${e.name}`, path),
                     };
                 } else {
