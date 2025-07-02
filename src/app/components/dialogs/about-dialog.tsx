@@ -1,11 +1,7 @@
 import { useStatusStore } from '@/app/stores/status-store';
-import { LinkExternalIcon } from '@primer/octicons-react';
 import { modals } from '@mantine/modals';
-import { Anchor } from '@mantine/core';
 import { KoFiButton } from "react-kofi";
-
-const ExtLink = ({ href, children }: { href: string; children: React.ReactNode; }) =>
-    <Anchor href={href} target="_blank">{children} <LinkExternalIcon className="inline" /></Anchor>;
+import { ExtLink } from '../ext-link';
 
 const AboutDialogContent = () => {
     const statusStore = useStatusStore();
@@ -31,6 +27,9 @@ const AboutDialogContent = () => {
         </div>
         <div>
             <div>Financial Support</div>
+            <ul>
+                <li>Need ESP32s? Use our <ExtLink href="https://s.click.aliexpress.com/e/_oCI3XiY">AliExpress affiliate link</ExtLink> and toss us a little love!</li>
+            </ul>
             <div className='ml-4'>
                 <KoFiButton
                     id="morcatko"
