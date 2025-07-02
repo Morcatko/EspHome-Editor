@@ -45,16 +45,19 @@ const DevicesPanel = () => {
 		<div className="flex-grow pl-1 overflow-y-auto">
 			<DevicesTree />
 		</div>
-		<div className="flex-none border-t border-slate-200 dark:border-slate-800 text-center p-4 flex">
-			<div className="w-14 flex-none">
+		<div className="flex-none border-t border-slate-200 dark:border-slate-800 text-center p-2 flex">
+			<div className="m-2 w-14 flex-none">
 				<CollapseButton />
 			</div>
-			<Anchor className="flex-grow" style={{ lineHeight: '34px' }} href="#" onClick={() => openAboutDialog()}>{statusStore.query.isSuccess && statusStore.query.data?.version}</Anchor>
+			<Anchor className="flex-grow" href="#" onClick={() => openAboutDialog()} underline="never">
+				<div>❤️ Support future development</div>
+				<div>{statusStore.query.isSuccess && statusStore.query.data?.version}</div>
+			</Anchor>
 		</div>
 	</div>;
 }
 
-const components:Record<string, React.FunctionComponent<ISplitviewPanelProps>> = {
+const components: Record<string, React.FunctionComponent<ISplitviewPanelProps>> = {
 	"devices-sidePanel": () => <DevicesPanel />,
 	"panels-container": () => <PanelsContainer />
 };
@@ -93,7 +96,7 @@ const PageContent = () => {
 
 		if (devicePanelExists)
 			api.removePanel(findDevicesSidePanel(api)!);
-		else  {
+		else {
 			api.addPanel({
 				id: 'devices-sidePanel',
 				component: 'devices-sidePanel',
@@ -104,7 +107,7 @@ const PageContent = () => {
 			});
 		}
 	}, [api, devicePanelExists]);
-	
+
 	return <SplitviewReact
 		orientation={Orientation.HORIZONTAL}
 		components={components}
