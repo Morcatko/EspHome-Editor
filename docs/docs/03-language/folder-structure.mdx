@@ -1,0 +1,45 @@
+---
+sidebar_position: 20
+---
+# Folder Structure & Files
+Each device is represented as a folder containing source files and another folders.
+This modular structure makes it easy to reuse components, manage complexity, and scale across many devices.
+
+Additionally, the `.lib` folder is used to store reusable code and templates that can be shared across multiple devices.
+
+
+<table className="table-no-border">
+<tr>
+    <td style={{ width: "250px"}}>
+    ![Folder Structure](@site/static/img/folder-structure-devices.png)
+    </td>
+<td>
+    <div>- root `.lib` folder is used for code shared across devices.</div>
+    <div>- `Device/.lib` is not compiled unless explicitly imported</div>
+    <div>- All files inside `water-leak-sensor` fdlder are processeed</div>
+    <div>- `configuration.yaml` is compiled</div>
+</td>
+</tr>
+</table>
+
+:::note
+In addition to source files like `.yaml` and `.eta`, you can also include `.md` or `.txt` files in your device folders. These are ignored during compilation and can be used freely for notes, documentation, or to-do lists specific to each device.
+:::
+
+### Typical Device File Structure
+A typical device configuration includes the following types of files:
+
+- `configuration`, `index`, or similarly named file.
+    This acts as the main entry point, containing shared elements like Wi-Fi credentials, logging, device name, and platform setup. Since many of these values are common across devices, you can extract them into a global `.lib` file and include them using the Eta.js templating language.
+
+- Component-specific files or folders
+Each component (or group of related components) typically gets its own file or subfolder. This keeps the configuration modular and easier to manage.
+For example, a `water-leak-sensor` folder might include a base sensor configuration and related automation scripts separately.
+
+
+
+
+:::tip
+You can [disable any file or folder](./disable-file.md) to exclude it from the final YAML configuration, allowing for easy testing or variant management.
+:::
+

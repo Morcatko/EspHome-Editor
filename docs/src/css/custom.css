@@ -4,6 +4,14 @@
  * work well for content-centric websites.
  */
 
+ .table-no-border tr {
+  border: none;
+}
+
+.table-no-border tr>td {
+  border: none;
+}
+
 /* You can override the default Infima variables here. */
 :root {
   --ifm-color-primary: #2e8555;
