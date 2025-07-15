@@ -45,3 +45,4 @@ next-env.d.ts
 
 public/esphome_schemas/
 src/3rd-party/esphome-dashboard/
+.temp

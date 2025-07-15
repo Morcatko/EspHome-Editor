@@ -45,9 +45,11 @@
   "devDependencies": {
     "@inquirer/prompts": "^7.2.3",
     "@tailwindcss/postcss": "^4.0.0",
+    "@types/adm-zip": "^0.5.7",
     "@types/node": "^24.0.7",
     "@types/react": "^19.0.3",
     "@types/react-dom": "^19.0.2",
+    "adm-zip": "^0.5.16",
     "eslint": "^9.19.0",
     "eslint-config-next": "^15.1.6",
     "execa": "^9.5.2",

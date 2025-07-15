@@ -36,7 +36,7 @@ export const useDeviceColor = (device_id: string | undefined) => {
         if (!device_id) return undefined;
 
         const index = (typeof theme.primaryShade === "object")
-            ? isDark ? theme.primaryShade.dark : theme.primaryShade.light
+            ? isDark ? theme.primaryShade.light : theme.primaryShade.dark
             : theme.primaryShade as number;
 
         //Tune colors - https://v5.mantine.dev/theming/colors/
@@ -52,11 +52,13 @@ export const useDeviceColor = (device_id: string | undefined) => {
             theme.colors.orange[index],
             theme.colors.teal[index],
             theme.colors.indigo[index],
-            theme.colors.dark[index],
+            //theme.colors.dark[index],
         ];
 
         const hash = stringToHash(device_id);
         const colorIndex = ((hash % colors.length) + colors.length) % colors.length;
+
+        //console.log("useDeviceColor", device_id, index, isDark, colors[colorIndex]);
 
         return colors[colorIndex];
     }, [device_id, isDark]);
