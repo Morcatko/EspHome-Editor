@@ -1,4 +1,6 @@
 import { promises as fs } from 'fs';
+import * as fs_old from 'fs';
+import AdmZip from 'adm-zip';
 
 const prepareDir = async (dir: string) => {
     try {
@@ -20,7 +22,7 @@ const modifyFile = async (file: string, callback: (content: string) => string) =
     await fs.writeFile(file, newContent);
 }
 
-const downloadEspHomeSchemas = async () => {
+const downloadEspHomeSchemasFromGithubRepository = async () => {
     console.log("Downloading EspHome schema files...");
     const fileList: any[] = await (await fetch("https://api.github.com/repos/esphome/esphome-schema/contents/schema?ref=release")).json();
 
@@ -62,5 +64,22 @@ const downloadEspHomeMonacoFiles = async () => {
     );
 }
 
-await downloadEspHomeSchemas();
+const processSchemaZip = async () => {
+    const schemaZipFile = "./.temp/schema.zip";
+
+    if (!fs_old.existsSync(schemaZipFile)) {
+        console.error("Schema zip file does not exist. Please download it from the GitHub Actions artifacts.");
+        //https://github.com/esphome/esphome-schema/actions/runs/16282708589/job/45975319823
+    }
+
+    console.log("Processing schema.zip file...");
+    const targetRoot = "./public/esphome_schemas";
+    await prepareDir(targetRoot);
+
+    const zip = new AdmZip(schemaZipFile);
+    zip.extractAllTo(targetRoot, true);
+    console.log("Done.");
+}
+
+await processSchemaZip();
 await downloadEspHomeMonacoFiles();
