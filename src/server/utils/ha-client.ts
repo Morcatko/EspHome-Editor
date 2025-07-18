@@ -14,39 +14,77 @@ const ha_getJson = async (haUrl: string, haToken: string, path: string) => {
     return await assertResponseAndJsonOk(response);
 }
 
-const findEspHomeAddon = async (haUrl: string, haToken: string) => {
+const getAddonPortViaAddonInfo = async (haUrl: string, haToken: string, addonSlug: string) => {
+    const addon = await ha_getJson(haUrl, haToken, `addons/${addonSlug}/info`);
+    return addon.data.ingress_port;
+}
+
+
+const getEspHomeViaAddons = async (haUrl: string, haToken: string) => {
     const responseJson = await ha_getJson(haUrl, haToken, "addons");
     const addons = responseJson.data.addons as any[];
     const espHomeAddon = addons.find(a => a.name === "ESPHome Device Builder")
         || addons.find(a => a.name === "ESPHome Device Compiler")
         || addons.find(a => a.url === "https://esphome.io/");
-    return espHomeAddon;
+    
+    const port = getAddonPortViaAddonInfo(haUrl, haToken, espHomeAddon.slug);
+    
+    return {
+        slug: espHomeAddon.slug,
+        port: port,
+    }
 }
 
-// const getDiscovery = async (haUrl: string, haToken: string) => {
-//     const responseJson = await ha_getJson(haUrl, haToken, "discovery");
-//     log.info("discovery", responseJson);
-//     const discoveries = responseJson.data.discovery as any[];
-//     const espHomeDiscovery = discoveries.find(a => a.service === "esphome");
+/*
+Discovery does not work, because it requries the caller to be "Home Assistant" itself
+const getEspHomeViaDiscovery = async (haUrl: string, haToken: string) => {
+    const responseJson = await ha_getJson(haUrl, haToken, "discovery");
+    const discoveries = responseJson.data.discovery as any[];
+    const espHomeDiscovery = discoveries.find(a => a.service === "esphome");
+    return null;
+}*/
 
-//     const config = espHomeDiscovery.config;
-//     return `http://${config.host}:${config.port}`;
-// }
+const getEspHomeViaSupervisorInfo = async (haUrl: string, haToken: string) => {
+    const responseJson = await ha_getJson(haUrl, haToken, "supervisor/info");
+    const addons = responseJson.data.addons as any[];
+    const espHomeAddon = addons.find(a => a.name === "ESPHome Device Builder")
+        || addons.find(a => a.name === "ESPHome Device Compiler");
+
+    const port = await getAddonPortViaAddonInfo(haUrl, haToken, espHomeAddon.slug);
+
+    return {
+        slug: espHomeAddon.slug,
+        port: port,
+    };
+}
+
+const getEspHomeAddon = async (haUrl: string, haToken: string) => {
+    try {
+        log.debug("Getting ESPHome addon via supervisor info");
+        return await getEspHomeViaSupervisorInfo(haUrl, haToken);
+    } catch (e) {
+        log.error("Error getting ESPHome addon via supervisor info", e);
+    }
+    
+    /*try {
+        return await getEspHomeViaAddons(haUrl, haToken);
+    } catch (e) {
+        log.error("Error getting ESPHome addon via addons", e);
+    }*/
+
+    return null;
+}
 
 export const getEspHomeUrls = async (haUrl: string, haToken: string) => {
     log.debug("Getting ESPHome URL");
-    try {
-        const espHomeAddon = await findEspHomeAddon(haUrl, haToken);
-        const espHomeSlug = espHomeAddon.slug;
-
-        const addon = await ha_getJson(haUrl, haToken, `addons/${espHomeSlug}/info`);
-        const port = addon.data.ingress_port
+    const addonInfo = await getEspHomeAddon(haUrl, haToken);
+    if (addonInfo) {
+        const port = addonInfo.port;
         return {
             apiUrl: `http://localhost:${port}`,
-            webUrl: `/${espHomeSlug}`
+            webUrl: `/${addonInfo.slug}`
         };
-    } catch (e) {
-        log.error("Error finding ESPHome addon", e);
     }
+    log.error("Failed to get ESPHome URLs, no addon info found");
     return null;
 }
