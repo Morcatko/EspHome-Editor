@@ -1944,24 +1944,24 @@ detect-node-es@^1.1.0:
   resolved "https://registry.yarnpkg.com/detect-node-es/-/detect-node-es-1.1.0.tgz#163acdf643330caa0b4cd7c21e7ee7755d6fa493"
   integrity sha512-ypdmJU/TbBby2Dxibuv7ZLW3Bs1QEmM7nHjEANfohJLvE0XVujisn1qPJcZxg+qDucsr+bP6fLD1rPS3AhJ7EQ==
 
-dockview-core@^4.4.0:
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/dockview-core/-/dockview-core-4.4.0.tgz#aeb39041fbcc876d2ce08996abaa5334b9b7ae3c"
-  integrity sha512-UsBJwS3lfZXM+gaTA+bJs8rAxLd7ZEmNcUf5CbKKhiPeKIPJrNCxXxTLcnQb3IXMJUGkE0aX1ZJ4BDaZGMtzlA==
+dockview-core@^4.4.1:
+  version "4.4.1"
+  resolved "https://registry.yarnpkg.com/dockview-core/-/dockview-core-4.4.1.tgz#1c0bdc357450bc37994b115894295b3311579243"
+  integrity sha512-pDQPlVfDYDuN3zSebVUMVn2x21bpYPGD1ybGYrKJMI1KDkSQSqy57FJRJXi7yEnkcrmBUF0xEEo4d0Yi3j2vGA==
 
 dockview-react@^4.2.1:
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/dockview-react/-/dockview-react-4.4.0.tgz#0f8ce88a3e3f2021996296b980316b52549b02ca"
-  integrity sha512-dLXSH7P/f4XYaBQUroIjmoVyHXhrW8/1sJqsKdu9xuQpP1tn4lYMN0piXLKWEqWO8QKA1ZCQ/U3C48rSj8bkBw==
+  version "4.4.1"
+  resolved "https://registry.yarnpkg.com/dockview-react/-/dockview-react-4.4.1.tgz#24a9e639bc79e6b7b5dd0390ca2dcbd4afc4ef80"
+  integrity sha512-1NxY/EOK+AhZFt9BAe9U0Jadqcc29h/KaRkVh8X8rHIdxLTwor/hprKJ8CsY6K/rwI0tJipoFz6S2PihTHV7gw==
   dependencies:
-    dockview "^4.4.0"
+    dockview "^4.4.1"
 
-dockview@^4.4.0:
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/dockview/-/dockview-4.4.0.tgz#86bc0c18e8247125766397c54d3cede065b4381d"
-  integrity sha512-cWi5R40R5kDky69vAqsKGznRx5tA0gk3Mdqe5aS2r4ollK951mWNJ/EeMmac+UP/juw4cbl0/APhXTV+EMnAbg==
+dockview@^4.4.1:
+  version "4.4.1"
+  resolved "https://registry.yarnpkg.com/dockview/-/dockview-4.4.1.tgz#6d0b5ddb23e3aad9e86d1eff29a7fc6ab91c61bb"
+  integrity sha512-XEAwl+VYVZGkBd3hprF6kRLspWSF/hydbRHuV3KEg3BHev1i5xc+H+Kjp+u5DHTQ97klFAATl5MntNoVXQeg0w==
   dependencies:
-    dockview-core "^4.4.0"
+    dockview-core "^4.4.1"
 
 doctrine@^2.1.0:
   version "2.1.0"
@@ -3193,9 +3193,9 @@ magic-string@^0.30.17:
     "@jridgewell/sourcemap-codec" "^1.5.0"
 
 marked@^16.0.0:
-  version "16.0.0"
-  resolved "https://registry.yarnpkg.com/marked/-/marked-16.0.0.tgz#0c48e79782f26224f8ce34878644d8c320ad599f"
-  integrity sha512-MUKMXDjsD/eptB7GPzxo4xcnLS6oo7/RHimUMHEDRhUooPwmN9BEpMl7AEOJv3bmso169wHI2wUF9VQgL7zfmA==
+  version "16.1.0"
+  resolved "https://registry.yarnpkg.com/marked/-/marked-16.1.0.tgz#d81a1726b12b6904591847761c0302ebba0b692c"
+  integrity sha512-Me7BNa1aqrxVinDnFfvCgHh2yHvLbFvILBs899MhuBpbE5VPzpSqv7alaESfkqkgc9JNvUGH4gqwZeOzLnY8Jg==
 
 math-intrinsics@^1.1.0:
   version "1.1.0"
@@ -3299,9 +3299,9 @@ natural-compare@^1.4.0:
   integrity sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==
 
 next-ws@^2.0.1:
-  version "2.0.10"
-  resolved "https://registry.yarnpkg.com/next-ws/-/next-ws-2.0.10.tgz#dc9017451049e94bcc7d97e9a4d4b65945be37e7"
-  integrity sha512-DZd4VXuMXbC8YKycz263uwtBMiQlNPdHxKkxpcdHEZbCyLJfiDO/DTjuqSgKHrg2jzfYDaXlhKLRcPTbOrv2gQ==
+  version "2.0.11"
+  resolved "https://registry.yarnpkg.com/next-ws/-/next-ws-2.0.11.tgz#9beb0651281ccbe8325b7e0cf53373457f74a5f4"
+  integrity sha512-6IQi8e0G3iSnlxtQlLJ7/Xh6TVYN2UD8T96n4quec+hFlDKBNGfutOLtVn6j6UPYn6p6h/QhVqawPljoOyo6Bg==
 
 next@^15.1.6:
   version "15.4.1"
