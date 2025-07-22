@@ -41,15 +41,18 @@ const config: Config = {
     [
       'classic',
       {
+        theme: {
+          customCss: './src/css/custom.css',
+        },
         docs: {
           sidebarPath: './sidebars.ts',
           routeBasePath: '/',
           editUrl: 'https://github.com/Morcatko/EspHome-Editor/tree/main/docs/',
         },
         blog: false,
-        theme: {
-          customCss: './src/css/custom.css',
-        },
+        sitemap: {
+          lastmod: "date",
+        }
       } satisfies Preset.Options,
     ],
   ],
