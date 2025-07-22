@@ -1,5 +1,6 @@
-import { promises as fs } from 'fs';
+import { createWriteStream, promises as fs } from 'fs';
 import * as fs_old from 'fs';
+import { Readable } from 'stream';
 import AdmZip from 'adm-zip';
 
 const prepareDir = async (dir: string) => {
@@ -22,17 +23,29 @@ const modifyFile = async (file: string, callback: (content: string) => string) =
     await fs.writeFile(file, newContent);
 }
 
-const downloadEspHomeSchemasFromGithubRepository = async () => {
+const downloadEspHomeSchemasFromGithub = async () => {
     console.log("Downloading EspHome schema files...");
-    const fileList: any[] = await (await fetch("https://api.github.com/repos/esphome/esphome-schema/contents/schema?ref=release")).json();
+    const lastRelase = await (await fetch("https://api.github.com/repos/esphome/esphome-schema/releases/latest")).json();
+    
+    console.log(`Latest release: ${lastRelase.tag_name}`);
+    
+    const schemaZipUrl = lastRelase.assets.find((asset: any) => asset.name === "schema.zip")?.browser_download_url;
 
-    const targetRoot = "./public/esphome_schemas";
-    await prepareDir(targetRoot);
+    await prepareDir("./.temp");
 
-    const promises = fileList.map((file) => downloadFile(file.download_url, `${targetRoot}/${file.name}`));
+    const schemaZipFile = "./.temp/schema.zip";
 
-    await Promise.all(promises)
-    console.log(` Done. ${promises.length} files`);
+    const response = await fetch(schemaZipUrl);
+
+    const readableNodeStream = Readable.fromWeb(response.body as any);
+    const fileStream = createWriteStream(schemaZipFile);
+    await new Promise((resolve, reject) => {
+	    readableNodeStream.pipe(fileStream);
+        readableNodeStream.on('error', reject);
+        fileStream.on('finish', resolve as any);
+    });
+
+    processSchemaZip();
 }
 
 const downloadEspHomeMonacoFiles = async () => {
@@ -81,5 +94,6 @@ const processSchemaZip = async () => {
     console.log("Done.");
 }
 
-await processSchemaZip();
+//await processSchemaZip();
+await downloadEspHomeSchemasFromGithub()
 await downloadEspHomeMonacoFiles();
