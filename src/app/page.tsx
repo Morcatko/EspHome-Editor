@@ -1,9 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
 import { ISplitviewPanelProps, Orientation, SplitviewApi, SplitviewReact, SplitviewReadyEvent } from "dockview-react";
-import { Anchor, Button, Loader } from "@mantine/core";
+import { Anchor, AppShell, Burger, Button, Group, Loader } from "@mantine/core";
 import Image from "next/image";
-import { SidebarExpandIcon } from "@primer/octicons-react";
+import { SidebarCollapseIcon, SidebarExpandIcon } from "@primer/octicons-react";
 import { DevicesTree } from "./components/devices-tree";
 import { useStatusStore } from "./stores/status-store";
 import { usePanelsStore, useRerenderOnPanelChange } from "./stores/panels-store";
@@ -14,7 +14,8 @@ import { useDarkTheme } from "./utils/hooks";
 import { useMonacoInit } from "./components/editors/monaco/monaco-init";
 import { useDevicesQuery } from "./stores/devices-store";
 import { PanelsContainer } from "./components/panels-container";
-import { useWindowEvent } from "@mantine/hooks";
+import { useDisclosure, useWindowEvent } from "@mantine/hooks";
+import App from "next/app";
 
 const devicesPanel: TPanel = {
 	operation: "devices_tree"
@@ -113,6 +114,59 @@ const PageContent = () => {
 		onReady={onReady}
 		className={`${isDarkMode ? "dockview-theme-dark" : "dockview-theme-light"}`}
 	/>
+}
+
+const PageContent2 = () => {
+	const statusStore = useStatusStore();
+	const [opened, { toggle }] = useDisclosure(true);
+
+	const panelsApi = useRerenderOnPanelChange();
+	useEffect(() => {
+		if (!panelsApi) return;
+
+		panelsApi.api?.layout(window.innerWidth, window.innerHeight);
+
+	}, [panelsApi])
+
+	return <AppShell
+		header={{ height: 0 }}
+		transitionDuration={0}
+		transitionTimingFunction="linear"
+		navbar={{
+			width: 300, breakpoint: 'sm',
+			collapsed: { mobile: !opened, desktop: !opened },
+		}}
+		padding="0">
+		<AppShell.Navbar>
+			<AppShell.Section className="border-b border-slate-200 dark:border-slate-800 text-center leading-[56px]">
+				<Header />
+			</AppShell.Section>
+			<AppShell.Section grow className="pl-1 overflow-y-auto">
+				<DevicesTree />
+			</AppShell.Section>
+			<AppShell.Section className="border-t border-slate-200 dark:border-slate-800 text-center p-2">
+					<div className="pl-24">
+				<Anchor href="#" onClick={() => openAboutDialog()} underline="never">
+						<div>❤️ Support development</div>
+						<div>{statusStore.query.isSuccess && statusStore.query.data?.version}</div>
+				</Anchor>
+					</div>
+			</AppShell.Section>
+		</AppShell.Navbar>
+		<AppShell.Main className="as_main">
+			<PanelsContainer />
+			{/* {!opened && <Button variant="subtle" radius="md" onClick={toggle} style={{ position: 'absolute', bottom: 16, left: 17, zIndex: 1000 }}  >
+				<SidebarCollapseIcon />
+			</Button> */}
+
+			<Button variant="subtle" radius="md" onClick={toggle} style={{ position: 'absolute', bottom: 16, left: 17, zIndex: 1000 }}  >
+				{opened
+					? <SidebarCollapseIcon />
+					: <SidebarExpandIcon />
+				}
+			</Button>
+		</AppShell.Main>
+	</AppShell>;
 }
 
 const Page = () => {
