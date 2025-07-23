@@ -179,8 +179,8 @@ export const usePanelsStore = () => {
             if (layout?.panels?.onboarding) {
                 delete layout.panels.onboarding;
             }
-            if (layout?.panels?.["devices-sidePanel"]) {
-                delete layout.panels["devices-sidePanel"];
+            if (layout?.panels?.['{"operation":"devices_tree"}']) {
+                delete layout.panels['{"operation":"devices_tree"}'];
             }
             api.fromJSON(layout);
         } catch (_) { }
