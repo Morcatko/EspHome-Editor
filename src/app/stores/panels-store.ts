@@ -1,7 +1,6 @@
 import { atom, getDefaultStore, useAtom } from "jotai";
 import type { TPanel, TPanel_Device, TPanelWithClick } from "./panels-store/types";
 import { type DockviewApi } from 'dockview-react';
-import { useEffect, useState } from "react";
 import { events } from "./events";
 import type { TLocalFileOrDirectory } from "@/server/devices/types";
 
@@ -36,8 +35,6 @@ dockViewApiAtom.onMount = (set) => {
 
 function getPanelTitle(panel: TPanel) {
     switch (panel.operation) {
-        case "devices_tree":
-            return "Devices";
         case "local_file":
             return `${panel.device_id} -  ${panel.path}`;
         case "local_device":
@@ -182,6 +179,9 @@ export const usePanelsStore = () => {
             if (layout?.panels?.onboarding) {
                 delete layout.panels.onboarding;
             }
+            if (layout?.panels?.["devices-sidePanel"]) {
+                delete layout.panels["devices-sidePanel"];
+            }
             api.fromJSON(layout);
         } catch (_) { }
 
@@ -199,17 +199,4 @@ export const usePanelsStore = () => {
         addPanel,
         addDevicePanel,
     };
-}
-
-export const useRerenderOnPanelChange = () => {
-    const papi = usePanelsApiStore();
-
-    const [_, setFake] = useState(0);
-    useEffect(() => {
-        papi.api?.onDidLayoutChange(() =>
-            setFake(papi.api?.panels.length ?? 0)
-        );
-    }, [papi.api]);
-
-    return papi;
 }
