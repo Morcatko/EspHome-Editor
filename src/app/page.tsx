@@ -29,8 +29,8 @@ const useDevicesPanelCollapsed = () => {
 
 const CollapseButton = () => {
 	const { collapsed, setCollapsed } = useDevicesPanelCollapsed();
-	return <Button
-		style={{ position: "absolute", left: "17px", bottom: "17px", zIndex: 1000 }}
+	return <Button	
+		style={{ position: "absolute", left: "8px", bottom: "17px", zIndex: 950 }}
 		variant={ collapsed ? "filled" : "subtle" }
 		radius="md"
 		onClick={() => setCollapsed(!collapsed)}>
@@ -52,7 +52,7 @@ const DevicesPanel = () => {
 		<div className="flex-grow pl-1 overflow-y-auto">
 			<DevicesTree />
 		</div>
-		<div className="flex-none border-t border-slate-200 dark:border-slate-800 text-center p-2 pl-24 flex">
+		<div className="flex-none border-t border-slate-200 dark:border-slate-800 text-center p-2 pl-16 flex">
 			<Anchor className="flex-grow" href="#" onClick={() => openAboutDialog()} underline="never">
 				<div>❤️ Support development</div>
 				<div>{statusStore.query.isSuccess && statusStore.query.data?.version}</div>
