@@ -1,7 +1,7 @@
 import { ExtLink } from "./ext-link";
 
-export const Watermark = () => 
-        <div className="text-center h-full flex flex-col items-center justify-center space-y-4">
+export const Watermark = () =>
+    <div className="text-center h-full flex flex-col items-center justify-center space-y-4 px-4">
         <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
             Welcome to the Editor for ESPHome
         </h1>
