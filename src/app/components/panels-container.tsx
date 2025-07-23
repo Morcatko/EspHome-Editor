@@ -7,7 +7,6 @@ import { DiffPanel, DiffToolbar } from "./panels/diff-panel";
 import { EspHomeLogPanel, EspHomeLogToolbar } from "./panels/esphome-log-panel";
 import { EspHomeInstallPanel, EspHomeInstallToolbar } from "./panels/esphome-install-panel";
 import { EspHomeCompilePanel, EspHomeCompileToolbar } from "./panels/esphome-compile-panel";
-import { DevicesPanel } from "./panels/devices-panel";
 import { TPanel_Device, TPanelWithClick } from "../stores/panels-store/types";
 import { usePanelsStore } from "../stores/panels-store";
 import { useDarkTheme, useDeviceColor } from "@/app/utils/hooks";
@@ -32,8 +31,6 @@ const dockViewComponents = {
     default: (p: IDockviewPanelProps<TPanelWithClick>) => {
         const panel = p.params;
         switch (panel.operation) {
-            case "devices_tree":
-                return <DevicesPanel />;
             case "esphome_device":
                 return <Panel
                     toolbar={<ESPHomeDeviceToolbar device_id={panel.device_id} />}
