@@ -28,10 +28,6 @@ export type TPanel_DeviceOperation = {
 
 export type TPanel_Device = TPanel_DeviceBase & (TPanel_DeviceLocalFile | TPanel_DeviceOperation);
 
-type TPanel_Devices = {
-    operation: "devices_tree";
-}
-
-export type TPanel = (TPanel_Device | TPanel_Devices);
+export type TPanel = TPanel_Device;
 
 export type TPanelWithClick = TPanel & { last_click: string };

@@ -3,22 +3,17 @@ import { useEffect, useState } from "react";
 import { ISplitviewPanelProps, Orientation, SplitviewApi, SplitviewReact, SplitviewReadyEvent } from "dockview-react";
 import { Anchor, Button, Loader } from "@mantine/core";
 import Image from "next/image";
-import { SidebarExpandIcon } from "@primer/octicons-react";
+import { SidebarCollapseIcon, SidebarExpandIcon } from "@primer/octicons-react";
 import { DevicesTree } from "./components/devices-tree";
 import { useStatusStore } from "./stores/status-store";
-import { usePanelsStore, useRerenderOnPanelChange } from "./stores/panels-store";
 import { openAboutDialog } from "./components/dialogs/about-dialog";
 import logo from "@/assets/logo.svg";
-import { TPanel } from "./stores/panels-store/types";
 import { useDarkTheme } from "./utils/hooks";
 import { useMonacoInit } from "./components/editors/monaco/monaco-init";
 import { useDevicesQuery } from "./stores/devices-store";
 import { PanelsContainer } from "./components/panels-container";
 import { useWindowEvent } from "@mantine/hooks";
-
-const devicesPanel: TPanel = {
-	operation: "devices_tree"
-};
+import { useLocalStorage } from "usehooks-ts";
 
 const Header = () => {
 	return <>
@@ -27,10 +22,23 @@ const Header = () => {
 	</>
 }
 
+const useDevicesPanelCollapsed = () => {
+	const [collapsed, setCollapsed] = useLocalStorage<boolean>("e4e.devicesCollapsed", false);
+	return { collapsed, setCollapsed };
+}
+
 const CollapseButton = () => {
-	const panelsStore = usePanelsStore();
-	return <Button variant="subtle" radius="md" onClick={() => panelsStore.addPanel(devicesPanel)}>
-		<SidebarExpandIcon />
+	const { collapsed, setCollapsed } = useDevicesPanelCollapsed();
+	return <Button
+		style={{ position: "absolute", left: "17px", bottom: "17px", zIndex: 1000 }}
+		variant={ collapsed ? "filled" : "subtle" }
+		radius="md"
+		onClick={() => setCollapsed(!collapsed)}>
+		{collapsed
+			? <SidebarCollapseIcon />
+			: <SidebarExpandIcon />
+
+		}
 	</Button>
 }
 
@@ -44,10 +52,7 @@ const DevicesPanel = () => {
 		<div className="flex-grow pl-1 overflow-y-auto">
 			<DevicesTree />
 		</div>
-		<div className="flex-none border-t border-slate-200 dark:border-slate-800 text-center p-2 flex">
-			<div className="m-2 w-14 flex-none">
-				<CollapseButton />
-			</div>
+		<div className="flex-none border-t border-slate-200 dark:border-slate-800 text-center p-2 pl-24 flex">
 			<Anchor className="flex-grow" href="#" onClick={() => openAboutDialog()} underline="never">
 				<div>❤️ Support development</div>
 				<div>{statusStore.query.isSuccess && statusStore.query.data?.version}</div>
@@ -65,8 +70,6 @@ const findDevicesSidePanel = (api: SplitviewApi) => api.getPanel("devices-sidePa
 
 const PageContent = () => {
 	const [api, setApi] = useState<SplitviewApi>()
-	const panelsApi = useRerenderOnPanelChange();
-	const devicePanelExists = !!panelsApi.findPanel(devicesPanel);
 
 	const isDarkMode = useDarkTheme();
 	const onReady = (event: SplitviewReadyEvent) => setApi(event.api);
@@ -90,12 +93,16 @@ const PageContent = () => {
 
 	useWindowEvent("resize", () => api?.layout(window.innerWidth, window.innerHeight));
 
+	const { collapsed } = useDevicesPanelCollapsed();
+
 	useEffect(() => {
 		if (!api) return;
 
-		if (devicePanelExists)
-			api.removePanel(findDevicesSidePanel(api)!);
-		else {
+		if (collapsed) {
+			const devicesSidePanel = findDevicesSidePanel(api);
+			if (devicesSidePanel)
+				api.removePanel(devicesSidePanel);
+		} else {
 			api.addPanel({
 				id: 'devices-sidePanel',
 				component: 'devices-sidePanel',
@@ -105,14 +112,18 @@ const PageContent = () => {
 				index: 0,
 			});
 		}
-	}, [api, devicePanelExists]);
+	}, [api, collapsed]);
 
-	return <SplitviewReact
-		orientation={Orientation.HORIZONTAL}
-		components={components}
-		onReady={onReady}
-		className={`${isDarkMode ? "dockview-theme-dark" : "dockview-theme-light"}`}
-	/>
+
+	return <div className="h-screen w-screen">
+		<SplitviewReact
+			orientation={Orientation.HORIZONTAL}
+			components={components}
+			onReady={onReady}
+			className={`${isDarkMode ? "dockview-theme-dark" : "dockview-theme-light"}`}
+		/>
+		<CollapseButton />
+	</div>
 }
 
 const Page = () => {
