@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { useStreamingStore } from "@/app/stores/panels-store/utils/streaming-store";
 import React from "react";
+import { SyncIcon } from "@primer/octicons-react";
 
 type LogsProps = {
     store: ReturnType<typeof useStreamingStore>;
@@ -64,7 +65,7 @@ const Logs = (props: LogsProps) => {
 
 
 const OutdatedCheck = ({ isOutdated, children }: { isOutdated: boolean, children: React.ReactNode }) => isOutdated
-        ? <div>Click Refresh</div>
+        ? <div className="p-2">Click <SyncIcon /> to reconnect</div>
         : children;
 
 export const LogStream = (props: LogsProps) => {
