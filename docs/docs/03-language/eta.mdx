@@ -12,7 +12,7 @@ This makes it possible to avoid repetition, keep your configs modular, and build
 
 ---
 
-### Why Templates?
+## Why Templates?
 
 ESPHome YAML can get repetitive fast.  
 With templates you can:
@@ -76,6 +76,7 @@ wifi:
 
 <%~ include('./.lib/inputs', { count: 7 }) %>
 ```
+The final code will have wifi with `default_ssid`/`pass` credentials and there will be 7 GPIO inputs
   </TabItem>
     <TabItem value="fina" label="Compiled code">
 ```yaml
@@ -110,16 +111,16 @@ binary_sensor:
   </TabItem>
 </Tabs>
 
+---
+
 ## Basic Syntax
 
 Eta uses JavaScript syntax inside special tags:
 
 - `<% ... %>` — execute JavaScript code (no output)
 - `<%= ... %>` — evaluate and print a value
-
 ---
-
-#### Loops
+### Loops
 
 Loops are especially useful when generating multiple sensors, switches, or pins.
 
@@ -155,7 +156,7 @@ binary_sensor:
 
 ---
 
-#### Conditionals
+### Conditionals
 
 You can include YAML conditionally based on variables:
 
@@ -182,7 +183,7 @@ logger:
 
 ---
 
-#### Includes and Reuse
+### Includes and Reuse
 
 You can split templates into smaller files and include them where needed.  
 For shared code, store files in device or global `.lib/` and import them whenever needed.
@@ -208,4 +209,4 @@ For shared code, store files in device or global `.lib/` and import them wheneve
 
 - For more details about Eta.js check the official [documentation](https://eta.js.org/docs/intro/template-syntax) or a (cheatsheet)[https://eta.js.org/docs/intro/syntax-cheatsheet]
 - Learn how to [Patch YAML](./yaml-patch.md) after templates are rendered  
-- Explore [Alternates](./alternates.md) to enable/disable files and folders for different device variants
+- Explore [Alternates](./disable-file.md) to enable/disable files and folders for different device variants
