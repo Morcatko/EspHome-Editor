@@ -64,7 +64,7 @@ binary_sensor:
 <%
   const ssid = it.ssid || "default_ssid"
   const password = it.password || "changeme"
-%>
+-%>
 wifi:
   ssid: "<%= ssid %>"
   password: "<%= password %>"
@@ -72,12 +72,40 @@ wifi:
   </TabItem>
   <TabItem value="device" label="device.eta">
 ```yaml
-Include
+<%~ include('./.lib/header', { password: "pass" }) %>
+
+<%~ include('./.lib/inputs', { count: 7 }) %>
 ```
   </TabItem>
     <TabItem value="fina" label="Compiled code">
 ```yaml
-FInal
+wifi:
+  ssid: "default_ssid"
+  password: "pass"
+
+binary_sensor:
+  - platform: gpio
+    pin: 0
+    name: "Input 0"
+  - platform: gpio
+    pin: 1
+    name: "Input 1"
+  - platform: gpio
+    pin: 2
+    name: "Input 2"
+  - platform: gpio
+    pin: 3
+    name: "Input 3"
+  - platform: gpio
+    pin: 4
+    name: "Input 4"
+  - platform: gpio
+    pin: 5
+    name: "Input 5"
+  - platform: gpio
+    pin: 6
+    name: "Input 6"
+
 ```
   </TabItem>
 </Tabs>
