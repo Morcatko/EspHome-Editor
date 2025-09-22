@@ -13,10 +13,11 @@ import { color_local, color_gray, color_esphome, color_online, color_offline } f
 
 It simplifies the process of configuring ESPHome devices by providing an intuitive interface for writing, editing, and managing YAML configuration files — especially those with repetitive or complex sections.
 
-Whether you're a seasoned home automation enthusiast or just getting started with ESP-based devices, this editor helps you:
+Whether you're a seasoned home automation enthusiast or just getting started with ESP-based devices, this IDE helps you:
 
 - **Speed up development** by reducing repetitive configuration tasks  
 - **Stay offline and in control** with a local, self-hosted setup  
+- **Build your device** by combining multiple files into final configuration
 
 Once Editor for ESPHome is running, you'll be greeted with a clean and simple interface focused on managing and editing ESPHome device configurations.
 
