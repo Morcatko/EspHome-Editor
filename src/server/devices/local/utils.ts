@@ -5,9 +5,12 @@ import { directoryExists, listDirEntries } from "@/server/utils/fs-utils";
 import type { TLocalDirectory, TLocalFile, TLocalFileOrDirectory } from "../types";
 import { getFileInfo } from "./template-processors";
 import { ManifestUtils } from "./manifest-utils";
+import { slugifyFriendlyName } from "@/shared/utils";
+
+export const deviceNameToDirName = (device_id: string) => slugifyFriendlyName(device_id)
 
 export const getDeviceDir = (device_id: string) =>
-    join(c.devicesDir, device_id);
+    join(c.devicesDir, deviceNameToDirName(device_id));
 
 export const fixPath = (path: string) =>
     path.replaceAll("\\", "/");
