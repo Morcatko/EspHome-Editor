@@ -1,0 +1,11 @@
+version: "3.8"
+name: esphome-e4e-test
+services:
+  esphome:
+    container_name: esphome
+    image: ghcr.io/esphome/esphome
+    #network_mode: host
+    ports:
+      - 6052:6052
+    volumes:
+      - ./esphome-config:/config
