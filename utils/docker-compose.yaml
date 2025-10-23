@@ -1,5 +1,5 @@
 version: "3.8"
-name: esphome-e4e-test
+name: e4e-esphome-e4e-test
 services:
   esphome:
     container_name: esphome
@@ -8,4 +8,9 @@ services:
     ports:
       - 6052:6052
     volumes:
+      - e4e-eshome-config-dotesphome:/config/.esphome
       - ./esphome-config:/config
+
+
+volumes:
+  e4e-eshome-config-dotesphome:
