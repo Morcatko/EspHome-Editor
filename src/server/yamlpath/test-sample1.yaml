@@ -46,3 +46,5 @@ binary_sensor:
   - platform: modbus_controller
     modbus_controller_id: mbc_0x01
     id: mbc_0x01_input_0x03
+
+cover:

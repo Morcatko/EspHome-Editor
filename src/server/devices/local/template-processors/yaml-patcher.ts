@@ -10,12 +10,12 @@ const patchYaml = (target: YAML.Document, path: string, changes: YAML.YAMLMap[])
         const pair = change.items[0] as YAML.Pair<YAML.Scalar, unknown>;
         const operation = pair.key.value;
 
-        const values = isSeq(pair.value)
-            ? (pair.value as YAML.YAMLSeq<YAML.YAMLMap>).items.flatMap(item => (item as YAML.YAMLMap).items)
-            : (pair.value as YAML.YAMLMap).items;
-
         for (const nodeToChange of nodesToChange) {
             if (isMap(nodeToChange)) {
+                const values = isSeq(pair.value)
+                    ? (pair.value as YAML.YAMLSeq<YAML.YAMLMap>).items.flatMap(item => (item as YAML.YAMLMap).items)
+                    : (pair.value as YAML.YAMLMap).items;
+
                 if (operation === "add") {
                     for (const value of values) {
                         nodeToChange.add(value, true);
@@ -25,7 +25,16 @@ const patchYaml = (target: YAML.Document, path: string, changes: YAML.YAMLMap[])
                         nodeToChange.add(value, true);
                     }
                 } else {
-                    throw new Error("Unsupported operation");
+                    throw new Error("Unsupported operation on map");
+                }
+            } else if (isSeq(nodeToChange)) {
+                const values = (pair.value as YAML.YAMLSeq<YAML.YAMLMap>).items;
+                if (operation === "add") {
+                    for (const value of values) {
+                        nodeToChange.add(value);
+                    }
+                } else {
+                    throw new Error("Unsupported operation on sequence");
                 }
             } else {
                 throw new Error("Unsupported node type");
