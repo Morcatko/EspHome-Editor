@@ -49,8 +49,6 @@ export const compileDevice = async (device_id: string) => {
         info: getFileInfo(f)
     }));
 
-    console.log("Input files", inputFiles);
-
     const compiledYamls: TFileContent[] = [];
     for (const file of inputFiles.filter(i => i.info.type === "basic")) {
         const isFileDisabled = await ManifestUtils.isPathDisabled(device_id, file.path);

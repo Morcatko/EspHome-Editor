@@ -1,4 +1,3 @@
-version: "3.8"
 name: e4e-esphome-e4e-test
 services:
   esphome:

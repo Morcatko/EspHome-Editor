@@ -25,7 +25,15 @@ const _applyDot = (nodes: YAML.Node[], path: DotContent): YAML.Node[] => {
             return nodes
                 .flatMap((n) => {
                     if (isMap(n)) {
-                        return [n.get(path.value) as YAML.Node];
+;                        const result = n.get(path.value) as YAML.Node;
+                        if (!result) {
+                            //Add fake node so that YamlPatch can change it
+                            const res = new YAML.YAMLSeq();
+                            n.set(path.value, res);
+                            return [res];
+                        } else {
+                            return [result];
+                        }
                     } else if (isSeq(n)) {
                         return _applyDot(n.items as YAML.Node[], path);
                     }
