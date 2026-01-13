@@ -28,6 +28,7 @@
     "dockview-react": "^4.2.1",
     "eta": "^3.5.0",
     "jotai": "^2.11.3",
+    "jotai-family": "^1.0.1",
     "jsonpathly": "^2.0.2",
     "marked": "^16.0.0",
     "monaco-editor": "^0.52.2",

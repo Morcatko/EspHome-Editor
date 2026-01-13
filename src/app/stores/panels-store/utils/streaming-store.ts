@@ -2,7 +2,7 @@ import { TWsMessage } from "@/app/api/device/[device_id]/esphome/utils";
 import { api } from "@/app/utils/api-client";
 import { log } from "@/shared/log";
 import Convert from "ansi-to-html";
-import { atomFamily } from 'jotai/utils';
+import { atomFamily } from 'jotai-family';
 import { atom,  getDefaultStore,  PrimitiveAtom, useAtom } from "jotai";
 import { useMemo } from "react";
 
