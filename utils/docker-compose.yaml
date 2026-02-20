@@ -1,4 +1,4 @@
-name: e4e-esphome-e4e-test
+name: e4e-esphome-test
 services:
   esphome:
     container_name: esphome
