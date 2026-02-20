@@ -17,16 +17,16 @@ export const registerDeviceActions = (
         label: "Upload to ESPHome",
         contextMenuGroupId: "esphome",
         contextMenuOrder: 0,
-        keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS],
+        //keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS],
         run: async () => await appStores.devices.espHome_upload(device)
     });
 
     editor.addAction({
-        id: "editor4esphome.upload_and_install",
-        label: "Upload & Install to device",
+        id: "editor4esphome.upload_and_compile",
+        label: "Upload to ESPHome & Compile",
         contextMenuGroupId: "esphome",
         contextMenuOrder: 1,
-        keybindings: [monaco.KeyCode.F6],
+        //keybindings: [monaco.KeyCode.F6],
         run: async () => {
             await appStores.devices.espHome_upload(device);
             appStores.panels.addDevicePanel("floating", device.id, "esphome_compile");

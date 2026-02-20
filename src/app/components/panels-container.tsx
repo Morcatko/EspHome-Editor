@@ -11,7 +11,7 @@ import { TPanel_Device, TPanelWithClick } from "../stores/panels-store/types";
 import { usePanelsStore } from "../stores/panels-store";
 import { useDarkTheme, useDeviceColor } from "@/app/utils/hooks";
 import { QuestionIcon } from "@primer/octicons-react";
-import { ActionIcon } from "@mantine/core";
+import { ActionIcon, Tooltip } from "@mantine/core";
 import { Watermark } from "./watermark";
 
 type TPanelProps = {
@@ -87,12 +87,14 @@ const dockViewTabComponents = {
     }
 };
 
-const RightHeaderActions = (prop: IDockviewHeaderActionsProps) => {
-    return (<ActionIcon
-        renderRoot={(p) => <a {...p} style={{ ...p.style, height: "100%" }}href="https://editor-4-esphome.github.io/" target="_blank" />}
-        variant="subtle" >
-        <QuestionIcon /></ActionIcon>);
-};
+const RightHeaderActions = (prop: IDockviewHeaderActionsProps) =>
+    <Tooltip label="https://editor-4-esphome.github.io/" withinPortal={false} >
+        <ActionIcon
+            renderRoot={(p) => <a {...p} style={{ ...p.style, height: "100%" }} href="https://editor-4-esphome.github.io/" target="_blank" />}
+            variant="subtle" >
+            <QuestionIcon /></ActionIcon>
+    </Tooltip>;
+
 
 export const PanelsContainer = () => {
     const isDarkMode = useDarkTheme();

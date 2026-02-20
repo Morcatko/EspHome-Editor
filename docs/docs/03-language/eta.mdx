@@ -1,0 +1,211 @@
+---
+sidebar_position: 30
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Using Eta.js Templates
+
+Editor for ESPHome uses the [Eta.js](https://eta.js.org) templating engine to dynamically generate YAML.  
+This makes it possible to avoid repetition, keep your configs modular, and build reusable building blocks for your devices.
+
+---
+
+## Why Templates?
+
+ESPHome YAML can get repetitive fast.  
+With templates you can:
+
+- Reuse blocks of code across devices
+- Dynamically change values (IDs, names, pins)
+- Use conditions and loops to generate many similar components
+- Keep large configs clean and maintainable
+
+---
+
+## File Extension
+
+Eta templates must use the `.eta` extension.
+When the editor builds the final config:
+
+- `.eta` files are **rendered** into YAML
+- Variables and logic inside them are processed
+- The generated YAML is merged with other files
+
+---
+
+## Example
+
+Let's look at an example that will explain the usage of Eta templating
+
+
+```
+my-device/
+├── .lib/
+|   ├── inputs.eta
+|   └── header.eta
+└── device.eta
+```
+
+<Tabs>
+  <TabItem value="lib_inputs" label=".lib/inputs.eta" defaults>
+```yaml
+binary_sensor:
+<% for (let i = 0; i < it.count; i++) { %>
+  - platform: gpio
+    pin: <%= i %>
+    name: "Input <%= i %>"
+<% } %>
+```
+  </TabItem>
+  <TabItem value="lib_header" label=".lib/header.eta">
+```yaml
+<%
+  const ssid = it.ssid || "default_ssid"
+  const password = it.password || "changeme"
+-%>
+wifi:
+  ssid: "<%= ssid %>"
+  password: "<%= password %>"
+```
+  </TabItem>
+  <TabItem value="device" label="device.eta">
+```yaml
+<%~ include('./.lib/header', { password: "pass" }) %>
+
+<%~ include('./.lib/inputs', { count: 7 }) %>
+```
+The final code will have wifi with `default_ssid`/`pass` credentials and there will be 7 GPIO inputs
+  </TabItem>
+    <TabItem value="fina" label="Compiled code">
+```yaml
+wifi:
+  ssid: "default_ssid"
+  password: "pass"
+
+binary_sensor:
+  - platform: gpio
+    pin: 0
+    name: "Input 0"
+  - platform: gpio
+    pin: 1
+    name: "Input 1"
+  - platform: gpio
+    pin: 2
+    name: "Input 2"
+  - platform: gpio
+    pin: 3
+    name: "Input 3"
+  - platform: gpio
+    pin: 4
+    name: "Input 4"
+  - platform: gpio
+    pin: 5
+    name: "Input 5"
+  - platform: gpio
+    pin: 6
+    name: "Input 6"
+
+```
+  </TabItem>
+</Tabs>
+
+---
+
+## Basic Syntax
+
+Eta uses JavaScript syntax inside special tags:
+
+- `<% ... %>` — execute JavaScript code (no output)
+- `<%= ... %>` — evaluate and print a value
+---
+### Loops
+
+Loops are especially useful when generating multiple sensors, switches, or pins.
+
+<Tabs>
+  <TabItem value="src" label="file.eta" defaults>
+```yaml
+binary_sensor:
+<% for (let i = 0; i < 4; i++) { %>
+  - platform: gpio
+    pin: <%= i %>
+    name: "Input <%= i %>"
+<% } %>
+```
+  </TabItem>
+  <TabItem value="tgt" label="file.yaml">
+```yaml
+binary_sensor:
+  - platform: gpio
+    pin: 0
+    name: "Input 0"
+  - platform: gpio
+    pin: 1
+    name: "Input 1"
+  - platform: gpio
+    pin: 2
+    name: "Input 2"
+  - platform: gpio
+    pin: 3
+    name: "Input 3"
+```
+  </TabItem>
+</Tabs>
+
+---
+
+### Conditionals
+
+You can include YAML conditionally based on variables:
+
+<Tabs>
+  <TabItem value="src" label="file.eta" defaults>
+```yaml
+<% if (it.debug) { %>
+logger:
+  level: DEBUG
+<% } else { %>
+logger:
+  level: WARN
+<% } %>
+```
+  </TabItem>
+  <TabItem value="tgt" label="file.yaml">
+When imported with `<%~ include('./.lib/file', { debug: true }) %>`
+```yaml
+logger:
+  level: DEBUG
+```
+  </TabItem>
+</Tabs>
+
+---
+
+### Includes and Reuse
+
+You can split templates into smaller files and include them where needed.  
+For shared code, store files in device or global `.lib/` and import them whenever needed.
+
+ - `<%~ include('./.lib/file', { key: value }) %>`
+   - imports from devices `.lib` folder
+ - `<%~ include('./../.lib/file', { key: value }) %>`
+    - imports from global `.lib` folder
+
+---
+
+## Best Practices
+
+- ✅ Keep logic simple — use Eta for structure, not business logic  
+- ✅ Group related components into their own template files  
+- ✅ Use `.lib/` for shared templates across devices  
+- ✅ Comment your templates for clarity  
+- ❌ Avoid overly complex JavaScript — configs should stay easy to read  
+
+---
+
+## Next Steps
+
+- For more details about Eta.js check the official [documentation](https://eta.js.org/docs/intro/template-syntax) or a (cheatsheet)[https://eta.js.org/docs/intro/syntax-cheatsheet]<!-- - Learn how to [Patch YAML](./yaml-patch.md) after templates are rendered   -->
+- Explore [Alternates](./disable-file.md) to enable/disable files and folders for different device variants
