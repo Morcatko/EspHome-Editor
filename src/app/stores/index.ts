@@ -1,6 +1,6 @@
 import { QueryClient } from "@tanstack/react-query";
-import { usePanelsStore } from "./panels-store";
 import { useDevicesTreeStore } from "../components/devices-tree/devices-tree-store";
+import { usePanelsStore } from "../components/panels/panels-store";
 
 export const queryClient = new QueryClient()
 

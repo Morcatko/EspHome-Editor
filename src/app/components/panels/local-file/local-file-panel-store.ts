@@ -1,11 +1,10 @@
 import { api } from "@/app/utils/api-client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { TEditorFileProps } from "../../editors/single-editor";
 import { TLocalFile, TLocalFileOrDirectory } from "@/server/devices/types";
-
+import { callResultToEditorFileProps } from "../_utils/query-utils";
 import { getSourceMonacoLanguge, getTargetMonacoLanguage } from "@/app/utils/file-utils";
 import { useDevice } from "@/app/stores/devices-store";
-import { callResultToEditorFileProps } from "@/app/stores/panels-store/utils/query-utils";
-import { TEditorFileProps } from "@/app/stores/panels-store/types";
 
 const findFile = (fods: TLocalFileOrDirectory[], file_path: string): TLocalFile | null => {
     for (const fod of fods) {

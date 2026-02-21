@@ -1,9 +1,9 @@
-import { useEspHomeCompileStore } from "@/app/stores/panels-store/esphome-compile-store";
-import { LogStream } from "../editors/log-stream";
+import { useEspHomeCompilePanelStore } from "./esphome-compile-panel-store";
+import { LogStream } from "../../editors/log-stream";
 import { SyncIcon } from "@primer/octicons-react";
-import { DeviceToolbarItem } from "../devices-tree/device-toolbar";
+import { DeviceToolbarItem } from "../../devices-tree/device-toolbar";
 import { useDevice } from "@/app/stores/devices-store";
-import { Toolbar, ToolbarItem } from "../toolbar";
+import { Toolbar, ToolbarItem } from "../../toolbar";
 
 type TProps = {
     device_id: string;
@@ -12,7 +12,7 @@ type TProps = {
 
 export const EspHomeCompileToolbar = ({ device_id, lastClick }: TProps) => {
     const device = useDevice(device_id)!;
-    const logStore = useEspHomeCompileStore(device_id, lastClick);
+    const logStore = useEspHomeCompilePanelStore(device_id, lastClick);
     const panelTarget ="floating";
 
     return <Toolbar>
@@ -25,6 +25,6 @@ export const EspHomeCompileToolbar = ({ device_id, lastClick }: TProps) => {
 }
 
 export const EspHomeCompilePanel = ({ device_id, lastClick }: TProps) => {
-    const logStore = useEspHomeCompileStore(device_id, lastClick);
+    const logStore = useEspHomeCompilePanelStore(device_id, lastClick);
     return <LogStream store={logStore} />;
 }

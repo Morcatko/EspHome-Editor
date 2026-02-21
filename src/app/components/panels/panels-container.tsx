@@ -1,19 +1,19 @@
 import React from "react";
 import { DockviewDefaultTab, DockviewReact, IDockviewHeaderActionsProps, IDockviewPanelHeaderProps, IDockviewPanelProps, themeDark, themeLight } from "dockview-react";
-import { LocalFilePanel, LocalFileToolbar } from "./panels/local-file/local-file-panel";
-import { LocalDevicePanel, LocalDeviceToolbar } from "./panels/local-device-panel";
-import { ESPHomeDevicePanel, ESPHomeDeviceToolbar } from "./panels/esphome-device-panel";
-import { DiffPanel, DiffToolbar } from "./panels/diff-panel";
-import { EspHomeLogPanel, EspHomeLogToolbar } from "./panels/esphome-log-panel";
-import { EspHomeInstallPanel, EspHomeInstallToolbar } from "./panels/esphome-install-panel";
-import { EspHomeCompilePanel, EspHomeCompileToolbar } from "./panels/esphome-compile-panel";
-import { TPanel_Device, TPanelWithClick } from "../stores/panels-store/types";
-import { usePanelsStore } from "../stores/panels-store";
+import { LocalFilePanel, LocalFileToolbar } from "./local-file/local-file-panel";
+import { LocalDevicePanel, LocalDeviceToolbar } from "./local-device/local-device-panel";
+import { ESPHomeDevicePanel, ESPHomeDeviceToolbar } from "./esphome-device/esphome-device-panel";
+import { DiffPanel, DiffToolbar } from "./diff/diff-panel";
+import { EspHomeLogPanel, EspHomeLogToolbar } from "./esphome-log/esphome-log-panel";
+import { EspHomeInstallPanel, EspHomeInstallToolbar } from "./esphome-install/esphome-install-panel";
+import { EspHomeCompilePanel, EspHomeCompileToolbar } from "./esphome-compile/esphome-compile-panel";
+import { TPanel_Device, TPanelWithClick } from "./_utils/types";
+import { DevicesPanel } from "./devices/devices-panel";
+import { usePanelsStore } from "./panels-store";
 import { useDarkTheme, useDeviceColor } from "@/app/utils/hooks";
 import { QuestionIcon } from "@primer/octicons-react";
 import { ActionIcon, Tooltip } from "@mantine/core";
 import { Watermark } from "./watermark";
-import { DevicesPanel } from "./panels/devices/devices-panel";
 
 type TPanelProps = {
     toolbar: React.ReactNode;

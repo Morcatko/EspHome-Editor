@@ -1,8 +1,8 @@
 import { useDevice } from "@/app/stores/devices-store";
-import { SingleEditor } from "../editors/single-editor";
-import { useLocalDeviceStore } from "@/app/stores/panels-store/local-device-store";
-import { Toolbar } from "../toolbar";
-import { DeviceToolbarItem } from "../devices-tree/device-toolbar";
+import { SingleEditor } from "../../editors/single-editor";
+import { useLocalDevicePanelStore } from "./local-device-panel-store";
+import { Toolbar } from "../../toolbar";
+import { DeviceToolbarItem } from "../../devices-tree/device-toolbar";
 
 type TProps = {
     device_id: string;
@@ -24,7 +24,7 @@ export const LocalDeviceToolbar = (props: TProps) => {
 }
 
 export const LocalDevicePanel = ({device_id} : TProps) => {
-    const data = useLocalDeviceStore(device_id);
+    const data = useLocalDevicePanelStore(device_id);
 
     return <SingleEditor {...data} device_id={device_id} />;
 }

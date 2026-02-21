@@ -1,8 +1,8 @@
-import { useEspHomeLogStore } from "@/app/stores/panels-store/esphome-log-store";
-import { LogStream } from "../editors/log-stream";
+import { useEspHomeLogPanelStore } from "./esphome-log-panel-store";
+import { LogStream } from "../../editors/log-stream";
 import { SyncIcon, XIcon } from "@primer/octicons-react";
-import { Toolbar, ToolbarItem } from "../toolbar";
-import { DeviceToolbarItem } from "../devices-tree/device-toolbar";
+import { Toolbar, ToolbarItem } from "../../toolbar";
+import { DeviceToolbarItem } from "../../devices-tree/device-toolbar";
 import { useDevice } from "@/app/stores/devices-store";
 
 type TProps = {
@@ -12,7 +12,7 @@ type TProps = {
 
 export const EspHomeLogToolbar = ({ device_id, lastClick }: TProps) => {
     const device = useDevice(device_id)!;
-    const logStore = useEspHomeLogStore(device_id, lastClick);
+    const logStore = useEspHomeLogPanelStore(device_id, lastClick);
     return <Toolbar>
         <DeviceToolbarItem.ESPHomeLog device={device} icon={<SyncIcon />} tooltip="Refresh" />
         <ToolbarItem.Divider />
@@ -23,6 +23,6 @@ export const EspHomeLogToolbar = ({ device_id, lastClick }: TProps) => {
 }
 
 export const EspHomeLogPanel = ({ device_id, lastClick }: TProps) => {
-    const logStore = useEspHomeLogStore(device_id, lastClick);
+    const logStore = useEspHomeLogPanelStore(device_id, lastClick);
     return <LogStream store={logStore} />;
 }

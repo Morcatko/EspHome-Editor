@@ -1,10 +1,10 @@
 import { api } from "@/app/utils/api-client";
 import { useQuery } from "@tanstack/react-query";
-import { TEditorFileProps } from "./types";
-import { resultToEditorFileProps } from "./utils/query-utils";
+import { resultToEditorFileProps } from "../_utils/query-utils";
 import { esphomeLanguageId } from "@/app/components/editors/monaco/languages";
+import { TEditorFileProps } from "../../editors/single-editor";
 
-export const useLocalDeviceStore = (device_id: string) => {
+export const useLocalDevicePanelStore = (device_id: string) => {
     const query = useQuery({
         queryKey: ["device", device_id, "local"],
         queryFn: async () => api.local_device(device_id)

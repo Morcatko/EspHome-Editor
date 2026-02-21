@@ -1,3 +1,4 @@
+import { useLocalFile, useLocalFilePanelStore } from "./local-file-panel-store";
 import { DockviewApi, DockviewDefaultTab, DockviewReact, IDockviewPanelProps, themeDark, themeLight } from "dockview-react";
 import { useDarkTheme } from "@/app/utils/hooks";
 import { SingleEditor } from "../../editors/single-editor";
@@ -6,7 +7,6 @@ import { DeviceToolbarItem } from "../../devices-tree/device-toolbar";
 import { useDevice } from "@/app/stores/devices-store";
 import { Toolbar, ToolbarItem } from "../../toolbar";
 import { HtmlPreview } from "../../editors/html-preview";
-import { useLocalFile, useLocalFilePanelStore } from "./local-file-panel-store";
 
 type TProps = {
     device_id: string;

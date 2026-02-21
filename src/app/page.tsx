@@ -11,7 +11,7 @@ import logo from "@/assets/logo.svg";
 import { useDarkTheme } from "./utils/hooks";
 import { useMonacoInit } from "./components/editors/monaco/monaco-init";
 import { useDevicesQuery } from "./stores/devices-store";
-import { PanelsContainer } from "./components/panels-container";
+import { PanelsContainer } from "./components/panels/panels-container";
 import { useWindowEvent } from "@mantine/hooks";
 import { useLocalStorage } from "usehooks-ts";
 import { usePanelsStore } from "./stores/panels-store";
