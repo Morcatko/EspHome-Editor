@@ -1,3 +1,4 @@
+import { type TDeviceInfo } from "./local/manifest-utils";
 import { type TLanguge,} from "./local/template-processors";
 
 export type TNode = {
@@ -28,6 +29,7 @@ export type TLocalFileOrDirectory = TLocalDirectory | TLocalFile;
 export type TDevice = TParent & {
     type: "device"
     esphome_config: string;
+    deviceInfo?: TDeviceInfo;
 }
 
 type TLog = {

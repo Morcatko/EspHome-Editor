@@ -18,7 +18,7 @@ export const registerDeviceActions = (
         contextMenuGroupId: "esphome",
         contextMenuOrder: 0,
         //keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS],
-        run: async () => await appStores.devices.espHome_upload(device)
+        run: async () => await appStores.devicesTree.espHome_upload(device)
     });
 
     editor.addAction({
@@ -28,7 +28,7 @@ export const registerDeviceActions = (
         contextMenuOrder: 1,
         //keybindings: [monaco.KeyCode.F6],
         run: async () => {
-            await appStores.devices.espHome_upload(device);
+            await appStores.devicesTree.espHome_upload(device);
             appStores.panels.addDevicePanel("floating", device.id, "esphome_compile");
         }
     });

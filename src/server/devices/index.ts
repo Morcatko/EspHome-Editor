@@ -1,5 +1,6 @@
 import { espHome } from "./esphome";
 import { local } from "./local";
+import { ManifestUtils } from "./local/manifest-utils";
 
 export const getTreeData = async () => {
     const esphome_data = await espHome.tryGetDevices();
@@ -38,4 +39,10 @@ export const importEspHomeToLocalDevice = async (device_id: string) => {
 export const deleteDevice = async (device_id: string) => {
     await local.deleteDevice(device_id);
     await espHome.deleteDevice(device_id);
+}
+
+export const getDeviceInfo = async (device_id: string) => {
+    const device_info = await espHome.getDeviceInfo(device_id);
+    await ManifestUtils.setDeviceInfo(device_id, device_info);
+    return device_info;
 }

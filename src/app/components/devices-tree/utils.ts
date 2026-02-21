@@ -1,4 +1,4 @@
-import { useDevicesStore } from "@/app/stores/devices-store";
+import { useDevicesTreeStore } from "./devices-tree-store";
 import { TDevice, TLocalDirectory, TLocalFile, TLocalFileOrDirectory } from "@/server/devices/types";
 import { TreeNodeData } from "@mantine/core";
 import { useMemo } from "react";
@@ -52,7 +52,7 @@ const mapFiles = (parentId: string, device: TDevice, files: TLocalFileOrDirector
 }
 
 export const useTreeData = () => {
-    const devicesStore = useDevicesStore();
+    const devicesStore = useDevicesTreeStore();
     const data = devicesStore.query.isSuccess ? devicesStore.query.data : []
     return useMemo(() => [{
             type: "add_new_device",

@@ -6,7 +6,7 @@ import { Group, RenderTreeNodePayload, Tree, useTree } from "@mantine/core";
 import { TDevice } from "@/server/devices/types";
 import { color_gray, color_offline, color_online } from "../../utils/const";
 import { api } from "../../utils/api-client";
-import { useDevicesStore } from "../../stores/devices-store";
+import { useDevicesTreeStore } from "./devices-tree-store";
 import { usePanelsStore } from "../../stores/panels-store";
 import { DeviceToolbar } from "./device-toolbar";
 import { ThreeDotsMenu, deviceMenuItems, fodMenuItems } from "./menus";
@@ -46,7 +46,7 @@ const Node = (p: TNodeProps) => {
 const nodeRenderer = (p: RenderTreeNodePayload) => {
     const node = p.node as TreeNodeType;
     const panels = usePanelsStore();
-    const devicesStore = useDevicesStore();
+    const devicesStore = useDevicesTreeStore();
     const pingQuery = useQuery({
         queryKey: ['ping'],
         refetchInterval: 1000,
@@ -111,7 +111,7 @@ const nodeRenderer = (p: RenderTreeNodePayload) => {
 }
 
 export const DevicesTree = () => {
-    const devicesStore = useDevicesStore();
+    const devicesStore = useDevicesTreeStore();
 
     const tree = useTree({
         initialExpandedState: devicesStore.expanded.expanded,

@@ -3,6 +3,8 @@ import type { TDevice } from "../types";
 import { esphome_stream, type StreamEvent } from "./client";
 import { log } from "@/shared/log";
 import { assertResponseAndJsonOk, assertResponseOk } from "@/shared/http-utils";
+import { TDeviceInfo } from "../local/manifest-utils";
+import { processLogMessage } from "./device-info-parser";
 
 type TEspHomeDevice = {
     name: string;
@@ -132,6 +134,49 @@ const stream = async (
         onError);
 }
 
+const getDeviceInfo = async (device_id: string): Promise<TDeviceInfo> => {
+    const result: TDeviceInfo = {
+        esphome_version: null,
+        chip: null,
+        compiled_on: null,
+        ip_address: null,
+        deviceInfoUpdatedAt: new Date().toISOString(),
+    }
+
+    let counter = 0;
+
+    return new Promise(async (res, rej) => {
+        let closing = false;
+        const logStream = await stream(device_id, "logs", { port: "OTA" },
+            (e) => {
+                processLogMessage(result, e.data.trim());
+                counter++;
+
+                const isCompleted =
+                    result.esphome_version !== null &&
+                    result.chip !== null &&
+                    result.compiled_on !== null &&
+                    result.ip_address !== null;
+
+                if ((counter > 15) || isCompleted) {
+                    closing = true;
+                    logStream.close();
+                    res(result);
+                }
+            },
+            (c) => {
+                log.debug(`[${device_id}] Stream completed with code ${c}`);
+                res(result);
+            },
+            (e) => {
+                if (!closing) {
+                    log.error(`[${device_id}] Stream error`, e);
+                    rej(e);
+                }
+            });
+    });
+}
+
 export const espHome = {
     tryGetDevices,
     getConfiguration,
@@ -139,4 +184,9 @@ export const espHome = {
     deleteDevice,
     getPing,
     stream,
+    getDeviceInfo,
+}
+
+function proceessLogMessage(result: TDeviceInfo, arg1: string) {
+    throw new Error("Function not implemented.");
 }

@@ -13,6 +13,7 @@ import { useDarkTheme, useDeviceColor } from "@/app/utils/hooks";
 import { QuestionIcon } from "@primer/octicons-react";
 import { ActionIcon, Tooltip } from "@mantine/core";
 import { Watermark } from "./watermark";
+import { DevicesPanel } from "./panels/devices/devices-panel";
 
 type TPanelProps = {
     toolbar: React.ReactNode;
@@ -64,6 +65,11 @@ const dockViewComponents = {
                 return <Panel
                     toolbar={<EspHomeLogToolbar device_id={panel.device_id} lastClick={panel.last_click} />}
                     panel={<EspHomeLogPanel device_id={panel.device_id} lastClick={panel.last_click} />} />;
+            case "dashboard":
+                return <Panel
+                    toolbar={null}
+                    panel={<DevicesPanel />}
+                />;
             default:
                 return <div>Noting selected</div>;
         }

@@ -1,6 +1,8 @@
 import { assertResponseAndJsonOk, assertResponseOk } from "@/shared/http-utils";
 import { TGetStatus } from "../api/status/route";
 import { TOperationResult } from "@/server/devices/types";
+import { log } from "@/shared/log";
+import { type TWsMessage } from "../api/device/[device_id]/esphome/utils";
 
 export namespace api {
     export type TCallResult = {
@@ -89,6 +91,9 @@ export namespace api {
     export const url_local_path = (device_id: string, path: string, suffix: string = "") =>
         url_device(device_id, `/local/${fixPath(path)}/${suffix}`);
 
+
+    export const url_esphome_compile = (device_id: string) => url_device(device_id, "esphome/compile");
+
     export async function local_createDevice(device_id: string) {
         await callPut(url_device(device_id, "local"), null);
     }
@@ -155,5 +160,44 @@ export namespace api {
 
     export async function getPing() {
         return await callGet_json("/api/device/ping");
+    }
+
+    export function stream(url: string, onMessage: (htmlMessage: string) => void) {
+        const socket = new WebSocket(api.getWsUrl(url))
+        log.debug("Creating socket", url);
+
+        // Connection opened
+        socket.addEventListener("open", event => {
+            socket.send("Connection established")
+        });
+
+        // Listen for messages
+        socket.addEventListener("message", event => {
+            if (event?.data) {
+                const jsonData = JSON.parse(event.data) as TWsMessage;
+
+                switch (jsonData.event) {
+                    case "completed":
+                        log.verbose("Stream completed");
+                        //ws.getWebSocket()!.close();
+                        break;
+                    case "error":
+                        log.error("Stream error", jsonData.data);
+                        //ws.getWebSocket()!.close();
+                        break;
+                    case "message":
+                        onMessage(jsonData.data);
+                        break;
+                    default:
+                        log.warn("Unknown event", jsonData);
+                        break
+                }
+            }
+        });
+        return () => {
+            log.debug("Closing socket");
+            if (socket.readyState === WebSocket.OPEN)
+                socket.close();
+        }
     }
 }
