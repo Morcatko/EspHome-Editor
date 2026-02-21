@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useVirtualizer } from '@tanstack/react-virtual'
-import { useStreamingStore } from "@/app/stores/panels-store/utils/streaming-store";
+import { useStreamingStore } from "@/app/components/panels/_utils/streaming-store";
 import React from "react";
 import { SyncIcon } from "@primer/octicons-react";
 

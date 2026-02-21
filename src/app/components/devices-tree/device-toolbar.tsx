@@ -1,12 +1,12 @@
 import { useDevicesStore } from "@/app/stores/devices-store";
-import { PanelTarget, usePanelsStore } from "@/app/stores/panels-store";
+import { PanelTarget, usePanelsStore } from "../panels/panels-store";
 import { color_esphome, color_gray, color_local } from "@/app/utils/const";
 import { useDarkTheme } from "@/app/utils/hooks";
 import { TDevice } from "@/server/devices/types";
 import { ActionIcon } from "@mantine/core";
 import { BeakerIcon, CodeIcon, DownloadIcon, GitCompareIcon, LogIcon, UploadIcon } from "@primer/octicons-react";
 import { ToolbarItem, TToolbarButtonProps } from "../toolbar";
-import { TPanel_DeviceOperation } from "@/app/stores/panels-store/types";
+import { TPanel_DeviceOperation } from "@/app/components/panels/_utils/types";
 
 type TDeviceToolbarItemProps =
     Pick<TToolbarButtonProps, "className"> & {

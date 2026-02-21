@@ -1,4 +1,4 @@
-import { TEditorFileProps } from "@/app/stores/panels-store/types";
+import { TEditorFileProps } from "./single-editor";
 import { QueryWrapper } from "../panels/query-wrapper";
 
 type THtmlPreviewProps = TEditorFileProps;

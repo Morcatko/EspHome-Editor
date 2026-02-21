@@ -1,10 +1,10 @@
 import { api } from "@/app/utils/api-client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { TEditorFileProps } from "./types";
+import { TEditorFileProps } from "../../editors/single-editor";
 import { TLocalFile, TLocalFileOrDirectory } from "@/server/devices/types";
-import { useDevice } from "../devices-store";
-import { callResultToEditorFileProps } from "./utils/query-utils";
+import { callResultToEditorFileProps } from "../_utils/query-utils";
 import { getSourceMonacoLanguge, getTargetMonacoLanguage } from "@/app/utils/file-utils";
+import { useDevice } from "@/app/stores/devices-store";
 
 const findFile = (fods: TLocalFileOrDirectory[], file_path: string): TLocalFile | null => {
     for (const fod of fods) {
@@ -27,7 +27,7 @@ export const useLocalFile = (device_id: string, file_path: string) => {
     return file;
 }
 
-export const useLocalFileStore = (device_id: string, file_path: string) => {
+export const useLocalFilePanelStore = (device_id: string, file_path: string) => {
     const file = useLocalFile(device_id, file_path);
 
     const hasRightFile = (file?.language === "etajs") || (file?.language === "markdown");

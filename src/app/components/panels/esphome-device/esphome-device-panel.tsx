@@ -1,20 +1,19 @@
-import { useDeviceDiffStoreQuery } from "@/app/stores/panels-store/device-diff-store";
-import { DiffEditor } from "../editors/diff-editor";
+import { useESPHomeDevicePanelStore } from "./esphome-device-panel-store";
+import { SingleEditor } from "../../editors/single-editor";
 import { useDevice } from "@/app/stores/devices-store";
-import { Toolbar } from "../toolbar";
-import { DeviceToolbarItem } from "../devices-tree/device-toolbar";
+import { Toolbar } from "../../toolbar";
+import { DeviceToolbarItem } from "../../devices-tree/device-toolbar";
 
 type TProps = {
     device_id: string;
 }
 
-export const DiffToolbar = ({ device_id }: TProps) => {
+export const ESPHomeDeviceToolbar = ({ device_id }: TProps) => {
     const device = useDevice(device_id)!;
 
     const panelTarget = "floating";
 
     return <Toolbar>
-        <DeviceToolbarItem.ESPHomeUpload device={device} panelTarget={panelTarget} />
         <DeviceToolbarItem.ESPHomeShow device={device} panelTarget={panelTarget} />
         <DeviceToolbarItem.ESPHomeCompile device={device} panelTarget={panelTarget} />
         <DeviceToolbarItem.ESPHomeInstall device={device} panelTarget={panelTarget} />
@@ -22,8 +21,8 @@ export const DiffToolbar = ({ device_id }: TProps) => {
     </Toolbar>
 }
 
-export const DiffPanel = ({ device_id }: TProps) => {
-    const data = useDeviceDiffStoreQuery(device_id);
+export const ESPHomeDevicePanel = ({device_id} : TProps) => {
+    const data = useESPHomeDevicePanelStore(device_id);
 
-    return <DiffEditor {...data} device_id={device_id} />;
+    return <SingleEditor {...data} device_id={device_id} />;
 }

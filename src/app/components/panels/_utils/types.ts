@@ -1,21 +1,6 @@
-import type { TOperationResult } from "@/server/devices/types";
-
-export type TEditorFileProps = {
-    query?: {
-        pending: boolean;
-        success: boolean;
-        logs: TOperationResult["logs"]
-    }
-    value: string;
-    language: string;
-    onValueChange?: (v: string) => void;
-}
-
-
 type TPanel_DeviceBase = {
     device_id: string;
 }
-
 
 type TPanel_DeviceLocalFile = {
     operation: "local_file";

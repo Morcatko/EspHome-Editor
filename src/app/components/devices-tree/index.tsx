@@ -7,7 +7,7 @@ import { TDevice } from "@/server/devices/types";
 import { color_gray, color_offline, color_online } from "../../utils/const";
 import { api } from "../../utils/api-client";
 import { useDevicesStore } from "../../stores/devices-store";
-import { usePanelsStore } from "../../stores/panels-store";
+import { usePanelsStore } from "../panels/panels-store";
 import { DeviceToolbar } from "./device-toolbar";
 import { ThreeDotsMenu, deviceMenuItems, fodMenuItems } from "./menus";
 import { TreeNodeType, useTreeData } from "./utils";

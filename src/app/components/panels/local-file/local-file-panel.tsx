@@ -1,12 +1,12 @@
-import { useLocalFile, useLocalFileStore } from "@/app/stores/panels-store/local-file-store";
+import { useLocalFile, useLocalFilePanelStore } from "./local-file-panel-store";
 import { DockviewApi, DockviewDefaultTab, DockviewReact, IDockviewPanelProps, themeDark, themeLight } from "dockview-react";
 import { useDarkTheme } from "@/app/utils/hooks";
-import { SingleEditor } from "../editors/single-editor";
+import { SingleEditor } from "../../editors/single-editor";
 import { QuestionIcon } from "@primer/octicons-react";
-import { DeviceToolbarItem } from "../devices-tree/device-toolbar";
+import { DeviceToolbarItem } from "../../devices-tree/device-toolbar";
 import { useDevice } from "@/app/stores/devices-store";
-import { Toolbar, ToolbarItem } from "../toolbar";
-import { HtmlPreview } from "../editors/html-preview";
+import { Toolbar, ToolbarItem } from "../../toolbar";
+import { HtmlPreview } from "../../editors/html-preview";
 
 type TProps = {
     device_id: string;
@@ -56,19 +56,19 @@ export const LocalFileToolbar = (props: TProps) => {
 
 const dockViewComponents = {
     source: (p: IDockviewPanelProps<TProps>) => {
-        const data = useLocalFileStore(p.params.device_id, p.params.file_path);
+        const data = useLocalFilePanelStore(p.params.device_id, p.params.file_path);
         return <SingleEditor {...data.leftEditor} device_id={p.params.device_id} />;
     },
     compiled: (p: IDockviewPanelProps<TProps>) => {
-        const data = useLocalFileStore(p.params.device_id, p.params.file_path);
+        const data = useLocalFilePanelStore(p.params.device_id, p.params.file_path);
         return <SingleEditor {...data.rightEditor!} device_id={p.params.device_id}/>;
     },
     htmlPreview: (p: IDockviewPanelProps<TProps>) => {
-        const data = useLocalFileStore(p.params.device_id, p.params.file_path);
+        const data = useLocalFilePanelStore(p.params.device_id, p.params.file_path);
         return <HtmlPreview {...data.rightEditor!} />;
     },
     testdata: (p: IDockviewPanelProps<TProps>) => {
-        const data = useLocalFileStore(p.params.device_id, p.params.file_path);
+        const data = useLocalFilePanelStore(p.params.device_id, p.params.file_path);
         return <SingleEditor {...data.testDataEditor!} device_id={p.params.device_id}/>;
     },
 };
@@ -76,7 +76,7 @@ const dockViewComponents = {
 export const LocalFilePanel = (props: TProps) => {
     const isDarkMode = useDarkTheme();
     const localFile = useLocalFile(props.device_id, props.file_path);
-    const data = useLocalFileStore(props.device_id, props.file_path);
+    const data = useLocalFilePanelStore(props.device_id, props.file_path);
 
     const onReady = (api: DockviewApi) => {
         const panelLeft = api.addPanel<TProps>({

@@ -1,4 +1,4 @@
-import { TEditorFileProps } from "@/app/stores/panels-store/types";
+import { TEditorFileProps } from "./single-editor";
 import { DiffEditor as MonacoDiffEditor } from "@monaco-editor/react";
 import { useMonacoTheme } from "./monaco/useMonacoTheme";
 import { QueryWrapper } from "../panels/query-wrapper";
