@@ -1,6 +1,6 @@
 import React from "react";
 import { DockviewDefaultTab, DockviewReact, IDockviewHeaderActionsProps, IDockviewPanelHeaderProps, IDockviewPanelProps, themeDark, themeLight } from "dockview-react";
-import { LocalFilePanel, LocalFileToolbar } from "./panels/local-file-panel";
+import { LocalFilePanel, LocalFileToolbar } from "./panels/local-file/local-file-panel";
 import { LocalDevicePanel, LocalDeviceToolbar } from "./panels/local-device-panel";
 import { ESPHomeDevicePanel, ESPHomeDeviceToolbar } from "./panels/esphome-device-panel";
 import { DiffPanel, DiffToolbar } from "./panels/diff-panel";
