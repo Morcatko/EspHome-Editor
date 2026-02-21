@@ -1,6 +1,6 @@
 import { api } from "@/app/utils/api-client";
 import { UseQueryResult } from "@tanstack/react-query";
-import { TEditorFileProps } from "../types";
+import { TEditorFileProps } from "../../editors/single-editor";
 import type { TOperationResult } from "@/server/devices/types";
 
 export const callResultToEditorFileProps = (query: UseQueryResult<api.TCallResult>) =>

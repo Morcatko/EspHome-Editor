@@ -1,7 +1,7 @@
 import { atom, getDefaultStore, useAtom } from "jotai";
-import type { TPanel, TPanel_Device, TPanelWithClick } from "./panels-store/types";
+import type { TPanel, TPanel_Device, TPanelWithClick } from "./_utils/types";
 import { type DockviewApi } from 'dockview-react';
-import { events } from "./events";
+import { events } from "@/app/stores/events";
 import type { TLocalFileOrDirectory } from "@/server/devices/types";
 
 const dockViewApiAtom = atom<DockviewApi | null>(null);

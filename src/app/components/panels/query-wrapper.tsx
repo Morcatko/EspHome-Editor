@@ -1,4 +1,4 @@
-import { type TEditorFileProps } from "@/app/stores/panels-store/types";
+import { type TEditorFileProps } from "../editors/single-editor";
 import { LogList } from "./log-list";
 
 type TProps = {

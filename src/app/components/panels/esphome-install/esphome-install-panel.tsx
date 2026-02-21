@@ -1,8 +1,8 @@
-import { useEsphomeInstallStore } from "@/app/stores/panels-store/esphome-install-store";
-import { LogStream } from "../editors/log-stream";
+import { useEsphomeInstallPanelStore } from "./esphome-install-panel-store";
+import { LogStream } from "../../editors/log-stream";
 import { useDevice } from "@/app/stores/devices-store";
-import { DeviceToolbarItem } from "../devices-tree/device-toolbar";
-import { Toolbar, ToolbarItem } from "../toolbar";
+import { DeviceToolbarItem } from "../../devices-tree/device-toolbar";
+import { Toolbar, ToolbarItem } from "../../toolbar";
 import { SyncIcon, XIcon } from "@primer/octicons-react";
 
 type TProps = {
@@ -12,7 +12,7 @@ type TProps = {
 
 export const EspHomeInstallToolbar = ({ device_id, lastClick }: TProps) => {
     const device = useDevice(device_id)!;
-    const logStore = useEsphomeInstallStore(device_id, lastClick);
+    const logStore = useEsphomeInstallPanelStore(device_id, lastClick);
     
     const panelTarget ="floating";
 
@@ -27,6 +27,6 @@ export const EspHomeInstallToolbar = ({ device_id, lastClick }: TProps) => {
 }
 
 export const EspHomeInstallPanel = ({ device_id, lastClick }: TProps) => {
-    const logStore = useEsphomeInstallStore(device_id, lastClick);
+    const logStore = useEsphomeInstallPanelStore(device_id, lastClick);
     return <LogStream store={logStore} />;
 }

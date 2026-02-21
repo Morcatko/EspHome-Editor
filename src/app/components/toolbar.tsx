@@ -1,7 +1,7 @@
 import React from "react";
 import { ActionIcon, ActionIconGroup, ActionIconProps, Divider, TextInput, Tooltip } from "@mantine/core";
 import { SearchIcon, XIcon } from "@primer/octicons-react";
-import { type useStreamingStore } from "../stores/panels-store/utils/streaming-store";
+import { type useStreamingStore } from "./panels/_utils/streaming-store";
 
 const allProps: Pick<ActionIconProps, "variant"> =
 {
