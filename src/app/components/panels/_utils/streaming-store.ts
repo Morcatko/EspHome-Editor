@@ -4,6 +4,7 @@ import Convert from "ansi-to-html";
 import { atomFamily } from 'jotai-family';
 import { atom, getDefaultStore, useAtom } from "jotai";
 import { useMemo } from "react";
+import { fixStreamMessage } from "@/shared/string-utils";
 
 const convert = new Convert({
     stream: true,
@@ -39,7 +40,7 @@ const storeFamily = atomFamily((key: AtomKey) => {
     });
     if (!isOutdatedValue) {
         const dispose = api.stream(key.url, (message) => {
-            const html = convert.toHtml(message.replaceAll("\\033", "\x1b"));
+            const html = convert.toHtml(fixStreamMessage(message));
             getDefaultStore().set(store, val => ({
                 ...val,
                 data: [...val.data, html],

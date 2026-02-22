@@ -13,7 +13,7 @@ import { usePanelsStore } from "./panels-store";
 import { useDarkTheme, useDeviceColor } from "@/app/utils/hooks";
 import { QuestionIcon } from "@primer/octicons-react";
 import { ActionIcon, Tooltip } from "@mantine/core";
-import { Watermark } from "./watermark";
+import { Watermark } from "./../watermark";
 
 type TPanelProps = {
     toolbar: React.ReactNode;

@@ -1,6 +1,19 @@
 import { Table } from "@mantine/core";
 import { useDevicesPanelStore } from "./devices-panel-store";
 
+export const CompileCell = (props: { device_id: string }) => {
+    const store = useDevicesPanelStore();
+    const state = store.getCompileState(props.device_id);
+
+    return (state.status === "unknown")
+        ? <button onClick={() => store.compile(props.device_id)}>Compile</button>
+        : <div>
+            <div>{state.status}</div>
+            <div>{state.last_message}</div>
+            <div>{state.finished_at?.toISOString() ?? "Not finished"}</div>
+        </div>;
+}
+
 export const DevicesPanel = () => {
     const store = useDevicesPanelStore();
  
@@ -24,13 +37,7 @@ export const DevicesPanel = () => {
                 <Table.Td>{d.deviceInfo?.esphome_version}</Table.Td>
                 <Table.Td>{d.deviceInfo?.compiled_on}</Table.Td>
                 <Table.Td>{d.deviceInfo?.deviceInfoUpdatedAt}</Table.Td>
-                <Table.Td>
-                    {
-                        store.compileState[d.id]
-                            ? <div>{store.compileState[d.id]}</div>
-                            : <button onClick={() => store.compile(d.id)}>Compile</button>
-                    }                    
-                </Table.Td>
+                <Table.Td><CompileCell device_id={d.id} /></Table.Td>
             </Table.Tr>)}
         </Table.Tbody>
     </Table>

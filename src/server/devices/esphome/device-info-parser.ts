@@ -1,6 +1,7 @@
+import { removeAnsiControlSequences } from '@/shared/string-utils';
 import { TDeviceInfo } from '../local/manifest-utils';
 
-const ansiRegex = /\\033\[[0-9;]*m/g;
+
 
 /*
 INFO ESPHome 2026.1.4
@@ -18,7 +19,7 @@ export const processLogMessage = (
     deviceInfoCollector: TDeviceInfo,
     data: string,
 ) => {
-    const message = data.trim().replaceAll(ansiRegex, '');
+    const message = removeAnsiControlSequences(data);
 
     if (message.startsWith('INFO Successfully connected to ')) {
         const ipMatch = message.match(/Successfully connected to .+ @ ([\d\.]+)/);

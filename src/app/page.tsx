@@ -14,7 +14,7 @@ import { useDevicesQuery } from "./stores/devices-store";
 import { PanelsContainer } from "./components/panels/panels-container";
 import { useWindowEvent } from "@mantine/hooks";
 import { useLocalStorage } from "usehooks-ts";
-import { usePanelsStore } from "./stores/panels-store";
+import { usePanelsStore } from "./components/panels/panels-store";
 
 const Header = () => {
 	return <>
