@@ -13,6 +13,10 @@ export type TPanel_DeviceOperation = {
 
 export type TPanel_Device = TPanel_DeviceBase & (TPanel_DeviceLocalFile | TPanel_DeviceOperation);
 
-export type TPanel = TPanel_Device;
+export type TPanel_Board = {
+    operation: "dashboard";
+}
+
+export type TPanel = TPanel_Device | TPanel_Board;
 
 export type TPanelWithClick = TPanel & { last_click: string };

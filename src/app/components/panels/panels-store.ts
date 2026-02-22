@@ -49,6 +49,8 @@ function getPanelTitle(panel: TPanel) {
             return `${panel.device_id} (Install)`;
         case "esphome_log":
             return `${panel.device_id} (Log)`;
+        case "dashboard":
+            return `Dashboard`;
         default:
             return `Unknown`;
     }

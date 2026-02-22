@@ -14,6 +14,7 @@ import { useDevicesQuery } from "./stores/devices-store";
 import { PanelsContainer } from "./components/panels/panels-container";
 import { useWindowEvent } from "@mantine/hooks";
 import { useLocalStorage } from "usehooks-ts";
+import { usePanelsStore } from "./components/panels/panels-store";
 
 const Header = () => {
 	return <>
@@ -44,12 +45,17 @@ const CollapseButton = () => {
 
 const SidePanel = () => {
 	const statusStore = useStatusStore();
+	const panelsStore = usePanelsStore();
 
 	return <div className="flex-none flex flex-col h-screen">
 		<div className="flex-none border-b border-slate-200 dark:border-slate-800 text-center leading-[56px]" >
 			<Header />
 		</div>
 		<div className="flex-grow pl-1 overflow-y-auto">
+			<Button
+				onClick={(e) => panelsStore.addPanel({operation: "dashboard"})}>
+				Dashboard
+			</Button>
 			<DevicesTree />
 		</div>
 		<div className="flex-none border-t border-slate-200 dark:border-slate-800 text-center p-2 pl-16 flex">

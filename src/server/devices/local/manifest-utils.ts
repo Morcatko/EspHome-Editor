@@ -6,8 +6,23 @@ type TManifestFileInfo = {
     disabled?: boolean;
 }
 
+export type TDeviceInfo = {
+    _updated_at: Date;
+    esphome_version: string | null;
+    chip: string | null;
+    compiled_on: Date | null;
+    ip_address: string | null;
+}
+
+export type TCompilationInfo = {
+    _updated_at: Date;
+    success: boolean;
+}
+
 type TManifest = {
     files: { [path: string]: TManifestFileInfo };
+    deviceInfo?: TDeviceInfo;
+    compilationInfo?: TCompilationInfo;
 };
 
 const manifestFileName = "manifest.json";
@@ -67,10 +82,25 @@ async function isPathDisabled(device_id: string, path: string) {
     return !!(manifest.files[path]?.disabled);
 }
 
+async function setDeviceInfo(device_id: string, deviceInfo: TDeviceInfo) {
+    await updateManifest(device_id, async (manifest) => {
+        manifest.deviceInfo = deviceInfo;
+    });
+}
+
+async function setCompilationInfo(device_id: string, compilationInfo: TCompilationInfo) {
+    await updateManifest(device_id, async (manifest) => {
+        manifest.compilationInfo = compilationInfo;
+    });
+}
+
 export const ManifestUtils = {
     manifestFileName,
     renameFile,
     deleteFile,
     togglePathEnabled,
-    isPathDisabled
+    getManifest: loadManifest,
+    isPathDisabled,
+    setDeviceInfo,
+    setCompilationInfo,
 }

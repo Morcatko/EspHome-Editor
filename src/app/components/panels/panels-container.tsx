@@ -8,6 +8,7 @@ import { EspHomeLogPanel, EspHomeLogToolbar } from "./esphome-log/esphome-log-pa
 import { EspHomeInstallPanel, EspHomeInstallToolbar } from "./esphome-install/esphome-install-panel";
 import { EspHomeCompilePanel, EspHomeCompileToolbar } from "./esphome-compile/esphome-compile-panel";
 import { TPanel_Device, TPanelWithClick } from "./_utils/types";
+import { DevicesPanel } from "./devices/devices-panel";
 import { usePanelsStore } from "./panels-store";
 import { useDarkTheme, useDeviceColor } from "@/app/utils/hooks";
 import { QuestionIcon } from "@primer/octicons-react";
@@ -64,6 +65,11 @@ const dockViewComponents = {
                 return <Panel
                     toolbar={<EspHomeLogToolbar device_id={panel.device_id} lastClick={panel.last_click} />}
                     panel={<EspHomeLogPanel device_id={panel.device_id} lastClick={panel.last_click} />} />;
+            case "dashboard":
+                return <Panel
+                    toolbar={null}
+                    panel={<DevicesPanel />}
+                />;
             default:
                 return <div>Noting selected</div>;
         }

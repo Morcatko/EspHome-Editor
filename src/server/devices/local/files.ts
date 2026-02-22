@@ -16,12 +16,16 @@ export const getDevices = async (): Promise<TDevice[]> => {
 
     const resAsync = deviceDirectories
         .map(async (d) => {
+            const manifestTask = ManifestUtils.getManifest(d.name);
+            const filesTask = scanDirectory(d.name, `${c.devicesDir}/${d.name}`, null);
             return <TDevice>{
                 id: d.name,
                 path: "",
                 name: d.name,
                 type: "device",
-                files: await scanDirectory(d.name, `${c.devicesDir}/${d.name}`, null),
+                deviceInfo: (await manifestTask).deviceInfo,
+                compilationInfo: (await manifestTask).compilationInfo,
+                files: await filesTask,
             } as TDevice;
         });
 
