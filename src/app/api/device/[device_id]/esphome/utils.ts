@@ -1,5 +1,5 @@
-import * as ws from "ws";
-import { type TStreamEvents } from "@/server/devices/esphome";
+import { WebSocket } from "ws";
+import { espHome } from "@/server/devices/esphome";
 import { TDeviceId, TParams } from "@/app/api/api-types";
 import { log } from "@/shared/log";
 
@@ -10,9 +10,9 @@ export type TWsMessage = {
 
 export async function streamToWs(
   { params }: TParams<TDeviceId>,
-  client: ws.WebSocket,
-  streamFunc: (device_id: string, streamEvents: TStreamEvents) => Promise<WebSocket>,
-  
+  client: WebSocket,
+  path: string,
+  spawnParams: Record<string, any> | null = null
 ) {
   const { device_id } = await params;
 
@@ -21,11 +21,15 @@ export async function streamToWs(
   }
 
   return new Promise(async (res, rej) => {
-    const socket = await streamFunc(device_id!, {
-        onEvent: (e) => send("message", e.data),
-        onClose: (c) => res(c),
-        onError: (e) => rej(e)
-      });
+    const socket = await espHome
+      .stream(
+        device_id!,
+        path,
+        spawnParams,
+        (e) => send("message", e.data),
+        (c) => res(c),
+        (e) => rej(e)
+      );
     client.on("close", () => {
       log.debug("Client closed connection");
       socket.close();
