@@ -3,6 +3,7 @@ import type { TDevice } from "../types";
 import { esphome_stream, type StreamEvent } from "./client";
 import { log } from "@/shared/log";
 import { assertResponseAndJsonOk, assertResponseOk } from "@/shared/http-utils";
+import { EspHomeStreamParser } from "./esphome-stream-parser";
 
 type TEspHomeDevice = {
     name: string;
@@ -124,10 +125,14 @@ const stream = async (
     onError: (data: any) => void,
 ) => {
     const device = await getDevice(device_id);
+    const parser = new EspHomeStreamParser(device_id);
     return esphome_stream(
         path,
         { ...spawnParams, configuration: device.esphome_config },
-        onEvent,
+        async (e) => {
+            onEvent(e);
+            await parser.processLine(e.data);
+        },
         onClose,
         onError);
 }

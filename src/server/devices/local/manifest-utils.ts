@@ -11,12 +11,18 @@ export type TDeviceInfo = {
     chip: string | null;
     compiled_on: string | null;
     ip_address: string | null;
-    deviceInfoUpdatedAt: string;
+    deviceInfoUpdatedAt: string;        //Rename to something better
+}
+
+export type TCompilationResult = {
+    success: boolean;
+    compilationResultUpdatedAt: string; //Rename to something better
 }
 
 type TManifest = {
     files: { [path: string]: TManifestFileInfo};
     deviceInfo?: TDeviceInfo;
+    compilationResult?: TCompilationResult;
 };
 
 const manifestFileName = "manifest.json";
@@ -82,6 +88,12 @@ async function setDeviceInfo(device_id: string, deviceInfo: TDeviceInfo) {
     await saveManifest(device_id, manifest);
 }
 
+async function setCompilationResult(device_id: string, compilationResult: TCompilationResult) {
+    const manifest = await loadManifest(device_id);
+    manifest.compilationResult = compilationResult;
+    await saveManifest(device_id, manifest);
+}
+
 export const ManifestUtils = {
     manifestFileName,
     renameFile,
@@ -90,4 +102,5 @@ export const ManifestUtils = {
     isPathDisabled,
     getDeviceInfo,
     setDeviceInfo,
+    setCompilationResult,
 }
