@@ -1,4 +1,4 @@
-import type { TCompilationResult, TDeviceInfo } from "./local/manifest-utils";
+import type { TCompilationInfo, TDeviceInfo } from "./local/manifest-utils";
 import { type TLanguge,} from "./local/template-processors";
 
 export type TNode = {
@@ -30,7 +30,7 @@ export type TDevice = TParent & {
     type: "device"
     esphome_config: string;
     deviceInfo?: TDeviceInfo;
-    compilationResult?: TCompilationResult;
+    compilationInfo?: TCompilationInfo;
 }
 
 type TLog = {

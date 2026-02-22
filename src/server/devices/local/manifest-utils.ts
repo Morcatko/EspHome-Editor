@@ -7,22 +7,22 @@ type TManifestFileInfo = {
 }
 
 export type TDeviceInfo = {
+    _updated_at: Date;
     esphome_version: string | null;
     chip: string | null;
     compiled_on: Date | null;
     ip_address: string | null;
-    deviceInfoUpdatedAt: Date;        //Rename to something better
 }
 
-export type TCompilationResult = {
+export type TCompilationInfo = {
+    _updated_at: Date;
     success: boolean;
-    compilationResultUpdatedAt: Date; //Rename to something better
 }
 
 type TManifest = {
     files: { [path: string]: TManifestFileInfo };
     deviceInfo?: TDeviceInfo;
-    compilationResult?: TCompilationResult;
+    compilationInfo?: TCompilationInfo;
 };
 
 const manifestFileName = "manifest.json";
@@ -88,9 +88,9 @@ async function setDeviceInfo(device_id: string, deviceInfo: TDeviceInfo) {
     });
 }
 
-async function setCompilationResult(device_id: string, compilationResult: TCompilationResult) {
+async function setCompilationInfo(device_id: string, compilationInfo: TCompilationInfo) {
     await updateManifest(device_id, async (manifest) => {
-        manifest.compilationResult = compilationResult;
+        manifest.compilationInfo = compilationInfo;
     });
 }
 
@@ -102,5 +102,5 @@ export const ManifestUtils = {
     getManifest: loadManifest,
     isPathDisabled,
     setDeviceInfo,
-    setCompilationResult,
+    setCompilationInfo,
 }

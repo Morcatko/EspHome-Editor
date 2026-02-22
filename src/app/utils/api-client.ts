@@ -3,6 +3,7 @@ import { TGetStatus } from "../api/status/route";
 import { TOperationResult } from "@/server/devices/types";
 import { log } from "@/shared/log";
 import { type TWsMessage } from "../api/device/[device_id]/esphome/utils";
+import { TCompilationInfo, TDeviceInfo } from "@/server/devices/local/manifest-utils";
 
 export namespace api {
     export type TCallResult = {
@@ -133,6 +134,9 @@ export namespace api {
     export const url_esphome_compile = (device_id: string) => url_device(device_id, "esphome/compile");
     export const url_esphome_logs = (device_id: string) => url_device(device_id, "esphome/log");
     export const url_esphome_install = (device_id: string) => url_device(device_id, "esphome/install");
+
+    export const esphome_refreshCompilationInfo = (device_id: string) => callGet_json<TCompilationInfo>(url_device(device_id, "esphome/compilation-info"));
+    export const esphome_refreshDeviceInfo = (device_id: string) => callGet_json<TDeviceInfo>(url_device(device_id, "esphome/device-info"));
 
     export async function local_createDevice(device_id: string) {
         await callPut(url_device(device_id, "local"), null);
