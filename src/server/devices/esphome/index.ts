@@ -117,22 +117,25 @@ const getPing = async () => {
     return await assertResponseAndJsonOk(response);
 }
 
+
 const stream = async (
     device_id: string,
     path: string,
     spawnParams: Record<string, any> | null,
-    onEvent: (event: StreamEvent) => void,
-    onClose: (code: number) => void,
-    onError: (data: any) => void,
+    streamEvents: TStreamEvents
 ) => {
     const device = await getDevice(device_id);
     return esphome_stream(
         path,
         { ...spawnParams, configuration: device.esphome_config },
-        onEvent,
-        onClose,
-        onError);
+        streamEvents.onEvent,
+        streamEvents.onClose,
+        streamEvents.onError);
 }
+
+const streamLog = (device_id: string, streamEvents: TStreamEvents) => stream(device_id, "logs", { port: "OTA" }, streamEvents);
+const streamInstall = (device_id: string, streamEvents: TStreamEvents) => stream(device_id, "run", { port: "OTA" }, streamEvents);
+const streamCompile = (device_id: string, streamEvents: TStreamEvents) => stream(device_id, "compile", null, streamEvents);
 
 const getDeviceInfo = async (device_id: string): Promise<TDeviceInfo> => {
     const result: TDeviceInfo = {
@@ -147,8 +150,8 @@ const getDeviceInfo = async (device_id: string): Promise<TDeviceInfo> => {
 
     return new Promise(async (res, rej) => {
         let closing = false;
-        const logStream = await stream(device_id, "logs", { port: "OTA" },
-            (e) => {
+        const logStream = await streamLog(device_id, {
+            onEvent: (e) => {
                 processLogMessage(result, e.data.trim());
                 counter++;
 
@@ -164,29 +167,33 @@ const getDeviceInfo = async (device_id: string): Promise<TDeviceInfo> => {
                     res(result);
                 }
             },
-            (c) => {
+            onClose: (c) => {
                 log.debug(`[${device_id}] Stream completed with code ${c}`);
                 res(result);
             },
-            (e) => {
+            onError: (e) => {
                 if (!closing) {
                     log.error(`[${device_id}] Stream error`, e);
                     rej(e);
                 }
-            });
+            }
+        });
     });
 }
 
+export type TStreamEvents = {
+    onEvent: (event: StreamEvent) => void,
+    onClose: (code: number) => void,
+    onError: (data: any) => void,
+}
 export const espHome = {
     tryGetDevices,
     getConfiguration,
     saveConfiguration,
     deleteDevice,
     getPing,
-    stream,
+    streamLog,
+    streamInstall,
+    streamCompile,
     getDeviceInfo,
-}
-
-function proceessLogMessage(result: TDeviceInfo, arg1: string) {
-    throw new Error("Function not implemented.");
 }

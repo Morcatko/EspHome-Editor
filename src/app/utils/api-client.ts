@@ -131,7 +131,7 @@ export namespace api {
         url_device(device_id, `/local/${fixPath(path)}/${suffix}`);
 
     export const url_esphome_compile = (device_id: string) => url_device(device_id, "esphome/compile");
-    export const url_esphome_logs = (device_id: string) => url_device(device_id, "esphome/logs");
+    export const url_esphome_logs = (device_id: string) => url_device(device_id, "esphome/log");
     export const url_esphome_install = (device_id: string) => url_device(device_id, "esphome/install");
 
     export async function local_createDevice(device_id: string) {
