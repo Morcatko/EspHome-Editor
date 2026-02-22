@@ -66,7 +66,7 @@ const components: Record<string, React.FunctionComponent<ISplitviewPanelProps>> 
 	"panels-container": () => <PanelsContainer />
 };
 
-const findDevicesSidePanel = (api: SplitviewApi) => api.getPanel("devices-sidePanel");
+const findSidePanel = (api: SplitviewApi) => api.getPanel("devices-sidePanel");
 
 const PageContent = () => {
 	const [api, setApi] = useState<SplitviewApi>()
@@ -84,7 +84,7 @@ const PageContent = () => {
 		});
 
 		api.onDidLayoutChange((e) => {
-			const sidePanel = findDevicesSidePanel(api);
+			const sidePanel = findSidePanel(api);
 			if (sidePanel) {
 				localStorage.setItem('e4e.devicesWidth', sidePanel.width.toString());
 			}
@@ -99,7 +99,7 @@ const PageContent = () => {
 		if (!api) return;
 
 		if (collapsed) {
-			const sidePanel = findDevicesSidePanel(api);
+			const sidePanel = findSidePanel(api);
 			if (sidePanel)
 				api.removePanel(sidePanel);
 		} else {
