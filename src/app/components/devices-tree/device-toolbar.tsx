@@ -1,4 +1,4 @@
-import { useDevicesTreeStore } from "./devices-tree-store";
+import { useDevicesStore } from "@/app/stores/devices-store";
 import { PanelTarget, usePanelsStore } from "../panels/panels-store";
 import { color_esphome, color_gray, color_local } from "@/app/utils/const";
 import { useDarkTheme } from "@/app/utils/hooks";
@@ -42,11 +42,11 @@ const DTB_Panel = (p: TDeviceToolbarButtonProps_Panel) => {
 
 
 type TDeviceToolbarButtonProps_Device = TDeviceToolbarButtonProps_Base & {
-    onClick: (ds: ReturnType<typeof useDevicesTreeStore>) => void;
+    onClick: (ds: ReturnType<typeof useDevicesStore>) => void;
 };
 
 const DTB_Device = (p: TDeviceToolbarButtonProps_Device) => {
-    const devicesStore = useDevicesTreeStore();
+    const devicesStore = useDevicesStore();
     return <ToolbarItem.Button {...p} onClick={() => p.onClick(devicesStore)} />;
 }
 

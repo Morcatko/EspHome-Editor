@@ -77,11 +77,6 @@ async function isPathDisabled(device_id: string, path: string) {
     return !!(manifest.files[path]?.disabled);
 }
 
-async function getDeviceInfo(device_id: string): Promise<TDeviceInfo | undefined> {
-    const manifest = await loadManifest(device_id);
-    return manifest.deviceInfo;
-}
-
 async function setDeviceInfo(device_id: string, deviceInfo: TDeviceInfo) {
     const manifest = await loadManifest(device_id);
     manifest.deviceInfo = deviceInfo;
