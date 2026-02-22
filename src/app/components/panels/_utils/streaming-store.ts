@@ -32,13 +32,11 @@ type TLogStoreAtom = {
 
 const storeFamily = atomFamily((key: AtomKey) => {
     const isOutdatedValue = isOutdated(key.lastClick);
-    const store = atom<TLogStoreAtom>(
-        {
-            data: [],
-            filter: "",
-            isOutdated: isOutdatedValue,
-        });
-
+    const store = atom<TLogStoreAtom>({
+        data: [],
+        filter: "",
+        isOutdated: isOutdatedValue,
+    });
     if (!isOutdatedValue) {
         const dispose = api.stream(key.url, (message) => {
             const html = convert.toHtml(message.replaceAll("\\033", "\x1b"));
@@ -46,7 +44,7 @@ const storeFamily = atomFamily((key: AtomKey) => {
                 ...val,
                 data: [...val.data, html],
             }));
-        })
+        });
         store.onMount = () => {
             log.verbose("onMount", key.url);
             return () => {
