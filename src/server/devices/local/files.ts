@@ -25,7 +25,6 @@ export const getDevices = async (): Promise<TDevice[]> => {
                 type: "device",
                 deviceInfo: (await manifestTask).deviceInfo,
                 compilationResult: (await manifestTask).compilationResult,
-
                 files: await filesTask,
             } as TDevice;
         });

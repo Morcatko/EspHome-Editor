@@ -7,12 +7,12 @@ export class EspHomeStreamParser {
         chip: null,
         compiled_on: null,
         ip_address: null,
-        deviceInfoUpdatedAt: new Date().toISOString(),
+        deviceInfoUpdatedAt: new Date(),
     }
 
     readonly compilationResult: TCompilationResult = {
         success: false,
-        compilationResultUpdatedAt: new Date().toISOString(),
+        compilationResultUpdatedAt: new Date(),
     }
 
     private compilationFinished = false;
@@ -29,7 +29,7 @@ export class EspHomeStreamParser {
         if (!this.compilationFinished) {
             if (message === "INFO Successfully compiled program.") {
                 this.compilationResult.success = true;
-                this.compilationResult.compilationResultUpdatedAt = new Date().toISOString();
+                this.compilationResult.compilationResultUpdatedAt = new Date();
                 this.compilationFinished = true;
                 await ManifestUtils.setCompilationResult(this.device_id, this.compilationResult);
             }
@@ -50,7 +50,7 @@ export class EspHomeStreamParser {
                 }
 
                 if (compiledOnMatch) {
-                    this.deviceInfo.compiled_on = compiledOnMatch[1];
+                    this.deviceInfo.compiled_on = new Date(compiledOnMatch[1]);
                 }
 
                 if (chipMatch) {
@@ -64,13 +64,11 @@ export class EspHomeStreamParser {
                     this.deviceInfo.ip_address !== null;
 
                 if (isCompleted && !this.deviceInfoFinished) {
+                    this.deviceInfo.deviceInfoUpdatedAt = new Date();
                     this.deviceInfoFinished = true;
                     await ManifestUtils.setDeviceInfo(this.device_id, this.deviceInfo);
                 }
             }
-
-
         }
-
     }
 }

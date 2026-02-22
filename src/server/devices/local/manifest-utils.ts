@@ -9,14 +9,14 @@ type TManifestFileInfo = {
 export type TDeviceInfo = {
     esphome_version: string | null;
     chip: string | null;
-    compiled_on: string | null;
+    compiled_on: Date | null;
     ip_address: string | null;
-    deviceInfoUpdatedAt: string;        //Rename to something better
+    deviceInfoUpdatedAt: Date;        //Rename to something better
 }
 
 export type TCompilationResult = {
     success: boolean;
-    compilationResultUpdatedAt: string; //Rename to something better
+    compilationResultUpdatedAt: Date; //Rename to something better
 }
 
 type TManifest = {
