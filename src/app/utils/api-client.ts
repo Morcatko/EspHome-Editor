@@ -1,6 +1,8 @@
 import { assertResponseAndJsonOk, assertResponseOk } from "@/shared/http-utils";
 import { TGetStatus } from "../api/status/route";
 import { TOperationResult } from "@/server/devices/types";
+import { log } from "@/shared/log";
+import { type TWsMessage } from "../api/device/[device_id]/esphome/utils";
 
 export namespace api {
     export type TCallResult = {
@@ -83,6 +85,45 @@ export namespace api {
 
     async function callPut(url: string, content: string | null): Promise<TCallResult> {
         return await callPostPut("PUT", url, content, true);
+    }
+
+    export function stream(url: string, onMessage: (htmlMessage: string) => void) {
+        const socket = new WebSocket(api.getWsUrl(url))
+        log.debug("Creating socket", url);
+
+        // Connection opened
+        socket.addEventListener("open", event => {
+            socket.send("Connection established")
+        });
+
+        // Listen for messages
+        socket.addEventListener("message", event => {
+            if (event?.data) {
+                const jsonData = JSON.parse(event.data) as TWsMessage;
+
+                switch (jsonData.event) {
+                    case "completed":
+                        log.verbose("Stream completed");
+                        //ws.getWebSocket()!.close();
+                        break;
+                    case "error":
+                        log.error("Stream error", jsonData.data);
+                        //ws.getWebSocket()!.close();
+                        break;
+                    case "message":
+                        onMessage(jsonData.data);
+                        break;
+                    default:
+                        log.warn("Unknown event", jsonData);
+                        break
+                }
+            }
+        });
+        return () => {
+            log.debug("Closing socket");
+            if (socket.readyState === WebSocket.OPEN)
+                socket.close();
+        }
     }
 
     export const url_device = (device_id: string, suffix: string = "") => `/api/device/${encodeURIComponent(device_id)}/${suffix}`;
