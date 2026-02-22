@@ -27,7 +27,7 @@ type TManifest = {
 
 const manifestFileName = "manifest.json";
 
-//Do not load for each file, load once and use the loaded manifest
+//TODO: Do not load for each file, load once and use the loaded manifest
 async function loadManifest(device_id: string): Promise<TManifest> {
     const manifestPath = getDevicePath(device_id, manifestFileName); 
     if (await fileExists(manifestPath))
@@ -99,8 +99,8 @@ export const ManifestUtils = {
     renameFile,
     deleteFile,
     togglePathEnabled,
+    getManifest: loadManifest,
     isPathDisabled,
-    getDeviceInfo,
     setDeviceInfo,
     setCompilationResult,
 }

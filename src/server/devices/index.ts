@@ -40,6 +40,3 @@ export const deleteDevice = async (device_id: string) => {
     await local.deleteDevice(device_id);
     await espHome.deleteDevice(device_id);
 }
-
-export const getDeviceInfo = async (device_id: string) =>
-    ManifestUtils.getDeviceInfo(device_id);
