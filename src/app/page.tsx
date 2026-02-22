@@ -42,7 +42,7 @@ const CollapseButton = () => {
 	</Button>
 }
 
-const DevicesPanel = () => {
+const SidePanel = () => {
 	const statusStore = useStatusStore();
 
 	return <div className="flex-none flex flex-col h-screen">
@@ -62,7 +62,7 @@ const DevicesPanel = () => {
 }
 
 const components: Record<string, React.FunctionComponent<ISplitviewPanelProps>> = {
-	"devices-sidePanel": () => <DevicesPanel />,
+	"devices-sidePanel": () => <SidePanel />,
 	"panels-container": () => <PanelsContainer />
 };
 
@@ -84,9 +84,9 @@ const PageContent = () => {
 		});
 
 		api.onDidLayoutChange((e) => {
-			const devicesSidePanel = findDevicesSidePanel(api);
-			if (devicesSidePanel) {
-				localStorage.setItem('e4e.devicesWidth', devicesSidePanel.width.toString());
+			const sidePanel = findDevicesSidePanel(api);
+			if (sidePanel) {
+				localStorage.setItem('e4e.devicesWidth', sidePanel.width.toString());
 			}
 		});
 	}, [api]);
@@ -99,9 +99,9 @@ const PageContent = () => {
 		if (!api) return;
 
 		if (collapsed) {
-			const devicesSidePanel = findDevicesSidePanel(api);
-			if (devicesSidePanel)
-				api.removePanel(devicesSidePanel);
+			const sidePanel = findDevicesSidePanel(api);
+			if (sidePanel)
+				api.removePanel(sidePanel);
 		} else {
 			api.addPanel({
 				id: 'devices-sidePanel',

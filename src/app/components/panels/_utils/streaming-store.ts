@@ -1,10 +1,10 @@
-import { TWsMessage } from "@/app/api/device/[device_id]/esphome/utils";
+import Convert from "ansi-to-html";
+import { atom, getDefaultStore, useAtom } from "jotai";
+import { atomFamily } from 'jotai-family';
+import { useMemo } from "react";
 import { api } from "@/app/utils/api-client";
 import { log } from "@/shared/log";
-import Convert from "ansi-to-html";
-import { atomFamily } from 'jotai-family';
-import { atom, getDefaultStore, PrimitiveAtom, useAtom } from "jotai";
-import { useMemo } from "react";
+import { fixStreamMessage } from "@/shared/string-utils";
 
 const convert = new Convert({
     stream: true,
@@ -40,7 +40,7 @@ const storeFamily = atomFamily((key: AtomKey) => {
     });
     if (!isOutdatedValue) {
         const dispose = api.stream(key.url, (message) => {
-            const html = convert.toHtml(message.replaceAll("\\033", "\x1b"));
+            const html = convert.toHtml(fixStreamMessage(message));
             getDefaultStore().set(store, val => ({
                 ...val,
                 data: [...val.data, html],
@@ -56,7 +56,6 @@ const storeFamily = atomFamily((key: AtomKey) => {
     }
     return store;
 }, (a, b) => a.url === b.url && a.lastClick === b.lastClick);
-
 
 export const useStreamingStore = (url: string, lastClick: string) => {
     const [store, setStore] = useAtom(storeFamily({ url, lastClick }));
@@ -77,5 +76,3 @@ export const useStreamingStore = (url: string, lastClick: string) => {
         clear: () => setStore({ ...store, data: [`${(new Date()).toLocaleTimeString()} - Stream cleared`] }),
     }
 }
-
-
