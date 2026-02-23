@@ -65,7 +65,7 @@ const dockViewComponents = {
                 return <Panel
                     toolbar={<EspHomeLogToolbar device_id={panel.device_id} lastClick={panel.last_click} />}
                     panel={<EspHomeLogPanel device_id={panel.device_id} lastClick={panel.last_click} />} />;
-            case "dashboard":
+            case "devices-panel":
                 return <Panel
                     toolbar={null}
                     panel={<DevicesPanel />}

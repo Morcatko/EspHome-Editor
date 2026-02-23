@@ -1,47 +1,61 @@
-import { Table } from "@mantine/core";
+import { DataTable } from "mantine-datatable";
 import { useDevicesPanelStore } from "./devices-panel-store";
+import { format, formatDistanceToNowStrict } from "date-fns";
+import { Tooltip } from "@mantine/core";
+import { TDevice } from "@/server/devices/types";
+import { useDevicesColor } from "@/app/stores/devices-store";
+import { DeviceLightbulbIcon } from "../../DeviceLightbulbIcon";
+
+const tryFormatDistanceToNowStrict = (date: Date | null | undefined) =>
+  date
+    ? <Tooltip label={format(date, "PPpp")}>
+      <span>{formatDistanceToNowStrict(date, { addSuffix: true })}</span>
+    </Tooltip>
+    : "";
+
+const deviceNameRenderer = (device: TDevice) => {
+  const { getDeviceColor } = useDevicesColor();
+  return <span style={{ color: getDeviceColor(device) }}>
+    {device.name}&nbsp;<DeviceLightbulbIcon device={device} />
+  </span>;
+}
 
 export const DevicesPanel = () => {
-    const store = useDevicesPanelStore();
- 
-    const data = store?.devices_query?.data ?? [];
+  const store = useDevicesPanelStore();
+  const data = store?.devices_query?.data ?? [];
 
-    return <Table>
-        <Table.Thead>
-            <Table.Tr>
-                <Table.Th />
-                <Table.Th colSpan={3} align="center">Compilation Info</Table.Th>
-                <Table.Th colSpan={5} align="center">Device Info</Table.Th>
-                <Table.Th />
-            </Table.Tr>
-            <Table.Tr>
-                <Table.Th>Name</Table.Th>
-
-                <Table.Th>Compilation</Table.Th>
-                <Table.Th>Compilation Updated At</Table.Th>
-                <Table.Th>Update</Table.Th>
-                
-                <Table.Th>Chip</Table.Th>
-                <Table.Th>ESPHome Version</Table.Th>
-                <Table.Th>Compiled On</Table.Th>
-                <Table.Th>Info Updated At</Table.Th>
-                <Table.Th>Update</Table.Th>
-            </Table.Tr>
-        </Table.Thead>
-        <Table.Tbody>
-            {data.map((d) => <Table.Tr key={d.id}>
-                <Table.Td>{d.name}</Table.Td>
-
-                <Table.Td>{d.compilationInfo ? (d.compilationInfo?.success ? "Success" : "Failed") : ""}</Table.Td>
-                <Table.Td>{d.compilationInfo?._updated_at?.toLocaleString()}</Table.Td>
-                <Table.Td><button onClick={() => store.refreshCompilationInfo(d.id)}>Refresh</button></Table.Td>
-
-                <Table.Td>{d.deviceInfo?.chip}</Table.Td>
-                <Table.Td>{d.deviceInfo?.esphome_version}</Table.Td>
-                <Table.Td>{d.deviceInfo?.compiled_on?.toLocaleString()}</Table.Td>
-                <Table.Td>{d.deviceInfo?._updated_at?.toLocaleString()}</Table.Td>
-                <Table.Td><button onClick={() => store.refreshDeviceInfo(d.id)}>Refresh</button></Table.Td>
-            </Table.Tr>)}
-        </Table.Tbody>
-    </Table>
+  return <DataTable
+    withTableBorder
+    withColumnBorders
+    striped
+    highlightOnHover
+    records={data}
+    groups={[
+      {
+        id: 'name',
+        title: '',
+        columns: [
+          {
+            accessor: 'name', title: 'Name', textAlign: 'right', render: deviceNameRenderer
+          },
+        ]
+      }, {
+        id: 'device_info',
+        title: 'Device Info',
+        columns: [
+          { accessor: 'deviceInfo.chip', title: 'Chip' },
+          { accessor: 'deviceInfo.esphome_version', title: 'ESPHome Version' },
+          { accessor: 'deviceInfo.compiled_on', title: 'Compiled On', render: (r) => tryFormatDistanceToNowStrict(r.deviceInfo?.compiled_on) },
+          { accessor: 'deviceInfo._updated_at', title: 'Updated At', render: (r) => tryFormatDistanceToNowStrict(r.deviceInfo?._updated_at) },
+        ]
+      }, {
+        id: 'compilation_info',
+        title: 'Compilation Info',
+        columns: [
+          { accessor: 'compilationInfo.success', title: 'Success', render: (r) => r.compilationInfo ? (r.compilationInfo?.success ? 'Yes' : 'No') : "" },
+          { accessor: 'compilationInfo._updated_at', title: 'Updated At', render: (r) => tryFormatDistanceToNowStrict(r.compilationInfo?._updated_at) },
+        ]
+      }
+    ]}
+  />;
 }

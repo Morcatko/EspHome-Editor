@@ -53,7 +53,7 @@ const SidePanel = () => {
 		</div>
 		<div className="flex-grow pl-1 overflow-y-auto">
 			<Button
-				onClick={(e) => panelsStore.addPanel({operation: "dashboard"})}>
+				onClick={(e) => panelsStore.addPanel({operation: "devices-panel"})}>
 				Dashboard
 			</Button>
 			<DevicesTree />
