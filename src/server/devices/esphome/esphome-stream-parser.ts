@@ -1,5 +1,5 @@
 import { removeAnsiControlSequences } from "@/shared/string-utils";
-import { ManifestUtils, TCompilationResult, TDeviceInfo } from "../local/manifest-utils";
+import { ManifestUtils, TCompilationInfo, TDeviceInfo } from "../local/manifest-utils";
 
 export class EspHomeStreamParser {
     readonly deviceInfo: TDeviceInfo = {
@@ -10,28 +10,37 @@ export class EspHomeStreamParser {
         _updated_at: new Date(),
     }
 
-    readonly compilationResult: TCompilationResult = {
+    readonly compilationInfo: TCompilationInfo = {
         success: false,
         _updated_at: new Date(),
     }
 
-    public compilationFinished = false;
+    public compilationInfoFinished = false;
     public deviceInfoFinished = false;
 
     constructor(
         private device_id: string,
     ) { }
 
+    private async setCompilationFinished(success: boolean) {
+        this.compilationInfo._updated_at = new Date();
+        this.compilationInfo.success = success;
+        this.compilationInfoFinished = true;
+        return ManifestUtils.setCompilationInfo(this.device_id, this.compilationInfo);
+    }
 
     public async processLine(line: string) {
         const message = removeAnsiControlSequences(line);
 
-        if (!this.compilationFinished) {
-            if (message === "INFO Successfully compiled program.") {
-                this.compilationResult._updated_at = new Date();
-                this.compilationResult.success = true;
-                this.compilationFinished = true;
-                await ManifestUtils.setCompilationInfo(this.device_id, this.compilationResult);
+        if (!this.compilationInfoFinished) {
+            if (message === "Failed config") {
+                await this.setCompilationFinished(false);
+            } else if (message.startsWith("========================== [FAILED] Took ")) {
+                await this.setCompilationFinished(false);
+
+            } else if (message === "INFO Successfully compiled program.") {
+                // message.startsWith("========================= [SUCCESS] Took ")
+                await this.setCompilationFinished(true);
             }
         }
         if (!this.deviceInfoFinished) {
