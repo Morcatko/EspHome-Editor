@@ -10,8 +10,8 @@ export const esphome_stream = (
     path: string,
     spawnParams: Record<string, any>,
     onEvent: (event: StreamEvent) => void,
-    onClose: (code: number) => void,
-    onError: (data: any) => void,
+    onClose?: (code: number) => void,
+    onError?: (data: any) => void,
 ): WebSocket => {
     const url = new URL(`${c.espHomeApiUrl}/${path}`);
     url.protocol = url.protocol === "http:" ? "ws:" : "wss:";
@@ -26,10 +26,10 @@ export const esphome_stream = (
         }
 
         if (event.event === "exit") {
-            onClose(event.code);
+            onClose?.(event.code);
         }
 
-        onError(message.data);
+        onError?.(message.data);
     });
 
     socket.addEventListener("open", () => {
@@ -42,7 +42,7 @@ export const esphome_stream = (
     });
 
     socket.addEventListener("close", () => {
-        onError(new Error("Unexpected socket closure"));
+        onError?.(new Error("Unexpected socket closure"));
     });
     
     return socket;
