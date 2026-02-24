@@ -5,6 +5,7 @@ import { Tooltip } from "@mantine/core";
 import { TDevice } from "@/server/devices/types";
 import { useDevicesColor } from "@/app/stores/devices-store";
 import { DeviceLightbulbIcon } from "../../DeviceLightbulbIcon";
+import { QuestionIcon } from "@primer/octicons-react";
 
 const tryFormatDistanceToNowStrict = (date: Date | null | undefined) =>
   date
@@ -20,15 +21,21 @@ const deviceNameRenderer = (device: TDevice) => {
   </span>;
 }
 
+const HeaderWithTooltip = ({ children, tooltip }: { children: React.ReactNode, tooltip: React.ReactNode }) => 
+  <span>{children} <Tooltip label={tooltip}><QuestionIcon /></Tooltip></span>;
+
 export const DevicesPanel = () => {
   const store = useDevicesPanelStore();
-  const data = store?.devices_query?.data ?? [];
+  const data = (store?.devices_query?.data ?? [])
+    .filter(d => d.name !== ".lib");
 
   return <DataTable
+    className="m-[10px]"
     withTableBorder
     withColumnBorders
     striped
     highlightOnHover
+    pinFirstColumn
     records={data}
     groups={[
       {
@@ -41,19 +48,20 @@ export const DevicesPanel = () => {
         ]
       }, {
         id: 'device_info',
-        title: 'Device Info',
+        title: <HeaderWithTooltip tooltip="Information parsed from device log">On Device</HeaderWithTooltip>,
+
         columns: [
           { accessor: 'deviceInfo.chip', title: 'Chip' },
           { accessor: 'deviceInfo.esphome_version', title: 'ESPHome Version' },
           { accessor: 'deviceInfo.compiled_on', title: 'Compiled On', render: (r) => tryFormatDistanceToNowStrict(r.deviceInfo?.compiled_on) },
-          { accessor: 'deviceInfo._updated_at', title: 'Updated At', render: (r) => tryFormatDistanceToNowStrict(r.deviceInfo?._updated_at) },
+          { accessor: 'deviceInfo._updated_at', title: 'As of', width: 100, render: (r) => tryFormatDistanceToNowStrict(r.deviceInfo?._updated_at) },
         ]
       }, {
         id: 'compilation_info',
-        title: 'Compilation Info',
+        title: <HeaderWithTooltip tooltip="Information from last compilation">Latest Build</HeaderWithTooltip>,
         columns: [
           { accessor: 'compilationInfo.success', title: 'Success', render: (r) => r.compilationInfo ? (r.compilationInfo?.success ? 'Yes' : 'No') : "" },
-          { accessor: 'compilationInfo._updated_at', title: 'Updated At', render: (r) => tryFormatDistanceToNowStrict(r.compilationInfo?._updated_at) },
+          { accessor: 'compilationInfo._updated_at', title: 'As of', width: 100, render: (r) => tryFormatDistanceToNowStrict(r.compilationInfo?._updated_at) },
         ]
       }
     ]}
