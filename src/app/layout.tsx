@@ -4,6 +4,7 @@ import "./globals.css";
 import 'dockview-react/dist/styles/dockview.css';
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
+import 'mantine-datatable/styles.layer.css';
 import "react-kofi/dist/kofi.css"
 import { ClientLayout } from "./client-layout";
 import { ColorSchemeScript, createTheme, MantineProvider } from "@mantine/core";
