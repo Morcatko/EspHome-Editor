@@ -146,30 +146,6 @@ const streamLogs = (device_id: string, events: TStreamEvents, parser?: EspHomeSt
 const streamCompile = (device_id: string, events: TStreamEvents, parser?: EspHomeStreamParser) => stream(device_id, "compile", null, events, parser);
 const streamInstall = (device_id: string, events: TStreamEvents, parser?: EspHomeStreamParser) => stream(device_id, "run", { port: "OTA" }, events, parser);
 
-const refreshDeviceInfo = async (device_id: string) => {
-    const parser = new EspHomeStreamParser(device_id);
-    const stream = await streamLogs(device_id, {
-        onEvent: async (e) => {
-            await parser.processLine(e.data);
-            if (parser.deviceInfoFinished){
-                stream.close();
-            }
-        }
-    }, parser);
-}
-
-const refreshCompilationInfo = async (device_id: string) => {
-    const parser = new EspHomeStreamParser(device_id);
-    const stream = await streamCompile(device_id, {
-        onEvent: async (e) => {
-            await parser.processLine(e.data);
-            if (parser.compilationInfoFinished){
-                stream.close();
-            }
-        }
-    }, parser);
-}
-
 export const espHome = {
     tryGetDevices,
     getConfiguration,
@@ -179,6 +155,4 @@ export const espHome = {
     streamLogs: (device_id: string, events: TStreamEvents) => streamLogs(device_id, events),
     streamCompile: (device_id: string, events: TStreamEvents) => streamCompile(device_id, events),
     streamInstall: (device_id: string, events: TStreamEvents) => streamInstall(device_id, events),
-    refreshDeviceInfo,
-    refreshCompilationInfo,
 }
