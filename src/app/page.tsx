@@ -14,12 +14,14 @@ import { useDevicesQuery } from "./stores/devices-store";
 import { PanelsContainer } from "./components/panels/panels-container";
 import { useWindowEvent } from "@mantine/hooks";
 import { useLocalStorage } from "usehooks-ts";
+import { usePanelsStore } from "./components/panels/panels-store";
 
 const Header = () => {
-	return <>
-		<Image className="inline mr-2 align-middle" src={logo} alt="ESPHome Editor" width="32" height="32" />
-		<h4 className="inline-block align-baseline text-slate-600 dark:text-slate-400 m-0 font-semibold" >Editor for ESPHome</h4>
-	</>
+	const panelsStore = usePanelsStore();
+	return <Anchor className="flex-grow" href="#" onClick={() => panelsStore.addPanel({operation: "devices-panel"})} underline="never">
+				<Image className="inline mr-2 align-middle" src={logo} alt="ESPHome Editor" width="32" height="32" />
+				<h4 className="inline-block align-baseline text-slate-600 dark:text-slate-400 m-0 font-semibold" >Editor for ESPHome</h4>
+			</Anchor>;
 }
 
 const useDevicesPanelCollapsed = () => {

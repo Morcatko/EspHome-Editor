@@ -3,6 +3,7 @@ import type { TDevice } from "../types";
 import { esphome_stream, type StreamEvent } from "./client";
 import { log } from "@/shared/log";
 import { assertResponseAndJsonOk, assertResponseOk } from "@/shared/http-utils";
+import { EspHomeStreamParser } from "./esphome-stream-parser";
 
 type TEspHomeDevice = {
     name: string;
@@ -124,21 +125,26 @@ const stream = async (
     device_id: string,
     path: string,
     spawnParams: Record<string, any> | null,
-    events: TStreamEvents
+    events: TStreamEvents,
+    parser?: EspHomeStreamParser
 ) => {
     const device = await getDevice(device_id);
+    const _parser = parser ?? new EspHomeStreamParser(device_id);
 
     return esphome_stream(
         path,
         { ...spawnParams, configuration: device.esphome_config },
-        events.onEvent,
+        async (e) => {
+            events.onEvent(e);
+            await _parser.processLine(e.data);
+        },
         events.onClose,
         events.onError);
-}
+};
 
-const streamLogs = (device_id: string, events: TStreamEvents) => stream(device_id, "logs", { port: "OTA" }, events);
-const streamCompile = (device_id: string, events: TStreamEvents) => stream(device_id, "compile", null, events);
-const streamInstall = (device_id: string, events: TStreamEvents) => stream(device_id, "run", { port: "OTA" }, events);
+const streamLogs = (device_id: string, events: TStreamEvents, parser?: EspHomeStreamParser) => stream(device_id, "logs", { port: "OTA" }, events, parser);
+const streamCompile = (device_id: string, events: TStreamEvents, parser?: EspHomeStreamParser) => stream(device_id, "compile", null, events, parser);
+const streamInstall = (device_id: string, events: TStreamEvents, parser?: EspHomeStreamParser) => stream(device_id, "run", { port: "OTA" }, events, parser);
 
 export const espHome = {
     tryGetDevices,
@@ -146,7 +152,7 @@ export const espHome = {
     saveConfiguration,
     deleteDevice,
     getPing,
-    streamLogs,
-    streamCompile,
-    streamInstall,
+    streamLogs: (device_id: string, events: TStreamEvents) => streamLogs(device_id, events),
+    streamCompile: (device_id: string, events: TStreamEvents) => streamCompile(device_id, events),
+    streamInstall: (device_id: string, events: TStreamEvents) => streamInstall(device_id, events),
 }
