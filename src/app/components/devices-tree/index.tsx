@@ -1,17 +1,15 @@
 "use client";
 import React from "react";
-import { useQuery } from "@tanstack/react-query";
-import { FileDirectoryIcon, LightBulbIcon, PlusIcon, ChevronRightIcon } from "@primer/octicons-react";
+import { FileDirectoryIcon, PlusIcon, ChevronRightIcon } from "@primer/octicons-react";
 import { Group, RenderTreeNodePayload, Tree, useTree } from "@mantine/core";
-import { TDevice } from "@/server/devices/types";
-import { color_gray, color_offline, color_online } from "../../utils/const";
-import { api } from "../../utils/api-client";
-import { useDevicesStore } from "../../stores/devices-store";
+
+import { useDevicesColor, useDevicesPingQuery, useDevicesStore } from "../../stores/devices-store";
 import { usePanelsStore } from "../panels/panels-store";
 import { DeviceToolbar } from "./device-toolbar";
 import { ThreeDotsMenu, deviceMenuItems, fodMenuItems } from "./menus";
 import { TreeNodeType, useTreeData } from "./utils";
 import { FileIcon } from "@/app/utils/file-utils";
+import { DeviceLightbulbIcon } from "../DeviceLightbulbIcon";
 
 type TNodeProps = {
     nodePayload: RenderTreeNodePayload;
@@ -47,18 +45,6 @@ const nodeRenderer = (p: RenderTreeNodePayload) => {
     const node = p.node as TreeNodeType;
     const panels = usePanelsStore();
     const devicesStore = useDevicesStore();
-    const pingQuery = useQuery({
-        queryKey: ['ping'],
-        refetchInterval: 1000,
-        queryFn: api.getPing,
-    });
-
-    const getDeviceColor = (d: TDevice) =>
-        d.esphome_config
-            ? pingQuery?.data?.[d.esphome_config]
-                ? color_online
-                : color_offline
-            : color_gray;
 
     switch (node.type) {
         case "add_new_device":
@@ -71,7 +57,7 @@ const nodeRenderer = (p: RenderTreeNodePayload) => {
         case "device":
             return <Node
                 nodePayload={p}
-                icon={<LightBulbIcon fill={getDeviceColor(node.device)} />}
+                icon={<DeviceLightbulbIcon device={node.device} />}
                 menuItems={deviceMenuItems(devicesStore, node.device)} >
                 <span className="font-semibold">{node.label}</span>
             </Node>

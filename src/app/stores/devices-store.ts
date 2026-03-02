@@ -9,6 +9,7 @@ import { openConfirmationDialog } from "../components/dialogs/confirmation-dialo
 import { openCreateFileDialog, openInputTextDialog } from "../components/dialogs/input-text-dialog";
 import { notifications } from "@mantine/notifications";
 import { events } from "./events";
+import { color_online, color_offline, color_gray } from "../utils/const";
 
 const useDeviceExpandedStore = () => {
     const [value, setValue] = useLocalStorage<string[]>('e4e.devices.expanded', [], {
@@ -215,6 +216,25 @@ export const useDevicesQuery = () =>
         queryKey: ["devices"],
         queryFn: async () => api.callGet_json<TDevice[]>("/api/device")
     });
+
+export const useDevicesPingQuery = () =>
+    useQuery({
+        queryKey: ['ping'],
+        refetchInterval: 1000,
+        queryFn: api.getPing,
+    });
+
+export const useDevicesColor = () => {
+    const pingQuery = useDevicesPingQuery();
+    return {
+        getDeviceColor: (d: TDevice) =>
+            d.esphome_config
+                ? pingQuery?.data?.[d.esphome_config]
+                    ? color_online
+                    : color_offline
+                : color_gray
+    }
+}
 
 export const useDevicesStore = () => {
     return {
