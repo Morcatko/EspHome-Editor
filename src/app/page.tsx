@@ -17,10 +17,11 @@ import { useLocalStorage } from "usehooks-ts";
 import { usePanelsStore } from "./components/panels/panels-store";
 
 const Header = () => {
-	return <>
-		<Image className="inline mr-2 align-middle" src={logo} alt="ESPHome Editor" width="32" height="32" />
-		<h4 className="inline-block align-baseline text-slate-600 dark:text-slate-400 m-0 font-semibold" >Editor for ESPHome</h4>
-	</>
+	const panelsStore = usePanelsStore();
+	return <Anchor className="flex-grow" href="#" onClick={() => panelsStore.addPanel({operation: "devices-panel"})} underline="never">
+				<Image className="inline mr-2 align-middle" src={logo} alt="ESPHome Editor" width="32" height="32" />
+				<h4 className="inline-block align-baseline text-slate-600 dark:text-slate-400 m-0 font-semibold" >Editor for ESPHome</h4>
+			</Anchor>;
 }
 
 const useDevicesPanelCollapsed = () => {
@@ -45,17 +46,12 @@ const CollapseButton = () => {
 
 const SidePanel = () => {
 	const statusStore = useStatusStore();
-	const panelsStore = usePanelsStore();
 
 	return <div className="flex-none flex flex-col h-screen">
 		<div className="flex-none border-b border-slate-200 dark:border-slate-800 text-center leading-[56px]" >
 			<Header />
 		</div>
 		<div className="flex-grow pl-1 overflow-y-auto">
-			<Button
-				onClick={(e) => panelsStore.addPanel({operation: "devices-panel"})}>
-				Dashboard
-			</Button>
 			<DevicesTree />
 		</div>
 		<div className="flex-none border-t border-slate-200 dark:border-slate-800 text-center p-2 pl-16 flex">

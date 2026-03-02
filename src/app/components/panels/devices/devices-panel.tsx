@@ -54,14 +54,14 @@ export const DevicesPanel = () => {
           { accessor: 'deviceInfo.chip', title: 'Chip' },
           { accessor: 'deviceInfo.esphome_version', title: 'ESPHome Version' },
           { accessor: 'deviceInfo.compiled_on', title: 'Compiled On', render: (r) => tryFormatDistanceToNowStrict(r.deviceInfo?.compiled_on) },
-          { accessor: 'deviceInfo._updated_at', title: 'As of', width: 100, render: (r) => tryFormatDistanceToNowStrict(r.deviceInfo?._updated_at) },
+          { accessor: 'deviceInfo._updated_at', title: 'As of', width: 130, render: (r) => tryFormatDistanceToNowStrict(r.deviceInfo?._updated_at) },
         ]
       }, {
         id: 'compilation_info',
         title: <HeaderWithTooltip tooltip="Information from last compilation">Latest Build</HeaderWithTooltip>,
         columns: [
           { accessor: 'compilationInfo.success', title: 'Success', render: (r) => r.compilationInfo ? (r.compilationInfo?.success ? 'Yes' : 'No') : "" },
-          { accessor: 'compilationInfo._updated_at', title: 'As of', width: 100, render: (r) => tryFormatDistanceToNowStrict(r.compilationInfo?._updated_at) },
+          { accessor: 'compilationInfo._updated_at', title: 'As of', width: 130, render: (r) => tryFormatDistanceToNowStrict(r.compilationInfo?._updated_at) },
         ]
       }
     ]}
