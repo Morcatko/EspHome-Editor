@@ -15,8 +15,8 @@ export type TDeviceInfo = {
 }
 
 export type TCompilationInfo = {
+    status: "running" | "success" | "failed";
     _updated_at: Date;
-    success: boolean;
 }
 
 type TManifest = {

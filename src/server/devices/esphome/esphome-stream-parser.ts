@@ -11,7 +11,7 @@ export class EspHomeStreamParser {
     }
 
     readonly compilationInfo: TCompilationInfo = {
-        success: false,
+        status: "running",
         _updated_at: new Date(),
     }
 
@@ -22,10 +22,10 @@ export class EspHomeStreamParser {
         private device_id: string,
     ) { }
 
-    private async setCompilationFinished(success: boolean) {
+    private async setCompilationInfo(status: TCompilationInfo["status"], finished: boolean) {
         this.compilationInfo._updated_at = new Date();
-        this.compilationInfo.success = success;
-        this.compilationInfoFinished = true;
+        this.compilationInfo.status = status;
+        this.compilationInfoFinished = finished;
         return ManifestUtils.setCompilationInfo(this.device_id, this.compilationInfo);
     }
 
@@ -33,14 +33,16 @@ export class EspHomeStreamParser {
         const message = removeAnsiControlSequences(line);
 
         if (!this.compilationInfoFinished) {
-            if (message === "Failed config") {
-                await this.setCompilationFinished(false);
+            if (message.startsWith("INFO Generating C++ source...")) {
+                await this.setCompilationInfo("running", false);
+            } else  if (message === "Failed config") {
+                await this.setCompilationInfo("failed", true);
             } else if (message.startsWith("========================== [FAILED] Took ")) {
-                await this.setCompilationFinished(false);
+                await this.setCompilationInfo("failed", true);
 
             } else if (message === "INFO Successfully compiled program.") {
                 // message.startsWith("========================= [SUCCESS] Took ")
-                await this.setCompilationFinished(true);
+                await this.setCompilationInfo("success",true);
             }
         }
         if (!this.deviceInfoFinished) {

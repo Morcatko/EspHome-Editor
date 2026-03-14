@@ -60,7 +60,7 @@ export const DevicesPanel = () => {
         id: 'compilation_info',
         title: <HeaderWithTooltip tooltip="Information from last compilation">Latest Build</HeaderWithTooltip>,
         columns: [
-          { accessor: 'compilationInfo.success', title: 'Success', render: (r) => r.compilationInfo ? (r.compilationInfo?.success ? 'Yes' : 'No') : "" },
+          { accessor: 'compilationInfo.status', title: 'Status' },
           { accessor: 'compilationInfo._updated_at', title: 'As of', width: 130, render: (r) => tryFormatDistanceToNowStrict(r.compilationInfo?._updated_at) },
         ]
       }

@@ -214,6 +214,7 @@ export const useDevice = (device_id?: string) => {
 export const useDevicesQuery = () =>
     useQuery({
         queryKey: ["devices"],
+        refetchInterval: 5000,
         queryFn: async () => api.callGet_json<TDevice[]>("/api/device")
     });
 
