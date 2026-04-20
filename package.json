@@ -46,7 +46,7 @@
     "yaml": "^2.7.0"
   },
   "devDependencies": {
-    "@inquirer/prompts": "^7.2.3",
+    "@inquirer/prompts": "^8.4.2",
     "@tailwindcss/postcss": "^4.0.0",
     "@types/adm-zip": "^0.5.7",
     "@types/node": "^24.0.7",
