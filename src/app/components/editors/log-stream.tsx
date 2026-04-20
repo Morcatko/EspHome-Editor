@@ -8,15 +8,20 @@ type LogsProps = {
     store: ReturnType<typeof useStreamingStore>;
 }
 
+//For soem reason it works. On the other side it does not work when stored into state or store.
+let scrollPosition = 0;
+
 const Logs = (props: LogsProps) => {
-    const parentRef = useRef(null)
+    const parentRef = useRef<HTMLDivElement>(null);
 
     const rowVirtualizer = useVirtualizer({
         count: props.store.filteredData.length,
         getScrollElement: () => parentRef.current,
+        onChange: (instance) => {if (instance.scrollOffset) scrollPosition = instance.scrollOffset},
+        initialOffset: scrollPosition,
         estimateSize: () => 19.5,
         overscan: 5,
-    })
+    })  
 
     useEffect(() => {
         const lastOffset = rowVirtualizer.getOffsetForIndex(props.store.filteredData.length - 1)?.[0] || 0;
@@ -26,6 +31,18 @@ const Logs = (props: LogsProps) => {
             rowVirtualizer.scrollToIndex(props.store.filteredData.length - 1);
         }
     }, [props.store.filteredData.length, rowVirtualizer]);
+
+    useEffect(() => {
+        if (!parentRef.current) return;
+
+        const observer = new ResizeObserver(() => {
+            // element is visible/attached again
+            rowVirtualizer.scrollToOffset(scrollPosition, { align: 'start' })
+        })
+
+        observer.observe(parentRef.current);
+        return () => observer.disconnect()
+    }, [parentRef.current])
 
     return <div
         ref={parentRef}
@@ -65,8 +82,8 @@ const Logs = (props: LogsProps) => {
 
 
 const OutdatedCheck = ({ isOutdated, children }: { isOutdated: boolean, children: React.ReactNode }) => isOutdated
-        ? <div className="p-2">Click <SyncIcon /> to reconnect</div>
-        : children;
+    ? <div className="p-2">Click <SyncIcon /> to reconnect</div>
+    : children;
 
 export const LogStream = (props: LogsProps) => {
     return <OutdatedCheck isOutdated={props.store.isOutdated}>
