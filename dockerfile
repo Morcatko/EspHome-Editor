@@ -19,7 +19,7 @@ COPY public ./public
 COPY .temp  ./.temp
 RUN yarn setup
 RUN yarn test run
-RUN yarn build
+RUN yarn build --webpack
 
 FROM node:current-alpine AS run
 

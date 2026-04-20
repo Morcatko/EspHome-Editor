@@ -4,14 +4,12 @@ import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin'
 const nextConfig: NextConfig = {
   output: "standalone",
   /* config options here */
-  eslint: {
-    // Warning: This allows production builds to successfully complete even if
-    // your project has ESLint errors.
-    ignoreDuringBuilds: true,
-  },
   assetPrefix: ".",
   typescript: {
     ignoreBuildErrors: false,
+  },
+  turbopack: {
+
   },
   //https://github.com/Chenalejandro/next.js/blob/add-monaco-editor-example/examples/monaco-editor/next.config.mjs
   //https://github.com/microsoft/monaco-editor/blob/main/docs/integrate-esm.md
