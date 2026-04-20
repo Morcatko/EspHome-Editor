@@ -26,7 +26,7 @@
     "ansi-to-html": "^0.7.2",
     "consola": "^3.4.0",
     "date-fns": "^4.1.0",
-    "dockview-react": "^4.2.1",
+    "dockview-react": "^5.2.0",
     "eta": "^3.5.0",
     "jotai": "^2.11.3",
     "jotai-family": "^1.0.1",

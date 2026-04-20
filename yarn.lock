@@ -2313,24 +2313,24 @@ detect-node-es@^1.1.0:
   resolved "https://registry.yarnpkg.com/detect-node-es/-/detect-node-es-1.1.0.tgz#163acdf643330caa0b4cd7c21e7ee7755d6fa493"
   integrity sha512-ypdmJU/TbBby2Dxibuv7ZLW3Bs1QEmM7nHjEANfohJLvE0XVujisn1qPJcZxg+qDucsr+bP6fLD1rPS3AhJ7EQ==
 
-dockview-core@^4.13.1:
-  version "4.13.1"
-  resolved "https://registry.yarnpkg.com/dockview-core/-/dockview-core-4.13.1.tgz#619e20ca52d077b83e985c91ce434f404626584c"
-  integrity sha512-+7vR0ZEoL8CNck6NqDVUMqBT22niwBu5CMMI137dZ3c8NDc7c5Si+3dGEqQgM4lNtHBLAtvypo1C4p21J2wkiQ==
+dockview-core@^5.2.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/dockview-core/-/dockview-core-5.2.0.tgz#0b6d96ece172378dfbf966f396ade3e642a5d4f1"
+  integrity sha512-Gib8yhK2Ng7w47ASvbUZ7GdhBYbeXEflbIDxf/vobdQBMrN/QXmPaouSsSSkEx5YH0N8ap8GYljfvqjug7h5Fg==
 
-dockview-react@^4.2.1:
-  version "4.13.1"
-  resolved "https://registry.yarnpkg.com/dockview-react/-/dockview-react-4.13.1.tgz#51e0f6887f1b0247dd786889bd93844037823aa6"
-  integrity sha512-xnK0mUq+gzME/QyzM5nn+SsQO26AA2qZlCuqi1KX7wux52KIUSMraQHN5AY9Qm2qCVb/NHhCZoZNSysb/GS79A==
+dockview-react@^5.2.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/dockview-react/-/dockview-react-5.2.0.tgz#174809acf79d2048a232b51731ac81c839bcef01"
+  integrity sha512-xJU5EiViiYYoP0ez5KxN8I+5CWSiPC27KVgVJBpRYRYJN6wKjMUpUqqSHwTlN1PGw5OzCu7UGQlUl1RQew74ag==
   dependencies:
-    dockview "^4.13.1"
+    dockview "^5.2.0"
 
-dockview@^4.13.1:
-  version "4.13.1"
-  resolved "https://registry.yarnpkg.com/dockview/-/dockview-4.13.1.tgz#31b0e45d369516616bddfe0ea0e5f4aaa0388df7"
-  integrity sha512-K8xnYt3Rvkx8MYKHaEsb8aFaPyQclKRRkXS9JcpQPZUgqxumTLnSidgdd6uIfzEps6yJsXoZGQGJ9PtcaKyDcQ==
+dockview@^5.2.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/dockview/-/dockview-5.2.0.tgz#35d5174b26687de0dbe3b162196ca7aacd05207c"
+  integrity sha512-Eh+SWt+AydcyeVmYkwP+Yxax0XpYSQfXsc4Rad9k+6QEddkSCn4hcjsdxp9lLsw/CaMy39jHawbDVxPMC4kvTg==
   dependencies:
-    dockview-core "^4.13.1"
+    dockview-core "^5.2.0"
 
 doctrine@^2.1.0:
   version "2.1.0"
