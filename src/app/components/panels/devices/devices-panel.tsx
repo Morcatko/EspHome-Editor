@@ -7,6 +7,7 @@ import { DeviceLightbulbIcon } from "../../DeviceLightbulbIcon";
 import { AlertIcon, CheckIcon, DiffAddedIcon, DiffIgnoredIcon, DiffRemovedIcon, ListOrderedIcon, PlayIcon, QuestionIcon, SquareIcon } from "@primer/octicons-react";
 import { AnsiConverter } from "@/app/utils/ansi-format-converter";
 import { icons } from "@/app/utils/icons";
+import { DeviceToolbarItem } from "../../devices-tree/device-toolbar";
 
 const tryFormatDistanceToNowStrict = (date: Date | null | undefined) =>
   date
@@ -50,11 +51,16 @@ const ESPHomeVersionRenderer = (record: TDeviceRecord) => {
     : "";
 }
 
-const lastMessageRenderer = (record: TDeviceRecord) => {
+const LastMessageRenderer = (record: TDeviceRecord) => {
   const html = AnsiConverter.toHtml(record.last_message ?? "");
-  return <span
-    dangerouslySetInnerHTML={{ __html: html }}
-  />;
+  return <>{(record.upload_status !== "success")
+    ? <span><StatusIcon status={record.upload_status} />&nbsp;</span>
+    : ""
+  }
+    <span
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
+  </>;
 };
 
 export const DevicesPanel = () => {
@@ -89,13 +95,13 @@ export const DevicesPanel = () => {
       </Button.Group>
       &nbsp;&nbsp;
       <Button.Group display="inline">
-        <Tooltip label="Upload local to ESPHome Device Builder">
-          <Button {...actionProps} onClick={store.compile} leftSection={icons.uploadToESPHome}>
+        <Tooltip label="Upload Selected Local Configs to ESPHome Device Builder">
+          <Button {...actionProps} onClick={store.uploadSelected} leftSection={icons.uploadToESPHome}>
             Upload
           </Button>
         </Tooltip>
-        <Tooltip label="Compile">
-          <Button {...actionProps} onClick={store.compile} leftSection={icons.compile}>
+        <Tooltip label="Compile Selected Devices">
+          <Button {...actionProps} onClick={store.compileSelected} leftSection={icons.compile}>
             Compile
           </Button>
         </Tooltip>
@@ -110,7 +116,7 @@ export const DevicesPanel = () => {
       //pinFirstColumn
       selectedRecords={store.selectionStore[0]}
       onSelectedRecordsChange={store.selectionStore[1]}
-
+      selectionTrigger="cell"
       records={data}
       groups={[
         {
@@ -118,7 +124,7 @@ export const DevicesPanel = () => {
           title: '',
           columns: [
             {
-              accessor: 'device.name', title: 'Name', width: 200, textAlign: 'right', render: deviceNameRenderer
+              accessor: 'device.name', title: 'Name', width: 250, align: 'right', render: deviceNameRenderer
             },
           ]
         }, {
@@ -144,7 +150,7 @@ export const DevicesPanel = () => {
           id: 'last_message',
           title: "",
           columns: [
-            { accessor: 'last_message', title: 'Last Message', noWrap: true, render: lastMessageRenderer },
+            { accessor: 'last_message', title: 'Last Message', noWrap: true, render: LastMessageRenderer },
           ]
         }
       ]}

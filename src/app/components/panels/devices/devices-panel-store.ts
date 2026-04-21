@@ -1,4 +1,4 @@
-import { useDevicesQuery } from "@/app/stores/devices-store"
+import { useDevicesQuery, useDevicesStore } from "@/app/stores/devices-store"
 import { useCallback, useMemo, useState } from "react";
 import { TDevice } from "@/server/devices/types";
 import { api, TStreamEvents } from "@/app/utils/api-client";
@@ -8,6 +8,7 @@ import { TCompilationInfo } from "@/server/devices/local/manifest-utils";
 export type TDeviceRecord = {
     id: string;
     device: TDevice;
+    upload_status: "" | "planned" | "running" | "success" | "failed";
     compilation_status: "" | "planned" | TCompilationInfo["status"];
     last_message: string | null;
 }
@@ -20,8 +21,55 @@ const compileDevice = async (device_id: string, events: TStreamEvents) =>
             onError: (error) => { events.onError?.(error); reject(error); }
         }));
 
+const compileDevices = async (
+    device_ids: string[],     
+    updateDeviceRecord: (device_id: string, state: Partial<TDeviceRecord>) => void) => {
+
+    for (const device_id of device_ids) {
+        updateDeviceRecord(device_id, { compilation_status: "planned" });
+    }
+
+    for (const device_id of device_ids) {
+        await compileDevice(device_id, {
+            onMessage: (message) => updateDeviceRecord(device_id, { compilation_status: "running", last_message: message }),
+            onCompleted: () => {
+                //devices_query.refetch();
+                updateDeviceRecord(device_id, { compilation_status: "success", last_message: "Compilation succeeded" });
+            },
+            onError: (errorMessage) => {
+                //devices_query.refetch();
+                updateDeviceRecord(device_id, { compilation_status: "failed", last_message: errorMessage });
+            }
+        });
+    }
+}
+
+const uploadConfigsToEspHome = async (
+    devices: TDevice[], 
+    updateDeviceRecord: (device_id: string, state: Partial<TDeviceRecord>) => void, 
+    deviceAction: (device: TDevice) => Promise<void>
+) => {
+    for (const device of devices) {
+        updateDeviceRecord(device.id, { upload_status: "planned" });
+    }
+
+    for (const device of devices) {
+        updateDeviceRecord(device.id, { upload_status: "running", last_message: "Uploading..." });
+        try {
+            await deviceAction(device);
+            updateDeviceRecord(device.id, { upload_status: "success", last_message: "Upload succeeded" });
+        } catch (e) {
+            updateDeviceRecord(device.id, { upload_status: "failed", last_message: e?.toString?.() });
+            continue;
+        }
+    }
+};
+
+
 export const useDevicesPanelStore = () => {
-    const devices_query = useDevicesQuery()
+    const devices_query = useDevicesQuery();
+    const devicesStore = useDevicesStore();
+
 
     const [selectedRecords, setSelectedRecords] = useState<TDeviceRecord[]>([]);
 
@@ -33,53 +81,27 @@ export const useDevicesPanelStore = () => {
                     [d.id, {
                         id: d.id,
                         device: d,
+                        upload_status: "",
                         compilation_status: d.compilationInfo?.status ?? "",
                         last_message: null
                     }]), [devices_query?.data])
     );
 
-    const compile = useCallback(async () => {
-        for (const r of selectedRecords) {
-            compilationStore.set(r.device.id, {
-                ...compilationStore.get(r.device.id)!,
-                compilation_status: "planned",
-                last_message: null,
-            });
-        }
-        
-        for (const r of selectedRecords) {
-            await compileDevice(r.device.id, {
-                onMessage: (message) => {
-                    compilationStore.set(r.device.id, {
-                        ...compilationStore.get(r.device.id)!,
-                        compilation_status: "running",
-                        last_message: message,
-                    });
-                },
-                onCompleted: () => {
-                    devices_query.refetch();
-                    compilationStore.set(r.device.id, {
-                        ...compilationStore.get(r.device.id)!,
-                        compilation_status: "success",
-                        last_message: null,
-                    } );
-                },
-                onError: (errorMessage) => {
-                    devices_query.refetch();
-                    compilationStore.set(r.device.id, {
-                        ...compilationStore.get(r.device.id)!,
-                        compilation_status: "failed",
-                        last_message: errorMessage
-                    });
-                }
-            });
-        }
-    }, [selectedRecords]);
+    const updateDeviceRecord = useCallback((device_id: string, deviceRecord: Partial<TDeviceRecord>) => {
+        compilationStore.set(device_id, {
+            ...compilationStore.get(device_id)!,
+            ...deviceRecord
+        });
+    }, [compilationStore]);
+
+    const upload = () => uploadConfigsToEspHome(selectedRecords.map(r => r.device), updateDeviceRecord, devicesStore.espHome_upload);
+    const compile = () => compileDevices(selectedRecords.map(r => r.device.id), updateDeviceRecord);   
 
     return {
         selectionStore: [selectedRecords, setSelectedRecords] as const,
         devices_query: useDevicesQuery(),
         devices: compilationStore,
-        compile
+        uploadSelected: upload,
+        compileSelected: compile
     };
 }

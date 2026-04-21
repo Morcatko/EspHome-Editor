@@ -10,7 +10,8 @@ import { TPanel_DeviceOperation } from "@/app/components/panels/_utils/types";
 import { icons } from "@/app/utils/icons";
 
 type TDeviceToolbarItemProps =
-    Pick<TToolbarButtonProps, "className"> & {
+    Pick<TToolbarButtonProps, "className"> & 
+    Pick<TToolbarButtonProps, "size"> & {
         device: TDevice;
         panelTarget?: PanelTarget;
         icon?: TToolbarButtonProps["icon"];
