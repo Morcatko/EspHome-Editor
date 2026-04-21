@@ -6,7 +6,6 @@ import { TDevice } from "@/server/devices/types";
 import { useDevicesColor } from "@/app/stores/devices-store";
 import { DeviceLightbulbIcon } from "../../DeviceLightbulbIcon";
 import { QuestionIcon } from "@primer/octicons-react";
-import { useState } from "react";
 
 const tryFormatDistanceToNowStrict = (date: Date | null | undefined) =>
   date
@@ -28,8 +27,6 @@ const HeaderWithTooltip = ({ children, tooltip }: { children: React.ReactNode, t
 export const DevicesPanel = () => {
   const store = useDevicesPanelStore();
 
-  const [selectedRecords, setSelectedRecords] = useState<TDevice[]>([]);
-
   const data = (store?.devices_query?.data ?? [])
     .filter(d => d.name !== ".lib");
 
@@ -40,9 +37,6 @@ export const DevicesPanel = () => {
     striped
     highlightOnHover
     //pinFirstColumn
-    selectedRecords={selectedRecords}
-    onSelectedRecordsChange={setSelectedRecords}
-
     records={data}
     groups={[
       {

@@ -4,6 +4,12 @@ import { TOperationResult } from "@/server/devices/types";
 import { log } from "@/shared/log";
 import { type TWsMessage } from "../api/device/[device_id]/esphome/utils";
 
+export type TStreamEvents = {
+    onMessage: (htmlMessage: string) => void;
+    onCompleted?: () => void;
+    onError?: (message: string) => void;
+}
+
 export namespace api {
     export type TCallResult = {
         status: number;
@@ -87,13 +93,14 @@ export namespace api {
         return await callPostPut("PUT", url, content, true);
     }
 
-    export function stream(url: string, onMessage: (htmlMessage: string) => void) {
+    export function stream(url: string, events:TStreamEvents) {
         const socket = new WebSocket(api.getWsUrl(url))
         log.debug("Creating socket", url);
 
         // Connection opened
         socket.addEventListener("open", event => {
-            socket.send("Connection established")
+            //socket.send("Connection established")
+            log.info("Socket opened", url);
         });
 
         // Listen for messages
@@ -104,14 +111,16 @@ export namespace api {
                 switch (jsonData.event) {
                     case "completed":
                         log.verbose("Stream completed");
+                        events.onCompleted?.();
                         //ws.getWebSocket()!.close();
                         break;
                     case "error":
                         log.error("Stream error", jsonData.data);
+                        events.onError?.(jsonData.data);
                         //ws.getWebSocket()!.close();
                         break;
                     case "message":
-                        onMessage(jsonData.data);
+                        events.onMessage(jsonData.data);
                         break;
                     default:
                         log.warn("Unknown event", jsonData);
