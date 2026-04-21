@@ -3,7 +3,7 @@ import React from "react";
 import { FileDirectoryIcon, PlusIcon, ChevronRightIcon } from "@primer/octicons-react";
 import { Group, RenderTreeNodePayload, Tree, useTree } from "@mantine/core";
 
-import { useDevicesStore } from "../../stores/devices-store";
+import { useDevicesColor, useDevicesPingQuery, useDevicesStore } from "../../stores/devices-store";
 import { usePanelsStore } from "../panels/panels-store";
 import { DeviceToolbar } from "./device-toolbar";
 import { ThreeDotsMenu, deviceMenuItems, fodMenuItems } from "./menus";
@@ -107,7 +107,8 @@ export const DevicesTree = () => {
     const treeData = useTreeData();
 
     return <Tree
-        tree={tree}
+        //Workaround for https://github.com/mantinedev/mantine/issues/7266
+        tree={{ ...tree, setHoveredNode: () => { } }}
         data={treeData}
         renderNode={nodeRenderer}
         className="text-sm"
