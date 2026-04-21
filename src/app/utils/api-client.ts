@@ -93,13 +93,14 @@ export namespace api {
         return await callPostPut("PUT", url, content, true);
     }
 
-    export function stream2(url: string, events:TStreamEvents) {
+    export function stream(url: string, events:TStreamEvents) {
         const socket = new WebSocket(api.getWsUrl(url))
         log.debug("Creating socket", url);
 
         // Connection opened
         socket.addEventListener("open", event => {
-            socket.send("Connection established")
+            //socket.send("Connection established")
+            log.info("Socket opened", url);
         });
 
         // Listen for messages
@@ -120,45 +121,6 @@ export namespace api {
                         break;
                     case "message":
                         events.onMessage(jsonData.data);
-                        break;
-                    default:
-                        log.warn("Unknown event", jsonData);
-                        break
-                }
-            }
-        });
-        return () => {
-            log.debug("Closing socket");
-            if (socket.readyState === WebSocket.OPEN)
-                socket.close();
-        }
-    }
-
-    export function stream(url: string, onMessage: (htmlMessage: string) => void) {
-        const socket = new WebSocket(api.getWsUrl(url))
-        log.debug("Creating socket", url);
-
-        // Connection opened
-        socket.addEventListener("open", event => {
-            socket.send("Connection established")
-        });
-
-        // Listen for messages
-        socket.addEventListener("message", event => {
-            if (event?.data) {
-                const jsonData = JSON.parse(event.data) as TWsMessage;
-
-                switch (jsonData.event) {
-                    case "completed":
-                        log.verbose("Stream completed");
-                        //ws.getWebSocket()!.close();
-                        break;
-                    case "error":
-                        log.error("Stream error", jsonData.data);
-                        //ws.getWebSocket()!.close();
-                        break;
-                    case "message":
-                        onMessage(jsonData.data);
                         break;
                     default:
                         log.warn("Unknown event", jsonData);

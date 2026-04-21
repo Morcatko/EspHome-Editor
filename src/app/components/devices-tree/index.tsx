@@ -107,8 +107,7 @@ export const DevicesTree = () => {
     const treeData = useTreeData();
 
     return <Tree
-        //Workaround for https://github.com/mantinedev/mantine/issues/7266
-        tree={{ ...tree, setHoveredNode: () => { } }}
+        tree={tree}
         data={treeData}
         renderNode={nodeRenderer}
         className="text-sm"
