@@ -1,14 +1,11 @@
-import Convert from "ansi-to-html";
+
 import { atom, getDefaultStore, useAtom } from "jotai";
 import { atomFamily } from 'jotai-family';
 import { useMemo } from "react";
 import { api } from "@/app/utils/api-client";
 import { log } from "@/shared/log";
 import { fixStreamMessage } from "@/shared/string-utils";
-
-const convert = new Convert({
-    stream: true,
-});
+import { AnsiConverter } from "@/app/utils/ansi-format-converter";
 
 const isOutdated = (lastClick: string | undefined) => {
     if (!lastClick)
@@ -22,7 +19,7 @@ const isOutdated = (lastClick: string | undefined) => {
 
 type AtomKey = {
     url: string;
-    lastClick: string;
+    lastClick?: string;
 }
 
 type TLogStoreAtom = {
@@ -40,7 +37,7 @@ const storeFamily = atomFamily((key: AtomKey) => {
     });
     if (!isOutdatedValue) {
         const dispose = api.stream(key.url, (message) => {
-            const html = convert.toHtml(fixStreamMessage(message));
+            const html = AnsiConverter.toHtml(fixStreamMessage(message));
             getDefaultStore().set(store, val => ({
                 ...val,
                 data: [...val.data, html],
@@ -57,7 +54,7 @@ const storeFamily = atomFamily((key: AtomKey) => {
     return store;
 }, (a, b) => a.url === b.url && a.lastClick === b.lastClick);
 
-export const useStreamingStore = (url: string, lastClick: string) => {
+export const useStreamingStore = (url: string, lastClick?: string) => {
     const [store, setStore] = useAtom(storeFamily({ url, lastClick }));
 
     const filteredData = useMemo(() =>

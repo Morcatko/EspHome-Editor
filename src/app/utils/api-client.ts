@@ -4,6 +4,12 @@ import { TOperationResult } from "@/server/devices/types";
 import { log } from "@/shared/log";
 import { type TWsMessage } from "../api/device/[device_id]/esphome/utils";
 
+export type TStreamEvents = {
+    onMessage: (htmlMessage: string) => void;
+    onCompleted?: () => void;
+    onError?: (message: string) => void;
+}
+
 export namespace api {
     export type TCallResult = {
         status: number;
@@ -85,6 +91,47 @@ export namespace api {
 
     async function callPut(url: string, content: string | null): Promise<TCallResult> {
         return await callPostPut("PUT", url, content, true);
+    }
+
+    export function stream2(url: string, events:TStreamEvents) {
+        const socket = new WebSocket(api.getWsUrl(url))
+        log.debug("Creating socket", url);
+
+        // Connection opened
+        socket.addEventListener("open", event => {
+            socket.send("Connection established")
+        });
+
+        // Listen for messages
+        socket.addEventListener("message", event => {
+            if (event?.data) {
+                const jsonData = JSON.parse(event.data) as TWsMessage;
+
+                switch (jsonData.event) {
+                    case "completed":
+                        log.verbose("Stream completed");
+                        events.onCompleted?.();
+                        //ws.getWebSocket()!.close();
+                        break;
+                    case "error":
+                        log.error("Stream error", jsonData.data);
+                        events.onError?.(jsonData.data);
+                        //ws.getWebSocket()!.close();
+                        break;
+                    case "message":
+                        events.onMessage(jsonData.data);
+                        break;
+                    default:
+                        log.warn("Unknown event", jsonData);
+                        break
+                }
+            }
+        });
+        return () => {
+            log.debug("Closing socket");
+            if (socket.readyState === WebSocket.OPEN)
+                socket.close();
+        }
     }
 
     export function stream(url: string, onMessage: (htmlMessage: string) => void) {
