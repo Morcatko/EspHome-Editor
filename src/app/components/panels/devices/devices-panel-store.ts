@@ -14,7 +14,7 @@ export type TDeviceRecord = {
 
 const compileDevice = async (device_id: string, events: TStreamEvents) =>
     new Promise<void>(async (resolve, reject) =>
-        await api.stream2(api.url_esphome_compile(device_id), {
+        await api.stream(api.url_esphome_compile(device_id), {
             onMessage: events.onMessage,
             onCompleted: () => { events.onCompleted?.(); resolve(); },
             onError: (error) => { events.onError?.(error); reject(error); }
