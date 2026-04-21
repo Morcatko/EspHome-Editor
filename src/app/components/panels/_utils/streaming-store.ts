@@ -1,14 +1,10 @@
-import Convert from "ansi-to-html";
+import { AnsiConverter } from "@/app/utils/ansi-format-converter";
 import { atom, getDefaultStore, useAtom } from "jotai";
 import { atomFamily } from 'jotai-family';
 import { useMemo } from "react";
 import { api } from "@/app/utils/api-client";
 import { log } from "@/shared/log";
 import { fixStreamMessage } from "@/shared/string-utils";
-
-const convert = new Convert({
-    stream: true,
-});
 
 const isOutdated = (lastClick: string | undefined) => {
     if (!lastClick)
@@ -39,12 +35,14 @@ const storeFamily = atomFamily((key: AtomKey) => {
         isOutdated: isOutdatedValue,
     });
     if (!isOutdatedValue) {
-        const dispose = api.stream(key.url, (message) => {
-            const html = convert.toHtml(fixStreamMessage(message));
-            getDefaultStore().set(store, val => ({
-                ...val,
-                data: [...val.data, html],
-            }));
+        const dispose = api.stream(key.url, {
+            onMessage: (message) => {
+                const html = AnsiConverter.toHtml(fixStreamMessage(message));
+                getDefaultStore().set(store, val => ({
+                    ...val,
+                    data: [...val.data, html],
+                }));
+            },
         });
         store.onMount = () => {
             log.verbose("onMount", key.url);
