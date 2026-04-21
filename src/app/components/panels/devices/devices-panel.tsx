@@ -4,8 +4,9 @@ import { format, formatDistanceToNowStrict } from "date-fns";
 import { Button, Tooltip } from "@mantine/core";
 import { useDevicesColor } from "@/app/stores/devices-store";
 import { DeviceLightbulbIcon } from "../../DeviceLightbulbIcon";
-import { AlertIcon, CheckIcon, ListOrderedIcon, PlayIcon, QuestionIcon } from "@primer/octicons-react";
+import { AlertIcon, CheckIcon, DiffAddedIcon, DiffIgnoredIcon, DiffRemovedIcon, ListOrderedIcon, PlayIcon, QuestionIcon, SquareIcon } from "@primer/octicons-react";
 import { AnsiConverter } from "@/app/utils/ansi-format-converter";
+import { icons } from "@/app/utils/icons";
 
 const tryFormatDistanceToNowStrict = (date: Date | null | undefined) =>
   date
@@ -44,9 +45,9 @@ const HeaderWithTooltip = ({ children, tooltip }: { children: React.ReactNode, t
 
 const ESPHomeVersionRenderer = (record: TDeviceRecord) => {
   //@esphome @ chip
-return record.device.deviceInfo
-  ? `${record.device.deviceInfo.esphome_version} @ ${record.device.deviceInfo.chip}`
-  : "";
+  return record.device.deviceInfo
+    ? `${record.device.deviceInfo.esphome_version} @ ${record.device.deviceInfo.chip}`
+    : "";
 }
 
 const lastMessageRenderer = (record: TDeviceRecord) => {
@@ -61,8 +62,45 @@ export const DevicesPanel = () => {
 
   const data = [...store.devices.values()];
 
+  const selProps: Button.Props = {
+    variant: "outline",
+    size: "sm",
+  };
+
+  const anySelected = store.selectionStore[0].length > 0;
+
+  const actionProps: Button.Props = {
+    ...selProps,
+    disabled: !anySelected
+  };
+
   return <>
-    <Button onClick={store.compile} disabled={store.selectionStore[0].length === 0}>Compile selected</Button>
+    <div>
+      <Button.Group display="inline">
+        <Button {...selProps} leftSection={<DiffAddedIcon />} onClick={() => store.selectionStore[1](data)}>
+          Select All
+        </Button>
+        <Button {...selProps} leftSection={<DiffIgnoredIcon />} onClick={() => store.selectionStore[1]([])}>
+          Toggle
+        </Button>
+        <Button {...selProps} leftSection={<DiffRemovedIcon />} onClick={() => store.selectionStore[1]([])}>
+          Unselect All
+        </Button>
+      </Button.Group>
+      &nbsp;&nbsp;
+      <Button.Group display="inline">
+        <Tooltip label="Upload local to ESPHome Device Builder">
+          <Button {...actionProps} onClick={store.compile} leftSection={icons.uploadToESPHome}>
+            Upload
+          </Button>
+        </Tooltip>
+        <Tooltip label="Compile">
+          <Button {...actionProps} onClick={store.compile} leftSection={icons.compile}>
+            Compile
+          </Button>
+        </Tooltip>
+      </Button.Group>
+    </div>
     <DataTable
       className="m-[10px]"
       withTableBorder
@@ -80,7 +118,7 @@ export const DevicesPanel = () => {
           title: '',
           columns: [
             {
-              accessor: 'device.name', title: 'Name', width: 200,textAlign: 'right', render: deviceNameRenderer
+              accessor: 'device.name', title: 'Name', width: 200, textAlign: 'right', render: deviceNameRenderer
             },
           ]
         }, {
@@ -94,7 +132,7 @@ export const DevicesPanel = () => {
               render: compilationRenderer
             }
           ]
-        },{
+        }, {
           id: 'device_info',
           title: <HeaderWithTooltip tooltip="Information parsed from device log">On Device</HeaderWithTooltip>,
           columns: [
