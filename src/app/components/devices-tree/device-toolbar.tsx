@@ -7,7 +7,7 @@ import { ActionIcon } from "@mantine/core";
 import { CodeIcon, DownloadIcon, GitCompareIcon, LogIcon } from "@primer/octicons-react";
 import { ToolbarItem, TToolbarButtonProps } from "../toolbar";
 import { TPanel_DeviceOperation } from "@/app/components/panels/_utils/types";
-import { icons } from "@/app/utils/icons";
+import { Icons } from "@/app/utils/icons";
 
 type TDeviceToolbarItemProps =
     Pick<TToolbarButtonProps, "className"> & 
@@ -66,11 +66,11 @@ export const DeviceToolbarItem = {
                 ? (isDarkMode ? "lightgrey" : color_gray)
                 : (isDarkMode ? color_gray : "lightgrey")} />;
     },
-    ESPHomeUpload: (p: TDeviceToolbarItemProps) => { const d = useDarkTheme(); return <DTB_Device tooltip={"Upload local to ESPHome"} icon={icons.uploadToESPHome} onClick={(ds) => ds.espHome_upload(p.device)} color={d ? "lightgrey" : color_gray} {...p} />; },
-    ESPHomeCreate: (p: TDeviceToolbarItemProps) => { const d = useDarkTheme(); return <DTB_Device tooltip={"Create device in ESPHome"} icon={icons.uploadToESPHome} onClick={(ds) => ds.espHome_upload(p.device)} color={d ? "lightgrey" : color_gray} {...p} />; },
+    ESPHomeUpload: (p: TDeviceToolbarItemProps) => { const d = useDarkTheme(); return <DTB_Device tooltip={"Upload local to ESPHome"} icon={Icons.UploadToESPHome} onClick={(ds) => ds.espHome_upload(p.device)} color={d ? "lightgrey" : color_gray} {...p} />; },
+    ESPHomeCreate: (p: TDeviceToolbarItemProps) => { const d = useDarkTheme(); return <DTB_Device tooltip={"Create device in ESPHome"} icon={Icons.UploadToESPHome} onClick={(ds) => ds.espHome_upload(p.device)} color={d ? "lightgrey" : color_gray} {...p} />; },
     ESPHomeShow: (p: TDeviceToolbarItemProps) => { const hasEspHomeConfig = !!p.device.esphome_config; return <DTB_Panel tooltip="Show ESPHome configuration" icon={<CodeIcon />} operation="esphome_device" disabled={!hasEspHomeConfig} color={hasEspHomeConfig ? color_esphome : "lightgrey"}{...p} />; },
-    ESPHomeCompile: (p: TDeviceToolbarItemProps) => { const hasEspHomeConfig = !!p.device.esphome_config; return <DTB_Panel tooltip="Compile ESPHome configuration" icon={icons.compile} operation="esphome_compile" disabled={!hasEspHomeConfig} color={hasEspHomeConfig ? color_esphome : "lightgrey"}{...p} />; },
-    ESPHomeInstall: (p: TDeviceToolbarItemProps) => { const hasEspHomeConfig = !!p.device.esphome_config; return <DTB_Panel tooltip="Install ESPHome configuration to device" icon={icons.install} operation="esphome_install" disabled={!hasEspHomeConfig} color={hasEspHomeConfig ? color_esphome : "lightgrey"}{...p} />; },
+    ESPHomeCompile: (p: TDeviceToolbarItemProps) => { const hasEspHomeConfig = !!p.device.esphome_config; return <DTB_Panel tooltip="Compile ESPHome configuration" icon={Icons.Compile} operation="esphome_compile" disabled={!hasEspHomeConfig} color={hasEspHomeConfig ? color_esphome : "lightgrey"}{...p} />; },
+    ESPHomeInstall: (p: TDeviceToolbarItemProps) => { const hasEspHomeConfig = !!p.device.esphome_config; return <DTB_Panel tooltip="Install ESPHome configuration to device" icon={Icons.Install} operation="esphome_install" disabled={!hasEspHomeConfig} color={hasEspHomeConfig ? color_esphome : "lightgrey"}{...p} />; },
     ESPHomeLog: (p: TDeviceToolbarItemProps) => { const hasEspHomeConfig = !!p.device.esphome_config; return <DTB_Panel tooltip="Show ESPHome device log" icon={<LogIcon />} operation="esphome_log" disabled={!hasEspHomeConfig} color={hasEspHomeConfig ? color_esphome : "lightgrey"} {...p} />; },
 };
 
