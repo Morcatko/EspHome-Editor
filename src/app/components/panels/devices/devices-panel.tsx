@@ -1,13 +1,22 @@
 import { DataTable } from "mantine-datatable";
 import { TDeviceRecord, useDevicesPanelStore } from "./devices-panel-store";
 import { format, formatDistanceToNowStrict } from "date-fns";
-import { Button, Tooltip } from "@mantine/core";
+import { Box, Button, HoverCard, Text, Tooltip } from "@mantine/core";
 import { useDevicesColor } from "@/app/stores/devices-store";
 import { DeviceLightbulbIcon } from "../../DeviceLightbulbIcon";
 import { AlertIcon, CheckIcon, DiffAddedIcon, DiffIgnoredIcon, DiffRemovedIcon, ListOrderedIcon, PlayIcon, QuestionIcon, SquareIcon } from "@primer/octicons-react";
 import { AnsiConverter } from "@/app/utils/ansi-format-converter";
-import { icons } from "@/app/utils/icons";
-import { DeviceToolbarItem } from "../../devices-tree/device-toolbar";
+import { Icons } from "@/app/utils/icons";
+import { JSX } from "react";
+
+const CardBlock = ({ label, value }: { label: string, value: JSX.Element | string | null }) => (
+  <Box mb="xs">
+    {value}
+    <Text fz="xs" c="dimmed">
+      {label}
+    </Text>
+  </Box>
+);
 
 const tryFormatDistanceToNowStrict = (date: Date | null | undefined) =>
   date
@@ -45,9 +54,18 @@ const HeaderWithTooltip = ({ children, tooltip }: { children: React.ReactNode, t
   <span>{children} <Tooltip label={tooltip}><QuestionIcon /></Tooltip></span>;
 
 const ESPHomeVersionRenderer = (record: TDeviceRecord) => {
-  //@esphome @ chip
   return record.device.deviceInfo
-    ? `${record.device.deviceInfo.esphome_version} @ ${record.device.deviceInfo.chip}`
+    ? <HoverCard width={250} shadow="md">
+      <HoverCard.Target>
+          <span>{record.device.deviceInfo.esphome_version}</span>
+      </HoverCard.Target>
+      <HoverCard.Dropdown>
+        <CardBlock label="ESPHome Version" value={record.device.deviceInfo.esphome_version} />
+        <CardBlock label="Chip" value={record.device.deviceInfo.chip} />
+        <CardBlock label="Compiled" value={tryFormatDistanceToNowStrict(record.device.deviceInfo?.compiled_on)} />
+        <CardBlock label="Polled" value={tryFormatDistanceToNowStrict(record.device.deviceInfo?._updated_at)} />
+      </HoverCard.Dropdown>
+    </HoverCard>
     : "";
 }
 
@@ -96,12 +114,12 @@ export const DevicesPanel = () => {
       &nbsp;&nbsp;
       <Button.Group display="inline">
         <Tooltip label="Upload Selected Local Configs to ESPHome Device Builder">
-          <Button {...actionProps} onClick={store.uploadSelected} leftSection={icons.uploadToESPHome}>
+          <Button {...actionProps} onClick={store.uploadSelected} leftSection={Icons.UploadToESPHome}>
             Upload
           </Button>
         </Tooltip>
         <Tooltip label="Compile Selected Devices">
-          <Button {...actionProps} onClick={store.compileSelected} leftSection={icons.compile}>
+          <Button {...actionProps} onClick={store.compileSelected} leftSection={Icons.Compile}>
             Compile
           </Button>
         </Tooltip>
@@ -118,40 +136,26 @@ export const DevicesPanel = () => {
       onSelectedRecordsChange={store.selectionStore[1]}
       selectionTrigger="cell"
       records={data}
-      groups={[
+      columns={[
         {
-          id: 'name',
-          title: '',
-          columns: [
-            {
-              accessor: 'device.name', title: 'Name', width: 250, align: 'right', render: deviceNameRenderer
-            },
-          ]
+          accessor: 'device.name',
+          title: 'Name',
+          width: 450, textAlign: 'right', render: deviceNameRenderer
         }, {
-          id: 'compilation_info',
-          title: '',
-          columns: [
-            {
-              accessor: 'compilation_status',
-              title: <HeaderWithTooltip tooltip="Information from last compilation">Latest Build</HeaderWithTooltip>,
-              width: 150,
-              render: compilationRenderer
-            }
-          ]
+          title: <HeaderWithTooltip tooltip="Information from last compilation">Latest Build</HeaderWithTooltip>,
+          width: 300,
+          accessor: '__',
+          render: compilationRenderer
         }, {
-          id: 'device_info',
-          title: <HeaderWithTooltip tooltip="Information parsed from device log">On Device</HeaderWithTooltip>,
-          columns: [
-            { accessor: 'device.deviceInfo', title: 'ESPHome Version', width: 250, render: ESPHomeVersionRenderer },
-            { accessor: 'device.deviceInfo.compiled_on', title: 'Compiled On', width: 130, render: (r) => tryFormatDistanceToNowStrict(r.device.deviceInfo?.compiled_on) },
-            { accessor: 'device.deviceInfo._updated_at', title: 'As of', width: 130, render: (r) => tryFormatDistanceToNowStrict(r.device.deviceInfo?._updated_at) },
-          ]
+          title: <HeaderWithTooltip tooltip="Information collected from live logs">On Device</HeaderWithTooltip>,
+          accessor: '__',
+          width: 300,
+          render: ESPHomeVersionRenderer
         }, {
-          id: 'last_message',
-          title: "",
-          columns: [
-            { accessor: 'last_message', title: 'Last Message', noWrap: true, render: LastMessageRenderer },
-          ]
+          accessor: 'last_message',
+          title: 'Last Message',
+          noWrap: true,
+          render: LastMessageRenderer
         }
       ]}
     /></>;
