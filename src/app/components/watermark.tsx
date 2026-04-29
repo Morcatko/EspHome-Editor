@@ -19,8 +19,8 @@ export const Watermark = () => {
             Check <ExtLink href="https://editor-4-esphome.github.io/">the documentation</ExtLink> for quick start and more information.
         </p>
         <p>
-            <Alert variant="light" color="blue" title="Devices Dashboard" icon={<InfoIcon />} >
-                <div>Try new <b>Devices Dashboard</b> by clicking on the logo in top left corner.</div>
+            <Alert variant="light" color="blue" title="Fleet Management" icon={<InfoIcon />} >
+                <div>Try new <b>Fleet Management</b> feature by clicking on the logo in top left corner.</div>
                 <Anchor className="flex-grow" href="#" onClick={() => panelsStore.addPanel({ operation: "devices-panel" })} underline="never">
                     <Image className="mt-2" src={logo} alt="ESPHome Editor" width="32" height="32" />
                 </Anchor>
