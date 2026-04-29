@@ -1,7 +1,7 @@
 import { DataTable } from "mantine-datatable";
 import { TDeviceRecord, useDevicesPanelStore } from "./devices-panel-store";
 import { format, formatDistanceToNowStrict } from "date-fns";
-import { Box, Button, HoverCard, Text, Tooltip } from "@mantine/core";
+import { ActionIcon, Box, Button, HoverCard, Text, Tooltip } from "@mantine/core";
 import { useDevicesColor } from "@/app/stores/devices-store";
 import { DeviceLightbulbIcon } from "../../DeviceLightbulbIcon";
 import { AlertIcon, CheckIcon, DiffAddedIcon, DiffIgnoredIcon, DiffRemovedIcon, ListOrderedIcon, PlayIcon, QuestionIcon, SquareIcon } from "@primer/octicons-react";
@@ -57,7 +57,7 @@ const ESPHomeVersionRenderer = (record: TDeviceRecord) => {
   return record.device.deviceInfo
     ? <HoverCard width={250} shadow="md">
       <HoverCard.Target>
-          <span>{record.device.deviceInfo.esphome_version}</span>
+        <span>{record.device.deviceInfo.esphome_version}</span>
       </HoverCard.Target>
       <HoverCard.Dropdown>
         <CardBlock label="ESPHome Version" value={record.device.deviceInfo.esphome_version} />
@@ -86,31 +86,38 @@ export const DevicesPanel = () => {
 
   const data = [...store.devices.values()];
 
-  const selProps: Button.Props = {
+  const selProps: ActionIcon.Props = {
     variant: "outline",
-    size: "sm",
+    size: "lg"
   };
 
   const anySelected = store.selectionStore[0].length > 0;
 
   const actionProps: Button.Props = {
-    ...selProps,
+    variant: "outline",
+    size: "sm",
     disabled: !anySelected
   };
 
-  return <>
+  return <div className="m-[10px]">
     <div>
-      <Button.Group display="inline">
-        <Button {...selProps} leftSection={<DiffAddedIcon />} onClick={() => store.selectionStore[1](data)}>
-          Select All
-        </Button>
-        <Button {...selProps} leftSection={<DiffIgnoredIcon />} onClick={() => store.selectionStore[1]([])}>
-          Toggle
-        </Button>
-        <Button {...selProps} leftSection={<DiffRemovedIcon />} onClick={() => store.selectionStore[1]([])}>
-          Unselect All
-        </Button>
-      </Button.Group>
+      <ActionIcon.Group display="inline">
+        <Tooltip label="Select all devices">
+          <ActionIcon {...selProps} onClick={() => store.selectionStore[1](data)} >
+            <DiffAddedIcon />
+          </ActionIcon>
+        </Tooltip>
+        <Tooltip label="Toggle selection">
+          <ActionIcon {...selProps} onClick={() => store.selectionStore[2]()} >
+            <DiffIgnoredIcon />
+          </ActionIcon>
+        </Tooltip>
+        <Tooltip label="Unelect all devices">
+          <ActionIcon {...selProps} onClick={() => store.selectionStore[1]([])} >
+            <DiffRemovedIcon />
+          </ActionIcon>
+        </Tooltip>
+      </ActionIcon.Group>
       &nbsp;&nbsp;
       <Button.Group display="inline">
         <Tooltip label="Upload Selected Local Configs to ESPHome Device Builder">
@@ -126,7 +133,7 @@ export const DevicesPanel = () => {
       </Button.Group>
     </div>
     <DataTable
-      className="m-[10px]"
+      className="mt-2"
       withTableBorder
       withColumnBorders
       striped
@@ -158,5 +165,6 @@ export const DevicesPanel = () => {
           render: LastMessageRenderer
         }
       ]}
-    /></>;
+    />
+  </div>;
 }

@@ -97,8 +97,14 @@ export const useDevicesPanelStore = () => {
     const upload = () => uploadConfigsToEspHome(selectedRecords.map(r => r.device), updateDeviceRecord, devicesStore.espHome_upload);
     const compile = () => compileDevices(selectedRecords.map(r => r.device.id), updateDeviceRecord);   
 
+    const toggleSelection = () => {
+        const selectedIds = new Set(selectedRecords.map(r => r.id));
+        const newSelected = [...compilationStore.values()].filter(r => !selectedIds.has(r.id));
+        setSelectedRecords(newSelected);
+    }
+
     return {
-        selectionStore: [selectedRecords, setSelectedRecords] as const,
+        selectionStore: [selectedRecords, setSelectedRecords, toggleSelection] as const,
         devices_query: useDevicesQuery(),
         devices: compilationStore,
         uploadSelected: upload,
