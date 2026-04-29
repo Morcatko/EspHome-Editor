@@ -1,13 +1,14 @@
 import { DataTable } from "mantine-datatable";
 import { TDeviceRecord, useDevicesPanelStore } from "./devices-panel-store";
 import { format, formatDistanceToNowStrict } from "date-fns";
-import { ActionIcon, Box, Button, HoverCard, Text, Tooltip } from "@mantine/core";
+import { ActionIcon, Alert, Box, Button, HoverCard, Text, Tooltip } from "@mantine/core";
 import { useDevicesColor } from "@/app/stores/devices-store";
 import { DeviceLightbulbIcon } from "../../DeviceLightbulbIcon";
-import { AlertIcon, CheckIcon, DiffAddedIcon, DiffIgnoredIcon, DiffRemovedIcon, ListOrderedIcon, PlayIcon, QuestionIcon, SquareIcon } from "@primer/octicons-react";
+import { AlertIcon, CheckIcon, DiffAddedIcon, DiffIgnoredIcon, DiffRemovedIcon, InfoIcon, ListOrderedIcon, PlayIcon, QuestionIcon, SquareIcon } from "@primer/octicons-react";
 import { AnsiConverter } from "@/app/utils/ansi-format-converter";
 import { Icons } from "@/app/utils/icons";
 import { JSX } from "react";
+import { ExtLink } from "../../ext-link";
 
 const CardBlock = ({ label, value }: { label: string, value: JSX.Element | string | null }) => (
   <Box mb="xs">
@@ -100,6 +101,12 @@ export const DevicesPanel = () => {
   };
 
   return <div className="m-[10px]">
+    <div className="mb-2">
+      <Alert variant="light" color="orange" icon={<InfoIcon />}>
+        This feature is in an early preview stage.
+        Have any feedback - let us know in our <ExtLink href="https://github.com/Morcatko/EspHome-Editor/issues">GitHub</ExtLink>
+      </Alert>
+    </div>
     <div>
       <ActionIcon.Group display="inline">
         <Tooltip label="Select all devices">
