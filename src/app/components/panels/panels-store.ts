@@ -50,7 +50,7 @@ function getPanelTitle(panel: TPanel) {
         case "esphome_log":
             return `${panel.device_id} (Log)`;
         case "devices-panel":
-            return `Devices`;
+            return `Fleet`;
         default:
             return `Unknown`;
     }
