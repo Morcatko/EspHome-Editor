@@ -4,6 +4,7 @@ import { esphome_stream, type StreamEvent } from "./client";
 import { log } from "@/shared/log";
 import { assertResponseAndJsonOk, assertResponseOk } from "@/shared/http-utils";
 import { EspHomeStreamParser } from "./esphome-stream-parser";
+import { wsClient } from "./ws-client";
 
 type TEspHomeDevice = {
     name: string;
@@ -55,11 +56,10 @@ const getDevice = async (device_id: string) => {
 
 const getConfiguration = async (device_id: string) => {
     const device = await getDevice(device_id);
-    const url = `${c.espHomeApiUrl}/edit?configuration=${device.esphome_config}`;
-    log.debug("Getting ESPHome configuration", url);
-    const response = await fetch(url);
-    assertResponseOk(response);
-    return await response.text();
+
+    log.debug("Getting ESPHome configuration", device.esphome_config);
+    const response = await wsClient.call("devices/get_config", {configuration: device.esphome_config});
+    return response;
 };
 
 const saveConfiguration = async (device_id: string, content: string) => {
@@ -80,14 +80,11 @@ const saveConfiguration = async (device_id: string, content: string) => {
         device = await getDevice(device_id.toLowerCase());
     }
 
-    //Create device if it does not exist???
-    const url = `${c.espHomeApiUrl}/edit?configuration=${device.esphome_config}`;
-    log.debug("Saving ESPHome configuration", url);
-    const response = await fetch(url, {
-        method: "POST",
-        body: content,
+    log.debug("Saving ESPHome configuration", device.esphome_config);
+    await wsClient.call("devices/update_config", {
+        configuration: device.esphome_config,
+        content: content
     });
-    assertResponseOk(response);
 }
 
 const deleteDevice = async (device_id: string) => {
@@ -98,12 +95,8 @@ const deleteDevice = async (device_id: string) => {
         return;
     }
 
-    const url = `${c.espHomeApiUrl}/delete?configuration=${device.esphome_config}`
-    log.debug("Deleting ESPHome device", url);
-    const response = await fetch(url, {
-        method: "POST",
-    });
-    assertResponseOk(response);
+    log.debug("Deleting ESPHome device", device.esphome_config);
+    await wsClient.call("devices/delete", { configuration:  device.esphome_config});
 }
 
 const getPing = async () => {
