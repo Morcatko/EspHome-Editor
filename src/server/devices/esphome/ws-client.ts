@@ -17,6 +17,7 @@
  */
 
 import { c } from "@/server/config";
+import { log } from "@/shared/log";
 
 export interface WsClientOptions {
   /** Timeout in ms to wait for a response before rejecting a call. Default: 10000 */
@@ -56,15 +57,14 @@ class WsClient {
   private ws: WebSocket | null = null;
   private nextId = 1;
   private pending = new Map<string, PendingCall>();
-  private readonly url: URL;
+  private readonly url: string;
   private readonly timeoutMs: number;
   private connectPromise: Promise<void> | null = null;
 
   private constructor(apiUrl: string, private readonly options: WsClientOptions = {}) {
-    this.url = new URL(`${apiUrl}/ws`);
-    this.url.protocol = this.url.protocol === "http:" ? "ws:" : "wss:";
-
-    console.log("Creating wsClient");
+    log.verbose("apiUrl", apiUrl);
+    this.url = apiUrl.replace("http", "ws") + "/ws"
+    log.info("Creating wsClient", this.url);
     this.timeoutMs = options.timeoutMs ?? 10_000;
   }
 
@@ -140,7 +140,7 @@ class WsClient {
   private handleRawMessage(data: unknown): void {
     let msg: IncomingMessage;
     try {
-      console.log("wsClient - received ", data);
+      log.verbose("wsClient", "received", data);
       msg = JSON.parse(String(data));
     } catch (err) {
       this.options.onError?.(new Error(`Failed to parse message: ${String(data)}`));
@@ -183,4 +183,4 @@ class WsClient {
 let _wsClient: WsClient | null = null;
 
 
-export const wsClient = WsClient.instance;
+export const getWsClient = () => WsClient.instance;

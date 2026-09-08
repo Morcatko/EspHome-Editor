@@ -4,7 +4,7 @@ import { esphome_stream, type StreamEvent } from "./client";
 import { log } from "@/shared/log";
 import { assertResponseAndJsonOk, assertResponseOk } from "@/shared/http-utils";
 import { EspHomeStreamParser } from "./esphome-stream-parser";
-import { wsClient } from "./ws-client";
+import { getWsClient } from "./ws-client";
 
 type TEspHomeDevice = {
     name: string;
@@ -58,7 +58,7 @@ const getConfiguration = async (device_id: string) => {
     const device = await getDevice(device_id);
 
     log.debug("Getting ESPHome configuration", device.esphome_config);
-    const response = await wsClient.call("devices/get_config", {configuration: device.esphome_config});
+    const response = await getWsClient().call("devices/get_config", {configuration: device.esphome_config});
     return response;
 };
 
@@ -81,7 +81,7 @@ const saveConfiguration = async (device_id: string, content: string) => {
     }
 
     log.debug("Saving ESPHome configuration", device.esphome_config);
-    await wsClient.call("devices/update_config", {
+    await getWsClient().call("devices/update_config", {
         configuration: device.esphome_config,
         content: content
     });
@@ -96,7 +96,7 @@ const deleteDevice = async (device_id: string) => {
     }
 
     log.debug("Deleting ESPHome device", device.esphome_config);
-    await wsClient.call("devices/delete", { configuration:  device.esphome_config});
+    await getWsClient().call("devices/delete", { configuration:  device.esphome_config});
 }
 
 const getPing = async () => {
