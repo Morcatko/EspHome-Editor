@@ -1,6 +1,5 @@
 import path from "path";
 import { getEspHomeUrls } from "./utils/ha-client";
-import { WsClient } from "./devices/esphome/ws-client";
 
 const cwd = process.cwd() + "/";
 const optimize = path.normalize;
