@@ -1,4 +1,6 @@
 FROM --platform=$BUILDPLATFORM node:current-alpine AS builder 
+RUN npm install -g yarn@1.22.22
+
 WORKDIR /build
 
  #COPY .npmrc ./
